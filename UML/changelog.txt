@@ -2,6 +2,8 @@ TODO
 - Connection between SPORE and TECTON
 - spore effetc attributum
 - Spore duration -> effectDuration-ra átnevezni
+- ALT class diag és a classDiag szinkronizálása
+
 
 CHANGED
 - 
