@@ -1,0 +1,169 @@
+' Privát tabban írtam meg 02.27én'
+@startuml ClassDiagram
+
+class Game {
+  - map: GameBoard
+  - players: List<Player>
+  - currTurn: int
+  - totalTurns: int
+  - currentPlayer: Player
+  + initBoard(): void
+  + initGame(): boolean
+  + startGame(): void
+  + addPlayer(Player p): boolean
+  + removePlayer(Player p): boolean
+  + nextTurn(): void
+  + endGame(): void
+}
+
+class GameBoard {
+  - tectons: List<Tecton>
+  + generateBoard(): void
+  + getNeighbors(Tecton t): List<Tecton>
+  + breakHandler(): void
+}
+
+abstract class Tecton {
+  - hyphaLifespan: int
+  - hyphaLimit: int 
+  - fungiEnabled: boolean
+  - breakChance: double
+  - breakCount: int
+  - fungus: Fungus
+  - insect: Etnomologist
+  - hexagons: List<Hexagon>
+  - spores: Map<Mycologist, int>
+  - hyphas: List<Hypha>
+  + addSpores(Mycologist m): void
+  + removeSpores(Mycologist m): void
+  + addHypha(Hypha m): void
+  + split(double breakChance): List<Tecton>
+  {abstract} + handleHypha(Hypha h): void
+}
+
+class Hexagon {
+  - id: int
+  - neighbors: List<Hexagon>
+  + destroy(): void
+}
+
+class TectonA extends Tecton {
+  ' 4 kör után a fonalak felszívódnak
+  - hyphaLifespan: int = 4
+  + handleHypha(Hypha h): void
+}
+class TectonB extends Tecton{
+  ' Végtelen mennyiségű fonal mehet keresztül a tektonon
+  - hyphaLimit: int = -1 
+  - hyphas: List<Hypha>
+  + handleHypha(Hypha h): void
+}
+class TectonC extends Tecton{
+  ' Csak egyfajta fonal nőhet 
+  - hyphaLimit: int = 1 
+  + handleHypha(Hypha h): void
+}
+class TectonD extends Tecton{
+  ' Nem helyezhető gomba a mezőre
+  - fungiEnabled: false
+  + handleHypha(Hypha h): void
+}
+
+abstract class Player {
+  - name: String
+  - score: int
+  - actionsPerTurn: int
+  - remainingActions: int
+'  + performAction(): void
+  {abstract} + calculateScore(): int
+}
+
+' Player type 1
+class Mycologist extends Player {
+  - mushrooms: List<Fungus>
+  + placeFungus(Tecton t)
+}
+
+class Fungus {
+  - species: Mycologist
+  - tecton: Tecton
+  - charge: int 
+  - lifespan: int 
+  - hyphas: List<Hypha>
+  ' Környező mezőkre spredel, tehát a tecton közvetlen szomszédaira feltéve ha nincs 3 charge 
+  + spreadSpores(): void
+  + growHypha(List<Tecton> t): boolean
+}
+
+class Hypha {
+  - tectons: List<Tecton>
+  - species: Mycologist
+  ' 
+  + isConnectedToFungus(): boolean
+}
+
+abstract class Spore {
+  - species: Mycologist
+  ' Meddig tart a spora effectje
+  - duration: int
+  - nutrientValue: int
+  {abstract} + applyTo(Insect i): void
+}
+
+class SporeNoEffect extends Spore {
+  - nutrientValue: int = 1
+}
+
+class AcceleratingEffect extends Spore {
+  - nutrientValue: int = 1
+}
+
+class SlowingEffect extends Spore {
+  - nutrientValue: int = 2
+}
+
+class ParalyzingEffect extends Spore {
+  - nutrientValue: int = 4
+}
+
+class StunningEffect extends Spore {
+  - nutrientValue: int = 3
+  + applyTo(Insect i): void
+}
+
+' Player type 2
+class Entomologist extends Player {
+  # insect: Insect
+}
+
+class Insect {
+  - entomologist: Entomologist
+  - tecton: Tecton
+  - effects: List<Spore>
+  + move(Tecton t): boolean
+  + cutHypha(Hypha h): boolean
+  + consumeSpores(Etnomologist e): void  
+  ' Hozzáadja az effect listához az effected és modifikálja az insect attribeket.
+  + addEffects(Spore s): void
+}
+
+' Relationships
+Game *-- GameBoard: 1
+Game o--  Player: 4..8
+GameBoard *--  Tecton: 1...*
+
+Mycologist o--  Fungus
+Entomologist o--  Insect: 1
+
+Hypha -d-* Tecton
+'Hypha -- Mycologist
+
+Insect o-- Spore 
+
+Tecton o--  Fungus
+
+Tecton o-l- Hexagon
+
+Fungus *-- Hypha
+@enduml
+

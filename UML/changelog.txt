@@ -1,0 +1,7 @@
+TODO
+- Connection between SPORE and TECTON
+- spore effetc attributum
+- Spore duration -> effectDuration-ra átnevezni
+
+CHANGED
+- 
