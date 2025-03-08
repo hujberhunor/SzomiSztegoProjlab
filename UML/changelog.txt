@@ -3,6 +3,7 @@ ClassDiagAlt changelogja.
 TODO
 - spore effetc attributum
 - Hypha construktor (curr, target)
+- Insect Tecton kapcsolat
 
 - insect akciók az interface-be kerülnek
 - Spore nem valósítja meg a rovar actionoket
