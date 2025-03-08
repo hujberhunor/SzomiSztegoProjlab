@@ -58,23 +58,23 @@ class Hexagon {
   + destroy(): void
 }
 
-class TectonA extends Tecton {
+class ShortHyphaTecton extends Tecton {
   ' 4 kör után a fonalak felszívódnak
   - hyphaLifespan: int = 4
   + handleHypha(Hypha h): void
 }
-class TectonB extends Tecton{
+class InfiniteHyphaTecton extends Tecton{
   ' Végtelen mennyiségű fonal mehet keresztül a tektonon
   - hyphaLimit: int = -1 
   - hyphas: List<Hypha>
   + handleHypha(Hypha h): void
 }
-class TectonC extends Tecton{
+class SingleHyphaTecton extends Tecton{
   ' Csak egyfajta fonal nőhet 
   - hyphaLimit: int = 1 
   + handleHypha(Hypha h): void
 }
-class TectonD extends Tecton{
+class NoFungiTecton extends Tecton{
   ' Nem helyezhető gomba a mezőre
   - fungiEnabled: false
   + handleHypha(Hypha h): void

@@ -7,14 +7,27 @@ participant GameBoard
 participant Tecton
 
 Entomologist -> Insect: move(Tecton target)
+activate Insect
+
 Insect -> GameBoard: getNeighbors(Tecton current)
+activate GameBoard
 GameBoard --> Insect: return List<Tecton>
+deactivate GameBoard
+
 Insect -> Tecton: getHypha()
-Tecton --> Insect: return 
+activate Tecton
+Tecton --> Insect: return Hypha (if exists)
+deactivate Tecton
 
 alt Van fonál
     Insect -> Tecton: moveTo(target)
+    activate Tecton
+    Tecton --> Insect: movement confirmed
+    deactivate Tecton
 else Nincs fonál
     Insect --> Entomologist: Nincs út
-    
+end
+
+deactivate Insect
+
 @enduml

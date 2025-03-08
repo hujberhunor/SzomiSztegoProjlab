@@ -1,12 +1,18 @@
+ClassDiagAlt changelogja. 
+
 TODO
 - Connection between SPORE and TECTON
 - spore effetc attributum
 - Spore duration -> effectDuration-ra átnevezni
 - ALT class diag és a classDiag szinkronizálása
+- Hypha construktor (curr, target)
+- continue hypha (hogy ne kelljen új obj minden alkalommal)
+    - Mind tecton mind hypha paraméterrel
+- SelectTecton playernek
 
 
 CHANGED
-- 
+- Tecton nevek átírva
 
 
 JEGYZETEK:
