@@ -1,0 +1,20 @@
+@startuml
+
+== 1. Rovar lépés ==
+actor Entomologist
+participant Insect
+participant GameBoard
+participant Tecton
+
+Entomologist -> Insect: move(Tecton target)
+Insect -> GameBoard: getNeighbors(Tecton current)
+GameBoard --> Insect: return List<Tecton>
+Insect -> Tecton: getHypha()
+Tecton --> Insect: return 
+
+alt Van fonál
+    Insect -> Tecton: moveTo(target)
+else Nincs fonál
+    Insect --> Entomologist: Nincs út
+    
+@enduml
