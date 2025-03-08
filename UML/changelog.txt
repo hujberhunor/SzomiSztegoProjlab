@@ -9,6 +9,7 @@ TODO
 - continue hypha (hogy ne kelljen új obj minden alkalommal)
     - Mind tecton mind hypha paraméterrel
 - SelectTecton playernek
+- SpreadSpores() megkapja a negigbhbour listát mint paraméter
 
 
 CHANGED

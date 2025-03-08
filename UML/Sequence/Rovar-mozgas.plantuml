@@ -5,27 +5,79 @@ actor Entomologist
 participant Insect
 participant GameBoard
 participant Tecton
+participant Spore
 
 Entomologist -> Insect: move(Tecton target)
 activate Insect
 
-Insect -> GameBoard: getNeighbors(Tecton current)
-activate GameBoard
-GameBoard --> Insect: return List<Tecton>
-deactivate GameBoard
+Insect -> Spore: getEffects()
+activate Spore
+Spore --> Insect: return List<Spore>
 
-Insect -> Tecton: getHypha()
-activate Tecton
-Tecton --> Insect: return Hypha (if exists)
-deactivate Tecton
+deactivate Spore
 
-alt Van fonál
-    Insect -> Tecton: move(target)
+alt ParalyzingEffect aktív
+    Insect --> Entomologist: Mozgás megbénítva
+else SlowingEffect aktív
+    Insect -> GameBoard: getNeighbors(Tecton current)
+    activate GameBoard
+    GameBoard --> Insect: return List<Tecton>
+    deactivate GameBoard
+
+    Insect -> Tecton: getHypha()
     activate Tecton
-    Tecton --> Insect: return boolean 
+    Tecton --> Insect: return Hypha (if exists)
     deactivate Tecton
-else Nincs fonál
-    Insect --> Entomologist: Nincs mozgás 
+
+    alt Van fonál
+        Insect -> Tecton: move(target) (csökkentett mozgással)
+        activate Tecton
+        Tecton --> Insect: return boolean
+        deactivate Tecton
+    else Nincs fonál
+        Insect --> Entomologist: Nincs mozgás
+    end
+
+else StunningEffect aktív
+    Insect -> GameBoard: getNeighbors(Tecton current)
+    activate GameBoard
+    GameBoard --> Insect: return List<Tecton>
+    deactivate GameBoard
+
+    Insect -> Tecton: getHypha()
+    activate Tecton
+    Tecton --> Insect: return Hypha (if exists)
+    deactivate Tecton
+
+    alt Van fonál, de rovar nem tud gombafonalat elvágni
+        Insect --> Entomologist: Rovar mozgott, de nem tud fonalat elvágni
+        Insect -> Tecton: move(target)
+        activate Tecton
+        Tecton --> Insect: return boolean
+        deactivate Tecton
+    else Nincs fonál
+        Insect --> Entomologist: Nincs mozgás
+    end
+
+else Normál mozgás (nincs effekt vagy csak gyorsító spóra)
+    Insect -> GameBoard: getNeighbors(Tecton current)
+    activate GameBoard
+    GameBoard --> Insect: return List<Tecton>
+    deactivate GameBoard
+
+    Insect -> Tecton: getHypha()
+    activate Tecton
+    Tecton --> Insect: return Hypha (if exists)
+    deactivate Tecton
+
+    alt Van fonál
+        Insect -> Tecton: move(target)
+        activate Tecton
+        Tecton --> Insect: return boolean
+        deactivate Tecton
+    else Nincs fonál
+        Insect --> Entomologist: Nincs mozgás
+    end
 end
 
 deactivate Insect
