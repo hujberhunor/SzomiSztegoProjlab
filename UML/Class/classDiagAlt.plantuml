@@ -131,9 +131,9 @@ abstract class Spore implements ISpore {
   - species: Mycologist
   - effectDuration: int
   - nutrientValue: int
-  + move(): void
-  + eat(): void
-  + cut(): void
+'  + move(): void
+'  + eat(): void
+'  + cut(): void
   {abstract} + applyTo(Insect i): void
 }
 

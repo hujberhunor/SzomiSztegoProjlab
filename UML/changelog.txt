@@ -1,12 +1,9 @@
 ClassDiagAlt changelogja. 
 
 TODO
-- spore effetc attributum
-- Hypha construktor (curr, target)
 - Insect Tecton kapcsolat
 
-- insect akciók az interface-be kerülnek
-- Spore nem valósítja meg a rovar actionoket
+
 
 CHANGED
 - Tecton nevek átírva
@@ -17,7 +14,9 @@ CHANGED
 - SelectTecton playernek
 - continue hypha (hogy ne kelljen új obj minden alkalommal)
     - Mind tecton mind hypha paraméterrel
-
+--- 
+- insect akciók az interface-be kerülnek
+- Spore nem valósítja meg a rovar actionoket
 
 JEGYZETEK:
 
