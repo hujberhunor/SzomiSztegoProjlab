@@ -134,25 +134,32 @@ abstract class Spore implements ISpore {
   {abstract} + applyTo(Insect i): void
 }
 
-class SporeNoEffect extends Spore {
-  - nutrientValue: int = 1
-}
 
+
+note top of AcceleratingEffect: +1 action / turn 
 class AcceleratingEffect extends Spore {
   - nutrientValue: int = 1
 }
 
+note top of SlowingEffect: Only 1 action / turn
 class SlowingEffect extends Spore {
   - nutrientValue: int = 2
 }
 
+note top of ParalyzingEffect: Can't move
 class ParalyzingEffect extends Spore {
   - nutrientValue: int = 4
 }
 
+note top of StunningEffect: Can't cut hypha
 class StunningEffect extends Spore {
   - nutrientValue: int = 3
   + applyTo(Insect i): void
+}
+
+' Alap spóra hogy az ős absztrakt lehessen
+class SporeNoEffect extends Spore {
+  - nutrientValue: int = 1
 }
 
 ' Player type 2
