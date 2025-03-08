@@ -20,12 +20,12 @@ Tecton --> Insect: return Hypha (if exists)
 deactivate Tecton
 
 alt Van fonál
-    Insect -> Tecton: moveTo(target)
+    Insect -> Tecton: move(target)
     activate Tecton
-    Tecton --> Insect: movement confirmed
+    Tecton --> Insect: return boolean 
     deactivate Tecton
 else Nincs fonál
-    Insect --> Entomologist: Nincs út
+    Insect --> Entomologist: Nincs mozgás 
 end
 
 deactivate Insect
