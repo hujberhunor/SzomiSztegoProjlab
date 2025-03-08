@@ -58,22 +58,26 @@ class Hexagon {
   + destroy(): void
 }
 
+note bottom of ShortHyphaTecton: After 4 turn hypha disapears
 class ShortHyphaTecton extends Tecton {
   ' 4 kör után a fonalak felszívódnak
   - hyphaLifespan: int = 4
   + handleHypha(Hypha h): void
 }
+note bottom of InfiniteHyphaTecton: Can contain infinite many hypha
 class InfiniteHyphaTecton extends Tecton{
   ' Végtelen mennyiségű fonal mehet keresztül a tektonon
   - hyphaLimit: int = -1 
   - hyphas: List<Hypha>
   + handleHypha(Hypha h): void
 }
+note bottom of SingleHyphaTecton: Can contain only 1 hypha
 class SingleHyphaTecton extends Tecton{
   ' Csak egyfajta fonal nőhet 
   - hyphaLimit: int = 1 
   + handleHypha(Hypha h): void
 }
+note bottom of NoFungiTecton: Can't contain fungus
 class NoFungiTecton extends Tecton{
   ' Nem helyezhető gomba a mezőre
   - fungiEnabled: false
@@ -86,6 +90,7 @@ abstract class Player {
   - actionsPerTurn: int
   - remainingActions: int
 '  + performAction(): void
+  + selectTecton(Tecton): Tecton
   {abstract} + calculateScore(): int
 }
 
@@ -101,8 +106,10 @@ class Fungus {
   - charge: int 
   - lifespan: int 
   - hyphas: List<Hypha>
+  - spores: List<Spore>
   ' Környező mezőkre spredel, tehát a tecton közvetlen szomszédaira feltéve ha nincs 3 charge 
-  + spreadSpores(): void
+  ' Paramétere a szomszéd lista Neighbour tecton
+  + spreadSpores(List<Tecton>): void
   + growHypha(List<Tecton> t): boolean
 }
 
@@ -111,13 +118,9 @@ class Hypha {
   - species: Mycologist
   ' Lefuttatjuk az elszakadt gomba két végére és megtudjuk melyik nincs gombatesthez kötve 
   + isConnectedToFungus(): boolean
-}
-
-
-interface ISpore {
-    + move(): void
-    + eat(): void
-    + cut(): void
+  ' folytatja a fonalat nem kell új objektum, lesz tectonos változata is 
+  + continueHypha(Hypha): void
+  + continueHypha(Tecton): void
 }
 
 ' Megvalósítja az interface-t emiatt bővíthetőbb
@@ -126,15 +129,13 @@ interface ISpore {
 ' Így nem kell az INSECT class-t baszogatni
 abstract class Spore implements ISpore {
   - species: Mycologist
-  - duration: int
+  - effectDuration: int
   - nutrientValue: int
   + move(): void
   + eat(): void
   + cut(): void
   {abstract} + applyTo(Insect i): void
 }
-
-
 
 note top of AcceleratingEffect: +1 action / turn 
 class AcceleratingEffect extends Spore {
@@ -167,6 +168,12 @@ class Entomologist extends Player {
   # insect: Insect
 }
 
+interface ISpore {
+    + move(): void
+    + consumeSpores(): void
+    + cut(): void
+}
+
 class Insect {
   - entomologist: Entomologist
   - tecton: Tecton
@@ -176,6 +183,7 @@ class Insect {
   + consumeSpores(Etnomologist e): void  
   ' Hozzáadja az effect listához az effected és modifikálja az insect attribeket.
   + addEffects(Spore s): void
+  + removeExpiredEffects(): void
 }
 
 ' Relationships
@@ -190,6 +198,7 @@ Hypha -d-* Tecton
 'Hypha -- Mycologist
 
 Insect o-- ISpore 
+Spore o-l- Fungus
 
 Tecton o--  Fungus
 
