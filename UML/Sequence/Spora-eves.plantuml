@@ -1,0 +1,23 @@
+@startuml
+
+== 6. Spóra evés ==
+actor Insect
+participant Tecton
+participant Spore
+
+Insect -> Tecton: getSpores()
+activate Tecton
+Tecton --> Insect: return List<Spore>
+deactivate Tecton
+
+alt Van spóra
+    Insect -> Spore: consumeSpore()
+    activate Spore
+    Spore -> Insect: updateScore()
+    Spore -> Insect: applyEffect()
+    deactivate Spore
+else Nincs spóra
+    Insect --> Insect: No spores available
+end
+
+@enduml
