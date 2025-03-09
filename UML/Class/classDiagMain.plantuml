@@ -49,6 +49,7 @@ abstract class Tecton {
   ' Accept hypha ként működik
   + addHypha(Hypha m): void
   + split(double breakChance): List<Tecton>
+  + update(): void
   {abstract} + handleHypha(Hypha h): void
 }
 
@@ -130,6 +131,7 @@ abstract class Spore {
   + move(): void
   + eat(): void
   + cut(): void
+  + update(): void
   {abstract} + applyTo(Insect i): void
 }
 
@@ -151,7 +153,6 @@ class ParalyzingEffect extends Spore {
 note top of StunningEffect: Can't cut hypha
 class StunningEffect extends Spore {
   - nutrientValue: int = 3
-  + applyTo(Insect i): void
 }
 
 ' Alap spóra hogy az ős absztrakt lehessen

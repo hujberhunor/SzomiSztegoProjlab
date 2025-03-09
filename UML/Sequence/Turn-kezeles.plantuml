@@ -7,7 +7,7 @@ participant GameBoard
 participant Tecton
 participant Spore
 
-Game -> Player: performTurn()
+Game -> Player: startGame()
 activate Player
 
 loop Akciók végrehajtása
@@ -24,21 +24,17 @@ end
 
 deactivate Player
 
-Game -> GameBoard: processTurn()
+Game -> GameBoard: handleTurn()
 activate GameBoard
 loop Minden tectonon
-    GameBoard -> Tecton: updateState()
+    GameBoard -> Tecton: update()
     alt ShortHyphaTecton
-        Tecton -> Tecton: decreaseHyphaLifespan()
+        Tecton -> Tecton: hyphaLifespan--;
     end
 end
 deactivate GameBoard
 
-Game -> Spore: updateSporeEffects()
-activate Spore
-loop Minden spóra
-    Spore -> Spore: decreaseDuration()
-end
+Game -> Spore: update()
 deactivate Spore
 
 Game -> Game: nextTurn()

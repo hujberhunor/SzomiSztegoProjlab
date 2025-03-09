@@ -1,8 +1,7 @@
-ClassDiagAlt changelogja. 
-
-TODO
+TODO in ALT
 - Insect Tecton kapcsolat
 
+TODO in MAIN: 
 
 
 CHANGED
@@ -14,9 +13,22 @@ CHANGED
 - SelectTecton playernek
 - continue hypha (hogy ne kelljen új obj minden alkalommal)
     - Mind tecton mind hypha paraméterrel
+- Game: update()
+- Tecton: Update()
+- Spore: update()
+- Player: selectAction(), performTurn()
+
+
+
+
 --- 
 - insect akciók az interface-be kerülnek
 - Spore nem valósítja meg a rovar actionoket
+
+
+
+
+
 
 JEGYZETEK:
 

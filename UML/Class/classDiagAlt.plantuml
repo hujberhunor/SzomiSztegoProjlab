@@ -18,6 +18,8 @@ class Game {
   + addPlayer(Player p): boolean
   + removePlayer(Player p): boolean
   + nextTurn(): void
+  ' Körkezeléshez kell 
+  + update(): void
   + endGame(): void
 }
 
@@ -49,6 +51,8 @@ abstract class Tecton {
   ' Accept hypha ként működik
   + addHypha(Hypha m): void
   + split(double breakChance): List<Tecton>
+  ' Körkezeléshez kell 
+  + update(): void 
   {abstract} + handleHypha(Hypha h): void
 }
 
@@ -92,6 +96,8 @@ abstract class Player {
 '  + performAction(): void
   + selectTecton(Tecton): Tecton
   {abstract} + calculateScore(): int
+  + selectAction(): void
+  + performTurn(): void
 }
 
 ' Player type 1
@@ -135,6 +141,8 @@ abstract class Spore implements ISpore {
 '  + eat(): void
 '  + cut(): void
   {abstract} + applyTo(Insect i): void
+  ' Körkezelés
+  + update(): void
 }
 
 note top of AcceleratingEffect: +1 action / turn 
@@ -155,7 +163,7 @@ class ParalyzingEffect extends Spore {
 note top of StunningEffect: Can't cut hypha
 class StunningEffect extends Spore {
   - nutrientValue: int = 3
-  + applyTo(Insect i): void
+  ' applyTo(Insect i): void
 }
 
 ' Alap spóra hogy az ős absztrakt lehessen
