@@ -5,11 +5,12 @@ TODO in MAIN:
 
 
 CHANGED
-- Tecton nevek átírva
 - Fungus contains spore list
 - removeExpiredEffects()
 - Spore duration -> effectDuration-ra átnevezni
 - SpreadSpores() megkapja a negigbhbour listát mint paraméter
+
+- Tecton nevek átírva
 - SelectTecton playernek
 - continue hypha (hogy ne kelljen új obj minden alkalommal)
     - Mind tecton mind hypha paraméterrel
