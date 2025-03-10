@@ -1,0 +1,46 @@
+@startuml
+
+== 3. Gombatest növesztés ==
+actor Mycologist
+participant Fungus
+participant Tecton
+
+Mycologist -> Fungus: growFungus(Tecton target)
+activate Fungus
+
+Fungus -> Tecton: checkHypha()
+activate Tecton
+Tecton --> Fungus: return boolean
+
+deactivate Tecton
+Fungus -> Tecton: checkSpore()
+activate Tecton
+Tecton --> Fungus: return boolean
+
+deactivate Tecton
+Fungus -> Tecton: getFungus()
+activate Tecton
+Tecton --> Fungus: return boolean
+
+' deactivate Tecton
+' Fungus -> Tecton: checkTectonType()
+' activate Tecton
+' Tecton --> Fungus: return TectonType
+' deactivate Tecton
+
+alt Feltételek: van fonál, spóra, nincs másik gomba, és nem NoFungiTecton
+    Fungus -> Tecton: Fungus(Tecton)
+    activate Tecton
+    Tecton --> Fungus: boolean
+    deactivate Tecton
+else Nem elég spóra 
+    Fungus --> Mycologist: error: Nem lehet gombát növeszteni
+else Már van gomba 
+    Fungus --> Mycologist: error: Már van gomba ezen a tectonon
+else NoFungi Tecton
+    Fungus --> Mycologist: error: Ezen a tectonon nem nőhet gomba
+end
+
+deactivate Fungus
+
+@enduml

@@ -1,0 +1,46 @@
+@startuml
+
+== 2. Gombafonál növesztés ==
+actor Mycologist
+participant Fungus
+participant GameBoard
+participant Tecton
+participant Hypha
+
+Mycologist -> Fungus: growHypha(Tecton target)
+activate Fungus
+
+Fungus -> GameBoard: getNeighbors(Tecton current)
+activate GameBoard
+GameBoard --> Fungus: return List<Tecton)
+deactivate GameBoard
+
+Fungus -> Mycologist: selectTecton(Tecton)
+activate Mycologist
+Mycologist --> Fungus: return chosen Tecton
+deactivate Mycologist
+
+Fungus -> Tecton: checkTectonType()
+activate Tecton
+Tecton --> Fungus: return TectonType
+deactivate Tecton
+
+alt InfiniteHyphaTecton (Több fonal lehetséges)
+    Fungus -> Hypha: createHypha(Tecton current, Tecton target)
+    activate Hypha
+    Hypha -> Tecton: attachToTecton(Hypha)
+    deactivate Hypha
+    Fungus -> Hypha: connectHypha(Tecton target)
+else hasHypha() == false (Nincs még fonal az adott irányban)
+    Fungus -> Hypha: createHypha(Tecton current, Tecton target)
+    activate Hypha
+    Hypha -> Tecton: attachToTecton(Hypha)
+    deactivate Hypha
+else hasHypha() == true (Már van fonal az adott irányban)
+    Fungus -> Hypha: connectHypha(Tecton target)
+end
+
+Fungus -> GameBoard: updateBoard()
+deactivate Fungus
+
+@enduml
