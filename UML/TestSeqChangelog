@@ -8,3 +8,5 @@ TODO IN CLASS
 + decreaseAction() a playernek
 
 + isUnderEffect() a rovarnak.
+
++ selectHighestSporeCount()
