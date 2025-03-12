@@ -1,0 +1,9 @@
+UML változtatások 
+
+TODO IN CLASS
++ growFungus virt a Mychologistnál és a fungus maga implementálja
++ addFungus() tecton-ra 
+
++ growHypha() a Mychologistnál is
+
++ isUnderEffect() a rovarnak.

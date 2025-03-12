@@ -1,0 +1,28 @@
+@startuml
+
+== Gombatest elhelyezése ==
+
+actor Mycologist
+participant Fungus
+participant Tecton
+
+Mycologist -> Fungus: growFungus(Tecton target)
+activate Fungus
+
+Fungus -> Tecton: addFungus(Tecton t)
+
+alt Feltételek teljesülnek (van fonál és >= 2 spóra)
+    Fungus -> Tecton: placeFungus()
+    Tecton --> Fungus: Fungus placed
+    Fungus -> Mycologist: decreaseActions()
+else NoFungiTecton (nem helyezhető gombatest)
+    Fungus -> Tecton: isFungiEnabled()
+    Tecton --> Fungus: return false
+    Fungus --> Mycologist: Nem lehet itt gombát növeszteni!
+else Nincs elég spóra vagy fonál
+    Fungus --> Mycologist: error: "Nem lehet új gombatestet elhelyezni!"
+end
+
+deactivate Fungus
+
+@enduml
