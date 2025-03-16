@@ -1,0 +1,30 @@
+@startuml
+== Generating GameBoard ==
+
+actor GameLogic
+participant Game
+participant GameBoard
+participant Hexagon
+participant Tecton
+
+GameLogic -> Game: initGameBoard()
+activate Game
+
+Game -> GameBoard: generateBoard()
+activate GameBoard
+
+GameBoard -> Tecton: generateTectons(List<Hexagon>)
+activate Tecton
+Tecton --> GameBoard: return List<Tecton>
+deactivate Tecton
+
+loop Minden tekton esetében
+    GameBoard -> Tecton: setAttributes()
+    Tecton --> GameBoard: return boolean
+end
+
+GameBoard --> Game: return Generated GameBoard
+deactivate GameBoard
+deactivate Game
+
+@enduml

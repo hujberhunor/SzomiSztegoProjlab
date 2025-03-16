@@ -1,5 +1,5 @@
 @startuml
-== Sikeres tekton törés ==
+== Break Tecton ==
 
 participant Game
 participant Tecton

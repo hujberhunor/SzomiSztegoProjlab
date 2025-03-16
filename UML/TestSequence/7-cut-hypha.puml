@@ -1,6 +1,6 @@
 @startuml
 
-== Fonal vágás ==
+== Cut Hypha ==
 
 actor Entomologist
 participant Insect

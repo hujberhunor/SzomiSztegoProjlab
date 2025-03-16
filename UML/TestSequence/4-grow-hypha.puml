@@ -1,6 +1,6 @@
 @startuml
 
-== Gombafonál növesztése ==
+== Grow Hypha ==
 
 actor Mycologist
 participant Fungus

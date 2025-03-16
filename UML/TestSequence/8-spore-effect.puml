@@ -1,6 +1,6 @@
 @startuml
 
-== Spóraevés és effektusok ==
+== Consume spore and effects ==
 
 actor Entomologist
 participant Insect

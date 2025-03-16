@@ -26,7 +26,7 @@
 ' @enduml
 @startuml
 
-== Játék Inicializálása ==
+== Initialize Game ==
 
 actor Player
 participant Game

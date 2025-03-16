@@ -1,5 +1,5 @@
 @startuml
-== Sikeres rovar mozgás ==
+== Move Insect ==
 
 actor Entomologist
 participant Insect

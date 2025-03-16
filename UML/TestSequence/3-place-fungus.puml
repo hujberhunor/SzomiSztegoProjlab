@@ -1,6 +1,6 @@
 @startuml
 
-== Gombatest elhelyezése ==
+== Place Fungus ==
 
 actor Mycologist
 participant Fungus

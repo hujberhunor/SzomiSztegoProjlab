@@ -1,0 +1,43 @@
+@startuml
+== Spread Spores ==
+
+actor Mycologist
+participant Fungus
+participant Tecton
+participant GameBoard
+
+Mycologist -> Fungus: spreadSpores()
+activate Fungus
+
+alt Charge == 2
+    Fungus -> GameBoard: getNeighboringTectons()
+    GameBoard --> Fungus: return List<Tecton>
+    
+    loop Minden szomszédos tekton esetében
+        Fungus -> Tecton: addSpore(Mychologist)
+    end
+    
+    GameBoard -> Fungus: resetCharge()
+
+    ' Fungus -> Fungus: resetCharge()
+else Charge == 3
+    Fungus -> GameBoard: getNeighboringTectons()
+    GameBoard --> Fungus: return List<Tecton>
+    
+    loop Minden szomszédos tekton esetében
+        Fungus -> Tecton: addSpore(Mychologist)
+        Fungus -> GameBoard: getNeighboringTectons(Tecton)
+        GameBoard --> Fungus: return List<Tecton>
+        
+        loop Minden új szomszédos tekton esetében
+            Fungus -> Tecton: addSpore(Mychologist)
+        end
+    end
+    GameBoard -> Fungus: resetCharge()
+    
+    ' Fungus -> Fungus: resetCharge()
+end
+
+deactivate Fungus
+
+@enduml
