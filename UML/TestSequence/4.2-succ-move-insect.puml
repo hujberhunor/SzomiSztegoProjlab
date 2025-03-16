@@ -1,5 +1,5 @@
 @startuml
-== Sikeres rovar mozgás V1 ==
+== Sikeres rovar mozgás ==
 
 actor Entomologist
 participant Insect
@@ -11,7 +11,7 @@ activate Insect
 Insect -> Tecton: isNeighbor(Tecton target)
 Tecton --> Insect: return boolean
 
-alt Szomszédos tekton és van fonál
+alt Szomszédos tekton 
     Insect -> Tecton: getHypha()
     Tecton --> Insect: return boolean
     
@@ -23,7 +23,7 @@ alt Szomszédos tekton és van fonál
         Insect --> Entomologist: Nincs gombafonál, mozgás sikertelen!
     end
 else Nem szomszédos tekton
-    Insect --> Entomologist: Tekton nem szomszédos!
+    Tecton --> Entomologist: Tekton nem szomszédos!
 end
 
 deactivate Insect

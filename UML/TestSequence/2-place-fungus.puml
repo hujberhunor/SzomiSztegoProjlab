@@ -16,11 +16,11 @@ alt Feltételek teljesülnek (van fonál és >= 2 spóra)
     Tecton --> Fungus: Fungus placed
     Fungus -> Mycologist: decreaseActions()
 else NoFungiTecton (nem helyezhető gombatest)
-    Fungus -> Tecton: isFungiEnabled()
+    Fungus -> Tecton: addFungus()
     Tecton --> Fungus: return false
-    Fungus --> Mycologist: Nem lehet itt gombát növeszteni!
+    Tecton --> Mycologist: Nem lehet itt gombát növeszteni!
 else Nincs elég spóra vagy fonál
-    Fungus --> Mycologist: error: "Nem lehet új gombatestet elhelyezni!"
+    Tecton --> Mycologist: error: "Nem lehet új gombatestet elhelyezni!"
 end
 
 deactivate Fungus

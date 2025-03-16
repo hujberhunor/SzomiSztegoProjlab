@@ -1,6 +1,6 @@
 @startuml
 
-== Gombafonál növesztése V1 ==
+== Gombafonál növesztése ==
 
 actor Mycologist
 participant Fungus
@@ -17,7 +17,7 @@ alt Szomszédos tekton
     Fungus -> Tecton: growHypha(Tecton t)
     Tecton --> Fungus: return boolean
     
-    alt Tektonon nőhet fonal 
+    alt Tektonon nőhet (még) fonal 
         Fungus -> Tecton: placeHypha()
         Tecton --> Fungus: Hypha placed
         Fungus -> Mycologist: decreaseActions()
@@ -30,15 +30,15 @@ alt Szomszédos tekton
                 ' tehát a szomszéd szomszédjéra is növesztheti
                 Fungus -> Tecton: growHypha(Tecton [adjecent of t])
                 Tecton --> Fungus: Second hypha placed
+                deactivate Fungus
             end
         end
-    else
-        Fungus --> Mycologist: Nem lehet itt gombafonalat növeszteni!
+    else A tectonon már van fonal 
+        Tecton --> Mycologist: Nem lehet itt gombafonalat növeszteni a tekton tulajdonsága miatt.
     end
-else
-    Fungus --> Mycologist: Tekton nem szomszédos! Nem lehet növeszteni. 
+else Nem szomszédos tekton
+    Tecton --> Mycologist: Tekton nem szomszédos! Nem lehet növeszteni. 
 end
 
-deactivate Fungus
 
 @enduml

@@ -1,0 +1,39 @@
+@startuml
+== Sikeres tekton törés ==
+
+participant Game
+participant Tecton
+participant Insect
+participant Hypha
+participant Hexagon
+
+Game -> Tecton: attemptBreak()
+activate Tecton
+
+Tecton -> Insect: hasInsect()
+Insect --> Tecton: return boolean
+
+Tecton -> Game: getBreakProbability()
+Tecton --> Game: return float
+
+Tecton -> Game: isSingleHexagon()
+Tecton --> Game: return boolean
+
+alt Tekton egyetlen hexagonból áll
+    Game -> Tecton: setBreakProbability(0)
+    Tecton --> Game: Tekton nem törhető tovább
+else Break Probability >= threshold és nincs rovar a tektonon
+    Game -> Tecton: split()
+    Tecton --> Game: return new Tectons
+    
+    loop Minden új tekton esetében 
+        Tecton -> Hypha: removeHypha()
+        Tecton -> Hexagon: updateHexagons()
+    end
+    Game -> Tecton: halveBreakProbability()
+else Tekton nem törik 
+    Tecton --> Game: Nem lehet eltörni a tektont 
+end
+
+deactivate Tecton
+@enduml

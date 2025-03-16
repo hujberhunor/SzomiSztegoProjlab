@@ -12,13 +12,13 @@ activate Insect
 Entomologist -> Insect: isUnderEffect(Spore s)
 Insect --> Entomologist: return boolean
 
-alt Rovar bénult (true az effect)
+alt Rovar bénult 
     Insect --> Entomologist: Nem mozoghat, bénult állapotban van.
 else Nem bénult 
     Insect -> Tecton: isNeighbor(Tecton target)
     Tecton --> Insect: return boolean
     
-    alt Szomszédos tekton és van fonál
+    alt Szomszédos tekton
         Insect -> Tecton: getHypha()
         Tecton --> Insect: return boolean
         
@@ -27,10 +27,10 @@ else Nem bénult
             Tecton --> Insect: Movement successful
             Insect -> Entomologist: decreaseActions()
         else Nincs fonal
-            Insect --> Entomologist: Nincs gombafonál, mozgás sikertelen!
+            Tecton --> Entomologist: Nincs gombafonál, mozgás sikertelen!
         end
     else Nem szomszédos tekton. 
-        Insect --> Entomologist: error: "Tekton nem szomszédos!"
+        Tecton --> Entomologist:Tekton nem szomszédos!
     end
 end
 
