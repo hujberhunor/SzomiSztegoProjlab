@@ -1,3 +1,5 @@
+package com.dino;
+
 import java.util.*;
 
 public class Insect {

@@ -1,3 +1,5 @@
+package com.dino;
+
 public abstract class Spore {
     protected Mycologist species;
     protected int effectDuration;
