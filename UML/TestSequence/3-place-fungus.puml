@@ -6,7 +6,7 @@ actor Mycologist
 participant Fungus
 participant Tecton
 
-Mycologist -> Fungus: growFungus(Tecton target)
+Mycologist -> Fungus: placeFungus(Tecton target)
 activate Fungus
 
 Fungus -> Tecton: addFungus(Tecton t)

@@ -1,0 +1,39 @@
+@startuml
+== Handle Hypha Tectons ==
+
+actor GameLogic
+participant ShortHyphaTecton
+participant SingleHyphaTecton
+participant InfiniteHyphaTecton
+participant NoFungiTecton
+participant Hypha
+participant Mycologist
+
+alt Handle ShortHyphaTecton
+    Mycologist -> ShortHyphaTecton: growHypha()
+    ShortHyphaTecton -> Hypha: create()
+    loop After 4 turns
+        ShortHyphaTecton -> Hypha: remove()
+    end
+end
+
+alt Handle SingleHyphaTecton
+    Mycologist -> SingleHyphaTecton: growHypha()
+    SingleHyphaTecton -> Hypha: create()
+    Mycologist -> SingleHyphaTecton: growHypha(other species)
+    SingleHyphaTecton --> Mycologist: Error: Hypha limit reached
+end
+
+alt Handle InfiniteHyphaTecton
+    Mycologist -> InfiniteHyphaTecton: growHypha()
+    InfiniteHyphaTecton -> Hypha: create()
+    Mycologist -> InfiniteHyphaTecton: growHypha(other species)
+    InfiniteHyphaTecton -> Hypha: create()
+end
+
+alt Handle NoFungiTecton
+    Mycologist -> NoFungiTecton: placeFungus()
+    NoFungiTecton --> Mycologist: Error: Fungus not allowed
+end
+
+@enduml

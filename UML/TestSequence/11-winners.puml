@@ -1,0 +1,39 @@
+@startuml
+== Calculate Scores & End Game ==
+
+participant Game
+participant GameLogic
+participant Fungus
+participant Mycologist
+participant Insect
+participant Entomologist
+participant Spore
+
+alt Gombatest létrejön
+    Mycologist -> Fungus: placeFungus()
+    activate Fungus
+    Fungus -> Mycologist: increaseScore()
+    deactivate Fungus
+end
+
+alt Rovar spórát eszik
+    GameLogic -> Insect: consumeSpores()
+    activate Insect
+    Insect -> Spore: getNutrientValue()
+    Spore --> Insect: return int
+    Insect -> Entomologist: increaseScore(nutrientValue)
+    deactivate Insect
+end
+
+Game -> GameLogic: getRound()
+activate GameLogic
+
+alt Max rounds reached
+    GameLogic -> Game: endGame()
+else Continue game
+    Game -> GameLogic: nextTurn()
+end
+
+deactivate GameLogic
+
+@enduml
