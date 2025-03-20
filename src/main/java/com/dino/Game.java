@@ -42,7 +42,7 @@ public class Game {
      * Paraméter nélkül hívható függvény, ami a játék elemeinek inicializálásáért felel.
      * A már legenerált játéktérben a felhasználótól kapott bemenetek szerint felveszi,
      * és elhelyezi a játékosokat a kezdeti tektonokon, és inicializálja a játékmenet kezdeti értékeit.
-     * @return Sikeres játék inicializálás.
+     * @return A játék inicializálásának sikeressége.
      */
     public boolean initGame() {
         throw new UnsupportedOperationException("Not supported yet.");

@@ -27,9 +27,9 @@ public class Player {
     private int remainingActions;
 
     /**
-     * Amolyan szubrutin amelyet szinte minden akció előtt meg kell hívni.
-     * @param tecton A kiválasztott tekton.
-     * @return
+     * Visszaad egy kivánt tektont.
+     * @param tecton A kiválasztotandó tekton.
+     * @return A kiválasztott tekton.
      */
     public Tecton selectTecton(Tecton tecton) {
         return tecton;
