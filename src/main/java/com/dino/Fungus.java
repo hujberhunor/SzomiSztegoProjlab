@@ -27,6 +27,18 @@ public class Fungus {
         this.spores = new ArrayList<>();
     }
 
+    /**
+     * Testing purposes only
+     */
+    public Fungus() {
+        this.species = new Mycologist(); // Helyes példányosítás
+        this.tecton = new NoFungiTecton(); // Példa: Egy megfelelő Tecton osztály
+        this.charge = 0;
+        this.lifespan = 0;
+        this.hyphas = new ArrayList<>();
+        this.spores = new ArrayList<>();
+    }
+
     public boolean growHypha(List<Tecton> t) {
         return false;
     }

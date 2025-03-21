@@ -14,6 +14,7 @@ public abstract class Tecton {
     protected Map<Mycologist, Integer> spores;
     protected List<Hypha> hyphas;
 
+    public Tecton(){}
     public void addSpores(Mycologist m) { }
     public void removeSpores(Mycologist m) { }
     public void addHypha(Hypha h) { }
