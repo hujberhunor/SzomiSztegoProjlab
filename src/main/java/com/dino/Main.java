@@ -2,9 +2,9 @@ package com.dino;
 
 public class Main {
 
-    public static void Init() {
-        Skeleton skeleton = Skeleton.getInstance();
+    public static Skeleton skeleton = Skeleton.getInstance();
 
+    public static void Init() {
         skeleton.log("Játék indítása...");
         skeleton.runTest("Játék inicializálása");
 
