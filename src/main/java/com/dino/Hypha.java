@@ -10,11 +10,28 @@ import java.util.List;
  */
 public class Hypha {
 
+    /**
+     *  Azon tectonok amelyeken keresztül halad a fonal
+     */
     private List<Tecton> tectons = new ArrayList<>();
+
+    /**
+     *  Amely gombászhoz tartozik a fonal
+     */
     private Mycologist spicies;
-    // public boolean isConnectedToFungus(Hypha h);
 
-    // public void continueHypha(Tecton t);
+    /**
+     *  Visszaadja, hogy van-e kapcsolat gombatesthez, ha nincs akkor elhalt a fonal
+     */
+    public boolean isConnectedToFungus(Hypha h) {
+        // temp has
+        return false;
+    }
 
-    // public void continueHypha(Hypha h);
+    /**
+     * Folytatja a már megkeztedd fonalat. Hozzáad "egy tectonnyi fonalat"
+     */
+    public void continueHypha(Tecton t) {}
+
+    public void continueHypha(Hypha h) {}
 } // End of Hypha

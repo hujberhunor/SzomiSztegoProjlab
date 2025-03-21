@@ -10,9 +10,11 @@ import java.util.List;
 public class Hexagon {
 
     public int id;
+    /**
+     * A szomszédos hexagonok listája
+     */
     public List<Hexagon> neighbours = new ArrayList<>();
 
-    // Konstruktor
     public Hexagon(int id) {
         this.id = id;
         this.neighbours = new ArrayList<>();

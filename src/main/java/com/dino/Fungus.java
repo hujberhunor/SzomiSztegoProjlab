@@ -7,6 +7,8 @@ import java.util.List;
  * A gombász játékosok által irányított gombát reprezentálja, amely gombafonalak és spórák segítségével terjeszkedik a tektonokon keresztül.
  * A gombák szaporodását a játékos dönti el
  */
+
+// ELKÚRTAM PETI DOLGA
 public class Fungus {
 
     private Mycologist species;
@@ -25,7 +27,7 @@ public class Fungus {
         this.spores = new ArrayList<>();
     }
 
-    public void spreadSpores(List<Tecton> t);
-
-    public boolean growHypha(List<Tecton> t);
+    public boolean growHypha(List<Tecton> t) {
+        return false;
+    }
 }
