@@ -1,6 +1,5 @@
 # TODO
-- [] Class fájlok package name include
-- [] Commentelés 
+- isConnectedToFungus kiszedése => Mivel csak az utolsó fonalból nőhet tovább fonal (continueHypha)
 
 # Telepítési és futtatási útmutató
 A projekt fordításához szükség lesz Maven build keretrendszere és Git-re, ezt kétféle képpen telepíthetjük:
