@@ -68,6 +68,33 @@ class Fungus {
      * @return
      */
     public boolean growHypha(List<Tecton> t) {
-        return false;
+        Skeleton skeleton = Skeleton.getInstance();
+        skeleton.startMethod("Fungus", "growHypha");
+
+        // Ellenőrizzük, hogy a lista nem üres
+        if (t == null || t.isEmpty()) {
+            skeleton.log("Nem lehet növeszteni a gombafonalat: a lista üres vagy érvénytelen.");
+            skeleton.endMethod();
+            return false;
+        }
+
+        // Megpróbálunk gombafonalat növeszteni minden tektonra a listában
+        for (Tecton tecton : t) {
+            // Ellenőrizzük, hogy a tekton érvényes
+            if (tecton == null) {
+                skeleton.log("Nem lehet növeszteni a gombafonalat: egy tekton érvénytelen.");
+                continue;  // Ha egy tekton érvénytelen, lépünk a következőre
+            }
+
+            // Növesztünk egy új gombafonalat a tektonra
+            Hypha newHypha = new Hypha();
+            newHypha.continueHypha(tecton); // A fonal folytatása ezen a tektonon
+            tecton.addHypha(newHypha); // Hozzáadjuk a fonalat a tektonhoz
+
+            skeleton.log("Gombafonál sikeresen növesztve a tektonon: " + tecton.toString());
+        }
+
+        skeleton.endMethod();
+        return true; // Ha sikerült minden tektonra növeszteni
     }
 }

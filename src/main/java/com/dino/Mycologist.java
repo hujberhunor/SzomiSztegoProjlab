@@ -24,5 +24,36 @@ public class Mycologist {
      * ha azon van a gombász által vezérelt fajnak fonala és kellő mennyiségű spórája.
      * @param t Ezen a tektonon lesz elhelyezve a gomatest.
      */
-    void placeFungus(Tecton t) {}
+    void placeFungus(Tecton t) {
+        Skeleton skeleton = Skeleton.getInstance();
+        skeleton.startMethod("Mycologist", "placeFungus");
+
+        // Ellenőrizzük, hogy a tekton tartalmaz-e a gombász által vezérelt fajnak megfelelő fonalat
+        boolean tectonHasHypha = false;
+        for (Hypha h : t.getHyphas()) {
+            if (h.getSpecies().equals(this)) {
+                tectonHasHypha = true;
+            }
+        }
+        if (!tectonHasHypha) {
+            skeleton.log("Nem lehet elhelyezni a gombát: nincs megfelelő gombafonál a tektonon.");
+            skeleton.endMethod();
+            return;
+        }
+
+        // Ellenőrizzük, hogy van-e elegendő spóra
+        if (!t.hasSpores(this)) {
+            skeleton.log("Nem lehet elhelyezni a gombát: nincs elegendő spóra.");
+            skeleton.endMethod();
+            return;
+        }
+
+        // Gombatest létrehozása és hozzáadása a listához
+        Fungus newFungus = new Fungus(this, t);
+        mushrooms.add(newFungus);
+        t.setFungus(newFungus);
+
+        skeleton.log("Gombatest sikeresen elhelyezve a tektonon.");
+        skeleton.endMethod();
+    }
 }
