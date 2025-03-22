@@ -2,16 +2,21 @@ package com.dino;
 
 //Olyan spórát megvalósító osztály, aminek nincs hatása az őt elfogyasztó rovarra.
 public class SporeNoEffect extends Spore {
+    private static final int NO_EFFECT_NUTRIENT_VALUE = 1;
 
     //Default konstruktor, beállítja a tápanyagtartalom értékét.
-    public SporeNoEffect() {
-        System.out.println("SporeNoEffect()");
-        this.nutrientValue = 1;
+    public SporeNoEffect(Mycologist mycologist) {
+        super(mycologist, NO_EFFECT_NUTRIENT_VALUE);
+    }
+
+    @Override
+    public int getNutrientValue() {
+        return NO_EFFECT_NUTRIENT_VALUE;
     }
 
     //A gomba hatását megvalósító függvény. Ennek a spórának az esetében nem valósít meg érdemi funkciót.
     public void applyTo(Insect i) {
-        System.out.println("SporeNoEffect.applyTo(Insect i)");
+        i.addEffects(this);
     }
 }
 
