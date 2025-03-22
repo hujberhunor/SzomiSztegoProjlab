@@ -42,8 +42,13 @@ public abstract class Tecton {
         this.hyphas = new ArrayList<>();
     }
 
+
     public List<Hypha> getHyphas(){
         return this.hyphas;
+    }
+
+    public List<Tecton> getNeighbours() {
+        return neighbours;
     }
 
     /**
