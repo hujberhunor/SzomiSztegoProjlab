@@ -29,3 +29,4 @@ public class Main {
         skeleton.log("Teszt befejezve.");
     }
 }
+// WORKFLOW COMMENT
