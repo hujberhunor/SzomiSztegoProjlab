@@ -64,9 +64,52 @@ public class Insect {
      * A rovar megsemmisíti a választott tekton és a jelenlegi tartózkodási helye között futó h fonalat, amennyiben az szomszédos az övével.
      * Visszaadja, hogy sikeres volt-e a művelet.
      * @param h
+     * @param targetTecton
      * @return
      */
-    public boolean cutHypha(Hypha h) {
+    public boolean cutHypha(Hypha h, Tecton targetTecton) {
+        Skeleton skeleton = Skeleton.getInstance();
+        skeleton.startMethod("Insect", "cut");
+
+        // Ellenőrizzük, hogy a tektonok szomszédosak-e
+        if (!currentTecton.isNeighbor(targetTecton)) {
+            skeleton.log("Nem vághat: a cél tekton nem szomszédos.");
+            skeleton.endMethod();
+            return false;
+        }
+
+        // Ellenőrizzük, hogy a fonál fut-e a tektonon
+        if (!h.tectons.contains(targetTecton)) {
+            skeleton.log("Nem vághat: a fonál nem a tektonon fut.");
+            skeleton.endMethod();
+            return false;
+        }
+
+        // Ellenőrizzük, hogy a rovar kábító spórák hatása alatt van-e
+        boolean isStunned = effects.stream().anyMatch(spore -> spore instanceof StunningEffect);
+
+        if (isStunned) {
+            skeleton.log("Nem vághat: a rovar kábító spóra hatása alatt van.");
+            skeleton.endMethod();
+            return false;
+        }
+
+        //Sikeres fonálvágás
+        int index = -1;
+        for (int i = 0; i < h.tectons.size(); i++){
+            if (h.tectons.get(i).equals(targetTecton)){
+                index = i;
+                break;
+            }
+        }
+        if (index != 1){
+            h.tectons.subList(index, h.tectons.size()).clear();
+        }
+        
+        skeleton.log("Rovar sikeresen elvágta a fonalat.");
+        entomologist.decreaseActions();
+        skeleton.endMethod();
+
         return true;
     }
 
@@ -76,16 +119,64 @@ public class Insect {
      * Ekkor az elfogyasztott spóra tápanyagtartalmától függően nő a játékos pontszáma.
      * @param e
      */
-    public void consumeSpores(Entomologist e) {}
+    public boolean consumeSpores(Entomologist e) {
+        Skeleton skeleton = Skeleton.getInstance();
+        skeleton.startMethod("Insect", "consume");
+
+        //Ellenőrizzük, hogy van-e spóra a tektonon
+        if (currentTecton.spores.isEmpty()) {
+            skeleton.log("Nem lehet spórát enni: a tektonon nincs spóra.");
+            skeleton.endMethod();
+            return false;
+        }
+
+        final Mycologist[] mycologistWrapper = new Mycologist[1];
+
+        Optional<Map.Entry<Mycologist, Integer>> maxSporeCountEntry = currentTecton.spores.entrySet().stream().max(Map.Entry.comparingByValue());
+        maxSporeCountEntry.ifPresent(entry -> {
+            mycologistWrapper[0] = entry.getKey();
+            int sporeCount = entry.getValue();
+            if (sporeCount > 1)
+                currentTecton.spores.put(mycologistWrapper[0], sporeCount - 1);
+            else
+                currentTecton.spores.remove(mycologistWrapper[0]);
+        });
+
+        List<Class<? extends Spore>> sporeClasses = Arrays.asList(AcceleratingEffect.class, ParalyzingEffect.class, SlowingEffect.class, SporeNoEffect.class, StunningEffect.class);
+        Random random = new Random();
+        Class<? extends Spore> randomSporeClass = sporeClasses.get(random.nextInt(sporeClasses.size()));
+        
+        try {
+            Spore spore = randomSporeClass.getDeclaredConstructor(Mycologist.class).newInstance(mycologistWrapper[0]);
+            spore.applyTo(this);
+        } catch (Exception exc) {
+            throw new RuntimeException("Failed to create spore instance", exc);
+        }
+
+        skeleton.log("Rovar sikeresen elfogyasztotta a spórát.");
+        entomologist.decreaseActions();
+        skeleton.endMethod();
+
+        return true;
+    }
 
     /**
      * A rovar effektlistájához hozzáadja az új effektet.
      * @param s
      */
-    public void addEffects(Spore s) {}
+    public void addEffects(Spore s) {
+        entomologist.score += s.getNutrientValue();
+        effects.add(s);
+    }
 
     /**
      * A rovar effektlistájáról eltávolítja a lejárt effektet.
      */
-    public void removeExpiredEffects() {}
+    public void removeExpiredEffects() {
+        for (int i = 0; i < effects.size(); i++){
+            if (effects.get(i).getEffectDuration() == 0){
+                effects.remove(i);
+            }
+        }
+    }
 }
