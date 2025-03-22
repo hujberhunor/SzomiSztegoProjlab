@@ -18,7 +18,7 @@ public class Hypha {
     /**
      *  Amely gombászhoz tartozik a fonal
      */
-    private Mycologist spicies;
+    private Mycologist species;
 
     /**
      *  Visszaadja, hogy van-e kapcsolat gombatesthez, ha nincs akkor elhalt a fonal

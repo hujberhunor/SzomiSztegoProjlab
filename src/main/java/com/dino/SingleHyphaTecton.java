@@ -19,6 +19,6 @@ public class SingleHyphaTecton extends Tecton {
      */
     @Override
     protected void handleHypha(Hypha h) {
-        // Implementáció később (Placeholder)
+        //TODO
     }
 }
