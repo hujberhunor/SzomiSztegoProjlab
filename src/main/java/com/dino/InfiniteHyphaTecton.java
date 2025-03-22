@@ -5,15 +5,15 @@ package com.dino;
  * lehetnek jelen.
  */
 public class InfiniteHyphaTecton extends Tecton {
-    // Attribútumok
-    private int hyphaCount; // A tektonon lévő fonalak száma
+    /// Attribútum
+    private int hyphaCount; /// A tektonon lévő fonalak száma
     
     /**
      * Konstruktor
      */
     public InfiniteHyphaTecton() {
         super();
-        this.hyphaLimit = -1; // Garantáltan mínusz egy értékű konstans (végtelen)
+        this.hyphaLimit = -1; // Végtelen számú fonál biztosítása
         this.hyphaCount = 0;
     }
     
@@ -24,22 +24,22 @@ public class InfiniteHyphaTecton extends Tecton {
      */
     @Override
     protected void handleHypha(Hypha h) {
-        // Implementáció később (Placeholder)
+        //TODO
     }
-    
+
     /**
-     * Hyphacount getter->CLAUDE ORIGINAL
+     * Hyphacount növelése
+     */
+    public void increaseHyphaCount() {
+        this.hyphaCount++;
+    }
+
+    /**
+     * Hyphacount getter
      * 
      * @return A tektonon lévő fonalak száma
      */
     public int getHyphaCount() {
         return hyphaCount;
-    }
-    
-    /**
-     * Hyphacount növelése->CLAUDE ORIGINAL
-     */
-    public void incrementHyphaCount() {
-        this.hyphaCount++;
     }
 }

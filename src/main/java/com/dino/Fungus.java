@@ -56,10 +56,44 @@ class Fungus {
 
     /**
      * A gombatest spórákat szór a Charge attribútuma értéke szerint
-     * vagy a szomszédos tektonokra, vagy azok szomszédjaira is.
-     * @param t
+     * vagy a szomszédos tektonokra, vagy azok szomszédjaira.
      */
-    public void spreadSpores(List<Tecton> t) {}
+
+    //Itt eredetileg kapott paraméterként egy listát, de kivettem, mert szerintem nem kell
+    public void spreadSpores() {
+        Skeleton skeleton = Skeleton.getInstance();
+        skeleton.startMethod("Fungus", "spreadSpores");
+
+        //ha a gomba töltöttsége 2, spórákat szór(hat) a szomszédos tektonokra
+        if(charge == 2){
+            for (Tecton t : tecton.getNeighbours()){
+                t.addSpores(species);
+            }
+            skeleton.log("A gomba spórát szórt a szomszédos tektonokra.");
+            skeleton.endMethod();
+            return;
+        }
+        //ha a gomba töltöttsége 3 vagy nagyobb, spórát szór a szomszédos tektonok szomszédaira
+        if (charge >= 3) {
+            for (Tecton t : tecton.getNeighbours()){
+                for (Tecton neighbourOfTecton : t.getNeighbours()){
+                    /* legyen a gombát tartalmazó tekton GT, ennek bármely szomszédja SzGT.
+                     * Egy T tekton akkor szomszédja SzGT-nek, ha szerepel SzGT szomszédainak listájában,
+                     * és T != GT vagy SzGT.
+                     */
+                    if(!neighbourOfTecton.equals(t) && !t.getNeighbours().contains(neighbourOfTecton)){
+                        neighbourOfTecton.addSpores(species);
+                    }
+                }
+            }
+            skeleton.log("A gomba spórát szórt a szomszédos tektonok szomszédjaira.");
+            skeleton.endMethod();
+            return;
+        }
+
+        skeleton.log("A gomba még nincs feltöltve.");
+        skeleton.endMethod();
+    }
 
     /**
      * A függvény hívásakor a gombatest a paraméterként kapott,
@@ -68,6 +102,33 @@ class Fungus {
      * @return
      */
     public boolean growHypha(List<Tecton> t) {
-        return false;
+        Skeleton skeleton = Skeleton.getInstance();
+        skeleton.startMethod("Fungus", "growHypha");
+
+        // Ellenőrizzük, hogy a lista nem üres
+        if (t == null || t.isEmpty()) {
+            skeleton.log("Nem lehet növeszteni a gombafonalat: a lista üres vagy érvénytelen.");
+            skeleton.endMethod();
+            return false;
+        }
+
+        // Megpróbálunk gombafonalat növeszteni minden tektonra a listában
+        for (Tecton tecton : t) {
+            // Ellenőrizzük, hogy a tekton érvényes
+            if (tecton == null) {
+                skeleton.log("Nem lehet növeszteni a gombafonalat: egy tekton érvénytelen.");
+                continue;  // Ha egy tekton érvénytelen, lépünk a következőre
+            }
+
+            // Növesztünk egy új gombafonalat a tektonra
+            Hypha newHypha = new Hypha();
+            newHypha.continueHypha(tecton); // A fonal folytatása ezen a tektonon
+            tecton.addHypha(newHypha); // Hozzáadjuk a fonalat a tektonhoz
+
+            skeleton.log("Gombafonál sikeresen növesztve a tektonon: " + tecton.toString());
+        }
+
+        skeleton.endMethod();
+        return true; // Ha sikerült minden tektonra növeszteni
     }
 }
