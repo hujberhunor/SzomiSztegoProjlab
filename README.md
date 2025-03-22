@@ -1,5 +1,6 @@
 # TODO
 - isConnectedToFungus kiszedése => Mivel csak az utolsó fonalból nőhet tovább fonal (continueHypha)
+- Új fv minden Tct typehoz, break után kezelni a keletkező tctokat.
 
 # Telepítési és futtatási útmutató
 A projekt fordításához szükség lesz Maven build keretrendszere és Git-re, ezt kétféle képpen telepíthetjük:
