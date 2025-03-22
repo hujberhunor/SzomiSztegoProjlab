@@ -20,6 +20,7 @@ public class Hypha {
      */
     private Mycologist species;
 
+
     public Mycologist getSpecies() {
         return species;
     }

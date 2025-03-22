@@ -19,6 +19,6 @@ public class NoFungiTecton extends Tecton {
      */
     @Override
     protected void handleHypha(Hypha h) {
-        // Implementáció később (Placeholder)
+        //TODO
     }
 }

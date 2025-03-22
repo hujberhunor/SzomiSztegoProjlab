@@ -20,6 +20,6 @@ public class ShortHyphaTecton extends Tecton {
      */
     @Override
     protected void handleHypha(Hypha h) {
-        // Implementáció később (Placeholder)
+        //TODO
     }
 }
