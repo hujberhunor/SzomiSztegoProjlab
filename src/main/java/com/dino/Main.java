@@ -1,8 +1,8 @@
 package com.dino;
+import java.util.Scanner;
 
 public class Main {
-
-    public static void main(String[] args) {
+    public static void insectMoveSeq(){
         Skeleton skeleton = Skeleton.getInstance();
 
         // Inicializáljuk az entomológust és a rovarát
@@ -27,5 +27,31 @@ public class Main {
 
         // Log: teszt vége
         skeleton.log("Teszt befejezve.");
+    }
+
+    public static void main(String[] args) {
+        boolean menuActive = true;
+        Scanner scanner = new Scanner(System.in);
+        System.out.println("Enter 0 to exit");
+
+        while(menuActive){
+            System.out.println("\n-----------------------\nUse case list:");
+            System.out.println("1. Insect movement");
+            System.out.println("-----------------------");
+            System.out.print("Select use case (e.g. 1): ");
+            int useCase = scanner.nextInt();
+            switch (useCase) {
+                case 0:
+                    menuActive = false;
+                    scanner.close();
+                    break;
+                case 1:
+                    insectMoveSeq();
+                    break;
+                default:
+                    System.out.println("Invalid input");
+            }
+            System.out.println("");
+        }
     }
 }
