@@ -19,6 +19,7 @@ public abstract class Tecton {
     protected double breakChance;
     protected int breakCount;
     protected List<Hexagon> hexagons;
+    protected List<Tecton> neighbours;
     protected Fungus fungus;
     protected Insect insect;
     protected Map<Mycologist, Integer> spores;
@@ -34,6 +35,7 @@ public abstract class Tecton {
         this.breakChance = 5.0 + Math.random() * 35.0;
         this.breakCount = 0;
         this.hexagons = new ArrayList<>();
+        this.neighbours = new ArrayList<>();
         this.fungus = null;
         this.insect = null;
         this.spores = new HashMap<>();
@@ -42,7 +44,6 @@ public abstract class Tecton {
 
     /**
      * A tektonon elhelyez egy darab, m gombász gombájából származó spórát.
-     *
      * @param m A gombász, akinek a gombájából a spóra származik
      */
     public void addSpores(Mycologist m) {
@@ -51,7 +52,6 @@ public abstract class Tecton {
 
     /**
      * A tektonról eltávolít egy darab, m gombász gombájából származó spórát, amennyiben lehetséges.
-     *
      * @param m A gombász, akinek a gombájából a spóra származik
      */
     public void removeSpores(Mycologist m) {
@@ -88,4 +88,13 @@ public abstract class Tecton {
      * @param h A kezelendő gombafonál
      */
     protected abstract void handleHypha(Hypha h);
+
+    public boolean isNeighbor(Tecton t) {
+        return neighbours.contains(t);
+    }
+
+    // TODO
+    public boolean hasHypha(Tecton t) {
+        return false;
+    }
 }

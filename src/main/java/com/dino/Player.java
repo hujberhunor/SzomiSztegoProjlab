@@ -5,26 +5,27 @@ package com.dino;
  * illetve egy olyan tulajdonságot tárol, ami mind gombászokra, mind rovarászokra egyaránt értelmezhető.
  */
 public class Player {
+
     /**
      * A játékos neve.
      */
-    private String name;
+    protected String name;
 
     /**
      * Egy egész szám, ami a játékos jelenlegi pontszámát reprezentálja.
      */
-    private int score;
+    protected int score;
 
     /**
      *  Egy egész szám, ami megadja, hogy a játékos hány akcióval kezdi a körét.
      *  Értéke gombászok és rovarászok között eltérő.
      */
-    private int actionsPerTurn;
+    protected int actionsPerTurn;
 
     /**
      * Egy egész szám, ami megadja, hogy a játékosnak hány akciója van hátra a körében.
      */
-    private int remainingActions;
+    protected int remainingActions;
 
     /**
      * Visszaad egy kivánt tektont.
