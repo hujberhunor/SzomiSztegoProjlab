@@ -4,16 +4,16 @@
 
 # Telepítési és futtatási útmutató
 A projekt fordításához szükség lesz Maven build keretrendszere és Git-re, ezt kétféle képpen telepíthetjük:
-A) A csatolt powershell script segítségével
-B) Manuálisan végiggyalogolni a powershell scripten.
+1) A csatolt powershell script segítségével
+2) Manuálisan végiggyalogolni a powershell scripten.
 
-A) Telepítsés powershell script
+1.1) Telepítsés powershell script
 Powershellbe futtasuk:
 `Set-ExecutionPolicy RemoteSigned -Scope CurrentUser`
 Majd navigáljunk a `maven-install.ps1`-et tartalmazó directory-ba majd a `.\maven-install.ps1` paranccsal futtassuk le. 
 
 
-B) Manuális telepítés
+2.1) Manuális telepítés
 Egy nem admin powershellbe illeszük be ezt a parancsot:
 ```
 Set-ExecutionPolicy -ExecutionPolicy RemoteSigned -Scope CurrentUser
