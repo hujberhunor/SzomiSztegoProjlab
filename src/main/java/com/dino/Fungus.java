@@ -6,6 +6,7 @@ import java.util.*;
  * Egy gombatestet reprezentáló osztály.
  */
 class Fungus {
+
     /**
      * Az a gombász, akihez a gombatest tartozik.
      * Tulajdonképpen a gomba faját jelenti.
@@ -35,14 +36,30 @@ class Fungus {
      */
     private List<Spore> spores;
 
+    public Fungus() {
+        this.species = new Mycologist(); // Helyes példányosítás
+        this.tecton = new NoFungiTecton(); // Példa: Egy megfelelő Tecton osztály
+        this.charge = 0;
+        this.lifespan = 0;
+        this.hyphas = new ArrayList<>();
+        this.spores = new ArrayList<>();
+    }
+
+    public Fungus(Mycologist m, Tecton t) {
+        this.species = m;
+        this.tecton = t;
+        this.charge = 0;
+        this.lifespan = 0;
+        this.hyphas = new ArrayList<>();
+        this.spores = new ArrayList<>();
+    }
+
     /**
      * A gombatest spórákat szór a Charge attribútuma értéke szerint
      * vagy a szomszédos tektonokra, vagy azok szomszédjaira is.
      * @param t
      */
-    public void spreadSpores(List<Tecton> t) {
-
-    }
+    public void spreadSpores(List<Tecton> t) {}
 
     /**
      * A függvény hívásakor a gombatest a paraméterként kapott,
@@ -51,7 +68,6 @@ class Fungus {
      * @return
      */
     public boolean growHypha(List<Tecton> t) {
-
         return false;
     }
 }
