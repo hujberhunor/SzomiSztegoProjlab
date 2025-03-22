@@ -79,7 +79,7 @@ public class Insect {
         }
 
         // Ellenőrizzük, hogy a fonál fut-e a tektonon
-        if (!h.tectons.contains(targetTecton)) {
+        if (!h.getTectons().contains(targetTecton)) {
             skeleton.log("Nem vághat: a fonál nem a tektonon fut.");
             skeleton.endMethod();
             return false;
@@ -96,14 +96,14 @@ public class Insect {
 
         //Sikeres fonálvágás
         int index = -1;
-        for (int i = 0; i < h.tectons.size(); i++){
-            if (h.tectons.get(i).equals(targetTecton)){
+        for (int i = 0; i < h.getTectons().size(); i++){
+            if (h.getTectons().get(i).equals(targetTecton)){
                 index = i;
                 break;
             }
         }
         if (index != 1){
-            h.tectons.subList(index, h.tectons.size()).clear();
+            h.getTectons().subList(index, h.getTectons().size()).clear();
         }
         
         skeleton.log("Rovar sikeresen elvágta a fonalat.");

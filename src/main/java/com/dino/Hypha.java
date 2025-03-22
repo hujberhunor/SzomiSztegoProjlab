@@ -39,4 +39,8 @@ public class Hypha {
     public void continueHypha(Tecton t) {}
 
     public void continueHypha(Hypha h) {}
+
+    public List<Tecton> getTectons(){
+        return tectons;
+    }
 } // End of Hypha

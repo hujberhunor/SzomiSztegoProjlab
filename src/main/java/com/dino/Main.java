@@ -73,9 +73,9 @@ public class Main {
         secondTecton.hyphas.add(hypha);
         thirdTecton.hyphas.add(hypha);
 
-        hypha.tectons.add(firstTecton);
-        hypha.tectons.add(secondTecton);
-        hypha.tectons.add(thirdTecton);
+        hypha.getTectons().add(firstTecton);
+        hypha.getTectons().add(secondTecton);
+        hypha.getTectons().add(thirdTecton);
 
         // Log: teszt kezdése
         skeleton.log("Teszt: rovar megpróbál fonalat vágni.");
