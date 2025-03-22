@@ -42,6 +42,15 @@ public abstract class Tecton {
         this.hyphas = new ArrayList<>();
     }
 
+
+    public List<Hypha> getHyphas(){
+        return this.hyphas;
+    }
+
+    public List<Tecton> getNeighbours() {
+        return neighbours;
+    }
+
     /**
      * A tektonon elhelyez egy darab, m gombász gombájából származó spórát.
      * @param m A gombász, akinek a gombájából a spóra származik
@@ -173,5 +182,21 @@ public abstract class Tecton {
         return false;
     }
 
-    
+    /**
+     * Ellenőrzi, hogy a tektonon van-e a megadott gombásztól származó spóra.
+     * @param m A gombász, akinek a spóráját keressük.
+     * @return Igaz, ha van legalább egy spóra a gombásztól, egyébként hamis.
+     */
+    public boolean hasSpores(Mycologist m) {
+        return spores.getOrDefault(m, 0) > 0;
+    }
+
+    /**
+     * Beállítja a tektonon lévő gombatestet.
+     * @param f Az új gombatest, amelyet elhelyezünk a tektonon.
+     */
+    public void setFungus(Fungus f) {
+        this.fungus = f;
+    }
 }
+

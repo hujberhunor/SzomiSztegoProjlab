@@ -20,6 +20,11 @@ public class Hypha {
      */
     private Mycologist species;
 
+
+    public Mycologist getSpecies() {
+        return species;
+    }
+
     /**
      *  Visszaadja, hogy van-e kapcsolat gombatesthez, ha nincs akkor elhalt a fonal
      */
