@@ -42,6 +42,10 @@ public abstract class Tecton {
         this.hyphas = new ArrayList<>();
     }
 
+    public List<Tecton> getNeighbours() {
+        return neighbours;
+    }
+
     /**
      * A tektonon elhelyez egy darab, m gombász gombájából származó spórát.
      * @param m A gombász, akinek a gombájából a spóra származik
