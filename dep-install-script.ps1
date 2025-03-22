@@ -37,4 +37,6 @@ if ($javaVersion) {
     Write-Host "Java nem található a rendszerben."
 }
 
-Write-Host " Készen vagyunk! "
+Write-Host "Készen vagyunk! Most megnyitunk egy új cmd ablakot, ahol klónozzuk a repót..."
+
+Start-Process cmd.exe -ArgumentList "/k git clone https://github.com/hujberhunor/SzomiSztegoProjlab.git && cd SzomiSztegoProjlab"
