@@ -195,80 +195,6 @@ public class Main {
         skeleton.log("Teszt befejezve.");
     }
 
-        Scanner scanner = new Scanner(System.in);
-        
-        
-        // Hexagonok számának bekérése
-        System.out.print("Hexagonok száma a tektonban (1 vagy több): ");
-        int hexagonCount = scanner.nextInt();
-        
-        // Eredeti törési valószínűség bekérése (Teszt miatt lehet 1-100 között, de rendes implementálásnál generálásnál 5-40 között lesz)
-        //Ha már volt törés, akkor érdemes 100-200 között megadni az értéket, ha látni is akarunk törést a Skeleton tesztelésnél
-        System.out.print("Eredeti törési valószínűség(1-100 között): ");
-        double originalBreakChance = scanner.nextDouble();
-        
-        // Előző törések számának bekérése
-        System.out.print("Előző törések száma (0, 1 vagy 2): ");
-        int breakCount = scanner.nextInt();
-        
-        // Jelenlegi törésnek valószínűségének kiszámolása "előző" törésektől függően
-        double currentBreakChance;
-        if (breakCount == 0) {
-            currentBreakChance = originalBreakChance;
-        } else if (breakCount == 1) {
-            currentBreakChance = originalBreakChance / 2;
-        } else { // breakCount >= 2
-            currentBreakChance = 0;
-        }
-        
-        //Tectonon tartózkodik rovar vagy sem
-        System.out.print("Van rajta rovar? (0 - nincs, 1 - van): ");
-        int hasInsect = scanner.nextInt();
-        
-        // Létrehozzuk a tektont a felhasználó által megadott értékekkel
-        Tecton tecton = new InfiniteHyphaTecton();
-        
-        // Hexagonok hozzáadása
-        for (int i = 1; i <= hexagonCount; i++) {
-            tecton.hexagons.add(new Hexagon(i));
-        }
-        
-        // Törési valószínűség beállítása
-        tecton.breakChance = currentBreakChance;
-        
-        // Előző törések számának beállítása
-        tecton.breakCount = breakCount;
-        
-        // Ha megadták, rovar hozzáadása
-        if (hasInsect == 1) {
-            Entomologist player = new Entomologist(3);
-            Insect insect = new Insect(player, tecton);
-            tecton.insect = insect;
-        }
-        
-        // Teszt elkezdése
-               
-        skeleton.log("Tekton konfiguráció:");
-        skeleton.log("- Hexagonok száma: " + hexagonCount);
-        skeleton.log("- Eredeti törési valószínűség: " + originalBreakChance + "%");
-        skeleton.log("- Előző törések száma: " + breakCount);
-        skeleton.log("- Aktuális törési valószínűség: " + currentBreakChance + "%");
-        skeleton.log("- Van-e rajta rovar: " + (hasInsect == 1 ? "Igen" : "Nem"));
-        
-        //split lefutása
-        List<Tecton> result = tecton.split(tecton.breakChance);
-        
-        // Végeredmény
-        if (result.isEmpty()) {
-            skeleton.log("A törés nem történt meg.");
-        } else {
-            skeleton.log("A törés sikeresen megtörtént, " + result.size() + " új tekton jött létre.");
-        }
-        
-        // Teszt vége
-        skeleton.log("Teszt befejezve.");
-    }
-
     public static void main(String[] args) {
         boolean menuActive = true;
         Scanner scanner = new Scanner(System.in);
@@ -308,4 +234,3 @@ public class Main {
         }
     }
 }
-// WORKFLOW COMMENT
