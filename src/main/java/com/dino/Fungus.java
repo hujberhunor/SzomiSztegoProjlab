@@ -140,4 +140,20 @@ class Fungus {
         skeleton.endMethod();
         return true; // Ha sikerült minden tektonra növeszteni
     }
+
+    public void setSpecies(Mycologist m){
+        this.species = m;
+    }
+
+    public void setTecton(Tecton t){
+        this.tecton = t;
+    }
+
+    public int getCharge(){
+        return charge;
+    }
+
+    public void setCharge(int c){
+        this.charge = c;
+    }
 }

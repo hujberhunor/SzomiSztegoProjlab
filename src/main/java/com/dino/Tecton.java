@@ -211,5 +211,9 @@ public abstract class Tecton {
     public void setFungus(Fungus f) {
         this.fungus = f;
     }
+
+    public void setNeighbours(List<Tecton> t){
+        this.neighbours = t;
+    }
 }
 
