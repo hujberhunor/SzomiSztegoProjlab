@@ -1,5 +1,6 @@
 package com.dino;
 
+import java.lang.annotation.Target;
 import java.util.List;
 import java.util.Scanner;
 
@@ -40,15 +41,19 @@ public class Main {
         // Mychologit init az effektekhez
         Mycologist emilia = new Mycologist();
 
-        skeleton.log(
-            "Rovar mozgása accel effekt alatt. (csak 1 action initelve)"
-        );
+        skeleton.log("Rovar mozgása accel effekt alatt.");
         insect = new Insect(player, startTecton); // resetelem az insectet
         player.decreaseActions(); // 1 actionja maradjon
         AcceleratingEffect accel = new AcceleratingEffect(emilia);
         accel.applyTo(insect);
         insect.move(targetTecton);
         insect.move(accelTecton);
+        skeleton.log("\n");
+
+        // ACTIONT Kell hozzáadni
+        player.increaseActions();
+        player.increaseActions();
+        player.increaseActions();
         skeleton.log("\n");
 
         skeleton.log("Rovar mozgása paralyzed effekt alatt.");
@@ -74,9 +79,12 @@ public class Main {
         insect.move(startTecton);
         skeleton.log("\n");
 
+        player = new Entomologist(0);
+        insect = new Insect(player, startTecton);
         skeleton.log("Rovar mozgása: Nem maradt akció.");
         skeleton.log("Akciók száma: " + player.getRemainingActions());
-        insect.move(startTecton);
+        insect.move(targetTecton);
+        skeleton.log("\n");
 
         // Log: teszt vége
         skeleton.log("Teszt befejezve.");
