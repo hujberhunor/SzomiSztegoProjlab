@@ -43,6 +43,10 @@ public class Main {
         insect.move(startTecton);
         skeleton.log("\n");
 
+        skeleton.log("Rovar mozgása accel effekt alatt.");
+
+        skeleton.log("Rovar mozgása paralyzed effekt alatt.");
+
         // Log: teszt vége
         skeleton.log("Teszt befejezve.");
     }

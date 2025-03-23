@@ -55,7 +55,6 @@ public class Insect {
         currentTecton = targetTecton;
         skeleton.log("Rovar sikeresen mozgott az új tektonra.");
         entomologist.decreaseActions(); // Csökkentjük az akciópontját
-
         skeleton.endMethod();
         return true;
     }
