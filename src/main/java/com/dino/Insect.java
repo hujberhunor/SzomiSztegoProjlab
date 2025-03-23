@@ -86,7 +86,9 @@ public class Insect {
         }
 
         // Ellenőrizzük, hogy a rovar kábító spórák hatása alatt van-e
-        boolean isStunned = effects.stream().anyMatch(spore -> spore instanceof StunningEffect);
+        boolean isStunned = effects
+            .stream()
+            .anyMatch(spore -> spore instanceof StunningEffect);
 
         if (isStunned) {
             skeleton.log("Nem vághat: a rovar kábító spóra hatása alatt van.");
@@ -96,16 +98,16 @@ public class Insect {
 
         //Sikeres fonálvágás
         int index = -1;
-        for (int i = 0; i < h.getTectons().size(); i++){
-            if (h.getTectons().get(i).equals(targetTecton)){
+        for (int i = 0; i < h.getTectons().size(); i++) {
+            if (h.getTectons().get(i).equals(targetTecton)) {
                 index = i;
                 break;
             }
         }
-        if (index != 1){
+        if (index != 1) {
             h.getTectons().subList(index, h.getTectons().size()).clear();
         }
-        
+
         skeleton.log("Rovar sikeresen elvágta a fonalat.");
         entomologist.decreaseActions();
         skeleton.endMethod();
@@ -132,22 +134,37 @@ public class Insect {
 
         final Mycologist[] mycologistWrapper = new Mycologist[1];
 
-        Optional<Map.Entry<Mycologist, Integer>> maxSporeCountEntry = currentTecton.spores.entrySet().stream().max(Map.Entry.comparingByValue());
+        Optional<Map.Entry<Mycologist, Integer>> maxSporeCountEntry =
+            currentTecton.spores
+                .entrySet()
+                .stream()
+                .max(Map.Entry.comparingByValue());
         maxSporeCountEntry.ifPresent(entry -> {
             mycologistWrapper[0] = entry.getKey();
             int sporeCount = entry.getValue();
-            if (sporeCount > 1)
-                currentTecton.spores.put(mycologistWrapper[0], sporeCount - 1);
-            else
-                currentTecton.spores.remove(mycologistWrapper[0]);
+            if (sporeCount > 1) currentTecton.spores.put(
+                mycologistWrapper[0],
+                sporeCount - 1
+            );
+            else currentTecton.spores.remove(mycologistWrapper[0]);
         });
 
-        List<Class<? extends Spore>> sporeClasses = Arrays.asList(AcceleratingEffect.class, ParalyzingEffect.class, SlowingEffect.class, SporeNoEffect.class, StunningEffect.class);
+        List<Class<? extends Spore>> sporeClasses = Arrays.asList(
+            AcceleratingEffect.class,
+            ParalyzingEffect.class,
+            SlowingEffect.class,
+            SporeNoEffect.class,
+            StunningEffect.class
+        );
         Random random = new Random();
-        Class<? extends Spore> randomSporeClass = sporeClasses.get(random.nextInt(sporeClasses.size()));
-        
+        Class<? extends Spore> randomSporeClass = sporeClasses.get(
+            random.nextInt(sporeClasses.size())
+        );
+
         try {
-            Spore spore = randomSporeClass.getDeclaredConstructor(Mycologist.class).newInstance(mycologistWrapper[0]);
+            Spore spore = randomSporeClass
+                .getDeclaredConstructor(Mycologist.class)
+                .newInstance(mycologistWrapper[0]);
             spore.applyTo(this);
         } catch (Exception exc) {
             throw new RuntimeException("Failed to create spore instance", exc);
@@ -173,8 +190,8 @@ public class Insect {
      * A rovar effektlistájáról eltávolítja a lejárt effektet.
      */
     public void removeExpiredEffects() {
-        for (int i = 0; i < effects.size(); i++){
-            if (effects.get(i).getEffectDuration() == 0){
+        for (int i = 0; i < effects.size(); i++) {
+            if (effects.get(i).getEffectDuration() == 0) {
                 effects.remove(i);
             }
         }
