@@ -71,6 +71,7 @@ class Fungus {
             }
             skeleton.log("A gomba spórát szórt a szomszédos tektonokra.");
             skeleton.endMethod();
+            charge = 0;
             return;
         }
         //ha a gomba töltöttsége 3 vagy nagyobb, spórát szór a szomszédos tektonok szomszédaira
@@ -88,6 +89,7 @@ class Fungus {
             }
             skeleton.log("A gomba spórát szórt a szomszédos tektonok szomszédjaira.");
             skeleton.endMethod();
+            charge = 0;
             return;
         }
 
