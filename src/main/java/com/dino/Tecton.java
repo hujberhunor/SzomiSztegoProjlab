@@ -46,6 +46,10 @@ public abstract class Tecton {
         return this.hyphas;
     }
 
+    public void setHyphas(List<Hypha> hyphas){
+        this.hyphas = hyphas;
+    }
+
     public List<Tecton> getNeighbours() {
         return neighbours;
     }
@@ -56,6 +60,7 @@ public abstract class Tecton {
      */
     public void addSpores(Mycologist m) {
         // TODO IMPLEMENTÁLNI
+        spores.put(m, spores.getOrDefault(m, 0) + 1);
     }
 
     /**
@@ -206,10 +211,22 @@ public abstract class Tecton {
     }
 
     /**
+     * Visszaadja a tektonon lévő gombatestet
+     * @return A tektonon lévő gombatest
+     */
+    public Fungus getFungus(){
+        return fungus;
+    }
+
+    /**
      * Beállítja a tektonon lévő gombatestet.
      * @param f Az új gombatest, amelyet elhelyezünk a tektonon.
      */
     public void setFungus(Fungus f) {
         this.fungus = f;
+    }
+
+    public void setNeighbours(List<Tecton> t){
+        this.neighbours = t;
     }
 }
