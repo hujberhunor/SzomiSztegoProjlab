@@ -3,6 +3,7 @@ package com.dino;
 //Olyan spórát megvalósító osztály, aminek hatására őt elfogyaszó rovar a következő körökre teljesen mozgásképtelenné válik.
 //Ez a hatás felülír minden más mozgást befolyásoló effektet.
 public class ParalyzingEffect extends Spore {
+
     private static final int PARALYZING_EFFECT_NUTRIENT_VALUE = 4;
 
     //Default konstruktor, beállítja a tápanyagtartalom értékét.
@@ -15,9 +16,15 @@ public class ParalyzingEffect extends Spore {
         return PARALYZING_EFFECT_NUTRIENT_VALUE;
     }
 
-    //A gomba hatását megvalósító függvény. A paraméterként átadott rovar a következő két körben nem tud akciót kihasználni mozgásra.
-    public void applyTo(Insect i) {
-        i.addEffects(this);
+    @Override
+    public void applyTo(Insect insect) {
+        Skeleton skeleton = Skeleton.getInstance();
+        skeleton.startMethod("ParalyzingEffect", "applyTo");
+
+        // Hatás alkalmazása
+        insect.addEffects(this); // effekt listára
+
+        skeleton.log("Paralyzing effect alkalmazva: rovar nem mozoghat.");
+        skeleton.endMethod();
     }
 }
-
