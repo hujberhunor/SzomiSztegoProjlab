@@ -20,9 +20,20 @@ public class Hypha {
      */
     private Mycologist species;
 
-
+    /**
+     * Visszaadja, hogy mely gombászhoz tartozik a fonal
+     * @return A fonalhoz tatozó gombász
+     */
     public Mycologist getSpecies() {
         return species;
+    }
+
+    /**
+     * Beállítja, hogy mely gombászhoz tatozzon a fonal
+     * @param species Gombász, akihez beállítódik a fonal
+     */
+    public void setSpecies(Mycologist species) {
+        this.species = species;
     }
 
     /**

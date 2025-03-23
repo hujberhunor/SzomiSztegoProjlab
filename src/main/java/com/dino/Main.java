@@ -1,4 +1,5 @@
 package com.dino;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Scanner;
 
@@ -132,8 +133,77 @@ public class Main {
         
         // Log: teszt vége
         skeleton.log("Teszt befejezve.");
-}
+    }
 
+    public static void placeFungusSeq(){
+        Skeleton skeleton = Skeleton.getInstance();
+        Tecton tecton1 = new InfiniteHyphaTecton();
+        Mycologist mycologist = new Mycologist();
+
+        // 1. Teszteset
+        skeleton.log("1. Teszt eset: Sikeres gombatest elhelyezés");
+        Hypha hypha = new Hypha();
+        hypha.setSpecies(mycologist);
+
+        List<Hypha> hyphas = new ArrayList<>();
+        hyphas.add(hypha);
+        tecton1.setHyphas(hyphas);
+
+        tecton1.addSpores(mycologist);
+        tecton1.addSpores(mycologist);
+        mycologist.placeFungus(tecton1);
+
+        // 2. Teszteset
+        skeleton.log("2. Teszt eset: Sikertelen elhelyezés - Nincs megfelelő gombafonál");
+        Tecton tecton2 = new InfiniteHyphaTecton();
+        tecton2.addSpores(mycologist);
+        tecton2.addSpores(mycologist);
+        mycologist.placeFungus(tecton2);
+
+        // 3. Teszteset
+        skeleton.log("3. Teszt eset: Sikertelen elhelyezés - Nincs elegendő spóra");
+        Tecton tecton3 = new InfiniteHyphaTecton();
+        tecton3.setHyphas(hyphas);
+        mycologist.placeFungus(tecton3);
+
+        skeleton.endMethod();
+    }
+
+    public static void growHyphaSeq(){
+        Skeleton skeleton = Skeleton.getInstance();
+
+        Mycologist mycologist = new Mycologist();
+        Fungus fungus = new Fungus();
+        Tecton tecton1 = new InfiniteHyphaTecton();
+        Tecton tecton2 = new InfiniteHyphaTecton();
+
+        // 1. Teszteset
+        skeleton.log("1. Teszt eset: Sikeres gombafonál növesztés egy tektonra");
+        List<Tecton> singleTectonList = new ArrayList<>();
+        singleTectonList.add(tecton1);
+        fungus.growHypha(singleTectonList);
+
+        // 2. Teszteset
+        skeleton.log("2. Teszt eset: Sikeres gombafonál növesztés két tektonra");
+        Tecton tecton3 = new InfiniteHyphaTecton();
+        List<Tecton> neighborsTectonList = new ArrayList<>();
+        tecton3.neighbours.add(tecton1);
+        neighborsTectonList.add(tecton3);
+        neighborsTectonList.add(tecton1);
+        fungus.growHypha(neighborsTectonList);
+
+        // 3. Teszteset
+        skeleton.log("3. Teszt eset: Sikertelen gombafonál növesztés - üres lista");
+        List<Tecton> emptyList = new ArrayList<>();
+        fungus.growHypha(emptyList);
+
+        // 4. Teszteset
+        skeleton.log("4. Teszt eset: Sikertelen gombafonál növesztés - nem szomszédos tektonok");
+        List<Tecton> doubleTectonList = new ArrayList<>();
+        doubleTectonList.add(tecton1);
+        doubleTectonList.add(tecton2);
+        fungus.growHypha(doubleTectonList);
+    }
 
     public static void main(String[] args) {
         boolean menuActive = true;
@@ -145,6 +215,9 @@ public class Main {
             System.out.println("1. Insect movement");
             System.out.println("2. Insect eating");
             System.out.println("3. Insect cutting");
+            System.out.println("4. Place fungus");
+            System.out.println("5. Spread spore");
+            System.out.println("6. Grow hypha");
             System.out.println("7. Tecton splitting");
             System.out.println("-----------------------");
             System.out.print("Select use case (e.g. 1,2...): ");
@@ -162,6 +235,12 @@ public class Main {
                     break;
                 case 3:
                     insectCutSeq();
+                    break;
+                case 4:
+                    placeFungusSeq();
+                    break;
+                case 6:
+                    growHyphaSeq();
                     break;
                 case 7:
                     tectonSplitSeq();
