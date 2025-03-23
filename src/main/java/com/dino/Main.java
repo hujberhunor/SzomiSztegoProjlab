@@ -241,7 +241,6 @@ public class Main {
         Tecton tecton2 = new InfiniteHyphaTecton();
         Tecton tecton3 = new InfiniteHyphaTecton();
         Tecton tecton4 = new InfiniteHyphaTecton();
-        Tecton tecton5 = new InfiniteHyphaTecton();
 
         int originalCharge = 0;
         int newCharge = 0;
@@ -259,15 +258,6 @@ public class Main {
         List<Tecton> t3Neighbors = new ArrayList<>();
         t3Neighbors.add(tecton2);
         tecton3.setNeighbours(t3Neighbors);
-
-        List<Tecton> t4Neighbors = new ArrayList<>();
-        t4Neighbors.add(tecton1);
-        t4Neighbors.add(tecton5);
-        tecton4.setNeighbours(t4Neighbors);
-
-        List<Tecton> t5Neighbors = new ArrayList<>();
-        t5Neighbors.add(tecton4);
-        tecton5.setNeighbours(t5Neighbors);
 
         // 1. Teszteset
         skeleton.log("1. Teszteset: Töltöttség < 2 - Nem történik spóraszórás");
