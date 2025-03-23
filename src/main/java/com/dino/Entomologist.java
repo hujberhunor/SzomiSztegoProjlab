@@ -48,4 +48,8 @@ public class Entomologist extends Player {
 
         skeleton.endMethod();
     }
+
+    public int getRemainingActions() {
+        return this.remainingActions;
+    }
 }

@@ -59,17 +59,24 @@ public class Main {
         skeleton.log("\n");
 
         skeleton.log("Teszt: rovar mozgása nem szomszédos tektonra.");
+        // Isecet helyzetének resetelése
+        insect = new Insect(player, startTecton); // resetelem az insectet
         insect.move(nonNeighbour); // Nem szomszédosak
         skeleton.log("\n");
 
         // initelem hogy ne legyenek összekötve
         targetTecton.getHyphas().remove(hypha);
         hypha.getTectons().remove(startTecton);
+        insect = new Insect(player, targetTecton); // resetelem az insectet
         skeleton.log(
             "Teszt: rovar mozgása szomszédos de fonallal nem összekötött tektonra."
         );
         insect.move(startTecton);
         skeleton.log("\n");
+
+        skeleton.log("Rovar mozgása: Nem maradt akció.");
+        skeleton.log("Akciók száma: " + player.getRemainingActions());
+        insect.move(startTecton);
 
         // Log: teszt vége
         skeleton.log("Teszt befejezve.");

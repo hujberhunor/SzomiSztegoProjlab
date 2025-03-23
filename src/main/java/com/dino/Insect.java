@@ -37,6 +37,13 @@ public class Insect {
         Skeleton skeleton = Skeleton.getInstance();
         skeleton.startMethod("Insect", "move");
 
+        // Ellenőrizzük, hogy van-e még akciópont
+        if (entomologist.getRemainingActions() <= 0) {
+            skeleton.log("Nem mozdulhat: nincs több akciópont a körben.");
+            skeleton.endMethod();
+            return false;
+        }
+
         // Ellenőrizzük, hogy bénító hatás alatt van-e
         for (Spore s : effects) {
             if (s instanceof ParalyzingEffect) {
