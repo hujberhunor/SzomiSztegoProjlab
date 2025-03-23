@@ -8,7 +8,8 @@ TectonA → TectonB
 TectonB ← TectonA 
 Különben nem működik → NEM JÓ!
 - topic2
-Kétirányú assziciáció van a HYPHA-nál is. 
+Kétirányú assziciáció van a HYPHA-nál is.
+- spreadSpores után egy resetCharge 
 
 # Telepítési és futtatási útmutató
 A projekt fordításához szükség lesz Maven build keretrendszere és Git-re, ezt kétféle képpen telepíthetjük:
