@@ -31,11 +31,22 @@ public class Insect {
      * A rovar átlép a paraméterként kapott tektonra, amennyiben az szomszédos, és vezet át gombafonál a jelenlegi tartózkodási hely és a célként választott tekton között.
      * Visszaadja, hogy sikeres volt-e a művelet.
      * @param t
-     * @return
+     * @return true ha a mozgás sikeres volt, különben false
      */
     public boolean move(Tecton targetTecton) {
         Skeleton skeleton = Skeleton.getInstance();
         skeleton.startMethod("Insect", "move");
+
+        // Ellenőrizzük, hogy bénító hatás alatt van-e
+        for (Spore s : effects) {
+            if (s instanceof ParalyzingEffect) {
+                skeleton.log(
+                    "Nem mozdulhat: ParalyzingEffect hatás alatt van."
+                );
+                skeleton.endMethod();
+                return false;
+            }
+        }
 
         // Ellenőrizzük, hogy a tektonok szomszédosak-e
         if (!currentTecton.isNeighbor(targetTecton)) {
@@ -194,5 +205,13 @@ public class Insect {
                 effects.remove(i);
             }
         }
+    }
+
+    public List<Spore> getEffects() {
+        return effects;
+    }
+
+    public Entomologist getEntomologist() {
+        return entomologist;
     }
 }

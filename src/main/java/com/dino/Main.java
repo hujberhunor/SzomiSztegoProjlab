@@ -12,40 +12,64 @@ public class Main {
         Entomologist player = new Entomologist(3); // 3 action
         Tecton startTecton = new InfiniteHyphaTecton();
         Tecton targetTecton = new InfiniteHyphaTecton();
+        Tecton accelTecton = new InfiniteHyphaTecton();
         Tecton nonNeighbour = new InfiniteHyphaTecton();
         Insect insect = new Insect(player, startTecton); //start tectonon indul a rovar
 
         // A két tekton legyen szomszédos és kötődjenek össze fonallal
         startTecton.neighbours.add(targetTecton);
         targetTecton.neighbours.add(startTecton);
+        targetTecton.neighbours.add(accelTecton);
+        accelTecton.neighbours.add(targetTecton);
 
+        // TOOD: Kétirányú asszociáció miatt mind a két helye össze kell kötni őket.
         Hypha hypha = new Hypha();
         hypha.getTectons().add(startTecton);
         hypha.getTectons().add(targetTecton);
+        hypha.getTectons().add(accelTecton);
 
         startTecton.getHyphas().add(hypha);
         targetTecton.getHyphas().add(hypha);
+        accelTecton.getHyphas().add(hypha);
 
         // Log: teszt kezdése
         skeleton.log("Teszt: rovar mozgása sikeresen.");
         insect.move(targetTecton); // Össze vannak kötve
         skeleton.log("\n");
 
+        // Mychologit init az effektekhez
+        Mycologist emilia = new Mycologist();
+
+        skeleton.log(
+            "Rovar mozgása accel effekt alatt. (csak 1 action initelve)"
+        );
+        insect = new Insect(player, startTecton); // resetelem az insectet
+        player.decreaseActions(); // 1 actionja maradjon
+        AcceleratingEffect accel = new AcceleratingEffect(emilia);
+        accel.applyTo(insect);
+        insect.move(targetTecton);
+        insect.move(accelTecton);
+        skeleton.log("\n");
+
+        skeleton.log("Rovar mozgása paralyzed effekt alatt.");
+        ParalyzingEffect paralyze = new ParalyzingEffect(new Mycologist());
+        paralyze.applyTo(insect);
+        // Mozgás próbálkozás hatás alatt
+        insect.move(targetTecton);
+        skeleton.log("\n");
+
         skeleton.log("Teszt: rovar mozgása nem szomszédos tektonra.");
         insect.move(nonNeighbour); // Nem szomszédosak
         skeleton.log("\n");
 
+        // initelem hogy ne legyenek összekötve
+        targetTecton.getHyphas().remove(hypha);
+        hypha.getTectons().remove(startTecton);
         skeleton.log(
             "Teszt: rovar mozgása szomszédos de fonallal nem összekötött tektonra."
         );
-        targetTecton.getHyphas().remove(hypha);
-        hypha.getTectons().remove(startTecton);
         insect.move(startTecton);
         skeleton.log("\n");
-
-        skeleton.log("Rovar mozgása accel effekt alatt.");
-
-        skeleton.log("Rovar mozgása paralyzed effekt alatt.");
 
         // Log: teszt vége
         skeleton.log("Teszt befejezve.");
