@@ -89,50 +89,79 @@ public class Main {
 
     public static void tectonSplitSeq(){
         Skeleton skeleton = Skeleton.getInstance();
+        Scanner scanner = new Scanner(System.in);
         
-        // Inicializáljuk a tektont
+        
+        // Hexagonok számának bekérése
+        System.out.print("Hexagonok száma a tektonban (1 vagy több): ");
+        int hexagonCount = scanner.nextInt();
+        
+        // Eredeti törési valószínűség bekérése (Teszt miatt lehet 1-100 között, de rendes implementálásnál generálásnál 5-40 között lesz)
+        //Ha már volt törés, akkor érdemes 100-200 között megadni az értéket, ha látni is akarunk törést a Skeleton tesztelésnél
+        System.out.print("Eredeti törési valószínűség(1-100 között): ");
+        double originalBreakChance = scanner.nextDouble();
+        
+        // Előző törések számának bekérése
+        System.out.print("Előző törések száma (0, 1 vagy 2): ");
+        int breakCount = scanner.nextInt();
+        
+        // Jelenlegi törésnek valószínűségének kiszámolása "előző" törésektől függően
+        double currentBreakChance;
+        if (breakCount == 0) {
+            currentBreakChance = originalBreakChance;
+        } else if (breakCount == 1) {
+            currentBreakChance = originalBreakChance / 2;
+        } else { // breakCount >= 2
+            currentBreakChance = 0;
+        }
+        
+        //Tectonon tartózkodik rovar vagy sem
+        System.out.print("Van rajta rovar? (0 - nincs, 1 - van): ");
+        int hasInsect = scanner.nextInt();
+        
+        // Létrehozzuk a tektont a felhasználó által megadott értékekkel
         Tecton tecton = new InfiniteHyphaTecton();
         
-        // Hexagonok elhelyezése a tektonon
-        tecton.hexagons.add(new Hexagon(1));
-        tecton.hexagons.add(new Hexagon(2));
-        tecton.hexagons.add(new Hexagon(3));
+        // Hexagonok hozzáadása
+        for (int i = 1; i <= hexagonCount; i++) {
+            tecton.hexagons.add(new Hexagon(i));
+        }
         
-        // Teszteléshez magas valószínűség
-        tecton.breakChance = 90.0;
+        // Törési valószínűség beállítása
+        tecton.breakChance = currentBreakChance;
         
-        skeleton.log("Teszt: Tekton kettétörése");
+        // Előző törések számának beállítása
+        tecton.breakCount = breakCount;
         
-        // Sikeres törés(nincs rajta rovar)
-        skeleton.log("1. eset: Tekton törése rovar nélkül");
-        List<Tecton> result1 = tecton.split(tecton.breakChance);
+        // Ha megadták, rovar hozzáadása
+        if (hasInsect == 1) {
+            Entomologist player = new Entomologist(3);
+            Insect insect = new Insect(player, tecton);
+            tecton.insect = insect;
+        }
         
-        // Törés rovarral
-        Entomologist player = new Entomologist(3);
-        Insect insect = new Insect(player, tecton);
-        tecton.insect = insect;
+        // Teszt elkezdése
+               
+        skeleton.log("Tekton konfiguráció:");
+        skeleton.log("- Hexagonok száma: " + hexagonCount);
+        skeleton.log("- Eredeti törési valószínűség: " + originalBreakChance + "%");
+        skeleton.log("- Előző törések száma: " + breakCount);
+        skeleton.log("- Aktuális törési valószínűség: " + currentBreakChance + "%");
+        skeleton.log("- Van-e rajta rovar: " + (hasInsect == 1 ? "Igen" : "Nem"));
         
-        skeleton.log("2. eset: Tekton törése rovarral (nem törhet)");
-        List<Tecton> result2 = tecton.split(tecton.breakChance);
+        //split lefutása
+        List<Tecton> result = tecton.split(tecton.breakChance);
         
-        // Most állítsuk be, hogy már egyszer tört, és teszteljük a csökkentett valószínűséget
-        tecton.insect = null; 
-        tecton.breakCount = 1; 
+        // Végeredmény
+        if (result.isEmpty()) {
+            skeleton.log("A törés nem történt meg.");
+        } else {
+            skeleton.log("A törés sikeresen megtörtént, " + result.size() + " új tekton jött létre.");
+        }
         
-        skeleton.log("3. eset: Tekton törése második alkalommal (kisebb esély)");
-        List<Tecton> result3 = tecton.split(tecton.breakChance);
-        
-        // Teszt amiben csak egy hexagonból áll
-        Tecton smallTecton = new InfiniteHyphaTecton();
-        smallTecton.hexagons.add(new Hexagon(4)); 
-        smallTecton.breakChance = 90.0;
-        
-        skeleton.log("4. eset: Egy hexagonból álló tekton törése (nem törhet)");
-        List<Tecton> result4 = smallTecton.split(smallTecton.breakChance);
-        
-        // Log: teszt vége
+        // Teszt vége
         skeleton.log("Teszt befejezve.");
-}
+    }
 
 
     public static void main(String[] args) {
