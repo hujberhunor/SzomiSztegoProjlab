@@ -1,6 +1,7 @@
 # TODO
-- [] Class fájlok package name include
-- [] Commentelés 
+- isConnectedToFungus kiszedése => Mivel csak az utolsó fonalból nőhet tovább fonal (continueHypha)
+- Új fv minden Tct typehoz, break után kezelni a keletkező tctokat.
+- workflow test
 
 # Telepítési és futtatási útmutató
 A projekt fordításához szükség lesz Maven build keretrendszere és Git-re, ezt kétféle képpen telepíthetjük:
@@ -8,13 +9,13 @@ A projekt fordításához szükség lesz Maven build keretrendszere és Git-re, 
 2) Manuálisan végiggyalogolni a powershell scripten.
 
 1.1) Telepítsés powershell script
-Powershellbe futtasuk:
-`Set-ExecutionPolicy RemoteSigned -Scope CurrentUser`
-Majd navigáljunk a `maven-install.ps1`-et tartalmazó directory-ba majd a `.\maven-install.ps1` paranccsal futtassuk le. 
-
+A megkapott `dep-install-script.ps1`-re jobbklikkelve a `run with powershell` opcióra kattintva tudjuk futtatni. 
+Amikor inputut kér adjunk neki egy `A` billentyűt. Ezek után települni fog minden függőség majd megnyílik egy cmd ablak. 
+Ebbe az ablakban lefut a `git clone` és a `cd` parancs, így bekerülünk a prohect directory-ba. 
+Itt pedig már fordíthatunk: `mvc compile` és futtathatunk `mvn exec:java`. 
 
 2.1) Manuális telepítés
-Egy nem admin powershellbe illeszük be ezt a parancsot:
+Egy powershellbe illeszük be ezt a parancsot:
 ```
 Set-ExecutionPolicy -ExecutionPolicy RemoteSigned -Scope CurrentUser
 Invoke-RestMethod -Uri https://get.scoop.sh | Invoke-Expression
@@ -50,3 +51,8 @@ Ennek kimenete hasonló:
 PS C:\Users\cloud> git -v
 git version 2.48.1.windows.1
 ```
+
+Ezek után nyissunk egy cmd ablakot és futtassuk le:
+`git clone https://github.com/hujberhunor/SzomiSztegoProjlab.git && cd SzomiSztegoProjlab"` parancsot. 
+Itt pedig már fordíthatunk: `mvc compile` és futtathatunk `mvn exec:java`. 
+

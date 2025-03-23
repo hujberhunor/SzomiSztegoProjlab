@@ -107,16 +107,25 @@ class Fungus {
 
         // Ellenőrizzük, hogy a lista nem üres
         if (t == null || t.isEmpty()) {
-            skeleton.log("Nem lehet növeszteni a gombafonalat: a lista üres vagy érvénytelen.");
+            skeleton.log("Nem lehet növeszteni gombafonalat: a lista üres vagy érvénytelen.");
             skeleton.endMethod();
             return false;
+        }
+
+        // Ha a lista két elemet tartalmaz, ellenőrizzük, hogy szomszédosak-e
+        if (t.size() == 2 && t.get(0) != null && t.get(1) != null) {
+            if (!t.get(0).isNeighbor(t.get(1))) {
+                skeleton.log("Nem lehet növeszteni gombafonalat: a tektonok nem szomszédosak egymással.");
+                skeleton.endMethod();
+                return false;
+            }
         }
 
         // Megpróbálunk gombafonalat növeszteni minden tektonra a listában
         for (Tecton tecton : t) {
             // Ellenőrizzük, hogy a tekton érvényes
             if (tecton == null) {
-                skeleton.log("Nem lehet növeszteni a gombafonalat: egy tekton érvénytelen.");
+                skeleton.log("Nem lehet növeszteni gombafonalat: egy tekton érvénytelen.");
                 continue;  // Ha egy tekton érvénytelen, lépünk a következőre
             }
 
@@ -130,5 +139,21 @@ class Fungus {
 
         skeleton.endMethod();
         return true; // Ha sikerült minden tektonra növeszteni
+    }
+
+    public void setSpecies(Mycologist m){
+        this.species = m;
+    }
+
+    public void setTecton(Tecton t){
+        this.tecton = t;
+    }
+
+    public int getCharge(){
+        return charge;
+    }
+
+    public void setCharge(int c){
+        this.charge = c;
     }
 }
