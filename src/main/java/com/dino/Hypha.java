@@ -25,6 +25,10 @@ public class Hypha {
         return species;
     }
 
+    public List<Tecton> getTectons(){
+        return tectons;
+    }
+
     /**
      *  Visszaadja, hogy van-e kapcsolat gombatesthez, ha nincs akkor elhalt a fonal
      */
