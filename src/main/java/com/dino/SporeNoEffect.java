@@ -14,6 +14,10 @@ public class SporeNoEffect extends Spore {
         return NO_EFFECT_NUTRIENT_VALUE;
     }
 
+    public String toString(){
+        return "Regular Spore";
+    }
+
     //A gomba hatását megvalósító függvény. Ennek a spórának az esetében nem valósít meg érdemi funkciót.
     public void applyTo(Insect i) {
         i.addEffects(this);

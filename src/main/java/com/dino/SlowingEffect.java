@@ -14,6 +14,10 @@ public class SlowingEffect extends Spore {
         return SLOWING_EFFECT_NUTRIENT_VALUE;
     }
 
+    public String toString(){
+        return "Slowing Spore";
+    }
+
     //A gomba hatását megvalósító függvény. A paraméterként átadott rovar a következő két körben legfeljebb egy akciót használhat ki mozgásra.
     public void applyTo(Insect i) {
         i.addEffects(this);

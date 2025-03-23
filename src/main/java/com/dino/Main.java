@@ -95,18 +95,25 @@ public class Main {
     public static void insectEatSeq() {
         Skeleton skeleton = Skeleton.getInstance();
 
+        // Log: teszt kezdése
+        skeleton.log("Teszt: rovar megpróbál spórát enni.");
+
         // Inicializáljuk az entomológust, a rovarát, illetve egy gombászt
         Entomologist player = new Entomologist(3);
         Tecton tecton = new InfiniteHyphaTecton(); // Jelenlegi tekton
         Insect insect = new Insect(player, tecton);
         Mycologist mycologist = new Mycologist();
 
+        // Sikertelen táplálkozási kísérlet (a tektonon nincs spóra)
+        skeleton.log("1. eset: Táplálkozás megkísérlése spóra nélkül.");
+        insect.consumeSpores(player);
+
+        // Sikeres táplálkozási kísérlet
+        skeleton.log("2. eset: Táplálkozás sikeres megkísérlése.");
+
+        // A tektonon elhelyezünk egy, a gombásztól származó spórát
         tecton.addSpores(mycologist);
 
-        // Log: teszt kezdése
-        skeleton.log("Teszt: rovar megpróbál spórát enni.");
-
-        // A rovar megpróbál mozogni
         insect.consumeSpores(player);
 
         // Log: teszt vége
@@ -115,11 +122,18 @@ public class Main {
 
     public static void insectCutSeq() {
         Skeleton skeleton = Skeleton.getInstance();
+
+        // Log: teszt kezdése
+        skeleton.log("Teszt: Fonál vágása.");
+        
         // Inicializáljuk az entomológust és a rovarát
         Entomologist player = new Entomologist(3);
-        Tecton firstTecton = new InfiniteHyphaTecton(); //Az a tekton, ahonnal a fonál indul és ahol a rovar tartózkodik
+        Tecton firstTecton = new InfiniteHyphaTecton(); //Az a tekton, ahol a rovar tartózkodik
+        skeleton.log("Első tekton azonosítója: " + firstTecton.toString());
         Tecton secondTecton = new InfiniteHyphaTecton(); //Tekton a kettő között
-        Tecton thirdTecton = new InfiniteHyphaTecton(); // Utolsó tekton
+        skeleton.log("Második tekton azonosítója: " + secondTecton.toString());
+        Tecton thirdTecton = new InfiniteHyphaTecton(); // Utolsó tekton, ahonnan a fonál indul
+        skeleton.log("Harmadik tekton azonosítója: " + thirdTecton.toString());
         Insect insect = new Insect(player, firstTecton);
 
         //Inicializálunk három tekton, amik közül az első és a harmadik nem szomszédosak egymással
@@ -128,20 +142,43 @@ public class Main {
         secondTecton.neighbours.add(thirdTecton);
         thirdTecton.neighbours.add(secondTecton);
 
-        //Inicializálunk egy gombafonalat, ami az első tektonról indulva a harmadikig tart
+        // Első teszt (nem szomszédos tekton) előkészítése
         Hypha hypha = new Hypha();
-        firstTecton.hyphas.add(hypha);
-        secondTecton.hyphas.add(hypha);
         thirdTecton.hyphas.add(hypha);
-
-        hypha.getTectons().add(firstTecton);
-        hypha.getTectons().add(secondTecton);
         hypha.getTectons().add(thirdTecton);
 
-        // Log: teszt kezdése
-        skeleton.log("Teszt: rovar megpróbál fonalat vágni.");
+        // Sikertelen vágás (tekton nem szomszédos)
+        skeleton.log("1. eset: Vágás megkísérlése nem szomszédos tektonra.");
+        insect.cutHypha(hypha, thirdTecton);
 
-        // A rovar megpróbál fonalat vágni
+        // Sikertelen vágás (a tektonon nincs fonál)
+        skeleton.log("2. eset: Vágás megkísérlése olyan tektonra, amin nincs fonál.");
+        insect.cutHypha(hypha, secondTecton);
+
+        // Létrehozunk egy gombafonalat, ami az első tektonról indulva a harmadikig tart
+        secondTecton.hyphas.add(hypha);
+        firstTecton.hyphas.add(hypha);
+
+        hypha.getTectons().add(secondTecton);
+        hypha.getTectons().add(firstTecton);
+
+        // Sikertelen vágás (a rovar kábítva van)
+        skeleton.log("3. eset: Vágás megkísérlése kábító hatás alatt.");
+
+        // A rovar kábító spóra hatása alá kerül
+        Mycologist mycologist = new Mycologist();
+        StunningEffect stunningSpore = new StunningEffect(mycologist);
+        stunningSpore.applyTo(insect);
+        
+        insect.cutHypha(hypha, secondTecton);
+
+        // A rovarat kigyógyítjuk a kábultságból
+        stunningSpore.decreaseEffectDuration();
+        stunningSpore.decreaseEffectDuration();
+        insect.removeExpiredEffects();
+
+        // Sikeres vágás
+        skeleton.log("4. eset: Vágás sikeres megkísérlése.");
         insect.cutHypha(hypha, secondTecton);
 
         // Log: teszt vége
@@ -343,7 +380,7 @@ public class Main {
             System.out.println("6. Grow hypha");
             System.out.println("7. Tecton splitting");
             System.out.println("-----------------------");
-            System.out.print("Select use case (e.g. 1,2...): ");
+            System.out.print("Select use case (e.g. 1, 2...): ");
             int useCase = scanner.nextInt();
             switch (useCase) {
                 case 0:

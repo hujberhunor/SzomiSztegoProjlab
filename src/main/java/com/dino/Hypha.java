@@ -28,6 +28,10 @@ public class Hypha {
         return species;
     }
 
+    public List<Tecton> getTectons(){
+        return tectons;
+    }
+
     /**
      * Beállítja, hogy mely gombászhoz tatozzon a fonal
      * @param species Gombász, akihez beállítódik a fonal
@@ -50,8 +54,4 @@ public class Hypha {
     public void continueHypha(Tecton t) {}
 
     public void continueHypha(Hypha h) {}
-
-    public List<Tecton> getTectons(){
-        return tectons;
-    }
 } // End of Hypha

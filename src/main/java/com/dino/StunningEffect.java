@@ -14,6 +14,10 @@ public class StunningEffect extends Spore {
         return STUNNING_EFFECT_NUTRIENT_VALUE;
     }
 
+    public String toString(){
+        return "Stunning Spore";
+    }
+
     //A gomba hatását megvalósító függvény. A paraméterként átadott rovar fonalvágási kísérletei sikertelenek lesznek a következő két körben.
     public void applyTo(Insect i) {
         i.addEffects(this);
