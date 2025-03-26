@@ -1,0 +1,169 @@
+@startuml
+
+' NEM SZEREPELNEK BENNE A LESZÁRMAZOTTAK HOGY ÁTLÁTHATÓBB LEGYEN '
+' --> : használja, de nem tartalmazza '
+' ===== Alap játékosok és szereplők =====
+class Player {
+    - name: String
+    - score: int
+    - actionsPerTurn: int
+    - remainingActions: int
+    + selectTecton(tecton: Tecton): Tecton
+    + calculateScore(): int
+}
+
+class Entomologist {
+    - insects: List<Insect>
+    + increaseActions()
+    + decreaseActions()
+    + getRemainingActions(): int
+}
+
+class Mycologist {
+    - mushrooms: List<Fungus>
+    + placeFungus(t: Tecton)
+}
+
+' ===== Térképelemek és logika =====
+abstract class Tecton {
+    - fungiEnabled: boolean
+    - hyphaLimit: int
+    - hyphaLifespan: int
+    - breakChance: double
+    - breakCount: int
+    - hexagons: List<Hexagon>
+    - neighbours: List<Tecton>
+    - fungus: Fungus
+    - insect: Insect
+    - spores: Map<Mycologist, Integer>
+    - hyphas: List<Hypha>
+    + addSpores(Mycologist)
+    + removeSpores(Mycologist)
+    + addHypha(Hypha)
+    + split(double): List<Tecton>
+    + isNeighbor(Tecton): boolean
+    + hasHypha(Tecton): boolean
+    + hasSpores(Mycologist): boolean
+    + setFungus(Fungus)
+    # handleHypha(Hypha)
+}
+
+' class SingleHyphaTecton 
+' class ShortHyphaTecton  
+' class InfiniteHyphaTecton  {
+'     - hyphaCount: int
+'     + increaseHyphaCount()
+'     + getHyphaCount(): int
+' }
+' class NoFungiTecton 
+' class KeepHyphaTecton{
+'   - asd
+' }
+'
+
+class Hexagon {
+    - id: int
+    - neighbours: List<Hexagon>
+    + getId(): int
+    + getNeighbours(): List<Hexagon>
+    + setNeighbours(List<Hexagon>)
+    + destroy()
+}
+
+class Hypha {
+    - tectons: List<Tecton>
+    - species: Mycologist
+    - lifespan: int 
+    + getSpecies(): Mycologist
+    + continueHypha(Tecton t)
+    + getTectons(): List<Tecton>
+}
+
+class Fungus {
+    - species: Mycologist
+    - tecton: Tecton
+    - charge: int
+    - lifespan: int
+    - hyphas: List<Hypha>
+    - spores: List<Spore>
+    + spreadSpores()
+    + growHypha(List<Tecton>): boolean
+}
+
+' ===== Spórák és hatásaik =====
+abstract class Spore {
+    - species: Mycologist
+    - effectDuration: int
+    - nutrientValue: int
+    + getEffectDuration(): int
+    + getNutrientValue(): int
+    + decreaseEffectDuration()
+    + applyTo(Insect)
+}
+
+' class StunningEffect
+' class SlowingEffect 
+' class SporeNoEffect 
+' class ParalyzingEffect 
+' class AcceleratingEffect 
+' class CloneEffect extends Spore
+
+' ===== Insect logika =====
+class Insect {
+    - entomologist: Entomologist
+    - currentTecton: Tecton
+    - effects: List<Spore>
+    + move(Tecton): boolean
+    + cutHypha(Hypha, Tecton): boolean
+    + consumeSpores(Entomologist): boolean
+    + addEffects(Spore)
+    + removeExpiredEffects()
+    + getEffects(): List<Spore>
+    + getEntomologist(): Entomologist
+}
+
+' ===== Game engine =====
+class GameBoard {
+    - tectons: List<Tecton>
+    + generateBoard()
+    + getNeighbors(Tecton): List<Tecton>
+    + breakHandler()
+}
+
+class Game {
+    - map: GameBoard
+    - players: List<Player>
+    - currTurn: int
+    - totalTurns: int
+    - currentPlayer: Player
+    - toBeCleared: List<Hypha>
+    + initBoard()
+    + initGame(): boolean
+    + startGame()
+    + addPlayer(Player): boolean
+    + removePlayer(Player): boolean
+    + nextTurn()
+    + endGame()
+}
+
+' ===== Kapcsolatok =====
+Game o-r- GameBoard
+Game o-l- Player
+GameBoard o-- Tecton
+Tecton o-l- Hexagon
+Tecton o-- Hypha
+Tecton o-- Insect
+Tecton o-r- Fungus
+Tecton o-- Mycologist
+Insect o-- Spore
+Insect --> Entomologist
+Mycologist o-- Fungus
+Fungus o-- Hypha
+Fungus o-- Spore
+Spore --> Insect
+Spore --> Mycologist
+Hypha o-- Tecton
+Hypha --> Mycologist
+
+
+@enduml

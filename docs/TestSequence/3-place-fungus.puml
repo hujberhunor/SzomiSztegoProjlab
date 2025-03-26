@@ -1,0 +1,28 @@
+@startuml
+
+== Place Fungus ==
+
+actor Mycologist
+participant Fungus
+participant Tecton
+
+Mycologist -> Fungus: placeFungus(Tecton target)
+activate Fungus
+
+Fungus -> Tecton: addFungus(Tecton t)
+
+alt Feltételek teljesülnek (van fonál és >= 2 spóra)
+    Fungus -> Tecton: placeFungus()
+    Tecton --> Fungus: Fungus placed
+    Fungus -> Mycologist: decreaseActions()
+else NoFungiTecton (nem helyezhető gombatest)
+    Fungus -> Tecton: addFungus()
+    Tecton --> Fungus: return false
+    Tecton --> Mycologist: Nem lehet itt gombát növeszteni!
+else Nincs elég spóra vagy fonál
+    Tecton --> Mycologist: error: "Nem lehet új gombatestet elhelyezni!"
+end
+
+deactivate Fungus
+
+@enduml

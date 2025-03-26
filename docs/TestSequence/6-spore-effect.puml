@@ -1,0 +1,70 @@
+@startuml
+
+== Spóra fogyasztás ==
+
+actor Entomologist
+participant Insect
+participant Tecton
+participant Spore
+
+Entomologist -> Insect: consumeSpores()
+activate Insect
+
+Insect -> Tecton: getAvailableSpores()
+Tecton --> Insect: return List<Spore>
+
+alt Többféle spóra van jelen
+    Insect -> Tecton: selectHighestSporeCount()
+    Tecton --> Insect: return Selected Spore
+end
+
+Insect -> Spore: consume()
+activate Spore
+Spore -> Entomologist: applyNutrientValue()
+Spore -> Insect: applyEffect()
+deactivate Spore
+
+
+deactivate Insect
+
+== Apply Accelerating Effect ==
+
+participant Insect
+participant Spore
+
+Spore -> Insect: applyAcceleratingEffect()
+activate Insect
+Insect -> Insect: increaseActions()
+deactivate Insect
+
+== Apply Slowing Effect ==
+
+participant Insect
+participant Spore
+
+Spore -> Insect: applySlowingEffect()
+activate Insect
+Insect -> Insect: decreaseActions()
+deactivate Insect
+
+== Apply Paralyzing Effect ==
+
+participant Insect
+participant Spore
+
+Spore -> Insect: applyParalyzingEffect()
+activate Insect
+Insect -> Insect: disableMovement()
+deactivate Insect
+
+== Apply Stunning Effect ==
+
+participant Insect
+participant Spore
+
+Spore -> Insect: applyStunningEffect()
+activate Insect
+Insect -> Insect: disableHyphaCutting()
+deactivate Insect
+
+@enduml

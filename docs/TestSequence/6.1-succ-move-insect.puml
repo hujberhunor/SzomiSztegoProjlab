@@ -1,0 +1,32 @@
+@startuml
+== Move Insect ==
+
+actor Entomologist
+participant Insect
+participant Tecton
+
+Entomologist -> Insect: move(Tecton target)
+activate Insect
+
+Insect -> Tecton: isNeighbor(Tecton target)
+Tecton --> Insect: return boolean
+
+alt Szomszédos tekton 
+    Insect -> Tecton: getHypha()
+    Tecton --> Insect: return boolean
+    
+    alt Van fonál
+        Insect -> Tecton: moveTo(Tecton target)
+        Tecton --> Insect: Movement successful
+        Insect -> Entomologist: decreaseActions()
+    else Nincs fonal
+        Insect --> Entomologist: Nincs gombafonál, mozgás sikertelen!
+    end
+else Nem szomszédos tekton
+    Tecton --> Entomologist: Tekton nem szomszédos!
+end
+
+deactivate Insect
+
+
+@enduml
