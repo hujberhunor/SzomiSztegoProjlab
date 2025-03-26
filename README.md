@@ -1,18 +1,9 @@
 # TODO
-- isConnectedToFungus kiszedése => Mivel csak az utolsó fonalból nőhet tovább fonal (continueHypha)
-- Új fv minden Tct typehoz, break után kezelni a keletkező tctokat.
-- workflow test
-- topic 1
-Tectononnak egymásra kell hivatkozniuk:
-TectonA → TectonB
-TectonB ← TectonA 
-Különben nem működik → NEM JÓ!
-- topic2
-Kétirányú assziciáció van a HYPHA-nál is.
---- 
 - Tecton: split átnevetése break-re
 - Mychologist: mushrooms átnevezni fungi
 - Hypha: isConnectedToFungus eltávolítása
+- Tecton: addNeighbour megvalósítása (kétírányú asszociáció miatt)
+- Hypha: addHypha(Tecton t) (kétírányú asszociáció miatt)
 
 ---
 
