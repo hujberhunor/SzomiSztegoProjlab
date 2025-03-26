@@ -1,3 +1,4 @@
 Hypha lifespan attrib
 Game class toBeCleared hypha lista
 Entomologist rovarjainak listája
+Hypha: eatInsect(i)
