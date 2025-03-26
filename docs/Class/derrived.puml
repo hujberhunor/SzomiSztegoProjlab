@@ -1,0 +1,54 @@
+@startuml
+
+abstract class Tecton {
+    - fungiEnabled: boolean
+    - hyphaLimit: int
+    - hyphaLifespan: int
+    - breakChance: double
+    - breakCount: int
+    - hexagons: List<Hexagon>
+    - neighbours: List<Tecton>
+    - fungus: Fungus
+    - insect: Insect
+    - spores: Map<Mycologist, Integer>
+    - hyphas: List<Hypha>
+    + addSpores(Mycologist)
+    + removeSpores(Mycologist)
+    + addHypha(Hypha)
+    + split(double): List<Tecton>
+    + isNeighbor(Tecton): boolean
+    + hasHypha(Tecton): boolean
+    + hasSpores(Mycologist): boolean
+    + setFungus(Fungus)
+    # handleHypha(Hypha)
+}
+
+class SingleHyphaTecton extends Tecton
+class ShortHyphaTecton  extends Tecton
+class InfiniteHyphaTecton  extends Tecton{
+    - hyphaCount: int
+    + increaseHyphaCount()
+    + getHyphaCount(): int
+}
+class NoFungiTecton extends Tecton
+class KeepHyphaTecton extends Tecton{ }
+
+
+abstract class Spore {
+    - species: Mycologist
+    - effectDuration: int
+    - nutrientValue: int
+    + getEffectDuration(): int
+    + getNutrientValue(): int
+    + decreaseEffectDuration()
+    + applyTo(Insect)
+}
+
+class StunningEffect extends Spore
+class SlowingEffect extends Spore
+class SporeNoEffect extends Spore
+class ParalyzingEffect extends Spore
+class AcceleratingEffect extends Spore
+class CloneEffect extends Spore
+
+@enduml

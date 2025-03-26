@@ -48,19 +48,6 @@ abstract class Tecton {
     # handleHypha(Hypha)
 }
 
-' class SingleHyphaTecton 
-' class ShortHyphaTecton  
-' class InfiniteHyphaTecton  {
-'     - hyphaCount: int
-'     + increaseHyphaCount()
-'     + getHyphaCount(): int
-' }
-' class NoFungiTecton 
-' class KeepHyphaTecton{
-'   - asd
-' }
-'
-
 class Hexagon {
     - id: int
     - neighbours: List<Hexagon>
@@ -100,13 +87,6 @@ abstract class Spore {
     + decreaseEffectDuration()
     + applyTo(Insect)
 }
-
-' class StunningEffect
-' class SlowingEffect 
-' class SporeNoEffect 
-' class ParalyzingEffect 
-' class AcceleratingEffect 
-' class CloneEffect extends Spore
 
 ' ===== Insect logika =====
 class Insect {
