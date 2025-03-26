@@ -77,6 +77,27 @@ public abstract class Tecton {
     }
 
     /**
+     * Kétirányú asszociáció miatt delegáltam fv-be
+     */
+    public static void connectTectons(Tecton a, Tecton b) {
+        a.getNeighbours().add(b);
+        b.getNeighbours().add(a);
+    }
+
+    /**
+     * Kétirányú asszociáció miatt kell
+     * Nagyon random de elv működik.
+     */
+    public static Hypha connectWithHypha(Tecton... tectons) {
+        Hypha hypha = new Hypha();
+        for (Tecton t : tectons) {
+            hypha.getTectons().add(t);
+            t.getHyphas().add(hypha);
+        }
+        return hypha;
+    }
+
+    /**
      * Minden kör után hívódó függvény, ami breakChance eséllyel, hatszögek mentén létrehoz két új tektont
      * a saját helyén, míg magát megszűnteti. Az új tektonok tulajdonságai egyeznek az őket létrehozó tulajdonságaival,
      * amiről a gombatest és rovarok véletlenszerűen választott töredékekre kerülnek át, a gombafonalak pedig megsemmisülnek.
