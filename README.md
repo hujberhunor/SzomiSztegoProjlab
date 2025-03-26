@@ -1,10 +1,14 @@
 # TODO
-- Tecton: split átnevetése break-re
-- Mychologist: mushrooms átnevezni fungi
-- Hypha: isConnectedToFungus eltávolítása
-- Tecton: addNeighbour megvalósítása (kétírányú asszociáció miatt)
-- Hypha: addHypha(Tecton t) (kétírányú asszociáció miatt)
+- Tecton:
+  - split átnevetése break-re
+  - addNeighbour megvalósítása (kétírányú asszociáció miatt)
 
+- Hypha:
+  - copy konstruktor
+  - addHypha(Tecton t) (kétírányú asszociáció miatt)
+  - isConnectedToFungus eltávolítása
+
+- Mychologist: mushrooms átnevezni fungi 
 ---
 
 # Telepítési és futtatási útmutató
