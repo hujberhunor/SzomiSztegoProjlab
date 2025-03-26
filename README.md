@@ -10,10 +10,11 @@ Különben nem működik → NEM JÓ!
 - topic2
 Kétirányú assziciáció van a HYPHA-nál is.
 --- 
-Tecton: split átnevetése break-re
-mychologist: mushrooms átnevezni fungi
-Hypha: isConnectedToFungus eltávolítása
+- Tecton: split átnevetése break-re
+- Mychologist: mushrooms átnevezni fungi
+- Hypha: isConnectedToFungus eltávolítása
 
+---
 
 # Telepítési és futtatási útmutató
 A projekt fordításához szükség lesz Maven build keretrendszere és Git-re, ezt kétféle képpen telepíthetjük:
