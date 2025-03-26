@@ -1,6 +1,5 @@
 
-' Andrással beszéltek utáni 2. verzió interface-szel. 
-' EZ amit valszeg a legjobb lenne megírni
+' MINDENT TARTALMAZ '
 
 @startuml ALTClassDiag
 
@@ -198,6 +197,8 @@ Spore o-- Fungus
 Tecton o--  Fungus
 
 Tecton o-- Hexagon
+Tecton o-- Insect
+Insect o-- Tecton
 
 Fungus *-- Hypha
 @enduml
