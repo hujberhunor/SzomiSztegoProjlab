@@ -1,0 +1,44 @@
+@startuml
+
+== Grow Hypha ==
+
+actor Mycologist
+participant Fungus
+participant Tecton
+
+Mycologist -> Fungus: growHypha(Tecton t)
+activate Fungus
+
+Fungus -> Tecton: isNeighbor(Tecton t)
+Tecton --> Fungus: return boolean
+
+alt Szomszédos tekton
+    ' Tud-e fonalat növeszteni. Show dont tell
+    Fungus -> Tecton: growHypha(Tecton t)
+    Tecton --> Fungus: return boolean
+    
+    alt Tektonon nőhet (még) fonal 
+        Fungus -> Tecton: placeHypha()
+        Tecton --> Fungus: Hypha placed
+        Fungus -> Mycologist: decreaseActions()
+        
+        alt Az első tektonon van saját fajta spóra
+            Fungus -> Tecton: getSpore(Mycologist m)
+            Tecton --> Fungus: return boolean/spore
+            
+            alt Van spóra
+                ' tehát a szomszéd szomszédjéra is növesztheti
+                Fungus -> Tecton: growHypha(Tecton [adjecent of t])
+                Tecton --> Fungus: Second hypha placed
+                deactivate Fungus
+            end
+        end
+    else A tectonon már van fonal 
+        Tecton --> Mycologist: Nem lehet itt gombafonalat növeszteni a tekton tulajdonsága miatt.
+    end
+else Nem szomszédos tekton
+    Tecton --> Mycologist: Tekton nem szomszédos! Nem lehet növeszteni. 
+end
+
+
+@enduml

@@ -1,0 +1,39 @@
+@startuml
+== Paralyzed Insect ==
+
+actor Entomologist
+participant Insect
+
+Entomologist -> Insect: move(Tecton target)
+Insect --> Entomologist: return boolean
+activate Insect
+
+' Megkersi, hogy azon effekt hatása alatt van-e
+Entomologist -> Insect: isUnderEffect(Spore s)
+Insect --> Entomologist: return boolean
+
+alt Rovar bénult 
+    Insect --> Entomologist: Nem mozoghat, bénult állapotban van.
+else Nem bénult 
+    Insect -> Tecton: isNeighbor(Tecton target)
+    Tecton --> Insect: return boolean
+    
+    alt Szomszédos tekton
+        Insect -> Tecton: getHypha()
+        Tecton --> Insect: return boolean
+        
+        alt Van fonál
+            Insect -> Tecton: moveTo(Tecton target)
+            Tecton --> Insect: Movement successful
+            Insect -> Entomologist: decreaseActions()
+        else Nincs fonal
+            Tecton --> Entomologist: Nincs gombafonál, mozgás sikertelen!
+        end
+    else Nem szomszédos tekton. 
+        Tecton --> Entomologist:Tekton nem szomszédos!
+    end
+end
+
+deactivate Insect
+
+@enduml

@@ -1,0 +1,17 @@
+@startuml
+== Charging Fungus ==
+
+actor GameLogic
+participant Fungus
+participant Game
+
+loop Every turn
+    Game -> Fungus: increaseCharge()
+    alt Charge < 3
+        Fungus -> Game: charge++
+    else Charge == 3
+        Fungus -> Game: Charge full, waiting for spore spread
+    end
+end
+
+@enduml

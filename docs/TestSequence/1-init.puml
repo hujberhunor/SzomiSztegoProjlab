@@ -1,0 +1,57 @@
+' @startuml
+' 
+' == 1. Játék Sikeres Inicializálása V1==
+' 
+' actor Player
+' participant Game
+' participant GameBoard
+' participant Tecton
+' 
+' Player -> Game: InitGame(int PlayerCount, int MycologistCount, int EntomologistCount, int RoundCount)
+' activate Game
+' Game --> Player: return true 
+' 
+' Player -> Game: StartGame(Game g)
+' Game -> GameBoard: InitBoard(GameBoard b)
+' deactivate Game
+' activate GameBoard
+' 
+' GameBoard -> Tecton: GenerateBoard(List<Tecton> t)
+' activate Tecton
+' Tecton --> GameBoard: return Generated Board
+' deactivate Tecton
+' 
+' deactivate GameBoard
+' 
+' @enduml
+@startuml
+
+== Initialize Game ==
+
+actor Player
+participant Game
+participant GameBoard
+participant Tecton
+
+Player -> Game: InitGame(int PlayerCount, int MycologistCount, int EntomologistCount, int RoundCount)
+activate Game
+
+alt Sikeres inicializálás
+    Game --> Player: return true 
+    Player -> Game: StartGame(Game g)
+    Game -> GameBoard: InitBoard(GameBoard b)
+    deactivate Game
+    activate GameBoard
+
+    GameBoard -> Tecton: GenerateBoard(List<Tecton> t)
+    activate Tecton
+    Tecton --> GameBoard: return Generated Board
+    deactivate Tecton
+
+    deactivate GameBoard
+else Sikertelen inicializálás
+    Game --> Player: return false
+end
+
+@enduml
+ 

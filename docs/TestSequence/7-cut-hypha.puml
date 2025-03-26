@@ -1,0 +1,27 @@
+@startuml
+
+== Cut Hypha ==
+
+actor Entomologist
+participant Insect
+participant Hypha
+participant Tecton
+
+Entomologist -> Insect: cutHypha(Hypha target)
+activate Insect
+
+Insect -> Hypha: isUnderEffect(StunningEffect)
+Hypha --> Insect: return boolean
+
+alt Nincs Stunning effect alatt
+    Insect -> Hypha: cut()
+    Hypha --> Tecton: removeConnection(Hypha)
+    Tecton --> Insect: Hypha removed
+    Insect -> Entomologist: decreaseActions()
+else  Stunning effect alatt van
+    Insect --> Entomologist: Effect hatása miatt nem vághatja el a fonalat
+end
+
+deactivate Insect
+@enduml
+
