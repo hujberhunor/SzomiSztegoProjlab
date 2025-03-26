@@ -8,7 +8,10 @@
   - addHypha(Tecton t) (kétírányú asszociáció miatt)
   - isConnectedToFungus eltávolítása
 
-- Mychologist: mushrooms átnevezni fungi 
+- Mychologist: mushrooms átnevezni fungi
+
+- Insect:
+  - Copy konstruktor a cloneSpore miatt??
 ---
 
 # Telepítési és futtatási útmutató
