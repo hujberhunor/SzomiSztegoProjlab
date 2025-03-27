@@ -1,4 +1,9 @@
-Hypha lifespan attrib
 Game class toBeCleared hypha lista
 Entomologist rovarjainak listája
-Hypha: eatInsect(i)
+
+Hypha:
+- eatInsect(i)
+- lifespan attrib
+- fungus attrib: ki a source gomba a fonalon (0. ind tekton)
+
+

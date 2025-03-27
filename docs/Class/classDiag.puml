@@ -60,6 +60,7 @@ class Hexagon {
 class Hypha {
     - tectons: List<Tecton>
     - species: Mycologist
+    - fungus: Fungus
     - lifespan: int 
     + getSpecies(): Mycologist
     + continueHypha(Tecton t)
