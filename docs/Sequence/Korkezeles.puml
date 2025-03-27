@@ -1,0 +1,27 @@
+@startuml
+actor Main
+participant Game
+participant Player
+participant Tecton
+
+Main -> Game : initGame()
+Game -> Game : currTurn = 0
+Game -> Game : currRound = 0
+
+Main -> Game : startGame()
+Game -> Player : performTurn()
+
+loop Player performs actions
+    Player -> Player : performAction()
+end
+
+Player -> Game : nextTurn()
+Game -> Game : currTurn++
+
+alt all players had turn
+    Game -> Game : currRound++
+    Game -> Tecton : update()
+end
+
+Game -> Player : performTurn()
+@enduml
