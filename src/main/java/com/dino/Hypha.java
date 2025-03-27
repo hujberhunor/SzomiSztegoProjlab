@@ -31,6 +31,7 @@ public class Hypha {
         mycologist = m; // Kinek a gombájáró
         fungus = f; // source fungus, ahonna indul a fonal
     }
+
     /**
      * Visszaadja, hogy mely gombászhoz tartozik a fonal
      * @return A fonalhoz tatozó gombász
@@ -39,16 +40,12 @@ public class Hypha {
         return mycologist;
     }
 
-    public List<Tecton> getTectons(){
-        return tectons;
-    }
-
     /**
      * Beállítja, hogy mely gombászhoz tatozzon a fonal
      * @param species Gombász, akihez beállítódik a fonal
      */
-    public void setSpecies(Mycologist species) {
-        this.species = species;
+    public void setMychologist(Mycologist m) {
+        this.mycologist = m;
     }
 
     /**
@@ -65,4 +62,3 @@ public class Hypha {
         return tectons;
     }
 } // End of Hypha
-
