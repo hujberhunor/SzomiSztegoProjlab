@@ -13,19 +13,30 @@ public class Hypha {
     /**
      *  Azon tectonok amelyeken keresztül halad a fonal
      */
-    private List<Tecton> tectons = new ArrayList<>();
+    private List<Tecton> tectons;
 
     /**
      *  Amely gombászhoz tartozik a fonal
      */
-    private Mycologist species;
+    private Mycologist mycologist;
+    /**
+     * Source fungus, ahonnan nő a fonal. 0. eleme a tecton listának
+     */
+    private Fungus fungus;
 
+    public Hypha() {}
+
+    public Hypha(Mycologist m, Fungus f) {
+        tectons = new ArrayList<>();
+        mycologist = m; // Kinek a gombájáró
+        fungus = f; // source fungus, ahonna indul a fonal
+    }
     /**
      * Visszaadja, hogy mely gombászhoz tartozik a fonal
      * @return A fonalhoz tatozó gombász
      */
-    public Mycologist getSpecies() {
-        return species;
+    public Mycologist getMycologist() {
+        return mycologist;
     }
 
     public List<Tecton> getTectons(){
@@ -41,17 +52,17 @@ public class Hypha {
     }
 
     /**
-     *  Visszaadja, hogy van-e kapcsolat gombatesthez, ha nincs akkor elhalt a fonal
+     * Folytatja a már megkeztedd fonalat. Hozzáad "egy tectonnyi fonalat" a lista végére
      */
-    public boolean isConnectedToFungus(Hypha h) {
-        // temp has
-        return false;
+    public void continueHypha(Tecton t) {
+        tectons.add(t);
     }
 
     /**
-     * Folytatja a már megkeztedd fonalat. Hozzáad "egy tectonnyi fonalat"
+     * Fonal haladásának tektonja, konkrétan maga a fonal
      */
-    public void continueHypha(Tecton t) {}
-
-    public void continueHypha(Hypha h) {}
+    public List<Tecton> getTectons() {
+        return tectons;
+    }
 } // End of Hypha
+

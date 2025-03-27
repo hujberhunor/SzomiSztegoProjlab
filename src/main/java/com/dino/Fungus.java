@@ -65,8 +65,8 @@ class Fungus {
         skeleton.startMethod("Fungus", "spreadSpores");
 
         //ha a gomba töltöttsége 2, spórákat szór(hat) a szomszédos tektonokra
-        if(charge == 2){
-            for (Tecton t : tecton.getNeighbours()){
+        if (charge == 2) {
+            for (Tecton t : tecton.getNeighbours()) {
                 t.addSpores(species);
             }
             skeleton.log("A gomba spórát szórt a szomszédos tektonokra.");
@@ -76,18 +76,23 @@ class Fungus {
         }
         //ha a gomba töltöttsége 3 vagy nagyobb, spórát szór a szomszédos tektonok szomszédaira
         if (charge >= 3) {
-            for (Tecton t : tecton.getNeighbours()){
-                for (Tecton neighbourOfTecton : t.getNeighbours()){
+            for (Tecton t : tecton.getNeighbours()) {
+                for (Tecton neighbourOfTecton : t.getNeighbours()) {
                     /* legyen a gombát tartalmazó tekton GT, ennek bármely szomszédja SzGT.
                      * Egy T tekton akkor szomszédja SzGT-nek, ha szerepel SzGT szomszédainak listájában,
                      * és T != GT vagy SzGT.
                      */
-                    if(!neighbourOfTecton.equals(t) && !t.getNeighbours().contains(neighbourOfTecton)){
+                    if (
+                        !neighbourOfTecton.equals(t) &&
+                        !t.getNeighbours().contains(neighbourOfTecton)
+                    ) {
                         neighbourOfTecton.addSpores(species);
                     }
                 }
             }
-            skeleton.log("A gomba spórát szórt a szomszédos tektonok szomszédjaira.");
+            skeleton.log(
+                "A gomba spórát szórt a szomszédos tektonok szomszédjaira."
+            );
             skeleton.endMethod();
             charge = 0;
             return;
@@ -136,7 +141,10 @@ class Fungus {
             newHypha.continueHypha(tecton); // A fonal folytatása ezen a tektonon
             tecton.addHypha(newHypha); // Hozzáadjuk a fonalat a tektonhoz
 
-            skeleton.log("Gombafonál sikeresen növesztve a tektonon: " + tecton.toString());
+            skeleton.log(
+                "Gombafonál sikeresen növesztve a tektonon: " +
+                tecton.toString()
+            );
         }
 
         skeleton.endMethod();
@@ -159,3 +167,4 @@ class Fungus {
         this.charge = c;
     }
 }
+

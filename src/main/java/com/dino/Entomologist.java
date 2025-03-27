@@ -15,6 +15,10 @@ public class Entomologist extends Player {
         this.remainingActions = actions;
     }
 
+    public Entomologist() {
+        this.remainingActions = 3;
+    }
+
     /**
      * AcceleratingEffect miatt kell.
      * MIkor accel effect van rajta ez a roundban meg kell hívni
