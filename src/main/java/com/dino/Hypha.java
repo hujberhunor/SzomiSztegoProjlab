@@ -24,7 +24,9 @@ public class Hypha {
      */
     private Fungus fungus;
 
-    public Hypha() {}
+    public Hypha() {
+        tectons = new ArrayList<>();
+    }
 
     public Hypha(Mycologist m, Fungus f) {
         tectons = new ArrayList<>();
