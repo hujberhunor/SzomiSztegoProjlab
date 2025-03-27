@@ -16,6 +16,12 @@ public class ParalyzingEffect extends Spore {
         return PARALYZING_EFFECT_NUTRIENT_VALUE;
     }
 
+
+    public String toString(){
+        return "Paralyzing Spore";
+    }
+
+    //A gomba hatását megvalósító függvény. A paraméterként átadott rovar a következő két körben nem tud akciót kihasználni mozgásra.
     @Override
     public void applyTo(Insect insect) {
         Skeleton skeleton = Skeleton.getInstance();

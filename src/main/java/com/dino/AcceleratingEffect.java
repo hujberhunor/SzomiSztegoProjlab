@@ -15,6 +15,11 @@ public class AcceleratingEffect extends Spore {
         return ACCELERATING_EFFECT_NUTRIENT_VALUE;
     }
 
+    public String toString(){
+        return "Accelerating Spore";
+    }
+
+    //A gomba hatását megvalósító függvény. A paraméterként átadott rovar a következő két kör alatt eggyel több akciót használhat ki mozgásra.
     @Override
     public void applyTo(Insect insect) {
         Skeleton skeleton = Skeleton.getInstance();

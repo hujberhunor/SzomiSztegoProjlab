@@ -1,7 +1,18 @@
 # TODO
-- isConnectedToFungus kiszedése => Mivel csak az utolsó fonalból nőhet tovább fonal (continueHypha)
-- Új fv minden Tct typehoz, break után kezelni a keletkező tctokat.
-- workflow test
+- Tecton:
+  - split átnevetése break-re
+  - addNeighbour megvalósítása (kétírányú asszociáció miatt)
+
+- Hypha:
+  - copy konstruktor
+  - addHypha(Tecton t) (kétírányú asszociáció miatt)
+  - isConnectedToFungus eltávolítása
+
+- Mychologist: mushrooms átnevezni fungi
+
+- Insect:
+  - Copy konstruktor a cloneSpore miatt??
+---
 
 # Telepítési és futtatási útmutató
 A projekt fordításához szükség lesz Maven build keretrendszere és Git-re, ezt kétféle képpen telepíthetjük:

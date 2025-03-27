@@ -46,6 +46,10 @@ public abstract class Tecton {
         return this.hyphas;
     }
 
+    public void setHyphas(List<Hypha> hyphas){
+        this.hyphas = hyphas;
+    }
+
     public List<Tecton> getNeighbours() {
         return neighbours;
     }
@@ -55,7 +59,13 @@ public abstract class Tecton {
      * @param m A gombász, akinek a gombájából a spóra származik
      */
     public void addSpores(Mycologist m) {
-        // TODO IMPLEMENTÁLNI
+        Skeleton skeleton = Skeleton.getInstance();
+        skeleton.startMethod("Tecton", "add spores");
+
+        spores.put(m, spores.getOrDefault(m, 0) + 1);
+        skeleton.log("Spóra elhelyezve");
+        skeleton.log("A tektonon található gombász-spóraszám párok:");
+        spores.forEach((key, value) -> skeleton.log(key + " = " + value));
     }
 
     /**
@@ -63,7 +73,18 @@ public abstract class Tecton {
      * @param m A gombász, akinek a gombájából a spóra származik
      */
     public void removeSpores(Mycologist m) {
-        // TODO IMPLEMENTÁLNI
+        Skeleton skeleton = Skeleton.getInstance();
+        skeleton.startMethod("Tecton", "remove spores");
+
+        spores.computeIfPresent(m, (key, value ) -> (value > 1) ? value - 1 : null);
+        skeleton.log("Spóra eltávolítva");
+        if (!spores.isEmpty()){
+            skeleton.log("A tektonon található gombász-spóraszám párok:");
+            spores.forEach((key, value) -> skeleton.log(key + " = " + value));
+        }
+        else {
+            skeleton.log("A tektonon nem található spóra");
+        }
     }
 
     /**
@@ -227,10 +248,22 @@ public abstract class Tecton {
     }
 
     /**
+     * Visszaadja a tektonon lévő gombatestet
+     * @return A tektonon lévő gombatest
+     */
+    public Fungus getFungus(){
+        return fungus;
+    }
+
+    /**
      * Beállítja a tektonon lévő gombatestet.
      * @param f Az új gombatest, amelyet elhelyezünk a tektonon.
      */
     public void setFungus(Fungus f) {
         this.fungus = f;
+    }
+
+    public void setNeighbours(List<Tecton> t){
+        this.neighbours = t;
     }
 }

@@ -113,16 +113,25 @@ public class Insect {
             return false;
         }
 
-        //Sikeres fonálvágás
+        // Sikeres fonálvágás
+        // Kikeressük, hogy a fonál tektonlistájában hol található a tekon, amire a rovar vág
+        // A kapott indextől kezdve töröljük a lista elemeit
         int index = -1;
-        for (int i = 0; i < h.getTectons().size(); i++) {
-            if (h.getTectons().get(i).equals(targetTecton)) {
+
+        skeleton.log("A fonál tektonjai a vágás előtt:");
+        for (int i = 0; i < h.getTectons().size(); i++){
+            skeleton.log(h.getTectons().get(i).toString());
+            if (h.getTectons().get(i).equals(targetTecton)){
                 index = i;
-                break;
             }
         }
-        if (index != 1) {
-            h.getTectons().subList(index, h.getTectons().size()).clear();
+
+
+        h.getTectons().subList(index, h.getTectons().size()).clear();
+
+        skeleton.log("A fonál tektonjai a vágás után:");
+        for (int i = 0; i < h.getTectons().size(); i++){
+            skeleton.log(h.getTectons().get(i).toString());
         }
 
         skeleton.log("Rovar sikeresen elvágta a fonalat.");
@@ -149,6 +158,7 @@ public class Insect {
             return false;
         }
 
+        // Spóra elfogyasztása
         final Mycologist[] mycologistWrapper = new Mycologist[1];
 
         Optional<Map.Entry<Mycologist, Integer>> maxSporeCountEntry =
@@ -158,12 +168,7 @@ public class Insect {
                 .max(Map.Entry.comparingByValue());
         maxSporeCountEntry.ifPresent(entry -> {
             mycologistWrapper[0] = entry.getKey();
-            int sporeCount = entry.getValue();
-            if (sporeCount > 1) currentTecton.spores.put(
-                mycologistWrapper[0],
-                sporeCount - 1
-            );
-            else currentTecton.spores.remove(mycologistWrapper[0]);
+            currentTecton.removeSpores(mycologistWrapper[0]);
         });
 
         List<Class<? extends Spore>> sporeClasses = Arrays.asList(
@@ -199,16 +204,24 @@ public class Insect {
      * @param s
      */
     public void addEffects(Spore s) {
+        Skeleton skeleton = Skeleton.getInstance();
+        skeleton.startMethod("Insect", "add effects");
+
         entomologist.score += s.getNutrientValue();
         effects.add(s);
+        skeleton.log("Elfogyasztott spóra: " + s.toString());
     }
 
     /**
      * A rovar effektlistájáról eltávolítja a lejárt effektet.
      */
     public void removeExpiredEffects() {
-        for (int i = 0; i < effects.size(); i++) {
-            if (effects.get(i).getEffectDuration() == 0) {
+        Skeleton skeleton = Skeleton.getInstance();
+        skeleton.startMethod("Insect", "remove effects");
+
+        for (int i = 0; i < effects.size(); i++){
+            if (effects.get(i).getEffectDuration() == 0){
+                skeleton.log("Törölt spóra: " + effects.get(i).toString());
                 effects.remove(i);
             }
         }
