@@ -5,9 +5,10 @@ package com.dino;
  * lehetnek jelen.
  */
 public class InfiniteHyphaTecton extends Tecton {
+
     /// Attribútum
     private int hyphaCount; /// A tektonon lévő fonalak száma
-    
+
     /**
      * Konstruktor
      */
@@ -16,10 +17,10 @@ public class InfiniteHyphaTecton extends Tecton {
         this.hyphaLimit = -1; // Végtelen számú fonál biztosítása
         this.hyphaCount = 0;
     }
-    
+
     /**
      * A fonalakat kezelő virtuális függvény felülírása.
-     * 
+     *
      * @param h A kezelendő gombafonál
      */
     @Override
@@ -36,7 +37,7 @@ public class InfiniteHyphaTecton extends Tecton {
 
     /**
      * Hyphacount getter
-     * 
+     *
      * @return A tektonon lévő fonalak száma
      */
     public int getHyphaCount() {
