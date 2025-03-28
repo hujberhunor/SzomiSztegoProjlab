@@ -46,6 +46,7 @@ abstract class Tecton {
     + hasSpores(Mycologist): boolean
     + setFungus(Fungus)
     # handleHypha(Hypha)
+    + hyphaDecay()
 }
 
 class Hexagon {
@@ -118,7 +119,7 @@ class Game {
     - currTurn: int
     - totalTurns: int
     - currentPlayer: Player
-    - toBeCleared: List<Hypha>
+    - decayedHypha: List<Hypha>
     + initBoard()
     + initGame(): boolean
     + startGame()
