@@ -34,7 +34,7 @@ abstract class Tecton {
     - hexagons: List<Hexagon>
     - neighbours: List<Tecton>
     - fungus: Fungus
-    - insect: Insect
+    - insects: List<Insect>
     - spores: Map<Mycologist, Integer>
     - hyphas: List<Hypha>
     + addSpores(Mycologist)
