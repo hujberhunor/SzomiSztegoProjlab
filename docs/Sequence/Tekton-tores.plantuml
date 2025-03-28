@@ -1,0 +1,43 @@
+@startuml SD_tctBrk
+
+title SD:tctBrk
+
+actor ":GameBoard" as Actor
+participant ":GameBoard" as GameBoard
+participant ":Tecton" as Tecton
+participant ":Hexagon" as Hexagon
+participant ":Hypha" as Hypha
+
+Actor -> GameBoard: breakHandler()
+activate GameBoard
+
+GameBoard -> Tecton: breakHandler()
+activate Tecton
+
+note right of Tecton: iterating through\ntectons
+
+Tecton -> Tecton: alt [random()<=breakChance]
+Tecton -> Hexagon: split()
+activate Hexagon
+
+note right of Hexagon: Grouping Hexagons\nin 2
+
+Hexagon --> Tecton: new Tectons[2]
+deactivate Hexagon
+
+Tecton -> Hypha: cutHypha()
+activate Hypha
+deactivate Hypha
+
+Tecton -> Tecton: alt [breakcount<2]
+Tecton -> Tecton: breakChance/2
+
+Tecton -> Tecton: else
+Tecton -> Tecton: breakChance=0
+
+Tecton --> GameBoard: update GameBoard
+deactivate Tecton
+
+GameBoard --> Actor: update GameBoard
+deactivate GameBoard
+@enduml

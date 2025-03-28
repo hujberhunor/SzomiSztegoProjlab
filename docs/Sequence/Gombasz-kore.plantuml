@@ -1,0 +1,81 @@
+@startuml SD_mycRnd
+
+title SD:mycRnd
+actor Gombász
+participant ":Game" as Game
+participant "Mycologist:Player" as Player
+participant ":Hypha" as Hypha
+participant ":Fungus" as Fungus
+participant ":Tecton" as Tecton
+participant ":Insect" as Insect
+
+Gombász -> Game: nextTurn()
+activate Game
+
+Game -> Player: loop
+activate Player
+note left of Player: remainingActions!=0
+
+alt [Action: Grow Hypha]
+    Player -> Hypha: growHypha(List<Hypha>)
+    activate Hypha
+    
+    Hypha -> Fungus: isConnectedToFungus()
+    activate Fungus
+    Fungus --> Hypha: return success [true]
+    deactivate Fungus
+    
+    Hypha -> Tecton: addHypha()
+    activate Tecton
+    deactivate Tecton
+    deactivate Hypha
+else [Action: Spread Spores]
+    Player -> Fungus: spreadSpores()
+    activate Fungus
+    
+    Fungus -> Player: addSpores(Mycologist)
+    deactivate Fungus
+else [Action: Place Fungus]
+    Player -> Tecton: placeFungus(Tecton)
+    activate Tecton
+    deactivate Tecton
+else [Action: Eat Paralyzed Insects]
+    Player -> Hypha: checkForParalyzedInsects()
+    activate Hypha
+    
+    Hypha -> Tecton: getInsectsOnTecton()
+    activate Tecton
+    Tecton --> Hypha: return List<Insect>
+    deactivate Tecton
+    
+    loop for each insect
+        Hypha -> Insect: isParalyzed()
+        activate Insect
+        Insect --> Hypha: return boolean
+        deactivate Insect
+        
+        alt insect is paralyzed
+            Hypha -> Insect: consumeInsect()
+            activate Insect
+            Insect --> Hypha: insect destroyed
+            deactivate Insect
+            
+            Hypha -> Fungus: placeFungus(tecton)
+            note right: Új gombatest jön létre\na bénult rovar helyén
+        end
+    end
+    
+    Hypha --> Player: paralyzed insects checked
+    deactivate Hypha
+end
+
+Player -> Player: update remainingActions
+
+Player --> Game: endTurn()
+deactivate Player
+
+Game -> Player: calculateScore()
+Player --> Gombász: return score
+
+deactivate Game
+@enduml
