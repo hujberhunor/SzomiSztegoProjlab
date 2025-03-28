@@ -235,7 +235,7 @@ public class Main {
         if (hasInsect == 1) {
             Entomologist player = new Entomologist(3);
             Insect insect = new Insect(player, tecton);
-            tecton.insect = insect;
+            if(!tecton.insects.contains(insect)) tecton.insects.add(insect); // EDITELTEM, szűrni kellene hogy benne van-e már
         }
 
         // Teszt elkezdése

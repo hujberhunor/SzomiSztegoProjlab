@@ -21,7 +21,7 @@ public abstract class Tecton {
     protected List<Hexagon> hexagons;
     protected List<Tecton> neighbours;
     protected Fungus fungus;
-    protected Insect insect;
+    protected List<Insect> insects;
     protected Map<Mycologist, Integer> spores;
     protected List<Hypha> hyphas;
 
@@ -37,7 +37,7 @@ public abstract class Tecton {
         this.hexagons = new ArrayList<>();
         this.neighbours = new ArrayList<>();
         this.fungus = null;
-        this.insect = null;
+        this.insects = new ArrayList<>();
         this.spores = new HashMap<>();
         this.hyphas = new ArrayList<>();
     }
@@ -134,7 +134,7 @@ public abstract class Tecton {
         List<Tecton> resultTectons = new ArrayList<>();
 
         // Ha van rajta rovar, nem törhet el a tekton
-        if (insect != null) {
+        if (insects.size() > 0) {
             skeleton.log("A tekton nem törhet el, mert van rajta rovar");
             skeleton.endMethod();
             return resultTectons;
@@ -265,5 +265,9 @@ public abstract class Tecton {
 
     public void setNeighbours(List<Tecton> t){
         this.neighbours = t;
+    }
+
+    public List<Insect> getInsects(){ 
+        return insects;
     }
 }
