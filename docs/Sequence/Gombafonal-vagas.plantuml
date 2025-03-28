@@ -1,0 +1,60 @@
+@startuml SD_hypCut
+title SD:hypCut
+
+actor Rovarász
+participant ":Game" as Game
+participant "Entomologist:Player" as Player
+participant ":Insect" as Insect
+participant ":Tecton" as Tecton
+participant ":Hypha" as Hypha
+
+Rovarász -> Game: SelectAction()
+activate Game
+
+Game -> Player: SelectAction()
+activate Player
+
+Player -> Insect: cutHypha(Tecton, Hypha)
+activate Insect
+
+Insect -> Tecton: getNeighbours(Tecton)
+activate Tecton
+
+Tecton --> Insect: return List<Tecton>
+deactivate Tecton
+
+Insect -> Hypha: isConnectedToFungus()
+activate Hypha
+
+Hypha --> Insect: return boolean
+deactivate Hypha
+
+Insect -> Hypha: startDecay()
+activate Hypha
+
+Hypha --> Insect: decay scheduled
+deactivate Hypha
+
+Insect -> Tecton: KeepHyphaTecton()
+activate Tecton
+note right: Ellenőrzi, hogy a tekton\néletben tartja-e a fonalakat
+Tecton --> Insect: return boolean
+deactivate Tecton
+
+alt tekton életben tartja a fonalakat
+    Insect -> Hypha: cancelDecay()
+    activate Hypha
+    Hypha --> Insect: decay cancelled
+    deactivate Hypha
+    note right: A fonál életben marad\ngombatesthez kapcsolódás nélkül is
+end
+
+Insect --> Player: return boolean
+deactivate Insect
+
+Player -> Player: update remainingActions
+
+Player --> Game: action done
+deactivate Player
+deactivate Game
+@enduml

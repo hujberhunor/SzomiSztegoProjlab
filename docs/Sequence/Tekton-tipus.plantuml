@@ -1,0 +1,55 @@
+@startuml SD_tctType
+
+title SD:tctType
+
+actor "Játék Logika" as JatekLogika
+participant ":Game" as Game
+participant ":GameBoard" as GameBoard
+participant ":NoFungiTecton" as NoFungiTecton
+participant ":ShortHyphaTecton" as ShortHyphaTecton
+participant ":InfiniteHyphaTecton" as InfiniteHyphaTecton
+participant ":SingleHyphaTecton" as SingleHyphaTecton
+participant ":LifeSupportTecton" as LifeSupportTecton
+
+JatekLogika -> Game: initGame()
+activate Game
+
+Game -> GameBoard: generateBoard()
+activate GameBoard
+
+GameBoard -> NoFungiTecton: new NoFungiTecton()
+activate NoFungiTecton
+note right of NoFungiTecton: [fungiEnabled=false]
+NoFungiTecton --> GameBoard: return tecton
+deactivate NoFungiTecton
+
+GameBoard -> ShortHyphaTecton: new ShortHyphaTecton()
+activate ShortHyphaTecton
+note right of ShortHyphaTecton: [hyphaLifespan=4]
+ShortHyphaTecton --> GameBoard: return tecton
+deactivate ShortHyphaTecton
+
+GameBoard -> InfiniteHyphaTecton: new InfiniteHyphaTecton()
+activate InfiniteHyphaTecton
+note right of InfiniteHyphaTecton: [hyphaLimit=-1]
+InfiniteHyphaTecton --> GameBoard: return tecton
+deactivate InfiniteHyphaTecton
+
+GameBoard -> SingleHyphaTecton: new SingleHyphaTecton()
+activate SingleHyphaTecton
+note right of SingleHyphaTecton: [hyphaLimit=1]
+SingleHyphaTecton --> GameBoard: return tecton
+deactivate SingleHyphaTecton
+
+GameBoard -> LifeSupportTecton: new LifeSupportTecton()
+activate LifeSupportTecton
+note right of LifeSupportTecton: [connectedHypha=true]
+LifeSupportTecton --> GameBoard: return tecton
+deactivate LifeSupportTecton
+
+GameBoard --> Game: return List <Tecton>
+deactivate GameBoard
+
+Game --> JatekLogika: board ready
+deactivate Game
+@enduml
