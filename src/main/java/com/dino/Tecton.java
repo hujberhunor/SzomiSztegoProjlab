@@ -13,9 +13,9 @@ import java.util.Map;
 public abstract class Tecton {
 
     /// Attribútumok
-    protected boolean fungiEnabled;
-    protected int hyphaLimit;
-    protected int hyphaLifespan;
+    // protected boolean fungiEnabled;
+    // protected int hyphaLimit;
+    // protected int hyphaLifespan;
     protected double breakChance;
     protected int breakCount;
     protected List<Hexagon> hexagons;
@@ -29,9 +29,9 @@ public abstract class Tecton {
      * Alapértelmezett konstruktor
      */
     public Tecton() {
-        this.fungiEnabled = true;
-        this.hyphaLimit = 0;
-        this.hyphaLifespan = -1;
+        // this.fungiEnabled = true;
+        // this.hyphaLimit = 0;
+        // this.hyphaLifespan = -1;
         this.breakChance = 5.0 + Math.random() * 35.0;
         this.breakCount = 0;
         this.hexagons = new ArrayList<>();

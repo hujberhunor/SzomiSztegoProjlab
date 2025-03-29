@@ -5,12 +5,18 @@ package com.dino;
  * maguktól elpusztulnak.
  */
 public class ShortHyphaTecton extends Tecton {
+    private int hyphaLifespan;
     /**
      * Konstruktor
      */
     public ShortHyphaTecton() {
         super();
         this.hyphaLifespan = 4; // Garantáltan négy értékű konstans
+    }
+
+    public void decreaseLifespan(){
+        if(hyphaLifespan > 0) hyphaLifespan--;
+        // TODO else MÁR NEM LEHeT csökkenteni
     }
     
     /**
@@ -22,4 +28,5 @@ public class ShortHyphaTecton extends Tecton {
     protected void handleHypha(Hypha h) {
         //TODO
     }
+
 }

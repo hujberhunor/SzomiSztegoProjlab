@@ -4,12 +4,13 @@ package com.dino;
  * Egy olyan konkrét, példányosítható tektontípus, amin nem nőhetnek gombatestek.
  */
 public class NoFungiTecton extends Tecton {
+    private boolean fungiEnabled;
     /**
      * Konstruktor
      */
     public NoFungiTecton() {
         super();
-        this.fungiEnabled = false; // Garantáltan hamis értékű konstans
+        fungiEnabled = false; // Garantáltan hamis értékű konstans
     }
     
     /**
