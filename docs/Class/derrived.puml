@@ -7,7 +7,7 @@ abstract class Tecton {
     - neighbours: List<Tecton>
     - fungus: Fungus
     - insects: List<Insect>
-    - spores: Map<Mycologist, Integer>
+    - spores: List<Spores>
     - hyphas: List<Mychologist>
     + addSpores(Mycologist)
     + removeSpores(Mycologist)
@@ -21,7 +21,6 @@ abstract class Tecton {
     + hyphaDecay(): void
     + eatInsect(): boolean
 }
-
 class SingleHyphaTecton extends Tecton{
     - hyphaLimit: int = 1
 }
