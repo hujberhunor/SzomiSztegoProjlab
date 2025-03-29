@@ -9,4 +9,5 @@ Hypha:
 Tecton:
 - hyphaDecay(): tectonnak szól, hogy tegye bele a game decayedHypha listába 
 - insect -> List insects (klónozás miatt)
+- hypha lista helyett mychologist lista a hyphas-nál.
 

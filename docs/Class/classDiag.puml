@@ -26,9 +26,6 @@ class Mycologist {
 
 ' ===== Térképelemek és logika =====
 abstract class Tecton {
-    - fungiEnabled: boolean
-    - hyphaLimit: int
-    - hyphaLifespan: int
     - breakChance: double
     - breakCount: int
     - hexagons: List<Hexagon>
@@ -36,7 +33,7 @@ abstract class Tecton {
     - fungus: Fungus
     - insects: List<Insect>
     - spores: Map<Mycologist, Integer>
-    - hyphas: List<Hypha>
+    - hyphas: List<Mychologist>
     + addSpores(Mycologist)
     + removeSpores(Mycologist)
     + addHypha(Hypha)
@@ -46,7 +43,8 @@ abstract class Tecton {
     + hasSpores(Mycologist): boolean
     + setFungus(Fungus)
     # handleHypha(Hypha)
-    + hyphaDecay()
+    + hyphaDecay(): void
+    + eatInsect(): boolean
 }
 
 class Hexagon {

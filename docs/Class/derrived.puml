@@ -1,17 +1,14 @@
 @startuml
 
 abstract class Tecton {
-    - fungiEnabled: boolean
-    - hyphaLimit: int
-    - hyphaLifespan: int
     - breakChance: double
     - breakCount: int
     - hexagons: List<Hexagon>
     - neighbours: List<Tecton>
     - fungus: Fungus
-    - insect: Insect
+    - insects: List<Insect>
     - spores: Map<Mycologist, Integer>
-    - hyphas: List<Hypha>
+    - hyphas: List<Mychologist>
     + addSpores(Mycologist)
     + removeSpores(Mycologist)
     + addHypha(Hypha)
@@ -21,17 +18,27 @@ abstract class Tecton {
     + hasSpores(Mycologist): boolean
     + setFungus(Fungus)
     # handleHypha(Hypha)
+    + hyphaDecay(): void
+    + eatInsect(): boolean
 }
 
-class SingleHyphaTecton extends Tecton
-class ShortHyphaTecton  extends Tecton
-class InfiniteHyphaTecton  extends Tecton{
-    - hyphaCount: int
-    + increaseHyphaCount()
-    + getHyphaCount(): int
+class SingleHyphaTecton extends Tecton{
+    - hyphaLimit: int = 1
 }
-class NoFungiTecton extends Tecton
-class KeepHyphaTecton extends Tecton{ }
+class InfiniteHyphaTecton  extends Tecton{
+    - hyphaLimit: int = -1
+    - hyphas: List<hypha>
+}
+class ShortHyphaTecton  extends Tecton{
+    - hyphaLifespan: int = 4
+    + decreaseLifespan(): void 
+}
+class KeepHyphaTecton extends Tecton{ 
+    - hyphaLifespan: int = -1
+}
+class NoFungiTecton extends Tecton{
+    - fungus: Fungus = null
+}
 
 
 abstract class Spore {
