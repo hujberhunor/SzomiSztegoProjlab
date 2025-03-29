@@ -2,13 +2,13 @@ Game class decayedHypha hypha lista
 Entomologist rovarjainak listája
 
 Hypha:
-- eatInsect(i)
 - lifespan attrib
 - fungus attrib: ki a source gomba a fonalon (0. ind tekton)
 
 Tecton:
 - hyphaDecay(): tectonnak szól, hogy tegye bele a game decayedHypha listába 
 - insect -> List insects (klónozás miatt)
+- eatInsect
 - hypha lista helyett mychologist lista a hyphas-nál.
 - spores map -> spores list: spora tudja ki a tulajdonosa, nem kell tudnia a tektonnak
 
