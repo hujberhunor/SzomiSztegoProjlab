@@ -37,18 +37,16 @@ else ParalyzingEffect
 else StunningEffect
     Spore -> Insect: disableHyphaCutting()
     Insect --> Spore: hypha cutting disabled
-else DuplicatingEffect
-    Spore -> Game: getCurrentPlayer()
-    activate Game
-    Game --> Spore: currentPlayer (Entomologist)
-    deactivate Game
-    
-    Spore -> Entomologist: createNewInsect(tecton)
+else CloneEffect
+    Spore -> Insect: cloneInsect()
+    activate Insect
+    Insect -> Insect: createCopy(currentTecton)
+    Insect -> Entomologist: addInsect(newInsect)
     activate Entomologist
+    Entomologist -> Entomologist: insects.add(newInsect)
     Entomologist --> Insect: duplication complete
-    deactivate Entomologist  
-        
-    
+    deactivate Entomologist
+    deactivate Insect
 else NoEffect
     Spore --> Insect: No changes
 end

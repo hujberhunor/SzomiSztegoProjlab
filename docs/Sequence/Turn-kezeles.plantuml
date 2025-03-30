@@ -5,6 +5,8 @@ actor Game
 participant Player
 participant GameBoard
 participant Tecton
+participant Hypha
+participant Insect
 participant Spore
 
 Game -> Player: startGame()
@@ -15,10 +17,17 @@ loop Akciók végrehajtása
     alt Gombász (Mycologist)
         Player -> Player: spreadSpores()
         Player -> Player: growHypha()
+        Player -> Hypha: eatInsect(Insect i)
     else Rovarász (Entomologist)
         Player -> Player: move()
         Player -> Player: cutHypha()
         Player -> Player: consumeSpores()
+        
+        alt CloneEffect spórát fogyasztott
+            Player -> Insect: clone()
+            Insect -> Insect: copy constructor
+            Insect -> Entomologist: insects.add(newInsect)
+        end
     end
 end
 
@@ -28,13 +37,39 @@ Game -> GameBoard: handleTurn()
 activate GameBoard
 loop Minden tectonon
     GameBoard -> Tecton: update()
-    alt ShortHyphaTecton
-        Tecton -> Tecton: hyphaLifespan--;
+    alt nem KeepHyphaTecton
+        Tecton -> Hypha: lifespan--
+        alt lifespan <= 0
+            Hypha -> Game: toBeCleared.add(this)
+        end
     end
 end
 deactivate GameBoard
 
+Game -> Hypha: handleCutHyphas()
+activate Hypha
+loop Minden elvágott fonalra
+    alt KeepHyphaTecton-on van
+        Hypha -> Hypha: lifespan--
+    else nincs összekapcsolva gombatesttel (fungusConnection == false)
+        Hypha -> Game: toBeCleared.add(this)
+    end
+end
+deactivate Hypha
+
+Game -> Game: clearDeadHyphas()
+loop toBeCleared listában
+    Game -> Hypha: remove()
+end
+
 Game -> Spore: update()
+activate Spore
+loop Minden rovar minden spórájára
+    Spore -> Spore: decreaseEffectDuration()
+    alt effectDuration <= 0
+        Insect -> Spore: removeExpiredEffects()
+    end
+end
 deactivate Spore
 
 Game -> Game: nextTurn()
