@@ -1,0 +1,52 @@
+@startuml SD_mycRnd
+
+title Gombász köre
+actor Gombász
+participant ":Game" as Game
+participant "Mycologist:Player" as Player
+participant ":Hypha" as Hypha
+participant ":Fungus" as Fungus
+participant ":Tecton" as Tecton
+participant ":Insect" as Insect
+
+Gombász -> Game: nextTurn()
+activate Game
+
+Game -> Player: loop
+activate Player
+note left of Player: remainingActions!=0
+
+alt [Action: Grow Hypha]
+    Player -> Hypha: growHypha(List<Hypha>)
+    activate Hypha
+    
+    Hypha -> Fungus: isConnectedToFungus()
+    Fungus --> Hypha: return success [true]
+    
+    Hypha -> Tecton: addHypha()
+    deactivate Hypha
+else [Action: Spread Spores]
+    Player -> Fungus: spreadSpores()
+    activate Fungus
+    
+    Fungus -> Player: addSpores(Mycologist)
+    deactivate Fungus
+else [Action: Place Fungus]
+    Player -> Tecton: placeFungus(Tecton)
+else [Action: Eat Paralyzed Insect]
+    Player -> Hypha: eatInsect(Insect i)
+    activate Hypha
+    Hypha --> Player: return success/failure
+    deactivate Hypha
+end
+
+Player -> Player: update remainingActions
+
+Player --> Game: endTurn()
+deactivate Player
+
+Game -> Player: calculateScore()
+Player --> Gombász: return score
+
+deactivate Game
+@enduml

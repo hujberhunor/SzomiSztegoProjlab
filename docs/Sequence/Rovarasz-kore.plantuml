@@ -1,0 +1,60 @@
+@startuml SD_entRnd
+
+title SD:entRnd
+
+actor Rovarász
+participant ":Game" as Game
+participant "Entomologist:Player" as Player
+participant ":Insect" as Insect
+participant ":Hypha" as Hypha
+participant ":Tecton" as Tecton
+participant ":Spore" as Spore
+
+Rovarász -> Game: nextTurn()
+activate Game
+
+Game -> Player: loop
+activate Player
+
+note left of Player: remainingActions!=0
+
+Player -> Player: frame [move]
+Player -> Tecton: move(targetTecton)
+activate Tecton
+
+note right of Tecton: [path exists]
+
+Tecton -> Insect: update insect
+activate Insect
+deactivate Insect
+deactivate Tecton
+
+Player -> Player: else if removeHypha
+Player -> Hypha: removeHypha()
+activate Hypha
+
+note right of Hypha: [insect can cut]
+
+Hypha -> Insect: removes hypha from list
+activate Insect
+deactivate Insect
+deactivate Hypha
+
+Player -> Player: else if consumeSpore
+Player -> Spore: consumeSpore()
+activate Spore
+
+Spore -> Spore: addEffect(Spore)
+Spore -> Insect: applyTo(Insect)
+deactivate Spore
+
+Player -> Player: update remainingActions
+
+Player --> Game: endTurn()
+deactivate Player
+
+Game -> Game: calculateScore()
+Game --> Rovarász: return score
+
+deactivate Game
+@enduml

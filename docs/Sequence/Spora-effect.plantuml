@@ -1,8 +1,26 @@
 @startuml
 
-== 5. Spóra hatás alkalmazása ==
-actor Insect
+title:Rovartáplálkozás és spóra hatás alkalmazása
+actor Rovarász
+participant Insect
+participant Tecton
 participant Spore
+participant Entomologist
+participant Game
+
+Rovarász -> Insect: consume()
+activate Insect
+
+Insect -> Tecton: getAvailableSpores()
+activate Tecton
+Tecton --> Insect: availableSpores
+deactivate Tecton
+
+alt multiple spore types available
+    Insect -> Insect: selectMostAbundantSpore()
+else equal amounts
+    Insect -> Insect: selectRandomSpore()
+end
 
 Insect -> Spore: applyEffect()
 activate Spore
@@ -19,13 +37,37 @@ else ParalyzingEffect
 else StunningEffect
     Spore -> Insect: disableHyphaCutting()
     Insect --> Spore: hypha cutting disabled
+else CloneEffect
+    Spore -> Insect: cloneInsect()
+    activate Insect
+    Insect -> Insect: createCopy(currentTecton)
+    Insect -> Entomologist: addInsect(newInsect)
+    activate Entomologist
+    Entomologist -> Entomologist: insects.add(newInsect)
+    Entomologist --> Insect: duplication complete
+    deactivate Entomologist
+    deactivate Insect
 else NoEffect
     Spore --> Insect: No changes
 end
 
 Spore -> Insect: applyNutrientValue()
-Spore --> Insect: modify attributes
+Insect -> Entomologist: addNutrientValue(value)
+activate Entomologist
+Entomologist -> Entomologist: increaseScore(value)
+Entomologist --> Insect: nutrient added
+deactivate Entomologist
 
+Spore --> Insect: all effects applied
 deactivate Spore
+
+Insect -> Tecton: removeSpore()
+activate Tecton
+Tecton --> Insect: spore removed
+deactivate Tecton
+
+Insect --> Rovarász: consumption complete
+
+deactivate Insect
 
 @enduml
