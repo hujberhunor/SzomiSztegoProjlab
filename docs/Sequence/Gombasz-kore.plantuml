@@ -21,13 +21,9 @@ alt [Action: Grow Hypha]
     activate Hypha
     
     Hypha -> Fungus: isConnectedToFungus()
-    activate Fungus
     Fungus --> Hypha: return success [true]
-    deactivate Fungus
     
     Hypha -> Tecton: addHypha()
-    activate Tecton
-    deactivate Tecton
     deactivate Hypha
 else [Action: Spread Spores]
     Player -> Fungus: spreadSpores()
@@ -37,35 +33,10 @@ else [Action: Spread Spores]
     deactivate Fungus
 else [Action: Place Fungus]
     Player -> Tecton: placeFungus(Tecton)
-    activate Tecton
-    deactivate Tecton
-else [Action: Eat Paralyzed Insects]
-    Player -> Hypha: checkForParalyzedInsects()
+else [Action: Eat Paralyzed Insect]
+    Player -> Hypha: eatInsect(Insect i)
     activate Hypha
-    
-    Hypha -> Tecton: getInsectsOnTecton()
-    activate Tecton
-    Tecton --> Hypha: return List<Insect>
-    deactivate Tecton
-    
-    loop for each insect
-        Hypha -> Insect: isParalyzed()
-        activate Insect
-        Insect --> Hypha: return boolean
-        deactivate Insect
-        
-        alt insect is paralyzed
-            Hypha -> Insect: consumeInsect()
-            activate Insect
-            Insect --> Hypha: insect destroyed
-            deactivate Insect
-            
-            Hypha -> Fungus: placeFungus(tecton)
-            note right: Új gombatest jön létre\na bénult rovar helyén
-        end
-    end
-    
-    Hypha --> Player: paralyzed insects checked
+    Hypha --> Player: return success/failure
     deactivate Hypha
 end
 
