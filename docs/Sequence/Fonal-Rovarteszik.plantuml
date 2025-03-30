@@ -1,0 +1,35 @@
+@startuml HyphaEatsInsect
+
+title Fonal megeszi a bénult rovart
+
+actor Mycologist
+participant Hypha
+participant Tecton
+participant Insect
+participant Fungus
+
+Mycologist -> Hypha: eatInsect(Insect i)
+activate Hypha
+
+Hypha -> Insect: getEffects()
+Insect --> Hypha: effects: List<Spore>
+
+Hypha -> Hypha: isParalyzed(effects)
+
+alt rovar bénult
+    Hypha -> Tecton: removeInsect(i)
+    
+    alt Ha a Tektonon lehet gombatestet növeszteni és nincs gombatest
+        Hypha -> Fungus: new Fungus(species, tecton)
+        Hypha -> Tecton: setFungus(fungus)
+        Hypha --> Mycologist: true
+    else
+        Hypha --> Mycologist: false
+    end
+else rovar nem bénult
+    Hypha --> Mycologist: false
+end
+
+deactivate Hypha
+
+@enduml
