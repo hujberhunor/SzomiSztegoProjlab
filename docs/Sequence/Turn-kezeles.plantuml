@@ -37,7 +37,7 @@ Game -> GameBoard: handleTurn()
 activate GameBoard
 loop Minden tectonon
     GameBoard -> Tecton: update()
-    alt nem KeepHyphaTecton
+    alt ShortHyphaTecton
         Tecton -> Hypha: lifespan--
         alt lifespan <= 0
             Hypha -> Game: toBeCleared.add(this)
@@ -49,9 +49,7 @@ deactivate GameBoard
 Game -> Hypha: handleCutHyphas()
 activate Hypha
 loop Minden elvágott fonalra
-    alt KeepHyphaTecton-on van
-        Hypha -> Hypha: lifespan--
-    else nincs összekapcsolva gombatesttel (fungusConnection == false)
+    alt nem KeepHyphaTecton és nincs összekapcsolva gombatesttel
         Hypha -> Game: toBeCleared.add(this)
     end
 end
