@@ -50,11 +50,23 @@ abstract class Spore {
     + applyTo(Insect)
 }
 
-class StunningEffect extends Spore
-class SlowingEffect extends Spore
-class SporeNoEffect extends Spore
-class ParalyzingEffect extends Spore
-class AcceleratingEffect extends Spore
-class CloneEffect extends Spore
+class StunningEffect extends Spore{
+    {static} - nutrientValue: int = 3
+}
+class SlowingEffect extends Spore{
+    {static} - nutrientValue: int = 2
+}
+class SporeNoEffect extends Spore{
+    {static} - nutrientValue: int = 1
+}
+class ParalyzingEffect extends Spore{
+    {static} - nutrientValue: int = 4
+}
+class AcceleratingEffect extends Spore{
+    {static} - nutrientValue: int = 1
+}
+class CloneEffect extends Spore{
+    {static} - nutrientValue: int = ??
+}
 
 @enduml
