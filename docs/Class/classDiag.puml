@@ -64,7 +64,6 @@ class Hypha {
     + getSpecies(): Mycologist
     + continueHypha(Tecton t)
     + getTectons(): List<Tecton>
-    + eatInsect(Insect i): boolean
 }
 
 class Fungus {

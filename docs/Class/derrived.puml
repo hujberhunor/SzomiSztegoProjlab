@@ -1,6 +1,7 @@
 @startuml
 
 abstract class Tecton {
+    - hyphaLimit: int 
     - breakChance: double
     - breakCount: int
     - hexagons: List<Hexagon>
@@ -25,17 +26,21 @@ class SingleHyphaTecton extends Tecton{
     - hyphaLimit: int = 1
 }
 class InfiniteHyphaTecton  extends Tecton{
+    - hyphaLimit: int = 1
     - hyphaLimit: int = -1
     - hyphas: List<hypha>
 }
 class ShortHyphaTecton  extends Tecton{
+    - hyphaLimit: int = 1
     - hyphaLifespan: int = 4
     + decreaseLifespan(): void 
 }
 class KeepHyphaTecton extends Tecton{ 
+    - hyphaLimit: int = 1
     - hyphaLifespan: int = -1
 }
 class NoFungiTecton extends Tecton{
+    - hyphaLimit: int = 1
     - fungus: Fungus = null
 }
 

@@ -23,6 +23,7 @@ public abstract class Tecton {
     protected Fungus fungus;
     protected List<Insect> insects;
     protected Map<Mycologist, Integer> spores;
+    // protected List<Spores> spores;
     protected List<Hypha> hyphas;
 
     /**

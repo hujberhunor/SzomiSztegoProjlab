@@ -60,4 +60,13 @@ public class Mycologist {
         skeleton.log("Gombatest sikeresen elhelyezve a tektonon.");
         skeleton.endMethod();
     }
+
+    /*
+     * CSAK DEBUG ÉS TESZT JELLEGGEL 
+     * INITELÉSHEZ LETT LÉRTEROZVA
+     */
+    void debugPlaceFungus(Tecton t){
+        Fungus f = new Fungus();
+        t.setFungus(f);
+    }
 }
