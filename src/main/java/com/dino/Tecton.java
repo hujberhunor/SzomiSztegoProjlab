@@ -13,31 +13,32 @@ import java.util.Map;
 public abstract class Tecton {
 
     /// Attribútumok
-    protected boolean fungiEnabled;
-    protected int hyphaLimit;
-    protected int hyphaLifespan;
+    // protected boolean fungiEnabled;
+    // protected int hyphaLimit;
+    // protected int hyphaLifespan;
     protected double breakChance;
     protected int breakCount;
     protected List<Hexagon> hexagons;
     protected List<Tecton> neighbours;
     protected Fungus fungus;
-    protected Insect insect;
+    protected List<Insect> insects;
     protected Map<Mycologist, Integer> spores;
+    // protected List<Spores> spores;
     protected List<Hypha> hyphas;
 
     /**
      * Alapértelmezett konstruktor
      */
     public Tecton() {
-        this.fungiEnabled = true;
-        this.hyphaLimit = 0;
-        this.hyphaLifespan = -1;
+        // this.fungiEnabled = true;
+        // this.hyphaLimit = 0;
+        // this.hyphaLifespan = -1;
         this.breakChance = 5.0 + Math.random() * 35.0;
         this.breakCount = 0;
         this.hexagons = new ArrayList<>();
         this.neighbours = new ArrayList<>();
         this.fungus = null;
-        this.insect = null;
+        this.insects = new ArrayList<>();
         this.spores = new HashMap<>();
         this.hyphas = new ArrayList<>();
     }
@@ -134,7 +135,7 @@ public abstract class Tecton {
         List<Tecton> resultTectons = new ArrayList<>();
 
         // Ha van rajta rovar, nem törhet el a tekton
-        if (insect != null) {
+        if (insects.size() > 0) {
             skeleton.log("A tekton nem törhet el, mert van rajta rovar");
             skeleton.endMethod();
             return resultTectons;
@@ -265,5 +266,9 @@ public abstract class Tecton {
 
     public void setNeighbours(List<Tecton> t){
         this.neighbours = t;
+    }
+
+    public List<Insect> getInsects(){ 
+        return insects;
     }
 }

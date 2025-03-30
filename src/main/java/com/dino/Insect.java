@@ -1,6 +1,11 @@
 package com.dino;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
+import java.util.Map;
+import java.util.Optional;
+import java.util.Random;
 
 /**
  * Egy rovart reprezentáló osztály.
@@ -27,9 +32,29 @@ public class Insect {
         this.effects = new ArrayList<>();
     }
 
+    /*
+     * Copy konstruktor
+     * Klónozáshoz kell
+     */
+    public Insect(Insect original) {
+        this.entomologist = original.entomologist;
+        this.currentTecton = original.currentTecton;
+        this.effects = new ArrayList<>();
+
+        /// Csak azokat az effekteket pakolom bele amelyek nem cloneEffectek (végtelen rekurzió elkerülése végett)
+        for (Spore s : original.effects) {
+            if (!(s instanceof CloneEffect)) {
+                this.effects.add(s);
+            }
+        }
+    }
+
     /**
-     * A rovar átlép a paraméterként kapott tektonra, amennyiben az szomszédos, és vezet át gombafonál a jelenlegi tartózkodási hely és a célként választott tekton között.
+     * A rovar átlép a paraméterként kapott tektonra, amennyiben az szomszédos, és
+     * vezet át gombafonál a jelenlegi tartózkodási hely és a célként választott
+     * tekton között.
      * Visszaadja, hogy sikeres volt-e a művelet.
+     * 
      * @param t
      * @return true ha a mozgás sikeres volt, különben false
      */
@@ -48,8 +73,7 @@ public class Insect {
         for (Spore s : effects) {
             if (s instanceof ParalyzingEffect) {
                 skeleton.log(
-                    "Nem mozdulhat: ParalyzingEffect hatás alatt van."
-                );
+                        "Nem mozdulhat: ParalyzingEffect hatás alatt van.");
                 skeleton.endMethod();
                 return false;
             }
@@ -78,8 +102,10 @@ public class Insect {
     }
 
     /**
-     * A rovar megsemmisíti a választott tekton és a jelenlegi tartózkodási helye között futó h fonalat, amennyiben az szomszédos az övével.
+     * A rovar megsemmisíti a választott tekton és a jelenlegi tartózkodási helye
+     * között futó h fonalat, amennyiben az szomszédos az övével.
      * Visszaadja, hogy sikeres volt-e a művelet.
+     * 
      * @param h
      * @param targetTecton
      * @return
@@ -104,8 +130,8 @@ public class Insect {
 
         // Ellenőrizzük, hogy a rovar kábító spórák hatása alatt van-e
         boolean isStunned = effects
-            .stream()
-            .anyMatch(spore -> spore instanceof StunningEffect);
+                .stream()
+                .anyMatch(spore -> spore instanceof StunningEffect);
 
         if (isStunned) {
             skeleton.log("Nem vághat: a rovar kábító spóra hatása alatt van.");
@@ -114,23 +140,23 @@ public class Insect {
         }
 
         // Sikeres fonálvágás
-        // Kikeressük, hogy a fonál tektonlistájában hol található a tekon, amire a rovar vág
+        // Kikeressük, hogy a fonál tektonlistájában hol található a tekon, amire a
+        // rovar vág
         // A kapott indextől kezdve töröljük a lista elemeit
         int index = -1;
 
         skeleton.log("A fonál tektonjai a vágás előtt:");
-        for (int i = 0; i < h.getTectons().size(); i++){
+        for (int i = 0; i < h.getTectons().size(); i++) {
             skeleton.log(h.getTectons().get(i).toString());
-            if (h.getTectons().get(i).equals(targetTecton)){
+            if (h.getTectons().get(i).equals(targetTecton)) {
                 index = i;
             }
         }
 
-
         h.getTectons().subList(index, h.getTectons().size()).clear();
 
         skeleton.log("A fonál tektonjai a vágás után:");
-        for (int i = 0; i < h.getTectons().size(); i++){
+        for (int i = 0; i < h.getTectons().size(); i++) {
             skeleton.log(h.getTectons().get(i).toString());
         }
 
@@ -142,16 +168,20 @@ public class Insect {
     }
 
     /**
-     * A rovar táplálkozik a saját tektonján lévő spórákból, és a tápanyagtartalmat hozzáadja a paraméterként kapott rovarász pontszámához.
-     * Ha több fajta található, abból eszik, amelyikből több van (ha egyenlő, akkor véletlenszerű).
-     * Ekkor az elfogyasztott spóra tápanyagtartalmától függően nő a játékos pontszáma.
+     * A rovar táplálkozik a saját tektonján lévő spórákból, és a tápanyagtartalmat
+     * hozzáadja a paraméterként kapott rovarász pontszámához.
+     * Ha több fajta található, abból eszik, amelyikből több van (ha egyenlő, akkor
+     * véletlenszerű).
+     * Ekkor az elfogyasztott spóra tápanyagtartalmától függően nő a játékos
+     * pontszáma.
+     * 
      * @param e
      */
     public boolean consumeSpores(Entomologist e) {
         Skeleton skeleton = Skeleton.getInstance();
         skeleton.startMethod("Insect", "consume");
 
-        //Ellenőrizzük, hogy van-e spóra a tektonon
+        // Ellenőrizzük, hogy van-e spóra a tektonon
         if (currentTecton.spores.isEmpty()) {
             skeleton.log("Nem lehet spórát enni: a tektonon nincs spóra.");
             skeleton.endMethod();
@@ -161,8 +191,7 @@ public class Insect {
         // Spóra elfogyasztása
         final Mycologist[] mycologistWrapper = new Mycologist[1];
 
-        Optional<Map.Entry<Mycologist, Integer>> maxSporeCountEntry =
-            currentTecton.spores
+        Optional<Map.Entry<Mycologist, Integer>> maxSporeCountEntry = currentTecton.spores
                 .entrySet()
                 .stream()
                 .max(Map.Entry.comparingByValue());
@@ -172,21 +201,19 @@ public class Insect {
         });
 
         List<Class<? extends Spore>> sporeClasses = Arrays.asList(
-            AcceleratingEffect.class,
-            ParalyzingEffect.class,
-            SlowingEffect.class,
-            SporeNoEffect.class,
-            StunningEffect.class
-        );
+                AcceleratingEffect.class,
+                ParalyzingEffect.class,
+                SlowingEffect.class,
+                SporeNoEffect.class,
+                StunningEffect.class);
         Random random = new Random();
         Class<? extends Spore> randomSporeClass = sporeClasses.get(
-            random.nextInt(sporeClasses.size())
-        );
+                random.nextInt(sporeClasses.size()));
 
         try {
             Spore spore = randomSporeClass
-                .getDeclaredConstructor(Mycologist.class)
-                .newInstance(mycologistWrapper[0]);
+                    .getDeclaredConstructor(Mycologist.class)
+                    .newInstance(mycologistWrapper[0]);
             spore.applyTo(this);
         } catch (Exception exc) {
             throw new RuntimeException("Failed to create spore instance", exc);
@@ -201,6 +228,7 @@ public class Insect {
 
     /**
      * A rovar effektlistájához hozzáadja az új effektet.
+     * 
      * @param s
      */
     public void addEffects(Spore s) {
@@ -219,8 +247,8 @@ public class Insect {
         Skeleton skeleton = Skeleton.getInstance();
         skeleton.startMethod("Insect", "remove effects");
 
-        for (int i = 0; i < effects.size(); i++){
-            if (effects.get(i).getEffectDuration() == 0){
+        for (int i = 0; i < effects.size(); i++) {
+            if (effects.get(i).getEffectDuration() == 0) {
                 skeleton.log("Törölt spóra: " + effects.get(i).toString());
                 effects.remove(i);
             }
@@ -233,5 +261,9 @@ public class Insect {
 
     public Entomologist getEntomologist() {
         return entomologist;
+    }
+
+    public Tecton getTecton() {
+        return currentTecton;
     }
 }

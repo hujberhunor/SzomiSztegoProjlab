@@ -7,15 +7,16 @@ package com.dino;
 public class InfiniteHyphaTecton extends Tecton {
 
     /// Attribútum
-    private int hyphaCount; /// A tektonon lévő fonalak száma
-
+    private int hyphaCount; /// A tektonon lévő fonalak száma == hpyhas.size()
+    private int hyphaLimit;
+    
     /**
      * Konstruktor
      */
     public InfiniteHyphaTecton() {
         super();
         this.hyphaLimit = -1; // Végtelen számú fonál biztosítása
-        this.hyphaCount = 0;
+        this.hyphaCount = hyphas.size();
     }
 
     /**
@@ -33,6 +34,10 @@ public class InfiniteHyphaTecton extends Tecton {
      */
     public void increaseHyphaCount() {
         this.hyphaCount++;
+    }
+   
+    public void decreaseHyphaCount() {
+        this.hyphaCount--;
     }
 
     /**

@@ -16,7 +16,7 @@ public class Main {
         Tecton targetTecton = new InfiniteHyphaTecton();
         Tecton accelTecton = new InfiniteHyphaTecton();
         Tecton nonNeighbour = new InfiniteHyphaTecton();
-        Insect insect = new Insect(player, startTecton); //start tectonon indul a rovar
+        Insect insect = new Insect(player, startTecton); // start tectonon indul a rovar
 
         // A két tekton legyen szomszédos és kötődjenek össze fonallal
         startTecton.neighbours.add(targetTecton);
@@ -75,8 +75,7 @@ public class Main {
         hypha.getTectons().remove(startTecton);
         insect = new Insect(player, targetTecton); // resetelem az insectet
         skeleton.log(
-            "Teszt: rovar mozgása szomszédos de fonallal nem összekötött tektonra."
-        );
+                "Teszt: rovar mozgása szomszédos de fonallal nem összekötött tektonra.");
         insect.move(startTecton);
         skeleton.log("\n");
 
@@ -127,15 +126,16 @@ public class Main {
 
         // Inicializáljuk az entomológust és a rovarát
         Entomologist player = new Entomologist(3);
-        Tecton firstTecton = new InfiniteHyphaTecton(); //Az a tekton, ahol a rovar tartózkodik
+        Tecton firstTecton = new InfiniteHyphaTecton(); // Az a tekton, ahol a rovar tartózkodik
         skeleton.log("Első tekton azonosítója: " + firstTecton.toString());
-        Tecton secondTecton = new InfiniteHyphaTecton(); //Tekton a kettő között
+        Tecton secondTecton = new InfiniteHyphaTecton(); // Tekton a kettő között
         skeleton.log("Második tekton azonosítója: " + secondTecton.toString());
         Tecton thirdTecton = new InfiniteHyphaTecton(); // Utolsó tekton, ahonnan a fonál indul
         skeleton.log("Harmadik tekton azonosítója: " + thirdTecton.toString());
         Insect insect = new Insect(player, firstTecton);
 
-        //Inicializálunk három tekton, amik közül az első és a harmadik nem szomszédosak egymással
+        // Inicializálunk három tekton, amik közül az első és a harmadik nem
+        // szomszédosak egymással
         firstTecton.neighbours.add(secondTecton);
         secondTecton.neighbours.add(firstTecton);
         secondTecton.neighbours.add(thirdTecton);
@@ -152,8 +152,7 @@ public class Main {
 
         // Sikertelen vágás (a tektonon nincs fonál)
         skeleton.log(
-            "2. eset: Vágás megkísérlése olyan tektonra, amin nincs fonál."
-        );
+                "2. eset: Vágás megkísérlése olyan tektonra, amin nincs fonál.");
         insect.cutHypha(hypha, secondTecton);
 
         // Létrehozunk egy gombafonalat, ami az első tektonról indulva a harmadikig tart
@@ -194,8 +193,10 @@ public class Main {
         System.out.print("Hexagonok száma a tektonban (1 vagy több): ");
         int hexagonCount = scanner.nextInt();
 
-        // Eredeti törési valószínűség bekérése (Teszt miatt lehet 1-100 között, de rendes implementálásnál generálásnál 5-40 között lesz)
-        //Ha már volt törés, akkor érdemes 100-200 között megadni az értéket, ha látni is akarunk törést a Skeleton tesztelésnél
+        // Eredeti törési valószínűség bekérése (Teszt miatt lehet 1-100 között, de
+        // rendes implementálásnál generálásnál 5-40 között lesz)
+        // Ha már volt törés, akkor érdemes 100-200 között megadni az értéket, ha látni
+        // is akarunk törést a Skeleton tesztelésnél
         System.out.print("Eredeti törési valószínűség(1-100 között): ");
         double originalBreakChance = scanner.nextDouble();
 
@@ -213,7 +214,7 @@ public class Main {
             currentBreakChance = 0;
         }
 
-        //Tectonon tartózkodik rovar vagy sem
+        // Tectonon tartózkodik rovar vagy sem
         System.out.print("Van rajta rovar? (0 - nincs, 1 - van): ");
         int hasInsect = scanner.nextInt();
 
@@ -235,7 +236,8 @@ public class Main {
         if (hasInsect == 1) {
             Entomologist player = new Entomologist(3);
             Insect insect = new Insect(player, tecton);
-            tecton.insect = insect;
+            if (!tecton.insects.contains(insect))
+                tecton.insects.add(insect); // EDITELTEM, szűrni kellene hogy benne van-e már
         }
 
         // Teszt elkezdése
@@ -243,17 +245,14 @@ public class Main {
         skeleton.log("Tekton konfiguráció:");
         skeleton.log("- Hexagonok száma: " + hexagonCount);
         skeleton.log(
-            "- Eredeti törési valószínűség: " + originalBreakChance + "%"
-        );
+                "- Eredeti törési valószínűség: " + originalBreakChance + "%");
         skeleton.log("- Előző törések száma: " + breakCount);
         skeleton.log(
-            "- Aktuális törési valószínűség: " + currentBreakChance + "%"
-        );
+                "- Aktuális törési valószínűség: " + currentBreakChance + "%");
         skeleton.log(
-            "- Van-e rajta rovar: " + (hasInsect == 1 ? "Igen" : "Nem")
-        );
+                "- Van-e rajta rovar: " + (hasInsect == 1 ? "Igen" : "Nem"));
 
-        //split lefutása
+        // split lefutása
         List<Tecton> result = tecton.split(tecton.breakChance);
 
         // Végeredmény
@@ -261,10 +260,9 @@ public class Main {
             skeleton.log("A törés nem történt meg.");
         } else {
             skeleton.log(
-                "A törés sikeresen megtörtént, " +
-                result.size() +
-                " új tekton jött létre."
-            );
+                    "A törés sikeresen megtörtént, " +
+                            result.size() +
+                            " új tekton jött létre.");
         }
 
         // Teszt vége
@@ -291,8 +289,7 @@ public class Main {
 
         // 2. Teszteset
         skeleton.log(
-            "2. Teszt eset: Sikertelen elhelyezés - Nincs megfelelő gombafonál"
-        );
+                "2. Teszt eset: Sikertelen elhelyezés - Nincs megfelelő gombafonál");
         Tecton tecton2 = new InfiniteHyphaTecton();
         tecton2.addSpores(mycologist);
         tecton2.addSpores(mycologist);
@@ -300,8 +297,7 @@ public class Main {
 
         // 3. Teszteset
         skeleton.log(
-            "3. Teszt eset: Sikertelen elhelyezés - Nincs elegendő spóra"
-        );
+                "3. Teszt eset: Sikertelen elhelyezés - Nincs elegendő spóra");
         Tecton tecton3 = new InfiniteHyphaTecton();
         tecton3.setHyphas(hyphas);
         mycologist.placeFungus(tecton3);
@@ -318,16 +314,14 @@ public class Main {
 
         // 1. Teszteset
         skeleton.log(
-            "1. Teszt eset: Sikeres gombafonál növesztés egy tektonra"
-        );
+                "1. Teszt eset: Sikeres gombafonál növesztés egy tektonra");
         List<Tecton> singleTectonList = new ArrayList<>();
         singleTectonList.add(tecton1);
         fungus.growHypha(singleTectonList);
 
         // 2. Teszteset
         skeleton.log(
-            "2. Teszt eset: Sikeres gombafonál növesztés két tektonra"
-        );
+                "2. Teszt eset: Sikeres gombafonál növesztés két tektonra");
         Tecton tecton3 = new InfiniteHyphaTecton();
         List<Tecton> neighborsTectonList = new ArrayList<>();
         tecton3.setNeighbours(neighborsTectonList);
@@ -337,15 +331,13 @@ public class Main {
 
         // 3. Teszteset
         skeleton.log(
-            "3. Teszt eset: Sikertelen gombafonál növesztés - üres lista"
-        );
+                "3. Teszt eset: Sikertelen gombafonál növesztés - üres lista");
         List<Tecton> emptyList = new ArrayList<>();
         fungus.growHypha(emptyList);
 
         // 4. Teszteset
         skeleton.log(
-            "4. Teszt eset: Sikertelen gombafonál növesztés - nem szomszédos tektonok"
-        );
+                "4. Teszt eset: Sikertelen gombafonál növesztés - nem szomszédos tektonok");
         List<Tecton> doubleTectonList = new ArrayList<>();
         doubleTectonList.add(tecton1);
         doubleTectonList.add(tecton2);
@@ -388,16 +380,14 @@ public class Main {
         fungus1.spreadSpores();
         newCharge = fungus1.getCharge();
         skeleton.log(
-            "Töltöttség a spóraszórás előtt: " +
-            originalCharge +
-            ", után: " +
-            newCharge
-        );
+                "Töltöttség a spóraszórás előtt: " +
+                        originalCharge +
+                        ", után: " +
+                        newCharge);
 
         // 2. Teszteset
         skeleton.log(
-            "2. Teszteset: Töltöttség == 2 - Spóraszórás a szomszédos tektonokra"
-        );
+                "2. Teszteset: Töltöttség == 2 - Spóraszórás a szomszédos tektonokra");
         Fungus fungus2 = new Fungus();
         fungus2.setSpecies(mycologist);
         fungus2.setTecton(tecton1);
@@ -406,16 +396,14 @@ public class Main {
         fungus2.spreadSpores();
         newCharge = fungus2.getCharge();
         skeleton.log(
-            "Töltöttség a spóraszórás előtt: " +
-            originalCharge +
-            ", után: " +
-            newCharge
-        );
+                "Töltöttség a spóraszórás előtt: " +
+                        originalCharge +
+                        ", után: " +
+                        newCharge);
 
         // 3. Teszteset
         skeleton.log(
-            "3. Teszteset: Töltöttség == 3 - Spóraszórás a szomszédos tektonok szomszédjaira"
-        );
+                "3. Teszteset: Töltöttség == 3 - Spóraszórás a szomszédos tektonok szomszédjaira");
         Fungus fungus3 = new Fungus();
         fungus3.setSpecies(mycologist);
         fungus3.setTecton(tecton1);
@@ -424,11 +412,10 @@ public class Main {
         fungus3.spreadSpores();
         newCharge = fungus3.getCharge();
         skeleton.log(
-            "Töltöttség a spóraszórás előtt: " +
-            originalCharge +
-            ", után: " +
-            newCharge
-        );
+                "Töltöttség a spóraszórás előtt: " +
+                        originalCharge +
+                        ", után: " +
+                        newCharge);
 
         skeleton.endMethod();
     }

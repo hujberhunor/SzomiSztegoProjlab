@@ -1,17 +1,15 @@
 @startuml
 
 abstract class Tecton {
-    - fungiEnabled: boolean
-    - hyphaLimit: int
-    - hyphaLifespan: int
+    - hyphaLimit: int 
     - breakChance: double
     - breakCount: int
     - hexagons: List<Hexagon>
     - neighbours: List<Tecton>
     - fungus: Fungus
-    - insect: Insect
-    - spores: Map<Mycologist, Integer>
-    - hyphas: List<Hypha>
+    - insects: List<Insect>
+    - spores: List<Spores>
+    - hyphas: List<Mychologist>
     + addSpores(Mycologist)
     + removeSpores(Mycologist)
     + addHypha(Hypha)
@@ -21,17 +19,30 @@ abstract class Tecton {
     + hasSpores(Mycologist): boolean
     + setFungus(Fungus)
     # handleHypha(Hypha)
+    + hyphaDecay(): void
+    + eatInsect(): boolean
 }
-
-class SingleHyphaTecton extends Tecton
-class ShortHyphaTecton  extends Tecton
+class SingleHyphaTecton extends Tecton{
+    - hyphaLimit: int = 1
+}
 class InfiniteHyphaTecton  extends Tecton{
-    - hyphaCount: int
-    + increaseHyphaCount()
-    + getHyphaCount(): int
+    - hyphaLimit: int = 1
+    - hyphaLimit: int = -1
+    - hyphas: List<hypha>
 }
-class NoFungiTecton extends Tecton
-class KeepHyphaTecton extends Tecton{ }
+class ShortHyphaTecton  extends Tecton{
+    - hyphaLimit: int = 1
+    - hyphaLifespan: int = 4
+    + decreaseLifespan(): void 
+}
+class KeepHyphaTecton extends Tecton{ 
+    - hyphaLimit: int = 1
+    - hyphaLifespan: int = -1
+}
+class NoFungiTecton extends Tecton{
+    - hyphaLimit: int = 1
+    - fungus: Fungus = null
+}
 
 
 abstract class Spore {
@@ -44,11 +55,23 @@ abstract class Spore {
     + applyTo(Insect)
 }
 
-class StunningEffect extends Spore
-class SlowingEffect extends Spore
-class SporeNoEffect extends Spore
-class ParalyzingEffect extends Spore
-class AcceleratingEffect extends Spore
-class CloneEffect extends Spore
+class StunningEffect extends Spore{
+    {static} - nutrientValue: int = 3
+}
+class SlowingEffect extends Spore{
+    {static} - nutrientValue: int = 2
+}
+class SporeNoEffect extends Spore{
+    {static} - nutrientValue: int = 1
+}
+class ParalyzingEffect extends Spore{
+    {static} - nutrientValue: int = 4
+}
+class AcceleratingEffect extends Spore{
+    {static} - nutrientValue: int = 1
+}
+class CloneEffect extends Spore{
+    {static} - nutrientValue: int = ??
+}
 
 @enduml
