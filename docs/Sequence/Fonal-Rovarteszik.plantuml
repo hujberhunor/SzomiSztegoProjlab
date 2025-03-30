@@ -3,33 +3,39 @@
 title Fonal megeszi a bénult rovart
 
 actor Mycologist
-participant Hypha
 participant Tecton
 participant Insect
 participant Fungus
 
-Mycologist -> Hypha: eatInsect(Insect i)
-activate Hypha
+Mycologist -> Tecton: eatInsect()
+activate Tecton
 
-Hypha -> Insect: getEffects()
-Insect --> Hypha: effects: List<Spore>
+Tecton -> Insect: getEffects()
+Insect --> Tecton: effects: List<Spore>
 
-Hypha -> Hypha: isParalyzed(effects)
+Tecton -> Tecton: checkParalyzingEffect(effects)
 
 alt rovar bénult
-    Hypha -> Tecton: removeInsect(i)
+    Tecton -> Tecton: hyphas.contains(Mycologist)
+    note right: Ellenőrzi, hogy a Gombásznak\nvan-e fonala a tektonon
     
-    alt Ha a Tektonon lehet gombatestet növeszteni és nincs gombatest
-        Hypha -> Fungus: new Fungus(species, tecton)
-        Hypha -> Tecton: setFungus(fungus)
-        Hypha --> Mycologist: true
+    alt Van fonala a gombásznak
+        Tecton -> Tecton: insects.remove(insect)
+        
+        alt fungiEnabled && fungus == null
+            Tecton -> Fungus: new Fungus(Mycologist, tecton)
+            Tecton -> Tecton: setFungus(fungus)
+            Tecton --> Mycologist: true
+        else
+            Tecton --> Mycologist: false
+        end
     else
-        Hypha --> Mycologist: false
+        Tecton --> Mycologist: false
     end
 else rovar nem bénult
-    Hypha --> Mycologist: false
+    Tecton --> Mycologist: false
 end
 
-deactivate Hypha
+deactivate Tecton
 
 @enduml

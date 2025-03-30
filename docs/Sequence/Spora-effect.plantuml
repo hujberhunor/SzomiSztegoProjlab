@@ -1,6 +1,6 @@
 @startuml
 
-== Rovartáplálkozás és spóra hatás alkalmazása ==
+title:Rovartáplálkozás és spóra hatás alkalmazása
 actor Rovarász
 participant Insect
 participant Tecton

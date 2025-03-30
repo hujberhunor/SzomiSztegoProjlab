@@ -1,6 +1,6 @@
 @startuml SD_tctType
 
-title SD:tctType
+title Tecton Típusok
 
 actor "Játék Logika" as JatekLogika
 participant ":Game" as Game
@@ -9,7 +9,7 @@ participant ":NoFungiTecton" as NoFungiTecton
 participant ":ShortHyphaTecton" as ShortHyphaTecton
 participant ":InfiniteHyphaTecton" as InfiniteHyphaTecton
 participant ":SingleHyphaTecton" as SingleHyphaTecton
-participant ":LifeSupportTecton" as LifeSupportTecton
+participant ":KeepHyphaTecton" as KeepHyphaTecton
 
 JatekLogika -> Game: initGame()
 activate Game
@@ -41,11 +41,11 @@ note right of SingleHyphaTecton: [hyphaLimit=1]
 SingleHyphaTecton --> GameBoard: return tecton
 deactivate SingleHyphaTecton
 
-GameBoard -> LifeSupportTecton: new LifeSupportTecton()
-activate LifeSupportTecton
-note right of LifeSupportTecton: [connectedHypha=true]
-LifeSupportTecton --> GameBoard: return tecton
-deactivate LifeSupportTecton
+GameBoard -> KeepHyphaTecton: new KeepHyphaTecton()
+activate KeepHyphaTecton
+note right of KeepHyphaTecton: [lifespam=-1]
+KeepHyphaTecton --> GameBoard: return tecton
+deactivate KeepHyphaTecton
 
 GameBoard --> Game: return List <Tecton>
 deactivate GameBoard

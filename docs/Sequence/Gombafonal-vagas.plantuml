@@ -1,38 +1,39 @@
 @startuml SD_hypCut
+title: Gombafonal vágása
 
 actor Rovarász
 participant ":Game" as Game
 participant "Entomologist:Player" as Player
 participant ":Insect" as Insect
 participant ":Hypha" as Hypha
-participant ":Tecton" as Tecton
+'participant ":Tecton" as Tecton
 
 Rovarász -> Game: SelectAction()
 activate Game
 
 Game -> Player: SelectAction()
+
+deactivate Game 
 activate Player
 
 Player -> Insect: cutHypha(Hypha, Tecton)
-activate Insect
+deactivate Player
 
+activate Insect
+activate Hypha
 Insect -> Hypha: getTectons()
 Hypha --> Insect: List<Tecton>
-
-Insect -> Hypha: continueHypha(Tecton)
-activate Hypha
-
-alt nem KeepHyphaTecton
-    Hypha -> Game: decayedHypha.add(this)
-end
-
-Hypha --> Insect: true
 deactivate Hypha
 
-Insect --> Player: true
 deactivate Insect
 
-Player --> Game: action done
+
+    alt lifespam == 0
+    activate Game
+    Hypha -> Game: decayedHypha.add(this)
+    deactivate Game
+    end
+
 deactivate Player
 deactivate Game
 @enduml

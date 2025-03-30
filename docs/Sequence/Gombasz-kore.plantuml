@@ -1,6 +1,6 @@
 @startuml SD_mycRnd
 
-title SD:mycRnd
+title Gombász köre
 actor Gombász
 participant ":Game" as Game
 participant "Mycologist:Player" as Player
