@@ -4,6 +4,11 @@ import java.util.HashMap;
 import java.util.IdentityHashMap;
 import java.util.Map;
 
+/**
+ * Ez tartja számon, hogy melyik OBJEKTUMNAK mi a NEVE
+ * Logger osztály miatt kell. Tudni akarjuk, hogy melyik objektum
+ * változását követjük. 
+ */
 public class EntityRegistry {
     private final Map<String, Object> nameToObject = new HashMap<>();
     private final Map<Object, String> objectToName = new IdentityHashMap<>();
