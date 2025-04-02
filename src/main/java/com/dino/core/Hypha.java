@@ -1,7 +1,11 @@
-package com.dino;
+package com.dino.core;
 
 import java.util.ArrayList;
 import java.util.List;
+
+import com.dino.player.Mycologist;
+import com.dino.tecton.Tecton;
+
 
 /**
  * A gombafonalakat reprezentáló osztály. Egy objektum a növesztés sorrendjében tartalmazza a tektonokat,
@@ -62,5 +66,11 @@ public class Hypha {
      */
     public List<Tecton> getTectons() {
         return tectons;
+    }
+
+    public void connectTectons(Tecton... path) {
+        for (Tecton t : path) {
+            tectons.add(t);
+        }
     }
 } // End of Hypha

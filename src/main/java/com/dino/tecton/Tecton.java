@@ -1,9 +1,16 @@
-package com.dino;
+package com.dino.tecton;
 
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+
+import com.dino.core.Fungus;
+import com.dino.core.Hexagon;
+import com.dino.core.Hypha;
+import com.dino.core.Insect;
+import com.dino.player.Mycologist;
+import com.dino.util.Skeleton;
 
 /**
  * Ennek az absztrakt osztálynak a leszármazottjai reprezentálják a játékteret alkotó egységeket, vagy mezőket.
@@ -16,15 +23,16 @@ public abstract class Tecton {
     // protected boolean fungiEnabled;
     // protected int hyphaLimit;
     // protected int hyphaLifespan;
-    protected double breakChance;
-    protected int breakCount;
-    protected List<Hexagon> hexagons;
-    protected List<Tecton> neighbours;
-    protected Fungus fungus;
-    protected List<Insect> insects;
-    protected Map<Mycologist, Integer> spores;
-    // protected List<Spores> spores;
-    protected List<Hypha> hyphas;
+    public double breakChance;
+    public int breakCount;
+    public List<Hexagon> hexagons;
+    public List<Tecton> neighbours;
+    public Fungus fungus;
+    public List<Insect> insects;
+    public Map<Mycologist, Integer> spores;
+    // TODO ÁTÍRNI 
+    // publicted List<Spores> spores;
+    public List<Hypha> hyphas;
 
     /**
      * Alapértelmezett konstruktor
@@ -95,8 +103,9 @@ public abstract class Tecton {
      * @param h Az elhelyezendő gombafonál
      */
     public void addHypha(Hypha h) {
-        // TODO IMPLEMENTÁLNI
+        hyphas.add(h);
     }
+
 
     /**
      * Kétirányú asszociáció miatt delegáltam fv-be
@@ -217,7 +226,7 @@ public abstract class Tecton {
      *
      * @param h A kezelendő gombafonál
      */
-    protected abstract void handleHypha(Hypha h);
+    public abstract void handleHypha(Hypha h);
 
     public boolean isNeighbor(Tecton t) {
         return neighbours.contains(t);
@@ -232,12 +241,18 @@ public abstract class Tecton {
      */
     public boolean hasHypha(Tecton t) {
         for (Hypha h : hyphas) {
-            if (h.getTectons().contains(t)) {
-                return true;
+            List<Tecton> path = h.getTectons();
+            for (int i = 0; i < path.size() - 1; i++) {
+                Tecton a = path.get(i);
+                Tecton b = path.get(i + 1);
+                if ((a == this && b == t) || (a == t && b == this)) {
+                    return true;
             }
         }
-        return false;
     }
+    return false;
+}
+
 
     /**
      * Ellenőrzi, hogy a tektonon van-e a megadott gombásztól származó spóra.

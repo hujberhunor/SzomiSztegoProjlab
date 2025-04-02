@@ -1,4 +1,6 @@
-package com.dino;
+package com.dino.core;
+
+import com.dino.player.Mycologist;
 
 //Absztrakt osztály, aminek leszármazottai a specifikus spóratípusokat valósítják meg.
 //Az osztály attribútumaiban számontartja, hogy melyik gombászhoz tartozik a spóra, hány körig tart a hatása,

@@ -1,4 +1,6 @@
-package com.dino;
+package com.dino.player;
+
+import com.dino.tecton.Tecton;
 
 /**
  * EZ az osztály alapvető, minden játékos által használható cselekvéseket valósítja meg,
@@ -9,23 +11,23 @@ public class Player {
     /**
      * A játékos neve.
      */
-    protected String name;
+    public String name;
 
     /**
      * Egy egész szám, ami a játékos jelenlegi pontszámát reprezentálja.
      */
-    protected int score;
+    public int score;
 
     /**
      *  Egy egész szám, ami megadja, hogy a játékos hány akcióval kezdi a körét.
      *  Értéke gombászok és rovarászok között eltérő.
      */
-    protected int actionsPerTurn;
+    public int actionsPerTurn;
 
     /**
      * Egy egész szám, ami megadja, hogy a játékosnak hány akciója van hátra a körében.
      */
-    protected int remainingActions;
+    public int remainingActions;
 
     /**
      * Visszaad egy kivánt tektont.

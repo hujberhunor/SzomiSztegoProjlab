@@ -11,4 +11,5 @@ Tecton:
 - eatInsect
 - hypha lista helyett mychologist lista a hyphas-nál.
 - spores map -> spores list: spora tudja ki a tulajdonosa, nem kell tudnia a tektonnak
+- connect metodus
 

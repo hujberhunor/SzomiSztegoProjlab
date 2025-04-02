@@ -1,4 +1,6 @@
-package com.dino;
+package com.dino.tecton;
+
+import com.dino.core.Hypha;
 
 public class KeepHyphaTecton extends Tecton {
     private int hyphaLifespan; 
@@ -9,7 +11,7 @@ public class KeepHyphaTecton extends Tecton {
     }
 
     @Override
-    protected void handleHypha(Hypha h) {
+    public void handleHypha(Hypha h) {
         //TODO
     }
 }

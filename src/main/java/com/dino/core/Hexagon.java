@@ -1,4 +1,4 @@
-package com.dino;
+package com.dino.core;
 
 import java.util.List;
 

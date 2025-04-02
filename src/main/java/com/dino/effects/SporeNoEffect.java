@@ -1,4 +1,8 @@
-package com.dino;
+package com.dino.effects;
+
+import com.dino.core.Insect;
+import com.dino.core.Spore;
+import com.dino.player.Mycologist;
 
 //Olyan spórát megvalósító osztály, aminek nincs hatása az őt elfogyasztó rovarra.
 public class SporeNoEffect extends Spore {

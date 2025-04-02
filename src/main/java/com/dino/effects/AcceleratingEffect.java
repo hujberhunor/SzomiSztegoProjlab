@@ -1,4 +1,9 @@
-package com.dino;
+package com.dino.effects;
+
+import com.dino.core.Insect;
+import com.dino.core.Spore;
+import com.dino.player.Mycologist;
+import com.dino.util.Skeleton;
 
 //Olyan spórát megvalósító osztály, ami felgyorsítja az őt elfogyaszó rovarat, aki a következő körökben legfeljebb akár háromszor tud majd mozogni.
 public class AcceleratingEffect extends Spore {

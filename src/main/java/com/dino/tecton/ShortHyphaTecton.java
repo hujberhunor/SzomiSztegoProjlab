@@ -1,4 +1,6 @@
-package com.dino;
+package com.dino.tecton;
+
+import com.dino.core.Hypha;
 
 /**
  * Egy olyan konkrét, példányosítható tektontípus, amin a gombafonalak négy kör leforgása után
@@ -25,7 +27,7 @@ public class ShortHyphaTecton extends Tecton {
      * @param h A kezelendő gombafonál
      */
     @Override
-    protected void handleHypha(Hypha h) {
+    public void handleHypha(Hypha h) {
         //TODO
     }
 

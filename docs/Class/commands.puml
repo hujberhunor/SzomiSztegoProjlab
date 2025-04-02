@@ -1,0 +1,15 @@
+@startuml
+
+' ===== Commandok =====
+interface ICommand{
+    + execute()
+}
+
+class CreateInsectCommand implements ICommand {
+
+}
+
+
+
+
+@enduml

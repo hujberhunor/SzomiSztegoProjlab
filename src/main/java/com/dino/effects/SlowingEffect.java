@@ -1,4 +1,8 @@
-package com.dino;
+package com.dino.effects;
+
+import com.dino.core.Insect;
+import com.dino.core.Spore;
+import com.dino.player.Mycologist;
 
 //Olyan spórát megvalósító osztály, ami lelassítja az őt elfogyaszó rovarat, aki a következő körökben legfeljebb egyszer tud majd mozogni.
 public class SlowingEffect extends Spore {

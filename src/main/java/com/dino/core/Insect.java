@@ -1,4 +1,4 @@
-package com.dino;
+package com.dino.core;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -6,6 +6,17 @@ import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 import java.util.Random;
+
+import com.dino.effects.AcceleratingEffect;
+import com.dino.effects.CloneEffect;
+import com.dino.effects.ParalyzingEffect;
+import com.dino.effects.SlowingEffect;
+import com.dino.effects.SporeNoEffect;
+import com.dino.effects.StunningEffect;
+import com.dino.player.Entomologist;
+import com.dino.player.Mycologist;
+import com.dino.tecton.Tecton;
+import com.dino.util.Skeleton;
 
 /**
  * Egy rovart reprezentáló osztály.
