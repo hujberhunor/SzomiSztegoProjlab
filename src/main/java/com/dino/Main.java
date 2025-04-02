@@ -437,56 +437,7 @@ public class Main {
         skeleton.endMethod();
     }
 
-    public static void main(String[] args) {
-        // boolean menuActive = true;
-        // Scanner scanner = new Scanner(System.in);
-        // System.out.println("Enter 0 to exit\n");
-
-        // while (menuActive) {
-        //     System.out.println("-----------------------\nUse case list:");
-        //     System.out.println("1. Insect movement");
-        //     System.out.println("2. Insect eating");
-        //     System.out.println("3. Insect cutting");
-        //     System.out.println("4. Place fungus");
-        //     System.out.println("5. Spread spore");
-        //     System.out.println("6. Grow hypha");
-        //     System.out.println("7. Tecton splitting");
-        //     System.out.println("-----------------------");
-        //     System.out.print("Select use case (e.g. 1, 2...): ");
-        //     int useCase = scanner.nextInt();
-        //     switch (useCase) {
-        //         case 0:
-        //             menuActive = false;
-        //             scanner.close();
-        //             break;
-        //         case 1:
-        //             insectMoveSeq();
-        //             break;
-        //         case 2:
-        //             insectEatSeq();
-        //             break;
-        //         case 3:
-        //             insectCutSeq();
-        //             break;
-        //         case 4:
-        //             placeFungusSeq();
-        //             break;
-        //         case 5:
-        //             spreadSporeSeq();
-        //             break;
-        //         case 6:
-        //             growHyphaSeq();
-        //             break;
-        //         case 7:
-        //             tectonSplitSeq();
-        //             break;
-        //         default:
-        //             System.out.println("Invalid input");
-        //             break;
-        //     }
-        //     System.out.println("");
-        // }
-
+    public static void loggerTest(){
         EntityRegistry registry = new EntityRegistry();
         Logger logger = new Logger(registry);
         GameBoard board = new GameBoard();
@@ -517,6 +468,60 @@ public class Main {
 
         // 4. Változás logolása
         logger.logChange("INSECT", i1, "POSITION", prevTectonName, newTectonName);
+    }
 
+    public static void main(String[] args) {
+        boolean menuActive = true;
+        Scanner scanner = new Scanner(System.in);
+        System.out.println("Enter 0 to exit\n");
+
+        while (menuActive) {
+            System.out.println("-----------------------\nUse case list:");
+            System.out.println("1. Insect movement");
+            System.out.println("2. Insect eating");
+            System.out.println("3. Insect cutting");
+            System.out.println("4. Place fungus");
+            System.out.println("5. Spread spore");
+            System.out.println("6. Grow hypha");
+            System.out.println("7. Tecton splitting");
+            System.out.println("8. Logger teszt");
+            System.out.println("-----------------------");
+            System.out.print("Select use case (e.g. 1, 2...): ");
+            int useCase = scanner.nextInt();
+            switch (useCase) {
+                case 0:
+                    menuActive = false;
+                    scanner.close();
+                    break;
+                case 1:
+                    insectMoveSeq();
+                    break;
+                case 2:
+                    insectEatSeq();
+                    break;
+                case 3:
+                    insectCutSeq();
+                    break;
+                case 4:
+                    placeFungusSeq();
+                    break;
+                case 5:
+                    spreadSporeSeq();
+                    break;
+                case 6:
+                    growHyphaSeq();
+                    break;
+                case 7:
+                    tectonSplitSeq();
+                    break;
+                case 8:
+                        loggerTest();
+                        break;
+                default:
+                    System.out.println("Invalid input");
+                    break;
+            }
+            System.out.println("");
+        }
     }
 } // end of main
