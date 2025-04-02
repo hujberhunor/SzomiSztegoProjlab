@@ -67,4 +67,10 @@ public class Hypha {
     public List<Tecton> getTectons() {
         return tectons;
     }
+
+    public void connectTectons(Tecton... path) {
+        for (Tecton t : path) {
+            tectons.add(t);
+        }
+    }
 } // End of Hypha

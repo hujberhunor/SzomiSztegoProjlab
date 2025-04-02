@@ -3,6 +3,7 @@ package com.dino.engine;
 import java.util.ArrayList;
 import java.util.List;
 
+import com.dino.core.Hypha;
 import com.dino.tecton.Tecton;
 
 /**
@@ -33,5 +34,18 @@ public class GameBoard {
      * A körök végén a tektonok törését kezelő függvény.
      */
     public void breakHandler() { }
+
+// /**
+//      * Összeköti a két Tectont, majd létrehoz és hozzárendel egy Hypha-t is.
+//      */
+//     public void connectWithHypha(Tecton a, Tecton b) {
+//         Tecton.connectTectons(a, b); // kétirányú szomszédság
+
+//         Hypha h = new Hypha();
+//         h.connectTectons(a, b); // fonal fizikailag is összeköti
+
+//         a.addHypha(h);
+//         b.addHypha(h);
+//     }
 }
 

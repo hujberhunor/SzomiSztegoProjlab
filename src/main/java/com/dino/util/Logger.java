@@ -3,10 +3,16 @@ package com.dino.util;
 import java.util.Objects;
 
 public class Logger {
+    private final EntityRegistry registry;
 
-    public void logChange(String objectType, String objectName, String property, Object prev, Object next) {
-        if (!Objects.equals(prev, next)) {
-            logOk(objectType, objectName, property, String.valueOf(prev), String.valueOf(next));
+    public Logger(EntityRegistry registry) {
+        this.registry = registry;
+    }
+
+    public void logChange(String objectType, Object obj, String property, Object oldVal, Object newVal) {
+        if (!Objects.equals(oldVal, newVal)) {
+            String name = registry.getNameOf(obj);
+            logOk(objectType, name, property, String.valueOf(oldVal), String.valueOf(newVal));
         }
     }
 
@@ -15,10 +21,8 @@ public class Logger {
             objectType.toUpperCase(), objectName, property.toUpperCase(), oldState, newState);
     }
 
-    public void logError(String objectType, String objectName, String message) {
+    public void logError(String objectType, String objectName, String errorMsg) {
         System.out.printf("[ERROR] %s %s %s%n",
-            objectType.toUpperCase(), objectName, message);
+            objectType.toUpperCase(), objectName, errorMsg);
     }
 }
-
- 

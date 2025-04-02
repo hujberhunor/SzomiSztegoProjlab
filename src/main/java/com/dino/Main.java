@@ -14,7 +14,11 @@ import com.dino.effects.StunningEffect;
 import com.dino.player.Entomologist;
 import com.dino.player.Mycologist;
 import com.dino.tecton.InfiniteHyphaTecton;
+import com.dino.tecton.KeepHyphaTecton;
+import com.dino.tecton.NoFungiTecton;
 import com.dino.tecton.Tecton;
+import com.dino.util.EntityRegistry;
+import com.dino.util.Logger;
 import com.dino.util.Skeleton;
 
 public class Main {
@@ -433,53 +437,91 @@ public class Main {
     }
 
     public static void main(String[] args) {
-        boolean menuActive = true;
-        Scanner scanner = new Scanner(System.in);
-        System.out.println("Enter 0 to exit\n");
+        // boolean menuActive = true;
+        // Scanner scanner = new Scanner(System.in);
+        // System.out.println("Enter 0 to exit\n");
 
-        while (menuActive) {
-            System.out.println("-----------------------\nUse case list:");
-            System.out.println("1. Insect movement");
-            System.out.println("2. Insect eating");
-            System.out.println("3. Insect cutting");
-            System.out.println("4. Place fungus");
-            System.out.println("5. Spread spore");
-            System.out.println("6. Grow hypha");
-            System.out.println("7. Tecton splitting");
-            System.out.println("-----------------------");
-            System.out.print("Select use case (e.g. 1, 2...): ");
-            int useCase = scanner.nextInt();
-            switch (useCase) {
-                case 0:
-                    menuActive = false;
-                    scanner.close();
-                    break;
-                case 1:
-                    insectMoveSeq();
-                    break;
-                case 2:
-                    insectEatSeq();
-                    break;
-                case 3:
-                    insectCutSeq();
-                    break;
-                case 4:
-                    placeFungusSeq();
-                    break;
-                case 5:
-                    spreadSporeSeq();
-                    break;
-                case 6:
-                    growHyphaSeq();
-                    break;
-                case 7:
-                    tectonSplitSeq();
-                    break;
-                default:
-                    System.out.println("Invalid input");
-                    break;
-            }
-            System.out.println("");
-        }
+        // while (menuActive) {
+        //     System.out.println("-----------------------\nUse case list:");
+        //     System.out.println("1. Insect movement");
+        //     System.out.println("2. Insect eating");
+        //     System.out.println("3. Insect cutting");
+        //     System.out.println("4. Place fungus");
+        //     System.out.println("5. Spread spore");
+        //     System.out.println("6. Grow hypha");
+        //     System.out.println("7. Tecton splitting");
+        //     System.out.println("-----------------------");
+        //     System.out.print("Select use case (e.g. 1, 2...): ");
+        //     int useCase = scanner.nextInt();
+        //     switch (useCase) {
+        //         case 0:
+        //             menuActive = false;
+        //             scanner.close();
+        //             break;
+        //         case 1:
+        //             insectMoveSeq();
+        //             break;
+        //         case 2:
+        //             insectEatSeq();
+        //             break;
+        //         case 3:
+        //             insectCutSeq();
+        //             break;
+        //         case 4:
+        //             placeFungusSeq();
+        //             break;
+        //         case 5:
+        //             spreadSporeSeq();
+        //             break;
+        //         case 6:
+        //             growHyphaSeq();
+        //             break;
+        //         case 7:
+        //             tectonSplitSeq();
+        //             break;
+        //         default:
+        //             System.out.println("Invalid input");
+        //             break;
+        //     }
+        //     System.out.println("");
+        // }
+
+        EntityRegistry registry = new EntityRegistry();
+        Logger logger = new Logger(registry);
+
+        // Entitások létrehozása
+        Tecton t1 = new NoFungiTecton();  
+        Tecton t2 = new KeepHyphaTecton();
+        Entomologist e1 = new Entomologist();
+        Insect i1 = new Insect(e1, t1);
+        Fungus f1 = new Fungus();
+
+        // csak azért, hogy seteljünk egy kapcsolatot. Valami nagyon nem jó itt
+        t1.connectTectons(t1, t2);
+        
+        Hypha hypha = new Hypha();
+        hypha.connectTectons(t1, t2);
+        
+        t1.addHypha(hypha);
+        t2.addHypha(hypha);
+
+        // Regisztráció név szerint
+        registry.register("tectonA", t1);
+        registry.register("tectonB", t2);
+        registry.register("insect1", i1);
+        registry.register("fung1", f1);
+
+        // 1. Aktuális hely logolása
+        String prevTectonName = registry.getNameOf(i1.getTecton());
+
+        // 2. Mozgatás t2-re
+        i1.move(t2);
+
+        // 3. Új hely logolása
+        String newTectonName = registry.getNameOf(i1.getTecton());
+
+        // 4. Változás logolása
+        logger.logChange("INSECT", i1, "POSITION", prevTectonName, newTectonName);
+
     }
-}
+} // end of main
