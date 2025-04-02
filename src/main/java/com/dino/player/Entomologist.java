@@ -1,4 +1,7 @@
-package com.dino;
+package com.dino.player;
+
+import com.dino.core.Insect;
+import com.dino.util.Skeleton;
 
 /**
  * Ez az osztály egy rovarászt reprezentál.

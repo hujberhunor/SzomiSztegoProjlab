@@ -1,7 +1,12 @@
-package com.dino;
+package com.dino.player;
 
 import java.util.ArrayList;
 import java.util.List;
+
+import com.dino.core.Hypha;
+import com.dino.core.Fungus;
+import com.dino.tecton.Tecton;
+import com.dino.util.Skeleton;
 
 /**
  * Ez az osztály egy gombászt reprezentál.
@@ -24,7 +29,7 @@ public class Mycologist {
      * ha azon van a gombász által vezérelt fajnak fonala és kellő mennyiségű spórája.
      * @param t Ezen a tektonon lesz elhelyezve a gomatest.
      */
-    void placeFungus(Tecton t) {
+    public void placeFungus(Tecton t) {
         Skeleton skeleton = Skeleton.getInstance();
         skeleton.startMethod("Mycologist", "placeFungus");
 

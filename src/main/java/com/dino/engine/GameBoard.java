@@ -1,6 +1,9 @@
-package com.dino;
+package com.dino.engine;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.List;
+
+import com.dino.tecton.Tecton;
 
 /**
  * A játékteret kezelő és megvalósító osztály.

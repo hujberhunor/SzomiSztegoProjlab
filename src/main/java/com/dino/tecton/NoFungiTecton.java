@@ -1,4 +1,5 @@
-package com.dino;
+package com.dino.tecton;
+import com.dino.core.Hypha;
 
 /**
  * Egy olyan konkrét, példányosítható tektontípus, amin nem nőhetnek gombatestek.
@@ -19,7 +20,7 @@ public class NoFungiTecton extends Tecton {
      * @param h A kezelendő gombafonál
      */
     @Override
-    protected void handleHypha(Hypha h) {
+    public void handleHypha(Hypha h) {
         //TODO
     }
 }

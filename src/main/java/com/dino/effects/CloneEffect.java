@@ -1,4 +1,10 @@
-package com.dino;
+package com.dino.effects;
+
+import com.dino.core.Insect;
+import com.dino.core.Spore;
+import com.dino.player.Mycologist;
+import com.dino.tecton.Tecton;
+import com.dino.util.Skeleton;
 
 /*
  * Olyan spóra hatás amely az őt elfogyasztó rovart klónozza az elfogyasztásnak helyet adó tektonon

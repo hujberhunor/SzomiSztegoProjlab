@@ -1,4 +1,4 @@
-package com.dino;
+package com.dino.util;
 
 import java.util.Stack;
 

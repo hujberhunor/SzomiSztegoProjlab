@@ -1,9 +1,21 @@
 package com.dino;
 
-import java.lang.annotation.Target;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Scanner;
+
+import com.dino.core.Fungus;
+import com.dino.core.Hexagon;
+import com.dino.core.Hypha;
+import com.dino.core.Insect;
+import com.dino.effects.AcceleratingEffect;
+import com.dino.effects.ParalyzingEffect;
+import com.dino.effects.StunningEffect;
+import com.dino.player.Entomologist;
+import com.dino.player.Mycologist;
+import com.dino.tecton.InfiniteHyphaTecton;
+import com.dino.tecton.Tecton;
+import com.dino.util.Skeleton;
 
 public class Main {
 
