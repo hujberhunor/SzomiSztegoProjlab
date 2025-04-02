@@ -11,6 +11,7 @@ import com.dino.core.Insect;
 import com.dino.effects.AcceleratingEffect;
 import com.dino.effects.ParalyzingEffect;
 import com.dino.effects.StunningEffect;
+import com.dino.engine.GameBoard;
 import com.dino.player.Entomologist;
 import com.dino.player.Mycologist;
 import com.dino.tecton.InfiniteHyphaTecton;
@@ -488,6 +489,7 @@ public class Main {
 
         EntityRegistry registry = new EntityRegistry();
         Logger logger = new Logger(registry);
+        GameBoard board = new GameBoard();
 
         // Entitások létrehozása
         Tecton t1 = new NoFungiTecton();  
@@ -496,14 +498,7 @@ public class Main {
         Insect i1 = new Insect(e1, t1);
         Fungus f1 = new Fungus();
 
-        // csak azért, hogy seteljünk egy kapcsolatot. Valami nagyon nem jó itt
-        t1.connectTectons(t1, t2);
-        
-        Hypha hypha = new Hypha();
-        hypha.connectTectons(t1, t2);
-        
-        t1.addHypha(hypha);
-        t2.addHypha(hypha);
+        board.connect(t1, t2);
 
         // Regisztráció név szerint
         registry.register("tectonA", t1);

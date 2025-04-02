@@ -35,17 +35,19 @@ public class GameBoard {
      */
     public void breakHandler() { }
 
-// /**
-//      * Összeköti a két Tectont, majd létrehoz és hozzárendel egy Hypha-t is.
-//      */
-//     public void connectWithHypha(Tecton a, Tecton b) {
-//         Tecton.connectTectons(a, b); // kétirányú szomszédság
+    /**
+     * Összeköti a két Tectont szomszédságként, majd létrehoz és rögzít egy Hypha-t is.
+     */
+    public Hypha connect(Tecton a, Tecton b) {
+        Tecton.connectTectons(a, b); // kétirányú szomszédság
 
-//         Hypha h = new Hypha();
-//         h.connectTectons(a, b); // fonal fizikailag is összeköti
+        Hypha hypha = new Hypha();
+        hypha.connectTectons(a, b);
 
-//         a.addHypha(h);
-//         b.addHypha(h);
-//     }
+        a.addHypha(hypha);
+        b.addHypha(hypha);
+
+        return hypha;
+    }
 }
 
