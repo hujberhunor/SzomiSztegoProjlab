@@ -1,7 +1,12 @@
 @startuml
 
-' NEM SZEREPELNEK BENNE A LESZÁRMAZOTTAK HOGY ÁTLÁTHATÓBB LEGYEN '
+' NEM SZEREPELNEK BENNE: (HOGY ÁTLÁTHATÓBB LEGYEN)
+'   LESZÁRMAZOTTAK
+'   COMMANDOK
+
+' MEGJEGYZÉSEK
 ' --> : használja, de nem tartalmazza '
+
 ' ===== Alap játékosok és szereplők =====
 class Player {
     - name: String
@@ -108,6 +113,7 @@ class GameBoard {
     + generateBoard()
     + getNeighbors(Tecton): List<Tecton>
     + breakHandler()
+    + connect(Tecton, Tecton): void
 }
 
 class Game {
@@ -125,6 +131,30 @@ class Game {
     + nextTurn()
     + endGame()
 }
+
+' ===== UTIL =====
+class Parser{
+    + parseCommand()
+}
+
+class Logger {
+    - registry: EntityRegistry
+    + Logger(registry: EntityRegistry)
+    + logChange(objectType: String, obj: Object, property: String, oldVal: Object, newVal: Object)
+    + logOk(objectType: String, objectName: String, property: String, oldState: String, newState: String)
+    + logError(objectType: String, objectName: String, errorMsg: String)
+}
+
+class EntityRegistry {
+    - nameToObject: Map<String, Object>
+    - objectToName: Map<Object, String>
+    + register(name: String, obj: Object)
+    + getByName(name: String): Object
+    + getNameOf(obj: Object): String
+    + isRegistered(obj: Object): boolean
+}
+
+Logger --> EntityRegistry : uses
 
 ' ===== Kapcsolatok =====
 Game o-r- GameBoard
