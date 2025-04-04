@@ -74,4 +74,26 @@ class CloneEffect extends Spore{
     {static} - nutrientValue: int = ??
 }
 
+abstract class Player {
+    - name: String
+    - score: int
+    - actionsPerTurn: int
+    - remainingActions: int
+    + selectTecton(tecton: Tecton): Tecton
+    + calculateScore(): int
+}
+
+class Entomologist extends Player{
+    - insects: List<Insect>
+    + increaseActions()
+    + decreaseActions()
+    + getRemainingActions(): int
+}
+
+class Mycologist extends Player{
+    - mushrooms: List<Fungus>
+    + placeFungus(t: Tecton)
+}
+
+
 @enduml
