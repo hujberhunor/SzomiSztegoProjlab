@@ -1,7 +1,11 @@
-package com.dino;
+package com.dino.core;
 
 import java.util.ArrayList;
 import java.util.List;
+
+import com.dino.player.Mycologist;
+import com.dino.tecton.Tecton;
+
 
 /**
  * A gombafonalakat reprezentáló osztály. Egy objektum a növesztés sorrendjében tartalmazza a tektonokat,

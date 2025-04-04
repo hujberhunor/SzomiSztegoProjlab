@@ -1,5 +1,7 @@
-package com.dino;
-import java.util.*;
+package com.dino.engine;
+import java.util.List;
+
+import com.dino.player.Player;
 
 /**
  * A játékmenet alapvető funkcióit vezérlő, és annak tulajdonságait tároló és kezelő osztály.

@@ -1,4 +1,8 @@
-package com.dino;
+package com.dino.effects;
+
+import com.dino.core.Insect;
+import com.dino.core.Spore;
+import com.dino.player.Mycologist;
 
 //Olyan spórát megvalósító osztály, aminek hatására az őt elfogyasztó rovar képtelen lesz fonalat vágni.
 public class StunningEffect extends Spore {

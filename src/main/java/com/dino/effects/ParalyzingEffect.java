@@ -1,4 +1,9 @@
-package com.dino;
+package com.dino.effects;
+
+import com.dino.core.Insect;
+import com.dino.core.Spore;
+import com.dino.player.Mycologist;
+import com.dino.util.Skeleton;
 
 //Olyan spórát megvalósító osztály, aminek hatására őt elfogyaszó rovar a következő körökre teljesen mozgásképtelenné válik.
 //Ez a hatás felülír minden más mozgást befolyásoló effektet.

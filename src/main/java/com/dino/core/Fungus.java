@@ -1,11 +1,17 @@
-package com.dino;
+package com.dino.core;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.List;
+
+import com.dino.player.Mycologist;
+import com.dino.tecton.NoFungiTecton;
+import com.dino.tecton.Tecton;
+import com.dino.util.Skeleton;
 
 /**
  * Egy gombatestet reprezentáló osztály.
  */
-class Fungus {
+public class Fungus {
 
     /**
      * Az a gombász, akihez a gombatest tartozik.
