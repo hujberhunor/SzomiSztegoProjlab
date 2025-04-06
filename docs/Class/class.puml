@@ -8,7 +8,8 @@
 ' --> : használja, de nem tartalmazza '
 
 ' ===== Alap játékosok és szereplők =====
-class Player {
+
+abstract class Player {
     - name: String
     - score: int
     - actionsPerTurn: int
@@ -17,14 +18,16 @@ class Player {
     + calculateScore(): int
 }
 
-class Entomologist {
+
+class Entomologist extends Player{
     - insects: List<Insect>
     + increaseActions()
     + decreaseActions()
     + getRemainingActions(): int
 }
 
-class Mycologist {
+
+class Mycologist extends Player{
     - mushrooms: List<Fungus>
     + placeFungus(t: Tecton)
 }
