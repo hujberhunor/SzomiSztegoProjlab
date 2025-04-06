@@ -5,8 +5,8 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import com.dino.core.Hexagon;
 import com.dino.core.Fungus;
+import com.dino.core.Hexagon;
 import com.dino.core.Hypha;
 import com.dino.core.Insect;
 import com.dino.player.Mycologist;
@@ -103,8 +103,9 @@ public abstract class Tecton {
      * @param h Az elhelyezendő gombafonál
      */
     public void addHypha(Hypha h) {
-        // TODO IMPLEMENTÁLNI
+        hyphas.add(h);
     }
+
 
     /**
      * Kétirányú asszociáció miatt delegáltam fv-be
@@ -240,12 +241,18 @@ public abstract class Tecton {
      */
     public boolean hasHypha(Tecton t) {
         for (Hypha h : hyphas) {
-            if (h.getTectons().contains(t)) {
-                return true;
+            List<Tecton> path = h.getTectons();
+            for (int i = 0; i < path.size() - 1; i++) {
+                Tecton a = path.get(i);
+                Tecton b = path.get(i + 1);
+                if ((a == this && b == t) || (a == t && b == this)) {
+                    return true;
             }
         }
-        return false;
     }
+    return false;
+}
+
 
     /**
      * Ellenőrzi, hogy a tektonon van-e a megadott gombásztól származó spóra.

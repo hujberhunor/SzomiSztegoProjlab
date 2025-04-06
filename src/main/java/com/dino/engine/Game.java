@@ -2,6 +2,7 @@ package com.dino.engine;
 import java.util.List;
 
 import com.dino.player.Player;
+import com.dino.util.EntityRegistry;
 
 /**
  * A játékmenet alapvető funkcióit vezérlő, és annak tulajdonságait tároló és kezelő osztály.
@@ -34,6 +35,8 @@ public class Game {
      * Értéke a maximális mennyiségű akció felhasználása után a soron következő játékosra vált.
      */
     private Player currentPlayer;
+
+    private EntityRegistry registry;
 
     /**
      * Paraméter nélkül hívható függvény, ami legenerálja a játékteret.

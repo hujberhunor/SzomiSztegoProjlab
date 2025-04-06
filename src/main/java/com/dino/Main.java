@@ -11,10 +11,15 @@ import com.dino.core.Insect;
 import com.dino.effects.AcceleratingEffect;
 import com.dino.effects.ParalyzingEffect;
 import com.dino.effects.StunningEffect;
+import com.dino.engine.GameBoard;
 import com.dino.player.Entomologist;
 import com.dino.player.Mycologist;
 import com.dino.tecton.InfiniteHyphaTecton;
+import com.dino.tecton.KeepHyphaTecton;
+import com.dino.tecton.NoFungiTecton;
 import com.dino.tecton.Tecton;
+import com.dino.util.EntityRegistry;
+import com.dino.util.Logger;
 import com.dino.util.Skeleton;
 
 public class Main {
@@ -432,6 +437,39 @@ public class Main {
         skeleton.endMethod();
     }
 
+    public static void loggerTest(){
+        EntityRegistry registry = new EntityRegistry();
+        Logger logger = new Logger(registry);
+        GameBoard board = new GameBoard();
+
+        // Entitások létrehozása
+        Tecton t1 = new NoFungiTecton();  
+        Tecton t2 = new KeepHyphaTecton();
+        Entomologist e1 = new Entomologist();
+        Insect i1 = new Insect(e1, t1);
+        Fungus f1 = new Fungus();
+
+        board.connect(t1, t2);
+
+        // Regisztráció név szerint
+        registry.register("tectonA", t1);
+        registry.register("tectonB", t2);
+        registry.register("insect1", i1);
+        registry.register("fung1", f1);
+
+        // 1. Aktuális hely logolása
+        String prevTectonName = registry.getNameOf(i1.getTecton());
+
+        // 2. Mozgatás t2-re
+        i1.move(t2);
+
+        // 3. Új hely logolása
+        String newTectonName = registry.getNameOf(i1.getTecton());
+
+        // 4. Változás logolása
+        logger.logChange("INSECT", i1, "POSITION", prevTectonName, newTectonName);
+    }
+
     public static void main(String[] args) {
         boolean menuActive = true;
         Scanner scanner = new Scanner(System.in);
@@ -446,6 +484,7 @@ public class Main {
             System.out.println("5. Spread spore");
             System.out.println("6. Grow hypha");
             System.out.println("7. Tecton splitting");
+            System.out.println("8. Logger teszt");
             System.out.println("-----------------------");
             System.out.print("Select use case (e.g. 1, 2...): ");
             int useCase = scanner.nextInt();
@@ -475,6 +514,9 @@ public class Main {
                 case 7:
                     tectonSplitSeq();
                     break;
+                case 8:
+                        loggerTest();
+                        break;
                 default:
                     System.out.println("Invalid input");
                     break;
@@ -482,4 +524,4 @@ public class Main {
             System.out.println("");
         }
     }
-}
+} // end of main
