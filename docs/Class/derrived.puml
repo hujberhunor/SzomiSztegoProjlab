@@ -8,7 +8,7 @@ abstract class Tecton {
     - neighbours: List<Tecton>
     - fungus: Fungus
     - insects: List<Insect>
-    - spores: List<Spores>
+    - spores: Map<Mychologist, Int>
     - hyphas: List<Mychologist>
     + addSpores(Mycologist)
     + removeSpores(Mycologist)
