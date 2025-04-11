@@ -5,6 +5,9 @@ import java.util.List;
 
 import com.dino.player.Mycologist;
 import com.dino.tecton.Tecton;
+import com.dino.util.SerializableEntity;
+import com.dino.util.SerializerUtil;
+import com.google.gson.JsonObject;
 
 
 /**
@@ -12,7 +15,7 @@ import com.dino.tecton.Tecton;
  * amiken keresztül nő, hogy a fonál elszakadása esetén (rovar vagy törés hatására) a szekvenciából egyértelmű
  * legyen, hogy a fonál melyik fele nem kapcsolódik már a gombatestből, amiből származnak.
  */
-public class Hypha {
+public class Hypha implements SerializableEntity {
 
     /**
      *  Azon tectonok amelyeken keresztül halad a fonal
@@ -72,5 +75,18 @@ public class Hypha {
         for (Tecton t : path) {
             tectons.add(t);
         }
+    }
+
+    @Override
+    public JsonObject serialize() {
+        JsonObject obj = new JsonObject();
+
+        // Kihez tartozik a hypha (gombász ID)
+        obj.addProperty("mycologist", "mycologist_" + mycologist.hashCode());
+
+        // Mely tectonokon halad át (tecton ID lista)
+        obj.add("tectons", SerializerUtil.toJsonArray(tectons, t -> "tecton_" + t.hashCode()));
+
+        return obj;
     }
 } // End of Hypha

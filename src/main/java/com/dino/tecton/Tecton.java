@@ -1,5 +1,6 @@
 package com.dino.tecton;
 
+import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -10,14 +11,17 @@ import com.dino.core.Hexagon;
 import com.dino.core.Hypha;
 import com.dino.core.Insect;
 import com.dino.player.Mycologist;
+import com.dino.util.SerializableEntity;
+import com.dino.util.SerializerUtil;
 import com.dino.util.Skeleton;
+import com.google.gson.JsonObject;
 
 /**
  * Ennek az absztrakt osztálynak a leszármazottjai reprezentálják a játékteret alkotó egységeket, vagy mezőket.
  * Tárolja a mezőket alkotó kisebb hatszögeket, illetve az egész egységre vonatkozó tulajdonságokat és annak állapotát.
  * A tekton altípusoknak az ősosztálya.
  */
-public abstract class Tecton {
+public abstract class Tecton implements SerializableEntity {
 
     /// Attribútumok
     // protected boolean fungiEnabled;
@@ -286,4 +290,36 @@ public abstract class Tecton {
     public List<Insect> getInsects(){ 
         return insects;
     }
+
+    @Override
+public JsonObject serialize() {
+    JsonObject obj = new JsonObject();
+
+    obj.addProperty("id", "tecton_" + hashCode());
+    obj.addProperty("breakChance", breakChance);
+    obj.addProperty("breakCount", breakCount);
+
+    // Hexagonok ID-val
+    obj.add("hexagons", SerializerUtil.toJsonArray(hexagons, Hexagon::getId));
+
+    // Neighbour Tecton ID-val
+    obj.add("neighbours", SerializerUtil.toJsonArray(neighbours, t -> "tecton_" + t.hashCode()));
+
+    // Fungus serialize
+    if (fungus != null) {
+        obj.add("fungus", fungus.serialize());
+    }
+
+    // Insect serialize
+    obj.add("insects", SerializerUtil.toJsonArray(insects, Insect::serialize));
+
+    // Spore Map serialize
+    obj.add("spores", SerializerUtil.toJsonMap(spores, m -> "mycologist_" + m.hashCode()));
+
+    // Hypha serialize
+    obj.add("hyphas", SerializerUtil.toJsonArray(hyphas, Hypha::serialize));
+
+    return obj;
+}
+
 }

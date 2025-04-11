@@ -16,12 +16,15 @@ import com.dino.effects.StunningEffect;
 import com.dino.player.Entomologist;
 import com.dino.player.Mycologist;
 import com.dino.tecton.Tecton;
+import com.dino.util.SerializableEntity;
+import com.dino.util.SerializerUtil;
 import com.dino.util.Skeleton;
+import com.google.gson.JsonObject;
 
 /**
  * Egy rovart reprezentáló osztály.
  */
-public class Insect {
+public class Insect implements SerializableEntity {
 
     /**
      * Megadja, hogy a rovar melyik rovarászhoz tartozik.
@@ -276,5 +279,21 @@ public class Insect {
 
     public Tecton getTecton() {
         return currentTecton;
+    }
+
+@Override
+    public JsonObject serialize() {
+        JsonObject obj = new JsonObject();
+
+        // Rovarász ID
+        obj.addProperty("owner", "entomologist_" + entomologist.hashCode());
+
+        // Jelenlegi tecton ID
+        obj.addProperty("currentTecton", "tecton_" + currentTecton.hashCode());
+
+        // Aktív effektek (spórák)
+        obj.add("effects", SerializerUtil.toJsonArray(effects, s -> s.serialize()));
+
+        return obj;
     }
 }
