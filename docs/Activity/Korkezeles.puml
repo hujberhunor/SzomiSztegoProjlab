@@ -1,0 +1,25 @@
+@startuml
+title Körkezelés (Turn Management) - SkipTurn támogatással
+
+start
+
+:Aktuális játékos kijelölése;
+
+if (Akciók elfogytak?) then (igen)
+  :Következő játékosra lépés;
+  :Hatások frissítése rovarokon;
+  :Gombafonalak élettartamának csökkentése;
+  :Tectonok törésének vizsgálata;
+  :Körszámláló növelése;
+else (nem)
+  if (Játékos SkipTurn-t hajt végre?) then (igen)
+    :Akciók nullázása;
+    -> [ugyanoda, mint ha elfogytak volna];
+  else
+    :Játékos akciót hajt végre;
+  endif
+endif
+
+stop
+
+@enduml
