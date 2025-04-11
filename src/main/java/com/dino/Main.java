@@ -1,5 +1,6 @@
 package com.dino;
 
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Scanner;
@@ -10,6 +11,7 @@ import com.dino.core.Hypha;
 import com.dino.core.Insect;
 import com.dino.effects.AcceleratingEffect;
 import com.dino.effects.ParalyzingEffect;
+import com.dino.effects.SporeNoEffect;
 import com.dino.effects.StunningEffect;
 import com.dino.engine.GameBoard;
 import com.dino.player.Entomologist;
@@ -20,6 +22,7 @@ import com.dino.tecton.NoFungiTecton;
 import com.dino.tecton.Tecton;
 import com.dino.util.EntityRegistry;
 import com.dino.util.Logger;
+import com.dino.util.Serializer;
 import com.dino.util.Skeleton;
 
 public class Main {
@@ -437,13 +440,13 @@ public class Main {
         skeleton.endMethod();
     }
 
-    public static void loggerTest(){
+    public static void loggerTest() {
         EntityRegistry registry = new EntityRegistry();
         Logger logger = new Logger(registry);
         GameBoard board = new GameBoard();
 
         // Entitások létrehozása
-        Tecton t1 = new NoFungiTecton();  
+        Tecton t1 = new NoFungiTecton();
         Tecton t2 = new KeepHyphaTecton();
         Entomologist e1 = new Entomologist();
         Insect i1 = new Insect(e1, t1);
@@ -470,53 +473,106 @@ public class Main {
         logger.logChange("INSECT", i1, "POSITION", prevTectonName, newTectonName);
     }
 
-    public static void main(String[] args) {
-        boolean menuActive = true;
-        Scanner scanner = new Scanner(System.in);
-        System.out.println("Enter 0 to exit\n");
-
-        while (menuActive) {
-            System.out.println("-----------------------\nUse case list:");
-            System.out.println("1. Insect movement");
-            System.out.println("2. Insect eating");
-            System.out.println("3. Insect cutting");
-            System.out.println("4. Place fungus");
-            System.out.println("5. Spread spore");
-            System.out.println("6. Grow hypha");
-            System.out.println("7. Tecton splitting");
-            System.out.println("8. Logger teszt");
-            System.out.println("-----------------------");
-            System.out.print("Select use case (e.g. 1, 2...): ");
-            int useCase = scanner.nextInt();
-            switch (useCase) {
-                case 0:
-                    menuActive = false;
-                    scanner.close();
-                    break;
-                case 1:
-                    insectMoveSeq();
-                    break;
-                case 2:
-                    insectEatSeq();
-                    break;
-                case 3:
-                    insectCutSeq();
-                    break;
-                case 4:
-                    placeFungusSeq();
-                    break;
-                case 5:
-                    spreadSporeSeq();
-                    break;
-                case 6:
-                    growHyphaSeq();
-                    break;
-                case 7:
-                    tectonSplitSeq();
-                    break;
-                case 8:
+    public static void SerializeTest() {
+            try {
+                // Dummy Mycologist
+                Mycologist m = new Mycologist();
+    
+                // Dummy Entomologist
+                Entomologist e = new Entomologist();
+    
+                // Dummy Tecton (pl. KeepHyphaTecton)
+                Tecton t = new KeepHyphaTecton();
+    
+                // Hexagon hozzáadása
+                t.hexagons.add(new Hexagon(1));
+                t.hexagons.add(new Hexagon(2));
+    
+                // Dummy Fungus
+                Fungus f = new Fungus();
+                f.setSpecies(m);
+                f.setCharge(2);
+                t.setFungus(f);
+    
+                // Dummy Hypha
+                Hypha h = new Hypha();
+                h.setMychologist(m);
+                h.continueHypha(t);
+                t.hyphas.add(h);
+    
+                // Dummy Insect
+                Insect insect = new Insect(e, t);
+                insect.getEffects().add(new SporeNoEffect(m)); // Dummy Spore
+                t.insects.add(insect);
+    
+                // Spóra hozzáadás
+                t.spores.put(m, 2);
+    
+                // Neighbour (önmaga teszt kedvéért)
+                t.neighbours.add(t);
+    
+                // Mentés
+                Serializer.saveToFile(t, "tecton_save.json");
+    
+                System.out.println("Sikeres mentés!");
+    
+            } catch (IOException ex) {
+                ex.printStackTrace();
+            }
+    
+        }
+    
+        public static void main(String[] args) {
+            boolean menuActive = true;
+            Scanner scanner = new Scanner(System.in);
+            System.out.println("Enter 0 to exit\n");
+    
+            while (menuActive) {
+                System.out.println("-----------------------\nUse case list:");
+                System.out.println("1. Insect movement");
+                System.out.println("2. Insect eating");
+                System.out.println("3. Insect cutting");
+                System.out.println("4. Place fungus");
+                System.out.println("5. Spread spore");
+                System.out.println("6. Grow hypha");
+                System.out.println("7. Tecton splitting");
+                System.out.println("8. Logger teszt");
+                System.out.println("9. Serializáció teszt");
+                System.out.println("-----------------------");
+                System.out.print("Select use case (e.g. 1, 2...): ");
+                int useCase = scanner.nextInt();
+                switch (useCase) {
+                    case 0:
+                        menuActive = false;
+                        scanner.close();
+                        break;
+                    case 1:
+                        insectMoveSeq();
+                        break;
+                    case 2:
+                        insectEatSeq();
+                        break;
+                    case 3:
+                        insectCutSeq();
+                        break;
+                    case 4:
+                        placeFungusSeq();
+                        break;
+                    case 5:
+                        spreadSporeSeq();
+                        break;
+                    case 6:
+                        growHyphaSeq();
+                        break;
+                    case 7:
+                        tectonSplitSeq();
+                        break;
+                    case 8:
                         loggerTest();
                         break;
+                    case 9:
+                        SerializeTest(); 
+                    break;
                 default:
                     System.out.println("Invalid input");
                     break;
