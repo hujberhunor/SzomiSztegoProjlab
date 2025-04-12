@@ -8,7 +8,9 @@
       "neighbours": [],
       "fungus": null,
       "insects": [],
-      "spores": {},
+      "spores": {
+        "mycologist_1": "2"
+      },
       "hyphas": []
     }
   ],

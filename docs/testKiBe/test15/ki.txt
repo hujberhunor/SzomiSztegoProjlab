@@ -1,0 +1,17 @@
+
+[OK] GAME game STATE: null -> INITIALIZED
+
+[OK] TECTON tecton_A CREATED: null -> CREATED
+[OK] TECTON tecton_B CREATED: null -> CREATED
+[OK] TECTON tecton_C CREATED: null -> CREATED
+
+[OK] HYPHA hypha0 CREATED: tecton_A - tecton_B
+[OK] HYPHA hypha1 CREATED: tecton_B - tecton_C
+
+[OK] ENTOMOLOGIST entomologist_1 CREATED: null -> EXISTS
+
+[OK] INSECT insect0 CREATED: - -> CREATED
+
+[OK] SPORE StunningEffect CREATED: null -> CREATED
+[OK] INSECT insect0 EFFECT_ADDED: null -> StunningEffect
+

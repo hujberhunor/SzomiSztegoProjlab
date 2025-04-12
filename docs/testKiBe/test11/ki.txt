@@ -1,0 +1,10 @@
+[OK] GAME game STATE: null -> INITIALIZED
+
+[OK] TECTON tecton_A CREATED: null -> CREATED
+
+[OK] ENTOMOLOGIST entomologist_1 CREATED: null -> EXISTS
+
+[OK] INSECT insect0 CREATED: - -> CREATED
+[OK] INSECT insect0 POSITION: null -> tecton_A
+[OK] INSECT insect0 OWNER: null -> entomologist_1
+

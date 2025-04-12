@@ -1,0 +1,7 @@
+[OK] GAME game STATE: null -> INITIALIZED
+
+[OK] TECTON tecton_A CREATED: null -> CREATED
+
+[OK] SPORE Spore CREATED: null -> CREATED
+[OK] SPORE Spore CREATED: null -> CREATED
+

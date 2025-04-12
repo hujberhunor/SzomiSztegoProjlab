@@ -6,7 +6,13 @@
       "breakCount": 0,
       "hexagons": ["1"],
       "neighbours": [],
-      "fungus": null,
+      "fungus": {
+        "species": "mycologist_1",
+        "charge": 2,
+        "lifespan": 0,
+        "hyphas": [],
+        "spores": []
+      },
       "insects": [],
       "spores": {},
       "hyphas": []
