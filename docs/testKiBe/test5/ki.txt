@@ -1,0 +1,31 @@
+[OK] TECTON tecton_A CREATED: null -> CREATED
+[OK] TECTON tecton_B CREATED: null -> CREATED
+[OK] TECTON tecton_C CREATED: null -> CREATED
+
+[OK] HYPHA hypha0 CREATED: tecton_A - tecton_B 
+[OK] HYPHA hypha0 CREATED: tecton_B - tecton_C
+
+[OK] ENTOMOLOGIST entomologist1 CREATED: null -> CREATED
+
+[OK] INSECT insect1 CREATED: null -> CREATED
+[OK] INSECT insect1 POSITION: null -> tecton_A
+[OK] INSECT insect1 OWNER: null -> entomologist1
+
+[OK] SPORE AcceleratingEffect CREATED: null -> CREATED
+[OK] INSECT insect1 EFFECT_ADDED: null -> AcceleratingEffect
+[OK] ENTOMOLOGIST entomologist1 SCORE: 0 -> 1
+[OK] SPORE CloneEffect CREATED: null -> CREATED
+
+[OK] INSECT insect1 POSITION: tecton_A -> tecton_B
+[OK] ENTOMOLOGIST entomologist1 REMAINING_ACTIONS: 3 -> 2
+[OK] INSECT insect1 EFFECT_ADDED: null -> CloneEffect
+
+[OK] INSECT insect2 CREATED: null -> CREATED
+[OK] INSECT insect2 POSITION: null -> tecton_B
+[OK] INSECT insect2 OWNER: null -> entomologist1
+
+[OK] INSECT insect2 POSITION: tecton_B -> tecton_C
+[OK] ENTOMOLOGIST entomologist1 REMAINING_ACTIONS: 2 -> 1
+
+[OK] INSECT insect2 POSITION: tecton_C -> tecton_B
+[OK] ENTOMOLOGIST entomologist1 REMAINING_ACTIONS: 1 -> 0

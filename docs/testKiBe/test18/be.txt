@@ -1,0 +1,11 @@
+init test18.json
+
+game NextTurn
+game NextTurn
+game NextTurn
+
+spreadSpore fungus11
+spreadSpore fungus21
+
+placeFungus tecton_C fungus12
+placeFungus tecton_B fungus22
