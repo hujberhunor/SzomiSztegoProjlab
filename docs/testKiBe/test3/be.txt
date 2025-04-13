@@ -1,0 +1,8 @@
+init test3.json
+
+consumeSpore ins1
+
+moveInsect ins1 B
+moveInsect ins1 C
+moveInsect ins1 D
+
