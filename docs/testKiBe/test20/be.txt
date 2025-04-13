@@ -1,0 +1,6 @@
+init test20.json
+break tecton1 1
+game NextTurn
+break tecton1 1
+game NextTurn
+break tecton1 1
