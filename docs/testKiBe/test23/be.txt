@@ -1,0 +1,3 @@
+init test23.json
+move hypha hypha1 infinite_tecton
+move hypha hypha2 infinite_tecton
