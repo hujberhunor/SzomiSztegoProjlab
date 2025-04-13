@@ -1,0 +1,3 @@
+[OK] FUNGUS fungus1 CHARGE: 0 -> 2
+[OK] HYPHA hypha1 EXTENDED: normal_tecton -> nofungi_tecton
+[ERROR] TECTON nofungi_tecton FUNGI_DISABLED: Cannot create fungus on NoFungiTecton

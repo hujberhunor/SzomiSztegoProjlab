@@ -1,0 +1,59 @@
+{
+    "tectons": [
+      {
+        "id": "normal_tecton",
+        "type": "Tecton",
+        "breakChance": 5.0,
+        "breakCount": 0,
+        "hexagons": ["hexagon1"],
+        "neighbours": ["nofungi_tecton"],
+        "fungus": {
+          "id": "fungus1",
+          "species": "mycologist1",
+          "tecton": "normal_tecton",
+          "charge": 0,
+          "lifespan": 5,
+          "hyphas": ["hypha1"]
+        },
+        "insects": [],
+        "spores": {},
+        "hyphas": ["hypha1"]
+      },
+      {
+        "id": "nofungi_tecton",
+        "type": "NoFungiTecton",
+        "breakChance": 5.0,
+        "breakCount": 0,
+        "hexagons": ["hexagon2"],
+        "neighbours": ["normal_tecton"],
+        "fungus": null,
+        "insects": [],
+        "spores": {
+          "mycologist1": "2"
+        },
+        "hyphas": []
+      }
+    ],
+    "hyphas": [
+      {
+        "id": "hypha1",
+        "mycologist": "mycologist1",
+        "fungus": "fungus1",
+        "tectons": ["normal_tecton"]
+      }
+    ],
+    "entomologists": [],
+    "mycologists": [
+      {
+        "name": "mycologist1",
+        "remainingActions": 3,
+        "score": 0,
+        "mushrooms": ["fungus1"]
+      }
+    ],
+    "game": {
+      "currentTurn": 0,
+      "totalTurns": 10,
+      "currentPlayer": "mycologist1"
+    }
+  }
