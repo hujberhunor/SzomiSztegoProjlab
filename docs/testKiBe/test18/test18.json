@@ -1,82 +1,82 @@
 {
-    "tectons": [
-      {
-        "id": "tecton_A",
-        "breakChance": 10.0,
-        "breakCount": 0,
-        "hexagons": ["1"],
-        "neighbours": ["tecton_B"],
-        "fungus": {
-          "species": "mycologist1",
-          "charge": 0,
-          "lifespan": 5,
-          "hyphas": [hypha1],
-          "spores": []
-        },
-        "insects": [],
-        "spores": {},
-        "hyphas": [hypha1]
+  "tectons": [
+    {
+      "id": "tecton_A",
+      "breakChance": 10.0,
+      "breakCount": 0,
+      "hexagons": ["1"],
+      "neighbours": ["tecton_B"],
+      "fungus": {
+        "species": "mycologist1",
+        "charge": 0,
+        "lifespan": 5,
+        "hyphas": ["hypha1"],
+        "spores": []
       },
-      {
-        "id": "tecton_B",
-        "breakChance": 10.0,
-        "breakCount": 0,
-        "hexagons": ["2"],
-        "neighbours": ["tecton_A", "tecton_C"],
-        "fungus": null,
-        "insects": [],
-        "spores": {},
-        "hyphas": [hypha1, hypha 2]
+      "insects": [],
+      "spores": {},
+      "hyphas": ["hypha1"]
+    },
+    {
+      "id": "tecton_B",
+      "breakChance": 10.0,
+      "breakCount": 0,
+      "hexagons": ["2"],
+      "neighbours": ["tecton_A", "tecton_C"],
+      "fungus": null,
+      "insects": [],
+      "spores": {},
+      "hyphas": ["hypha1", "hypha2"]
+    },
+    {
+      "id": "tecton_C",
+      "breakChance": 10.0,
+      "breakCount": 0,
+      "hexagons": ["3"],
+      "neighbours": ["tecton_B", "tecton_D"],
+      "fungus": null,
+      "insects": [],
+      "spores": {},
+      "hyphas": ["hypha2"]
+    },
+    {
+      "id": "tecton_D",
+      "breakChance": 10.0,
+      "breakCount": 0,
+      "hexagons": ["4"],
+      "neighbours": ["tecton_C"],
+      "fungus": {
+        "species": "mycologist2",
+        "charge": 0,
+        "lifespan": 5,
+        "hyphas": ["hypha2"],
+        "spores": []
       },
-      {
-        "id": "tecton_C",
-        "breakChance": 10.0,
-        "breakCount": 0,
-        "hexagons": ["3"],
-        "neighbours": ["tecton_B", "tecton_D"],
-        "fungus": null,
-        "insects": [],
-        "spores": {},
-        "hyphas": [hypha2]
-      },
-      {
-        "id": "tecton_D",
-        "breakChance": 10.0,
-        "breakCount": 0,
-        "hexagons": ["4"],
-        "neighbours": ["tecton_C"],
-        "fungus": {
-          "species": "mycologist2",
-          "charge": 0,
-          "lifespan": 5,
-          "hyphas": [hypha2],
-          "spores": []
-        },
-        "insects": [],
-        "spores": {},
-        "hyphas": [hypha2]
-      }
-    ],
-    "hyphas": [
-      {
-        "id": hypha1
-        "mycologist": "mycologist1",
-        "tectons": ["tecton_A", "tecton_B"]
-      },
-      {
-        "id": hypha2
-        "mycologist": "mycologist2",
-        "tectons": ["tecton_B", "tecton_C", "tecton_D"]
-      }
-    ],
-    "mycologists": [
-      {
-        "name": "mycologist1",
-        "remainingActions": 3
-      },
-      {
-        "name": "mycologist2",
-        "remainingActions": 3
-      }
-    ]
-  }
+      "insects": [],
+      "spores": {},
+      "hyphas": ["hypha2"]
+    }
+  ],
+  "hyphas": [
+    {
+      "id": "hypha1",
+      "mycologist": "mycologist1",
+      "tectons": ["tecton_A", "tecton_B"]
+    },
+    {
+      "id": "hypha2",
+      "mycologist": "mycologist2",
+      "tectons": ["tecton_B", "tecton_C", "tecton_D"]
+    }
+  ],
+  "mycologists": [
+    {
+      "name": "mycologist1",
+      "remainingActions": 3
+    },
+    {
+      "name": "mycologist2",
+      "remainingActions": 3
+    }
+  ]
+}

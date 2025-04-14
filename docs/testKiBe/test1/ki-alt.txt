@@ -28,4 +28,4 @@
 [OK] INSECT insect0 CREATED: null -> CREATED
 [OK] INSECT insect0 POSITION: null -> tecton_B
 [OK] INSECT insect0 OWNER: null -> entomologist_1
-[OK] INSECT insect0 EFFECT_ADDED: null -> StunningEffect(species=mycologist_1, duration=2, nutrientValue=3)
+[OK] INSECT insect0 EFFECT_ADDED: null -> StunningEffect

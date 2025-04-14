@@ -9,7 +9,7 @@
       "fungus": null,
       "insects": [],
       "spores": {},
-      "hyphas": [hypha0]
+      "hyphas": ["hypha0"]
     },
     {
       "id": "tecton_B",
@@ -35,8 +35,7 @@
       "spores": {
         "mycologist_1": "1"
       },
-      "hyphas": [hypha0]
-
+      "hyphas": ["hypha0"]
     },
     {
       "id": "tecton_C",
@@ -47,15 +46,15 @@
       "fungus": null,
       "insects": [],
       "spores": {},
-      "hyphas": [hypha0]
+      "hyphas": ["hypha0"]
     }
   ],
   "hyphas": [
     {
-      "id": hypha0
+      "id": "hypha0",
       "mycologist": "mycologist_1",
       "tectons": ["tecton_A", "tecton_B", "tecton_C"]
-    },
+    }
   ],
   "entomologists": [
     {
@@ -64,5 +63,3 @@
     }
   ]
 }
-
-
