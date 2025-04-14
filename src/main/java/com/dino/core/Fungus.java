@@ -6,12 +6,15 @@ import java.util.List;
 import com.dino.player.Mycologist;
 import com.dino.tecton.NoFungiTecton;
 import com.dino.tecton.Tecton;
+import com.dino.util.SerializableEntity;
+import com.dino.util.SerializerUtil;
 import com.dino.util.Skeleton;
+import com.google.gson.JsonObject;
 
 /**
  * Egy gombatestet reprezentáló osztály.
  */
-public class Fungus {
+public class Fungus implements SerializableEntity{
 
     /**
      * Az a gombász, akihez a gombatest tartozik.
@@ -172,5 +175,23 @@ public class Fungus {
     public void setCharge(int c){
         this.charge = c;
     }
-}
+ @Override
+    public JsonObject serialize() {
+        JsonObject obj = new JsonObject();
+
+        // Kié a gomba (csak id)
+        obj.addProperty("species", "mycologist_" + species.hashCode());
+
+        // Feltöltöttség / életciklus
+        obj.addProperty("charge", charge);
+        obj.addProperty("lifespan", lifespan);
+
+        // Hyphak listája (maguk serialize-olják magukat)
+        obj.add("hyphas", SerializerUtil.toJsonArray(hyphas, h -> h.serialize()));
+
+        // Spórák listája (maguk serialize-olják magukat)
+        obj.add("spores", SerializerUtil.toJsonArray(spores, s -> s.serialize()));
+
+        return obj;
+    }}
 
