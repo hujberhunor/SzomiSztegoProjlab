@@ -1,19 +1,3 @@
-# TODO
-- Tecton:
-  - split átnevetése break-re
-  - addNeighbour megvalósítása (kétírányú asszociáció miatt)
-
-- Hypha:
-  - copy konstruktor
-  - addHypha(Tecton t) (kétírányú asszociáció miatt)
-  - isConnectedToFungus eltávolítása
-
-- Mychologist: mushrooms átnevezni fungi
-
-- Insect:
-  - Copy konstruktor a cloneSpore miatt??
----
-
 # Telepítési és futtatási útmutató
 A projekt fordításához szükség lesz Maven build keretrendszere és Git-re, ezt kétféle képpen telepíthetjük:
 1) A csatolt powershell script segítségével
