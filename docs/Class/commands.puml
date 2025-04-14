@@ -1,15 +1,28 @@
 @startuml
+skinparam classAttributeIconSize 0
 
-' ===== Commandok =====
-interface ICommand{
-    + execute()
+interface Command {
+    + void execute()
 }
 
-class CreateInsectCommand implements ICommand {
-
+class CommandParser {
+    + Command parse(String line)
 }
 
+class Game {
+    + void runCommand(Command cmd)
+}
 
+note left of Command: A teljessség igénye nélkül
+Command <|.. MoveInsectCommand
+Command <|.. ConsumeSporeCommand
+Command <|.. ApplyEffectCommand
+Command <|.. CutHyphaCommand
+Command <|.. CloneInsectCommand
+Command <|.. EndTurnCommand
 
+CommandParser --> Command : returns
+Game --> Command : executes
+Game --> CommandParser : uses
 
 @enduml
