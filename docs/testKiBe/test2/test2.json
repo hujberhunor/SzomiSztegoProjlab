@@ -1,0 +1,68 @@
+{
+  "tectons": [
+    {
+      "id": "A",
+      "breakChance": 0.0,
+      "breakCount": 0,
+      "hexagons": ["A1"],
+      "neighbours": ["B"],
+      "fungus": null,
+      "insects": [
+        {
+          "id": "ins1",
+          "owner": "ent1",
+          "currentTecton": "A",
+          "effects": []
+        }
+      ],
+      "spores": {
+        "myc1": "0"
+      },
+      "hyphas": []
+    },
+    {
+      "id": "B",
+      "breakChance": 0.0,
+      "breakCount": 0,
+      "hexagons": ["B1"],
+      "neighbours": ["A", "C"],
+      "fungus": null,
+      "insects": [],
+      "spores": {
+        "myc1": "0"
+      },
+      "hyphas": []
+    },
+    {
+      "id": "C",
+      "breakChance": 0.0,
+      "breakCount": 0,
+      "hexagons": ["C1"],
+      "neighbours": ["B"],
+      "fungus": null,
+      "insects": [],
+      "spores": {
+        "myc1": "0"
+      },
+      "hyphas": []
+    }
+  ],
+  "hyphas": [
+    {
+      "mycologist": "myc1",
+      "tectons": ["A", "B", "C"]
+    }
+  ],
+  "spores": [],
+  "mycologists": [
+    {
+      "id": "myc1"
+    }
+  ],
+  "entomologists": [
+    {
+      "id": "ent1",
+      "remainingActions": 3
+    }
+  ]
+}

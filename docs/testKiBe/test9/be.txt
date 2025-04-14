@@ -1,18 +1,1 @@
-{
-  "tectons": [
-    {
-      "id": "tecton_A",
-      "breakChance": 10.0,
-      "breakCount": 0,
-      "hexagons": ["1"],
-      "neighbours": [],
-      "fungus": null,
-      "insects": [],
-      "spores": {},
-      "hyphas": []
-    }
-  ],
-  "hyphas": [],
-  "entomologists": []
-}
-
+init test9.json

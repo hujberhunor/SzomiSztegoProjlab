@@ -1,0 +1,4 @@
+init test4.json
+eat insect0 paralyze1
+skip entomologist_1
+eatHypha mycologist_1 tecton_B
