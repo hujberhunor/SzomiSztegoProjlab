@@ -1,0 +1,24 @@
+{
+  "tectons": [
+    {
+      "id": "tecton_A",
+      "breakChance": 10.0,
+      "breakCount": 0,
+      "hexagons": ["1"],
+      "neighbours": [],
+      "fungus": {
+        "species": "mycologist_1",
+        "charge": 2,
+        "lifespan": 0,
+        "hyphas": [],
+        "spores": []
+      },
+      "insects": [],
+      "spores": {},
+      "hyphas": []
+    }
+  ],
+  "hyphas": [],
+  "entomologists": []
+}
+
