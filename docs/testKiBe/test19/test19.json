@@ -1,0 +1,99 @@
+{
+    "tectons": [
+      {
+        "id": "tecton_A",
+        "breakChance": 10.0,
+        "breakCount": 0,
+        "hexagons": ["1"],
+        "neighbours": ["tecton_B"],
+        "fungus": {
+          "species": "mycologist1",
+          "charge": 0,
+          "lifespan": 5,
+          "hyphas": [],
+          "spores": []
+        },
+        "insects": [],
+        "spores": {},
+        "hyphas": []
+      },
+      {
+        "id": "tecton_B",
+        "breakChance": 10.0,
+        "breakCount": 0,
+        "hexagons": ["2"],
+        "neighbours": ["tecton_A", "tecton_C"],
+        "fungus": null,
+        "insects": [
+          {
+            "owner": "entomologist1",
+            "currentTecton": "tecton_B",
+            "effects": []
+          },
+          {
+            "owner": "entomologist2",
+            "currentTecton": "tecton_B",
+            "effects": []
+          }
+        ],
+        "spores": {
+          "mycologist1": "1"
+        },
+        "hyphas": []
+      },
+      {
+        "id": "tecton_C",
+        "breakChance": 10.0,
+        "breakCount": 0,
+        "hexagons": ["3"],
+        "neighbours": ["tecton_B", "tecton_D"],
+        "fungus": {
+          "species": "mycologist2",
+          "charge": 0,
+          "lifespan": 5,
+          "hyphas": [],
+          "spores": []
+        },
+        "insects": [],
+        "spores": {},
+        "hyphas": []
+      },
+      {
+        "id": "tecton_D",
+        "breakChance": 10.0,
+        "breakCount": 0,
+        "hexagons": ["4"],
+        "neighbours": ["tecton_C"],
+        "fungus": {
+          "species": "mycologist1",
+          "charge": 0,
+          "lifespan": 5,
+          "hyphas": [],
+          "spores": []
+        },
+        "insects": [],
+        "spores": {},
+        "hyphas": []
+      }
+    ],
+    "entomologists": [
+      {
+        "name": "entomologist1",
+        "remainingActions": 3
+      },
+      {
+        "name": "entomologist2",
+        "remainingActions": 3
+      }
+    ],
+    "mycologists": [
+      {
+        "name": "mycologist1",
+        "remainingActions": 3
+      },
+      {
+        "name": "mycologist2",
+        "remainingActions": 3
+      }
+    ]
+  }

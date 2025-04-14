@@ -1,0 +1,44 @@
+[OK] TECTON tecton_A CREATED: null -> CREATED
+[OK] TECTON tecton_B CREATED: null -> CREATED
+[OK] TECTON tecton_C CREATED: null -> CREATED
+[OK] TECTON tecton_D CREATED: null -> CREATED
+
+[OK] HYPHA hypha0 CREATED: tecton_A - tecton_B
+[OK] HYPHA hypha0 CREATED: tecton_B - tecton_C - tecton_D
+
+[OK] MYCOLOGIST mycologist1 CREATED: null -> CREATED
+[OK] MYCOLOGIST mycologist2 CREATED: null -> CREATED
+
+[OK] FUNGUS fungus11 CREATED: null -> CREATED
+[OK] FUNGUS fungus11 POSITION: null -> tecton_A
+[OK] FUNGUS fungus11 OWNER: null -> mycologist1
+
+[OK] FUNGUS fungus21 CREATED: null -> CREATED
+[OK] FUNGUS fungus21 POSITION: null -> tecton_D
+[OK] FUNGUS fungus21 OWNER: null -> mycologist2
+
+[OK] GAME CURRENT_TURN: 0 -> 1
+[OK] FUNGUS fungus11 CHARGE: 0 -> 1
+[OK] FUNGUS fungus21 CHARGE: 0 -> 1
+
+[OK] GAME CURRENT_TURN: 1 -> 2
+[OK] FUNGUS fungus11 CHARGE: 1 -> 2
+[OK] FUNGUS fungus21 CHARGE: 1 -> 2
+
+[OK] GAME CURRENT_TURN: 2 -> 3
+[OK] FUNGUS fungus11 CHARGE: 2 -> 3
+[OK] FUNGUS fungus21 CHARGE: 2 -> 3
+
+[OK] FUNGUS fungus11 CHARGE: 3 -> 0
+[OK] MYCOLOGIST mycologist1 REMAINING_ACTIONS: 3 -> 2
+[OK] FUNGUS fungus11 LIFESPAN: 5 -> 4
+
+[OK] FUNGUS fungus21 CHARGE: 3 -> 0
+[OK] MYCOLOGIST mycologist1 REMAINING_ACTIONS: 3 -> 2
+[OK] FUNGUS fungus21 LIFESPAN: 5 -> 4
+
+[ERROR] FUNGUS fungus12 CANNOT_GROW: No hypha on tecton
+
+[OK] FUNGUS fungus22 CREATED: null -> CREATED
+[OK] FUNGUS fungus22 POSITION: null -> tecton_B
+[OK] FUNGUS fungus22 OWNER: null -> mycologist2

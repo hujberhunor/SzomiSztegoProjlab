@@ -1,0 +1,21 @@
+[OK] TECTON tecton_A CREATED: null -> CREATED
+[OK] TECTON tecton_B CREATED: null -> CREATED
+
+[OK] HYPHA hypha0 CREATED: tecton_A - tecton_B 
+
+[OK] MYCOLOGIST mycologist1 CREATED: null -> CREATED
+
+[OK] FUNGUS fungus1 CREATED: null -> CREATED
+[OK] FUNGUS fungus1 POSITION: null -> tecton_A
+[OK] FUNGUS fungus1 OWNER: null -> mycologist1
+
+[OK] GAME CURRENT_TURN: 0 -> 1
+[OK] FUNGUS fungus1 CHARGE: 0 -> 1
+[OK] GAME CURRENT_TURN: 1 -> 2
+[OK] FUNGUS fungus1 CHARGE: 1 -> 2
+
+[OK] FUNGUS fungus1 CHARGE: 2 -> 0
+[OK] MYCOLOGIST mycologist1 REMAINING_ACTIONS: 3 -> 2
+[OK] FUNGUS fungus1 LIFESPAN: 5 -> 4
+
+[ERROR] FUNGUS fungus2 CANNOT_GROW: Incompatible tecton type

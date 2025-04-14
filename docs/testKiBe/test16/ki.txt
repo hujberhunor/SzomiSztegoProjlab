@@ -1,0 +1,21 @@
+[OK] TECTON tecton_A CREATED: null -> CREATED
+[OK] TECTON tecton_B CREATED: null -> CREATED
+
+[OK] HYPHA hypha0 CREATED: tecton_A - tecton_B 
+
+[OK] ENTOMOLOGIST entomologist1 CREATED: null -> CREATED
+
+[OK] INSECT insect1 CREATED: null -> CREATED
+[OK] INSECT insect1 POSITION: null -> tecton_A
+[OK] INSECT insect1 OWNER: null -> entomologist1
+
+[ERROR] TECTON tecton_A CANNOT_BREAK: Insect on tecton
+
+[OK] INSECT insect1 POSITION: tecton_A -> tecton_B
+[OK] ENTOMOLOGIST entomologist1 REMAINING_ACTIONS: 3 -> 2
+
+[OK] GAME CURRENT_TURN: 0 -> 1
+[OK] ENTOMOLOGIST entomologist1 REMAINING_ACTIONS: 2 -> 3
+
+[OK] TECTON tecton1 BREAK_CHANCE: 20 -> 10
+[OK] TECTON tecton1 BREAK_COUNT: 0 -> 1

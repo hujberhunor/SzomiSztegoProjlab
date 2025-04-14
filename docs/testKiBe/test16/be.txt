@@ -1,0 +1,8 @@
+init test16.json
+
+break tecton_A 100
+moveInsect tecton_B
+
+game NextTurn
+
+break tecton_A 100
