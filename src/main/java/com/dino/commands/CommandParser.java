@@ -19,7 +19,7 @@ public class CommandParser {
         switch (commandType) {
             case "MOVE_INSECT":
                 if (parts.length != 3) throw new IllegalArgumentException("MOVE_INSECT needs 2 arguments");
-                // return new MoveInsectCommand(parts[1], parts[2], game);
+                return new MoveInsectCommand(parts[1], parts[2]);
 
             // case "CONSUME_SPORE":
             //     if (parts.length != 2) throw new IllegalArgumentException("CONSUME_SPORE needs 1 argument");

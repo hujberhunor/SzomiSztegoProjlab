@@ -17,7 +17,6 @@ public class MoveInsectCommand implements Command {
         this.tectonName = tectonName;
     }
 
-
     @Override
     public void execute(Game game, Logger logger) {
         EntityRegistry registry = game.getRegistry();
@@ -38,7 +37,7 @@ public class MoveInsectCommand implements Command {
         /// Van-e fonál curr és a target között?
         /// TODO Levi branche
         boolean connected = current.getHyphas().stream()
-            .anyMatch(h -> h.connects(current, target));
+                .anyMatch(h -> h.connects(current, target));
         if (!connected) {
             logger.logError("INSECT", insectId, "No hypha between current and target Tecton.");
             return;
@@ -46,7 +45,7 @@ public class MoveInsectCommand implements Command {
 
         // Bénult-e?
         boolean isParalyzed = insect.getEffects().stream()
-            .anyMatch(e -> e.getClass().getSimpleName().equals("ParalyzingEffect"));
+                .anyMatch(e -> e.getClass().getSimpleName().equals("ParalyzingEffect"));
         if (isParalyzed) {
             logger.logError("INSECT", insectId, "Insect is paralyzed.");
             return;
@@ -56,8 +55,25 @@ public class MoveInsectCommand implements Command {
         String prevTecton = registry.getNameOf(current);
         insect.move(target);
         String newTecton = registry.getNameOf(target);
-        
+
         logger.logChange("INSECT", insectId, "POSITION", prevTecton, newTecton);
+    }
+
+    /**
+     * Feladata, hogy validjálja, hogy a user valid, helyes commandot adott meg
+     * Ez a paraméterek lézezését tesztelni
+     */
+    @Override
+    public boolean validate(Game game) {
+        EntityRegistry reg = game.getRegistry();
+        Insect insect = (Insect) reg.getByName(insectName);
+        Tecton target = (Tecton) reg.getByName(tectonName);
+
+        if (insect == null || target == null)
+            return false;
+        Tecton current = insect.getTecton();
+
+        return current.isNeighbor(target) && current.hasHypha(target);
     }
 
     @Override

@@ -5,7 +5,7 @@ import com.dino.util.Logger;
 
 public interface Command {
     void execute(Game game, Logger logge);
-    // boolean validate();
+    boolean validate(Game game);
     String toString();
 }
 
