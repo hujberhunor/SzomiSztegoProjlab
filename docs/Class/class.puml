@@ -122,8 +122,8 @@ class GameBoard {
 class Game {
     - map: GameBoard
     - players: List<Player>
-    - currTurn: int
-    - totalTurns: int
+    - currRound: int
+    - totalRounds: int
     - currentPlayer: Player
     - decayedHypha: List<Hypha>
     + initBoard()

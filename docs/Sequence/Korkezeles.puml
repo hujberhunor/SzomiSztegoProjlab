@@ -6,7 +6,7 @@ participant Player
 participant Tecton
 
 Main -> Game : initGame()
-Game -> Game : currTurn = 0
+Game -> Game : currRound = 0
 Game -> Game : currRound = 0
 
 Main -> Game : startGame()
@@ -17,7 +17,7 @@ loop Player performs actions
 end
 
 Player -> Game : nextTurn()
-Game -> Game : currTurn++
+Game -> Game : currRound++
 
 alt all players had turn
     Game -> Game : currRound++

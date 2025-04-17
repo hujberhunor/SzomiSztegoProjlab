@@ -82,7 +82,7 @@
   ],
   "game": {
     "currentTurn": 0,
-    "totalTurns": 10,
+    "totalRounds": 10,
     "currentPlayer": "mycologist1"
   }
 }
