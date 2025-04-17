@@ -40,9 +40,9 @@ public class Game {
      */
     private Player currentPlayer;
 
-    EntityRegistry registry = new EntityRegistry();
-    Logger logger = new Logger(registry);
-    GameBoard board = new GameBoard();
+    private final EntityRegistry registry;
+    private final Logger logger;
+    private final GameBoard board;
 
     // Jó
     /**
@@ -57,6 +57,9 @@ public class Game {
         this.totalTurns = totalTurns;
         this.currentPlayer = null;
         this.decayedHypha = new ArrayList<>();
+        this.registry = new EntityRegistry();
+        this.logger = new Logger(registry);
+        this.board = new GameBoard();
     }
 
     /**

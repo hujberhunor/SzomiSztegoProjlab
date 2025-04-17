@@ -73,7 +73,7 @@ public abstract class Tecton implements SerializableEntity {
      * Minden alosztály felülírja ezt a metódust.
      * @return Új, az aktuálissal megegyező típusú tekton
      */
-    public abstract Tecton createCopy();
+    // public abstract Tecton createCopy();
 
     /**
      * A tektonon elhelyez egy darab, m gombász gombájából származó spórát.

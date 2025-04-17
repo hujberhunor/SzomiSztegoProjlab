@@ -35,7 +35,6 @@ public class MoveInsectCommand implements Command {
         }
 
         /// Van-e fonál curr és a target között?
-        /// TODO Levi branche
         if (!current.hasHypha(target)) {
             logger.logError("INSECT", insectId, "No hypha between current and target Tecton.");
             return;
@@ -54,7 +53,7 @@ public class MoveInsectCommand implements Command {
         insect.move(target);
         String newTecton = registry.getNameOf(target);
 
-        logger.logChange("INSECT", insectId, "POSITION", prevTecton, newTecton);
+        logger.logChange("INSECT", insect, "POSITION", prevTecton, newTecton);
     }
 
     /**
