@@ -11,6 +11,7 @@ import java.util.Map;
  */
 public class EntityRegistry {
     private final Map<String, Object> nameToObject = new HashMap<>();
+    // private final Map<Object, String> objectToName = new HashMap<>();
     private final Map<Object, String> objectToName = new IdentityHashMap<>();
 
     public void register(String name, Object obj) {
