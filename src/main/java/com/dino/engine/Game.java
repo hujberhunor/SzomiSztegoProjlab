@@ -6,6 +6,7 @@ import java.util.List;
 import com.dino.core.Hypha;
 import com.dino.player.Player;
 import com.dino.util.EntityRegistry;
+import com.dino.util.Logger;
 
 /**
  * A játékmenet alapvető funkcióit vezérlő, és annak tulajdonságait tároló és kezelő osztály.
@@ -38,6 +39,10 @@ public class Game {
      * Értéke a maximális mennyiségű akció felhasználása után a soron következő játékosra vált.
      */
     private Player currentPlayer;
+
+    EntityRegistry registry = new EntityRegistry();
+    Logger logger = new Logger(registry);
+    GameBoard board = new GameBoard();
 
     // Jó
     /**
@@ -254,5 +259,17 @@ public class Game {
      */
     public List<Hypha> getDecayedHypha() {
         return decayedHypha;
+    }
+
+    public EntityRegistry getRegistry() {
+        return registry;
+    }
+
+    public GameBoard getBoard() {
+        return board;
+    }
+
+    public Logger getLogger() {
+        return logger;
     }
 }

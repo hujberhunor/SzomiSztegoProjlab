@@ -5,62 +5,63 @@ import com.dino.engine.Game;
 import com.dino.engine.GameBoard;
 import com.dino.tecton.Tecton;
 import com.dino.util.EntityRegistry;
+import com.dino.util.Logger;
 
 public class MoveInsectCommand implements Command {
 
     private final String insectName;
-    private final String targetTectonName;
+    private final String tectonName;
 
-    public MoveInsectCommand(String insectName, String targetTectonName) {
+    public MoveInsectCommand(String insectName, String tectonName) {
         this.insectName = insectName;
-        this.targetTectonName = targetTectonName;
+        this.tectonName = tectonName;
     }
+
 
     @Override
     public void execute(Game game, Logger logger) {
-        EntityRegistry registry = game.getEntityRegistry();
-        GameBoard board = game.getGameBoard();
+        EntityRegistry registry = game.getRegistry();
+        GameBoard board = game.getBoard();
 
-        Insect insect = (Insect) registry.get(insectName);
+        Insect insect = (Insect) registry.getByName(insectName);
         Tecton current = insect.getTecton();
-        Tecton target = (Tecton) registry.get(targetTectonName);
+        Tecton target = (Tecton) registry.getByName(tectonName);
 
-        if (!board.areConnected(current, target)) {
-            logger.logError("INSECT", insect, "Target tecton is not a neighbor.");
+        String insectId = registry.getNameOf(insect);
+
+        /// Szomszéd-e a target tecton?
+        if (!board.getNeighbors(current).contains(target)) {
+            logger.logError("INSECT", insectId, "Target Tecton is not a neighbor.");
             return;
         }
 
-        if (!board.hasHypha(current, target)) {
-            logger.logError("INSECT", insect, "No hypha between tectons.");
+        /// Van-e fonál curr és a target között?
+        /// TODO Levi branche
+        boolean connected = current.getHyphas().stream()
+            .anyMatch(h -> h.connects(current, target));
+        if (!connected) {
+            logger.logError("INSECT", insectId, "No hypha between current and target Tecton.");
             return;
         }
 
-        if (insect.isParalyzed()) {
-            logger.logError("INSECT", insect, "Insect is paralyzed.");
+        // Bénult-e?
+        boolean isParalyzed = insect.getEffects().stream()
+            .anyMatch(e -> e.getClass().getSimpleName().equals("ParalyzingEffect"));
+        if (isParalyzed) {
+            logger.logError("INSECT", insectId, "Insect is paralyzed.");
             return;
         }
 
+        // Mozgás + logolás
         String prevTecton = registry.getNameOf(current);
         insect.move(target);
         String newTecton = registry.getNameOf(target);
-
-        logger.logChange("INSECT", insect, "POSITION", prevTecton, newTecton);
+        
+        logger.logChange("INSECT", insectId, "POSITION", prevTecton, newTecton);
     }
 
     @Override
     public String toString() {
-        return "MOVE_INSECT " + insectName + " " + targetTectonName;
-    }
-
-    @Override
-    public void execute() {
-        // TODO Auto-generated method stub
-        throw new UnsupportedOperationException("Unimplemented method 'execute'");
-    }
-
-    @Override
-    public String Serialize() {
-        // TODO Auto-generated method stub
-        throw new UnsupportedOperationException("Unimplemented method 'Serialize'");
+        return "MOVE_INSECT " + insectName + " " + tectonName;
     }
 }
