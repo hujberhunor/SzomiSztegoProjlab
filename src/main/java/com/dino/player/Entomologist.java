@@ -3,6 +3,8 @@ package com.dino.player;
 import com.dino.core.Insect;
 import com.dino.util.Skeleton;
 
+import java.util.List;
+
 /**
  * Ez az osztály egy rovarászt reprezentál.
  * Összeköti a Player osztályt az Insect osztállyal.
@@ -10,9 +12,9 @@ import com.dino.util.Skeleton;
 public class Entomologist extends Player {
 
     /**
-     * Egy rovar példány, amit a rovarász irányít.
+     * Rovarok, amiket a rovarász irányít.
      */
-    Insect insect;
+    List<Insect> insects;
 
     public Entomologist(int actions) {
         this.remainingActions = actions;

@@ -3,11 +3,10 @@ package com.dino.player;
 import com.dino.tecton.Tecton;
 
 /**
- * EZ az osztály alapvető, minden játékos által használható cselekvéseket valósítja meg,
+ * Ez az osztály alapvető, minden játékos által használható cselekvéseket valósítja meg,
  * illetve egy olyan tulajdonságot tárol, ami mind gombászokra, mind rovarászokra egyaránt értelmezhető.
  */
-public class Player {
-
+public abstract class Player {
     /**
      * A játékos neve.
      */
