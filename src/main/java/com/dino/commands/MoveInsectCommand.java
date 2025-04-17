@@ -36,9 +36,7 @@ public class MoveInsectCommand implements Command {
 
         /// Van-e fonál curr és a target között?
         /// TODO Levi branche
-        boolean connected = current.getHyphas().stream()
-                .anyMatch(h -> h.connects(current, target));
-        if (!connected) {
+        if (!current.hasHypha(target)) {
             logger.logError("INSECT", insectId, "No hypha between current and target Tecton.");
             return;
         }
