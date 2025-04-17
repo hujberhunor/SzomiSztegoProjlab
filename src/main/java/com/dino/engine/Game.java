@@ -25,13 +25,13 @@ public class Game {
      * Egy egész szám, ami azt tartja számon, hogy a játék menete alatt hány kör telt el.
      * Értéke eggyel nő, ha már minden játékos lépett.
      */
-    private int currTurn;
+    private int currRound;
 
     /**
      * Egy egész szám, ami eltárolja, hogy a játék hány kör után fog véget érni.
      * Értékét a felhasználók adják meg a meccs kezdete előtt.
      */
-    private int totalTurns;
+    private int totalRounds;
 
     /**
      * Az a játékos, aki éppen léphet.
@@ -45,11 +45,11 @@ public class Game {
      */
     private List<Hypha> decayedHypha;
 
-    public Game(int totalTurns) {
+    public Game(int totalRounds) {
         this.map = new GameBoard();
         this.players = new ArrayList<Player>();
-        this.currTurn = 0;
-        this.totalTurns = totalTurns;
+        this.currRound = 0;
+        this.totalRounds = totalRounds;
         this.currentPlayer = null;
         this.decayedHypha = new ArrayList<>();
     }
@@ -81,7 +81,7 @@ public class Game {
             currentPlayer = players.get(0);
         }
 
-        currTurn = 0;
+        currRound = 0;
         decayedHypha.clear();
 
         return true;
@@ -91,7 +91,7 @@ public class Game {
      * A játék első körtől való indításáért felelő függvény.
      */
     public void startGame() {
-        currTurn = 1;
+        currRound = 1;
 
         if (currentPlayer == null && !players.isEmpty()) {
             currentPlayer = players.get(0);
@@ -163,9 +163,9 @@ public class Game {
      * Meghívódik, amikor minden játékos befejezte a saját körét.
      */
     public void nextRound() {
-        currTurn++;
+        currRound++;
 
-        if (currTurn > totalTurns) {
+        if (currRound > totalRounds) {
             endGame();
             return;
         }
@@ -178,7 +178,7 @@ public class Game {
     /**
      * Paraméter nélkül hívható függvény, ami befejezi a játékot.
      * Ez a függvény választja ki a két győztest a számontartott pontszámok alapján,
-     * és akkor hívódik, amikor a CurrTurn értéke eléri a TotalTurns plusz egy értéket.
+     * és akkor hívódik, amikor a currRound értéke eléri a totalRounds plusz egy értéket.
      */
     public void endGame() {
         for (Player player : players) {
@@ -226,23 +226,23 @@ public class Game {
      * @return A jelenlegi kör száma
      */
     public int getCurrentTurn() {
-        return currTurn;
+        return currRound;
     }
 
     /**
      * Visszaadja az összes kör számát
      * @return Az összes kör száma
      */
-    public int getTotalTurns() {
-        return totalTurns;
+    public int gettotalRounds() {
+        return totalRounds;
     }
 
     /**
      * Beállítja az összes kör számát
-     * @param totalTurns Az összes kör új értéke
+     * @param totalRounds Az összes kör új értéke
      */
-    public void setTotalTurns(int totalTurns) {
-        this.totalTurns = totalTurns;
+    public void settotalRounds(int totalRounds) {
+        this.totalRounds = totalRounds;
     }
 
     /**
