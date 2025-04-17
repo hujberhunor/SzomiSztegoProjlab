@@ -112,11 +112,7 @@ public class Game {
             return false;
         }
 
-        if (players.size() == 1) {
-            currentPlayer = player;
-        }
         players.add(player);
-
         return true;
     }
 
@@ -147,24 +143,35 @@ public class Game {
     }
 
     /**
-     * Paraméter nélkül hívható függvény, ami lépteti a játékmenetet egy lépéssel.
+     * Paraméter nélkül hívható függvény, ami lépteti a játékmenetet a következő játékosra.
+     * Ha minden játékos sorra került, akkor meghívja a nextRound() függvényt.
      */
     public void nextTurn() {
         int currentIndex = players.indexOf(currentPlayer);
         int nextIndex = (currentIndex + 1) % players.size();
 
         if (nextIndex == 0) {
-            currTurn++;
+            nextRound();
+        } else {
+            currentPlayer = players.get(nextIndex);
+            currentPlayer.remainingActions = currentPlayer.actionsPerTurn;
+        }
+    }
 
-            // Ha elértük a maximális köröket, a játék véget ér
-            if (currTurn > totalTurns) {
-                endGame();
-                return;
-            }
-            map.breakHandler();
+    /**
+     * Paraméter nélkül hívható függvény, ami lépteti a játékmenetet a következő körre.
+     * Meghívódik, amikor minden játékos befejezte a saját körét.
+     */
+    public void nextRound() {
+        currTurn++;
+
+        if (currTurn > totalTurns) {
+            endGame();
+            return;
         }
 
-        currentPlayer = players.get(nextIndex);
+        map.breakHandler();
+        currentPlayer = players.get(0);
         currentPlayer.remainingActions = currentPlayer.actionsPerTurn;
     }
 
