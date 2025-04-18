@@ -151,7 +151,7 @@ public class Fungus implements SerializableEntity{
 
         // Megpróbálunk gombafonalat növeszteni minden tektonra a listában
         // Inicializáljuk az új fonalat
-        Hypha newHypha = new Hypha();
+        Hypha newHypha = new Hypha(species, this);
         tecton.addHypha(newHypha);
         hyphas.add(newHypha);
         newHypha.getTectons().add(tecton);
@@ -212,5 +212,6 @@ public class Fungus implements SerializableEntity{
         obj.add("spores", SerializerUtil.toJsonArray(spores, s -> s.serialize()));
 
         return obj;
-    }}
+    }
+}
 
