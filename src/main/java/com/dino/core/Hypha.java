@@ -37,7 +37,7 @@ public class Hypha implements SerializableEntity {
 
     public Hypha(Mycologist m, Fungus f) {
         tectons = new ArrayList<>();
-        mycologist = m; // Kinek a gombájáró
+        mycologist = m; // Kinek a gombájáról
         fungus = f; // source fungus, ahonna indul a fonal
     }
 
