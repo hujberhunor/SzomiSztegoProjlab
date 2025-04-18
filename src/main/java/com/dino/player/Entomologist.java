@@ -1,5 +1,7 @@
 package com.dino.player;
 
+import java.util.List;
+
 import com.dino.core.Insect;
 import com.dino.util.Skeleton;
 
@@ -12,7 +14,7 @@ public class Entomologist extends Player {
     /**
      * Egy rovar példány, amit a rovarász irányít.
      */
-    Insect insect;
+    List<Insect> insects;
 
     public Entomologist(int actions) {
         this.remainingActions = actions;
@@ -58,5 +60,9 @@ public class Entomologist extends Player {
 
     public int getRemainingActions() {
         return this.remainingActions;
+    }
+
+    public List<Insect> getInsects(){
+        return insects;
     }
 }
