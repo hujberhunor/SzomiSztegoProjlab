@@ -6,6 +6,7 @@ import java.util.List;
 import com.dino.core.Hypha;
 import com.dino.player.Player;
 import com.dino.util.EntityRegistry;
+import com.dino.util.Logger;
 
 /**
  * A játékmenet alapvető funkcióit vezérlő, és annak tulajdonságait tároló és kezelő osztály.
@@ -45,6 +46,9 @@ public class Game {
      */
     private List<Hypha> decayedHypha;
 
+    private EntityRegistry registry;
+    private Logger logger;
+
     public Game(int totalRounds) {
         this.map = new GameBoard();
         this.players = new ArrayList<Player>();
@@ -52,6 +56,8 @@ public class Game {
         this.totalRounds = totalRounds;
         this.currentPlayer = null;
         this.decayedHypha = new ArrayList<>();
+        this.registry = new EntityRegistry();
+        this.logger = new Logger(registry);
     }
 
     /**
@@ -112,7 +118,12 @@ public class Game {
             return false;
         }
 
+        int oldPlayerCount = players.size();
         players.add(player);
+
+        logger.logChange("GAME", this, "PLAYERS_COUNT", String.valueOf(oldPlayerCount),
+                String.valueOf(players.size()));
+
         return true;
     }
 
@@ -127,15 +138,28 @@ public class Game {
         }
 
         int playerIndex = players.indexOf(player);
-        boolean result = players.remove(player);
+        int oldPlayerCount = players.size();
+        String playerName = registry.getNameOf(player);
 
-        if (player == currentPlayer) {
-            if (players.isEmpty()) {
-                currentPlayer = null;
-            } else {
-                // A következő játékos lesz az aktuális, vagy az első, ha ez volt az utolsó
-                int nextIndex = playerIndex % players.size();
-                currentPlayer = players.get(nextIndex);
+        boolean result = players.remove(player);
+        if (result) {
+            logger.logChange("GAME", this, "PLAYERS_COUNT", String.valueOf(oldPlayerCount),
+                    String.valueOf(players.size()));
+
+            if (player == currentPlayer) {
+                String oldPlayerName = playerName;
+
+                if (players.isEmpty()) {
+                    currentPlayer = null;
+                    logger.logChange("GAME", this, "CURRENT_PLAYER", oldPlayerName, "null");
+                } else {
+                    // A következő játékos lesz az aktuális, vagy az első, ha ez volt az utolsó
+                    int nextIndex = playerIndex % players.size();
+                    currentPlayer = players.get(nextIndex);
+
+                    String newPlayerName = registry.getNameOf(currentPlayer);
+                    logger.logChange("GAME", this, "CURRENT_PLAYER", oldPlayerName, newPlayerName);
+                }
             }
         }
 
@@ -147,6 +171,8 @@ public class Game {
      * Ha minden játékos sorra került, akkor meghívja a nextRound() függvényt.
      */
     public void nextTurn() {
+        String oldPlayerName = registry.getNameOf(currentPlayer);
+
         int currentIndex = players.indexOf(currentPlayer);
         int nextIndex = (currentIndex + 1) % players.size();
 
@@ -155,6 +181,9 @@ public class Game {
         } else {
             currentPlayer = players.get(nextIndex);
             currentPlayer.remainingActions = currentPlayer.actionsPerTurn;
+
+            String newPlayerName = registry.getNameOf(currentPlayer);
+            logger.logChange("GAME", this, "CURRENT_PLAYER", oldPlayerName, newPlayerName);
         }
     }
 
@@ -163,7 +192,10 @@ public class Game {
      * Meghívódik, amikor minden játékos befejezte a saját körét.
      */
     public void nextRound() {
+        int oldRound = currRound;
         currRound++;
+
+        logger.logChange("GAME", this, "ROUND", String.valueOf(oldRound), String.valueOf(currRound));
 
         if (currRound > totalRounds) {
             endGame();
@@ -171,8 +203,13 @@ public class Game {
         }
 
         map.breakHandler();
+
+        String oldPlayerName = registry.getNameOf(currentPlayer);
         currentPlayer = players.get(0);
         currentPlayer.remainingActions = currentPlayer.actionsPerTurn;
+
+        String newPlayerName = registry.getNameOf(currentPlayer);
+        logger.logChange("GAME", this, "CURRENT_PLAYER", oldPlayerName, newPlayerName);
     }
 
     /**
