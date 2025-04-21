@@ -58,8 +58,19 @@ public class AcceleratingEffect extends Spore {
             insect.addEffects(this); // effekt listára
             insect.getEntomologist().increaseActions(); // +1 action
 
-            logger.logChange("INSECT", insect, "EFFECT", prevEffects, insect.getEffects());
-            logger.logChange("ENTOMOLOGIST", insect.getEntomologist(), "REMAINING ACTIONS", prevActions, insect.getEntomologist().getRemainingActions());
+            if(insect.getEffects().contains(this)){
+                logger.logChange("INSECT", insect, "EFFECT", prevEffects, insect.getEffects());
+            }
+            else {
+                logger.logError("EFFECT", "ACCELERATING EFFECT", "Nem sikerült alkalmazni a rovarra!");
+            }
+
+            if(prevActions < insect.getEntomologist().getRemainingActions()){
+                logger.logChange("ENTOMOLOGIST", insect.getEntomologist(), "REMAINING ACTIONS", prevActions, insect.getEntomologist().getRemainingActions());
+            }
+            else {
+                logger.logError("ENTOMOLOGIST", "", "Nem sikerült növelni az akciók számát!");
+            }
         }
     }
 }
