@@ -40,19 +40,36 @@ public class ParalyzingEffect extends Spore {
         Logger logger = new Logger(registry);
 
         List<Spore> prevEffects = insect.getEffects();
-        int prevActions = insect.getEntomologist().getRemainingActions();
 
-        // Hatás alkalmazása
-        insect.addEffects(this); // effekt listára
-        insect.getEntomologist().setActions(0);
+        //ellenőrzés, hogy már az adott spóra hatása alatt van-e
+        boolean alreadyHasEffect = false;
+        for (Spore effect : prevEffects) {
+            if (effect.sporeType() == 3) alreadyHasEffect = true;
+        }
 
-        if(insect.getEffects().contains(this)){
-            logger.logChange("INSECT", insect, "EFFECT", prevEffects, insect.getEffects());
+        if(alreadyHasEffect){
+            logger.logError("SPORE", "PARALYZING_EFFECT", "A rovar már bénító hatás alatt van!");
         }
         else {
-            logger.logError("EFFECT", "PARALYZING EFFECT", "Nem sikerült alkalmazni a rovarra!");
-        }
+            int prevActions = insect.getEntomologist().getRemainingActions();
 
-        logger.logChange("ENTOMOLOGIST", insect.getEntomologist(), "ACTIONS", prevActions, 0);
+            // Hatás alkalmazása
+            insect.addEffects(this); // effekt listára
+            insect.getEntomologist().setActions(0);
+
+            if(insect.getEffects().contains(this)){
+                logger.logChange("INSECT", insect, "EFFECT", prevEffects, insect.getEffects());
+            }
+            else {
+                logger.logError("EFFECT", "PARALYZING EFFECT", "Nem sikerült alkalmazni a rovarra!");
+            }
+
+            if(insect.getEntomologist().getRemainingActions() == 0){
+                logger.logChange("ENTOMOLOGIST", insect.getEntomologist(), "ACTIONS", prevActions, 0);
+            }
+            else {
+                logger.logError("ENTOMOLOGIST", "", "Nem sikerült beállítani az akciók számát!");
+            }
+        }
     }
 }

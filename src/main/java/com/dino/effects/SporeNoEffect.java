@@ -45,6 +45,7 @@ public class SporeNoEffect extends Spore {
         }
         else {
             logger.logError("EFFECT", "NO EFFECT", "Nem sikerült alkalmazni a rovarra!");
-        }    }
+        }
+    }
 }
 

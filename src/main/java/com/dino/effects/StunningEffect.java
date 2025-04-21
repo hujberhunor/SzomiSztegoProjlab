@@ -38,13 +38,24 @@ public class StunningEffect extends Spore {
 
         List<Spore> prevEffects = insect.getEffects();
 
-        insect.addEffects(this);
+        //ellenőrzés, hogy már az adott spóra hatása alatt van-e
+        boolean alreadyHasEffect = false;
+        for (Spore effect : prevEffects) {
+            if (effect.sporeType() == 5) alreadyHasEffect = true;
+        }
 
-        if(insect.getEffects().contains(this)){
-            logger.logChange("INSECT", insect, "EFFECT", prevEffects, insect.getEffects());
+        if(alreadyHasEffect){
+            logger.logError("SPORE", "STUNNING_EFFECT", "A rovar már kábító hatás alatt van!");
         }
         else {
-            logger.logError("EFFECT", "STUNNING EFFECT", "Nem sikerült alkalmazni a rovarra!");
+            insect.addEffects(this);
+
+            if(insect.getEffects().contains(this)){
+                logger.logChange("INSECT", insect, "EFFECT", prevEffects, insect.getEffects());
+            }
+            else {
+                logger.logError("EFFECT", "STUNNING EFFECT", "Nem sikerült alkalmazni a rovarra!");
+            }
         }
     }
 }

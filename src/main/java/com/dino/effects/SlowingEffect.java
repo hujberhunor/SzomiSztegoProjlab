@@ -37,23 +37,35 @@ public class SlowingEffect extends Spore {
         Logger logger = new Logger(registry);
 
         List<Spore> prevEffects = insect.getEffects();
-        int prevActions = insect.getEntomologist().getRemainingActions();
 
-        insect.addEffects(this);
-        insect.getEntomologist().setActions(1);
+        //ellenőrzés, hogy már az adott spóra hatása alatt van-e
+        boolean alreadyHasEffect = false;
+        for (Spore effect : prevEffects) {
+            if (effect.sporeType() == 4) alreadyHasEffect = true;
+        }
 
-        if(insect.getEffects().contains(this)){
-            logger.logChange("INSECT", insect, "EFFECT", prevEffects, insect.getEffects());
+        if(alreadyHasEffect){
+            logger.logError("SPORE", "SLOWING_EFFECT", "A rovar már lassító hatás alatt van!");
         }
         else {
-            logger.logError("EFFECT", "SLOWING EFFECT", "Nem sikerült alkalmazni a rovarra!");
-        }
+            int prevActions = insect.getEntomologist().getRemainingActions();
 
-        if(insect.getEntomologist().getRemainingActions() == 1){
-            logger.logChange("ENTOMOLOGIST", insect.getEntomologist(), "REMAINING ACTIONS", prevActions, 1);
-        }
-        else {
-            logger.logError("ENTOMOLOGIST", "", "Nem sikerült beállítani az akciók számát!");
+            insect.addEffects(this);
+            insect.getEntomologist().setActions(1);
+
+            if(insect.getEffects().contains(this)){
+                logger.logChange("INSECT", insect, "EFFECT", prevEffects, insect.getEffects());
+            }
+            else {
+                logger.logError("EFFECT", "SLOWING EFFECT", "Nem sikerült alkalmazni a rovarra!");
+            }
+
+            if(insect.getEntomologist().getRemainingActions() == 1){
+                logger.logChange("ENTOMOLOGIST", insect.getEntomologist(), "REMAINING ACTIONS", prevActions, 1);
+            }
+            else {
+                logger.logError("ENTOMOLOGIST", "", "Nem sikerült beállítani az akciók számát!");
+            }
         }
     }
 }
