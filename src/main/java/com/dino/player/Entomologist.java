@@ -61,6 +61,7 @@ public class Entomologist extends Player {
     public int getRemainingActions() {
         return this.remainingActions;
     }
+    public void setActionsToZero() { remainingActions = 0; }
 
     public List<Insect> getInsects() { return insects; }
     public void addInsects(Insect insect) { insects.add(insect); }
