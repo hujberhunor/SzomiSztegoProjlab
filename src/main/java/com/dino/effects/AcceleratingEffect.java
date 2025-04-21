@@ -3,9 +3,10 @@ package com.dino.effects;
 import com.dino.core.Insect;
 import com.dino.core.Spore;
 import com.dino.player.Mycologist;
-import com.dino.util.Skeleton;
+import com.dino.util.*;
+import java.util.List;
 
-//Olyan spórát megvalósító osztály, ami felgyorsítja az őt elfogyaszó rovarat, aki a következő körökben legfeljebb akár háromszor tud majd mozogni.
+//Olyan spórát megvalósító osztály, ami felgyorsítja az őt elfogyaszó rovarat, aki a következő körökben egyel több akciót tud végrehajtani.
 public class AcceleratingEffect extends Spore {
 
     private static final int ACCELERATING_EFFECT_NUTRIENT_VALUE = 1;
@@ -15,28 +16,50 @@ public class AcceleratingEffect extends Spore {
         super(mycologist, ACCELERATING_EFFECT_NUTRIENT_VALUE);
     }
 
+    //A spóra tápértékét visszaadó függvény.
     @Override
     public int getNutrientValue() {
         return ACCELERATING_EFFECT_NUTRIENT_VALUE;
     }
 
+    //A spóra fajtáját stringgé alakító függvény.
+    @Override
     public String toString(){
         return "Accelerating Spore";
+    }
+
+    //A spóra típusát reprezentáló integert visszaadó függvény.
+    @Override
+    public int sporeType() {
+        return 1;
     }
 
     //A gomba hatását megvalósító függvény. A paraméterként átadott rovar a következő két kör alatt eggyel több akciót használhat ki mozgásra.
     @Override
     public void applyTo(Insect insect) {
-        Skeleton skeleton = Skeleton.getInstance();
-        skeleton.startMethod("AcceleratingEffect", "applyTo");
+        EntityRegistry registry = new EntityRegistry();
+        Logger logger = new Logger(registry);
 
-        // Hatás alkalmazása
-        insect.addEffects(this); // effekt listára
-        insect.getEntomologist().increaseActions(); // +1 action
+        List<Spore> prevEffects = insect.getEffects();
 
-        skeleton.log(
-            "AcceleratingEffect hatás alkalmazva: +1 akció a rovarásznak."
-        );
-        skeleton.endMethod();
+        //ellenőrzés, hogy már az adott spóra hatása alatt van-e
+        boolean alreadyHasEffect = false;
+        for (Spore effect : prevEffects) {
+            if (effect.sporeType() == 1) alreadyHasEffect = true;
+        }
+
+        if(alreadyHasEffect){
+            logger.logError("SPORE", "ACCELERATING_EFFECT", "A rovar már gyorsító hatás alatt van!");
+        }
+        else {
+            int prevActions = insect.getEntomologist().getRemainingActions();
+
+            // Hatás alkalmazása
+            insect.addEffects(this); // effekt listára
+            insect.getEntomologist().increaseActions(); // +1 action
+
+            logger.logChange("INSECT", insect, "EFFECT", prevEffects, insect.getEffects());
+            logger.logChange("ENTOMOLOGIST", insect.getEntomologist(), "REMAINING ACTIONS", prevActions, insect.getEntomologist().getRemainingActions());
+        }
     }
 }
