@@ -44,7 +44,7 @@ public class ParalyzingEffect extends Spore {
 
         // Hatás alkalmazása
         insect.addEffects(this); // effekt listára
-        insect.getEntomologist().setActionsToZero();
+        insect.getEntomologist().setActions(0);
 
         if(insect.getEffects().contains(this)){
             logger.logChange("INSECT", insect, "EFFECT", prevEffects, insect.getEffects());
