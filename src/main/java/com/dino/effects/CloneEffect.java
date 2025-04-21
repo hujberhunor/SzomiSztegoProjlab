@@ -6,7 +6,6 @@ import com.dino.player.Mycologist;
 import com.dino.tecton.Tecton;
 import com.dino.util.EntityRegistry;
 import com.dino.util.Logger;
-import com.dino.util.Skeleton;
 
 import java.util.List;
 
@@ -55,6 +54,7 @@ public class CloneEffect extends Spore {
         Tecton currTecton = original.getTecton();
         // Hozzáadom a klónt az eredeti tektonjához
         currTecton.addInsect(clone);
+        clone.getEntomologist().addInsects(clone);
 
         if(original.getEffects().contains(this)){
             logger.logChange("INSECT", original, "EFFECT", prevEffects, original.getEffects());
@@ -63,11 +63,11 @@ public class CloneEffect extends Spore {
             logger.logError("EFFECT", "ACCELERATING EFFECT", "Nem sikerült alkalmazni a rovarra!");
         }
 
-        if(currTecton.getInsects().contains(clone)){
+        if(currTecton.getInsects().contains(clone) && original.getEntomologist().getInsects().contains(clone)){
             logger.logOk("INSECT", "NEW INSECT", "", "null", "created");
         }
         else {
-            logger.logError("INSECT", "NEW INSECT", "Nem sikerült hozzáadni a tektonhoz!");
+            logger.logError("INSECT", "NEW INSECT", "Nem sikerült a klónt hozzáadni a tektonhoz vagy a rovarászhoz!");
         }
     }
 
