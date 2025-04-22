@@ -50,6 +50,8 @@ public class Game {
      */
     private List<Hypha> decayedHypha;
 
+    private Object selectedEntity;
+
     public Game(int totalTurns) {
         this.map = new GameBoard();
         this.players = new ArrayList<Player>();
@@ -274,5 +276,13 @@ public class Game {
 
     public Logger getLogger() {
         return logger;
+    }
+
+    public Object getSelectedEntity() {
+        return selectedEntity;
+    }
+
+    public void setSelectedEntity(Object selectedEntity) {
+        this.selectedEntity = selectedEntity;
     }
 }
