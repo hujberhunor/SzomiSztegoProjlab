@@ -87,9 +87,23 @@ public class Hypha implements SerializableEntity {
     /**
      * Folytatja a már megkeztedd fonalat. Hozzáad "egy tectonnyi fonalat" a lista végére
      */
-    public void continueHypha(Tecton t) {
+    public boolean continueHypha(Tecton t) {
+    // Ha ez az első tecton (pl. új fonalnál), engedjük
+    if (tectons.isEmpty()) {
         tectons.add(t);
+        return true;
     }
+
+    // Ellenőrizzük, hogy az utolsó tecton szomszédja-e a cél
+    Tecton last = tectons.get(tectons.size() - 1);
+    if (last.isNeighbor(t)) {
+        tectons.add(t);
+        return true;
+    }
+
+    return false;
+}
+
 
     /**
      * Fonal haladásának tektonjai, konkrétan maga a fonal
