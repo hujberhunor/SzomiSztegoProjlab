@@ -66,6 +66,10 @@ public class Mycologist {
         skeleton.endMethod();
     }
 
+    public List<Fungus> getMushrooms(){
+        return mushrooms;
+    }
+
     /*
      * CSAK DEBUG ÉS TESZT JELLEGGEL 
      * INITELÉSHEZ LETT LÉRTEROZVA
