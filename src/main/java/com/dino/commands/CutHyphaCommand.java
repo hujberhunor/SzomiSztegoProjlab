@@ -30,14 +30,21 @@ public class CutHyphaCommand implements Command {
         Tecton targetTecton = (Tecton) registry.getByName(targetTectonName);
         String insectId = registry.getNameOf(insect);
 
+        // Rovar megpróbálja elvágni a fonalat a megadott tektonnál
         boolean success = insect.cutHypha(hypha, targetTecton);
         if (success) {
+            // Sikeres vágás esetén változás logolása
             logger.logChange("INSECT", insect, "CUT_HYPHA", hyphaName + ":" + targetTectonName, "SUCCESS");
         } else {
+            // Sikertelen vágás esetén hiba logolása
             logger.logError("INSECT", insectId, "Failed to cut hypha at target tecton.");
         }
     }
 
+    /**
+     * Feladata, hogy validálja, hogy a user valid, helyes commandot adott meg
+     * Ez a paraméterek létezését és típusát teszteli
+     */
     @Override
     public boolean validate(Game game) {
         EntityRegistry reg = game.getRegistry();
