@@ -26,23 +26,19 @@ public class Game {
      * Egy egész szám, ami azt tartja számon, hogy a játék menete alatt hány kör telt el.
      * Értéke eggyel nő, ha már minden játékos lépett.
      */
-    private int currTurn;
+    private int currRound;
 
     /**
      * Egy egész szám, ami eltárolja, hogy a játék hány kör után fog véget érni.
      * Értékét a felhasználók adják meg a meccs kezdete előtt.
      */
-    private int totalTurns;
+    private int totalRounds;
 
     /**
      * Az a játékos, aki éppen léphet.
      * Értéke a maximális mennyiségű akció felhasználása után a soron következő játékosra vált.
      */
     private Player currentPlayer;
-
-    private final EntityRegistry registry;
-    private final Logger logger;
-    private final GameBoard board;
 
     // Jó
     /**
@@ -51,17 +47,18 @@ public class Game {
     private List<Hypha> decayedHypha;
 
     private Object selectedEntity;
+    private EntityRegistry registry;
+    private Logger logger;
 
-    public Game(int totalTurns) {
+    public Game(int totalRounds) {
         this.map = new GameBoard();
         this.players = new ArrayList<Player>();
-        this.currTurn = 0;
-        this.totalTurns = totalTurns;
+        this.currRound = 0;
+        this.totalRounds = totalRounds;
         this.currentPlayer = null;
         this.decayedHypha = new ArrayList<>();
         this.registry = new EntityRegistry();
         this.logger = new Logger(registry);
-        this.board = new GameBoard();
     }
 
     /**
@@ -91,7 +88,7 @@ public class Game {
             currentPlayer = players.get(0);
         }
 
-        currTurn = 0;
+        currRound = 0;
         decayedHypha.clear();
 
         return true;
@@ -101,7 +98,7 @@ public class Game {
      * A játék első körtől való indításáért felelő függvény.
      */
     public void startGame() {
-        currTurn = 1;
+        currRound = 1;
 
         if (currentPlayer == null && !players.isEmpty()) {
             currentPlayer = players.get(0);
@@ -122,10 +119,11 @@ public class Game {
             return false;
         }
 
-        if (players.size() == 1) {
-            currentPlayer = player;
-        }
+        int oldPlayerCount = players.size();
         players.add(player);
+
+        logger.logChange("GAME", this, "PLAYERS_COUNT", String.valueOf(oldPlayerCount),
+                String.valueOf(players.size()));
 
         return true;
     }
@@ -141,15 +139,28 @@ public class Game {
         }
 
         int playerIndex = players.indexOf(player);
-        boolean result = players.remove(player);
+        int oldPlayerCount = players.size();
+        String playerName = registry.getNameOf(player);
 
-        if (player == currentPlayer) {
-            if (players.isEmpty()) {
-                currentPlayer = null;
-            } else {
-                // A következő játékos lesz az aktuális, vagy az első, ha ez volt az utolsó
-                int nextIndex = playerIndex % players.size();
-                currentPlayer = players.get(nextIndex);
+        boolean result = players.remove(player);
+        if (result) {
+            logger.logChange("GAME", this, "PLAYERS_COUNT", String.valueOf(oldPlayerCount),
+                    String.valueOf(players.size()));
+
+            if (player == currentPlayer) {
+                String oldPlayerName = playerName;
+
+                if (players.isEmpty()) {
+                    currentPlayer = null;
+                    logger.logChange("GAME", this, "CURRENT_PLAYER", oldPlayerName, "null");
+                } else {
+                    // A következő játékos lesz az aktuális, vagy az első, ha ez volt az utolsó
+                    int nextIndex = playerIndex % players.size();
+                    currentPlayer = players.get(nextIndex);
+
+                    String newPlayerName = registry.getNameOf(currentPlayer);
+                    logger.logChange("GAME", this, "CURRENT_PLAYER", oldPlayerName, newPlayerName);
+                }
             }
         }
 
@@ -157,31 +168,55 @@ public class Game {
     }
 
     /**
-     * Paraméter nélkül hívható függvény, ami lépteti a játékmenetet egy lépéssel.
+     * Paraméter nélkül hívható függvény, ami lépteti a játékmenetet a következő játékosra.
+     * Ha minden játékos sorra került, akkor meghívja a nextRound() függvényt.
      */
     public void nextTurn() {
+        String oldPlayerName = registry.getNameOf(currentPlayer);
+
         int currentIndex = players.indexOf(currentPlayer);
         int nextIndex = (currentIndex + 1) % players.size();
 
         if (nextIndex == 0) {
-            currTurn++;
+            nextRound();
+        } else {
+            currentPlayer = players.get(nextIndex);
+            currentPlayer.remainingActions = currentPlayer.actionsPerTurn;
 
-            // Ha elértük a maximális köröket, a játék véget ér
-            if (currTurn > totalTurns) {
-                endGame();
-                return;
-            }
-            map.breakHandler();
+            String newPlayerName = registry.getNameOf(currentPlayer);
+            logger.logChange("GAME", this, "CURRENT_PLAYER", oldPlayerName, newPlayerName);
+        }
+    }
+
+    /**
+     * Paraméter nélkül hívható függvény, ami lépteti a játékmenetet a következő körre.
+     * Meghívódik, amikor minden játékos befejezte a saját körét.
+     */
+    public void nextRound() {
+        int oldRound = currRound;
+        currRound++;
+
+        logger.logChange("GAME", this, "ROUND", String.valueOf(oldRound), String.valueOf(currRound));
+
+        if (currRound > totalRounds) {
+            endGame();
+            return;
         }
 
-        currentPlayer = players.get(nextIndex);
+        map.breakHandler();
+
+        String oldPlayerName = registry.getNameOf(currentPlayer);
+        currentPlayer = players.get(0);
         currentPlayer.remainingActions = currentPlayer.actionsPerTurn;
+
+        String newPlayerName = registry.getNameOf(currentPlayer);
+        logger.logChange("GAME", this, "CURRENT_PLAYER", oldPlayerName, newPlayerName);
     }
 
     /**
      * Paraméter nélkül hívható függvény, ami befejezi a játékot.
      * Ez a függvény választja ki a két győztest a számontartott pontszámok alapján,
-     * és akkor hívódik, amikor a CurrTurn értéke eléri a TotalTurns plusz egy értéket.
+     * és akkor hívódik, amikor a currRound értéke eléri a totalRounds plusz egy értéket.
      */
     public void endGame() {
         for (Player player : players) {
@@ -229,23 +264,23 @@ public class Game {
      * @return A jelenlegi kör száma
      */
     public int getCurrentTurn() {
-        return currTurn;
+        return currRound;
     }
 
     /**
      * Visszaadja az összes kör számát
      * @return Az összes kör száma
      */
-    public int getTotalTurns() {
-        return totalTurns;
+    public int gettotalRounds() {
+        return totalRounds;
     }
 
     /**
      * Beállítja az összes kör számát
-     * @param totalTurns Az összes kör új értéke
+     * @param totalRounds Az összes kör új értéke
      */
-    public void setTotalTurns(int totalTurns) {
-        this.totalTurns = totalTurns;
+    public void settotalRounds(int totalRounds) {
+        this.totalRounds = totalRounds;
     }
 
     /**
@@ -266,23 +301,19 @@ public class Game {
         return decayedHypha;
     }
 
-    public EntityRegistry getRegistry() {
+    public EntityRegistry getRegistry(){
         return registry;
-    }
-
-    public GameBoard getBoard() {
-        return board;
-    }
-
-    public Logger getLogger() {
-        return logger;
     }
 
     public Object getSelectedEntity() {
         return selectedEntity;
     }
-
+    
     public void setSelectedEntity(Object selectedEntity) {
         this.selectedEntity = selectedEntity;
+    }
+
+    public GameBoard getBoard(){
+        return map; 
     }
 }
