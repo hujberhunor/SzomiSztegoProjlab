@@ -269,6 +269,14 @@ public class Insect implements SerializableEntity {
         }
     }
 
+    /**
+     * A rovar eltávolítása a játékból.
+     */
+    public void destroyInsect(){
+        currentTecton.getInsects().remove(this);
+        entomologist.getInsects().remove(this);
+    }
+
     public List<Spore> getEffects() {
         return effects;
     }
