@@ -316,4 +316,8 @@ public class Game {
     public GameBoard getBoard(){
         return map; 
     }
+
+    public Logger getLogger(){
+        return logger;
+    }
 }
