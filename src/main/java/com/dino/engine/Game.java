@@ -46,6 +46,7 @@ public class Game {
      */
     private List<Hypha> decayedHypha;
 
+    private Object selectedEntity;
     private EntityRegistry registry;
     private Logger logger;
 
@@ -299,4 +300,25 @@ public class Game {
     public List<Hypha> getDecayedHypha() {
         return decayedHypha;
     }
+  
+    public EntityRegistry getRegistry(){
+        return registry;
+    }
+
+    public Object getSelectedEntity() {
+        return selectedEntity;
+    }
+    
+    public void setSelectedEntity(Object selectedEntity) {
+        this.selectedEntity = selectedEntity;
+    }
+
+    public GameBoard getBoard(){
+        return map; 
+    }
+
+    public Logger getLogger(){
+        return logger;
+    }
+  
 }

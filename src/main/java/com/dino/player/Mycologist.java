@@ -70,6 +70,10 @@ public class Mycologist {
                 "ACTION", "ATTEMPT_PLACE_FUNGUS", "SUCCESS");
     }
 
+    public List<Fungus> getMushrooms(){
+        return mushrooms;
+    }
+
     /*
      * CSAK DEBUG ÉS TESZT JELLEGGEL 
      * INITELÉSHEZ LETT LÉRTEROZVA
