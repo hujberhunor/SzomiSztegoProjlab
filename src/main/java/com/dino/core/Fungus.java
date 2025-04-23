@@ -227,17 +227,20 @@ public class Fungus implements SerializableEntity {
     public static Fungus deserialize(JsonObject obj, EntityRegistry registry, Logger logger) {
         Fungus f = new Fungus();
 
+        // A gomba fajához tartozó Mycologist visszakeresése
         String speciesName = obj.get("species").getAsString();
         Object speciesObj = registry.getByName(speciesName);
         if (speciesObj instanceof Mycologist) {
             f.setSpecies((Mycologist) speciesObj);
         } else {
-            System.out.printf("[ERROR] FUNGUS SPECIES: Ismeretlen vagy hibás típus: %s%n", speciesName);
+            logger.logError("Fungus", registry.getNameOf(f), "Ismeretlen vagy hibás Mycologist: " + speciesName);
         }
 
+        // Feltöltöttség és élettartam betöltése
         f.setCharge(obj.get("charge").getAsInt());
         f.setLifespan(obj.get("lifespan").getAsInt());
 
+        // Hypha-k visszatöltése név alapján
         if (obj.has("hyphas")) {
             JsonArray hyphaArray = obj.getAsJsonArray("hyphas");
             List<Hypha> hyphaList = new ArrayList<>();
@@ -249,13 +252,14 @@ public class Fungus implements SerializableEntity {
                 if (h instanceof Hypha) {
                     hyphaList.add((Hypha) h);
                 } else {
-                    System.out.printf("[ERROR] FUNGUS HYPHA: Ismeretlen vagy hibás típus: %s%n", name);
+                    logger.logError("Fungus", registry.getNameOf(f), "Ismeretlen vagy hibás Hypha: " + name);
                 }
             }
 
             f.hyphas = hyphaList;
         }
 
+        // Spórák visszatöltése név alapján
         if (obj.has("spores")) {
             JsonArray sporeArray = obj.getAsJsonArray("spores");
             List<Spore> sporeList = new ArrayList<>();
@@ -267,8 +271,7 @@ public class Fungus implements SerializableEntity {
                 if (s instanceof Spore) {
                     sporeList.add((Spore) s);
                 } else {
-                    logger.logError("Fungus", registry.getNameOf(f),
-                            "Ismeretlen vagy hibás Spore típus: " + name);
+                    logger.logError("Fungus", registry.getNameOf(f), "Ismeretlen vagy hibás Spore: " + name);
                 }
             }
 

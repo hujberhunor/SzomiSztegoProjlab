@@ -5,6 +5,8 @@ import java.util.Comparator;
 import java.util.List;
 
 import com.dino.core.Hypha;
+import com.dino.core.Insect;
+import com.dino.player.Entomologist;
 import com.dino.player.Player;
 import com.dino.util.EntityRegistry;
 import com.dino.util.InitLoader;
@@ -369,6 +371,17 @@ public class Game implements SerializableEntity {
             obj.add("currentPlayer", null);
         }
 
+        // Insect gyűjtés az összes entomologistből
+        JsonArray insectArray = new JsonArray();
+        for (Player p : players) {
+            if (p instanceof Entomologist) {
+                for (Insect i : ((Entomologist) p).getInsects()) {
+                    insectArray.add(i.serialize(registry, logger));
+                }
+            }
+        }
+        obj.add("insects", insectArray);
+
         return obj;
     }
 
@@ -376,4 +389,35 @@ public class Game implements SerializableEntity {
         this.map = new GameBoard(); // üres board, nem hívjuk meg a generateBoard()-ot
         InitLoader.loadFromFile(filename, this);
     }
+
+    public static Game deserialize(JsonObject root, Logger logger) throws Exception {
+        Game game = new Game(root.get("totalRounds").getAsInt());
+
+        // játék körének beállítása
+        int currentRound = root.get("currentRound").getAsInt();
+        game.settotalRounds(currentRound);
+
+        // komponensek betöltése
+        InitLoader.loadPlayers(root, game, logger);
+        InitLoader.loadBoard(root, game, logger);
+        InitLoader.loadHyphas(root, game, logger);
+        InitLoader.loadInsects(root, game, logger);
+
+        // aktuális játékos beállítása, ha van
+        if (root.has("currentPlayer") && !root.get("currentPlayer").isJsonNull()) {
+            String currentName = root.get("currentPlayer").getAsString();
+            for (Player p : game.getPlayers()) {
+                if (game.getRegistry().getNameOf(p).equals(currentName)) {
+                    game.setSelectedEntity(p);
+                    game.getPlayers().remove(p);
+                    game.getPlayers().add(0, p); // legyen az első
+                    break;
+                }
+            }
+            game.startGame();
+        }
+
+        return game;
+    }
+
 }

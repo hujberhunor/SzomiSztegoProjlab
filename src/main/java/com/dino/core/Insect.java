@@ -19,8 +19,9 @@ import com.dino.tecton.Tecton;
 import com.dino.util.EntityRegistry;
 import com.dino.util.Logger;
 import com.dino.util.SerializableEntity;
-import com.dino.util.SerializerUtil;
 import com.dino.util.Skeleton;
+import com.google.gson.JsonArray;
+import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 
 /**
@@ -57,7 +58,8 @@ public class Insect implements SerializableEntity {
         this.currentTecton = original.currentTecton;
         this.effects = new ArrayList<>();
 
-        /// Csak azokat az effekteket pakolom bele amelyek nem cloneEffectek (végtelen rekurzió elkerülése végett)
+        /// Csak azokat az effekteket pakolom bele amelyek nem cloneEffectek (végtelen
+        /// rekurzió elkerülése végett)
         for (Spore s : original.effects) {
             if (!(s instanceof CloneEffect)) {
                 this.effects.add(s);
@@ -274,9 +276,9 @@ public class Insect implements SerializableEntity {
     /**
      * Visszaadja, hogy a rovar le van-e bénulva?
      */
-    public boolean isParalyzed(){
-        if (effects != null && !effects.isEmpty()){
-            for (Spore s : effects){
+    public boolean isParalyzed() {
+        if (effects != null && !effects.isEmpty()) {
+            for (Spore s : effects) {
                 if (s.sporeType() == 3)
                     return true;
             }
@@ -287,7 +289,7 @@ public class Insect implements SerializableEntity {
     /**
      * A rovar eltávolítása a játékból.
      */
-    public void destroyInsect(){
+    public void destroyInsect() {
         currentTecton.getInsects().remove(this);
         entomologist.getInsects().remove(this);
     }
@@ -304,19 +306,103 @@ public class Insect implements SerializableEntity {
         return currentTecton;
     }
 
-@Override
+    @Override
     public JsonObject serialize(EntityRegistry registry, Logger logger) {
         JsonObject obj = new JsonObject();
 
-        // Rovarász ID
-        obj.addProperty("owner", "entomologist_" + entomologist.hashCode());
+        // Entomologist neve registry alapján
+        String ownerName = registry.getNameOf(entomologist);
+        if (ownerName != null) {
+            obj.addProperty("owner", ownerName);
+        } else {
+            logger.logError("Insect", "?", "Entomologist nincs regisztrálva: " + entomologist);
+        }
 
-        // Jelenlegi tecton ID
-        obj.addProperty("currentTecton", "tecton_" + currentTecton.hashCode());
+        // Aktuális Tecton neve
+        String tectonName = registry.getNameOf(currentTecton);
+        if (tectonName != null) {
+            obj.addProperty("currentTecton", tectonName);
+        } else {
+            logger.logError("Insect", registry.getNameOf(this), "CurrentTecton nincs regisztrálva: " + currentTecton);
+        }
 
-        // Aktív effektek (spórák)
-        obj.add("effects", SerializerUtil.toJsonArray(effects, s -> s.serialize(registry, logger)));
+        // Effektek (Spore objektumok)
+        JsonArray effectArray = new JsonArray();
+        for (Spore s : effects) {
+            String name = registry.getNameOf(s);
+            if (name != null) {
+                effectArray.add(name);
+            } else {
+                logger.logError("Insect", registry.getNameOf(this), "Ismeretlen effect (Spore): " + s);
+            }
+        }
 
+        obj.add("effects", effectArray);
         return obj;
     }
+
+    public static Insect deserialize(JsonObject obj, EntityRegistry registry, Logger logger) {
+        Entomologist owner = null;
+        Tecton tecton = null;
+
+        // Owner beállítása
+        String ownerName = obj.get("owner").getAsString();
+        Object ownerObj = registry.getByName(ownerName);
+        if (ownerObj instanceof Entomologist) {
+            owner = (Entomologist) ownerObj;
+        } else {
+            logger.logError("Insect", "?", "Ismeretlen vagy hibás Entomologist: " + ownerName);
+        }
+
+        // Tecton beállítása
+        String tectonName = obj.get("currentTecton").getAsString();
+        Object tectonObj = registry.getByName(tectonName);
+        if (tectonObj instanceof Tecton) {
+            tecton = (Tecton) tectonObj;
+        } else {
+            logger.logError("Insect", "?", "Ismeretlen vagy hibás Tecton: " + tectonName);
+        }
+
+        // Ha bármelyik kulcselem hiányzik, nem hozunk létre példányt
+        if (owner == null || tecton == null)
+            return null;
+
+        // Insect példányosítás
+        Insect insect = new Insect(owner, tecton);
+
+        // Effect lista (opcionális)
+        if (obj.has("effects")) {
+            JsonArray effectArray = obj.getAsJsonArray("effects");
+            List<Spore> effectList = new ArrayList<>();
+
+            for (JsonElement e : effectArray) {
+                String name = e.getAsString();
+                Object effect = registry.getByName(name);
+
+                if (effect instanceof Spore) {
+                    effectList.add((Spore) effect);
+                } else {
+                    logger.logError("Insect", registry.getNameOf(insect),
+                            "Ismeretlen vagy hibás Spore: " + name);
+                }
+            }
+
+            insect.setSpores(effectList);
+        }
+
+        return insect;
+    }
+
+    public void setOwner(Entomologist e) {
+        this.entomologist = e;
+    }
+
+    public void setCurrentTecton(Tecton t) {
+        this.currentTecton = t;
+    }
+
+    public void setSpores(List<Spore> e) {
+        this.effects = e;
+    }
+
 }

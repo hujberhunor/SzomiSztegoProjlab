@@ -10,23 +10,27 @@ import com.dino.util.EntityRegistry;
 import com.dino.util.Logger;
 import com.dino.util.SerializableEntity;
 import com.dino.util.SerializerUtil;
+import com.google.gson.JsonArray;
+import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 
-
 /**
- * A gombafonalakat reprezentáló osztály. Egy objektum a növesztés sorrendjében tartalmazza a tektonokat,
- * amiken keresztül nő, hogy a fonál elszakadása esetén (rovar vagy törés hatására) a szekvenciából egyértelmű
- * legyen, hogy a fonál melyik fele nem kapcsolódik már a gombatestből, amiből származnak.
+ * A gombafonalakat reprezentáló osztály. Egy objektum a növesztés sorrendjében
+ * tartalmazza a tektonokat,
+ * amiken keresztül nő, hogy a fonál elszakadása esetén (rovar vagy törés
+ * hatására) a szekvenciából egyértelmű
+ * legyen, hogy a fonál melyik fele nem kapcsolódik már a gombatestből, amiből
+ * származnak.
  */
 public class Hypha implements SerializableEntity {
 
     /**
-     *  Azon tectonok amelyeken keresztül halad a fonal
+     * Azon tectonok amelyeken keresztül halad a fonal
      */
     private List<Tecton> tectons;
 
     /**
-     *  Amely gombászhoz tartozik a fonal
+     * Amely gombászhoz tartozik a fonal
      */
     private Mycologist mycologist;
     /**
@@ -48,6 +52,7 @@ public class Hypha implements SerializableEntity {
 
     /**
      * Visszaadja, hogy mely gombászhoz tartozik a fonal
+     * 
      * @return A fonalhoz tatozó gombász
      */
     public Mycologist getMycologist() {
@@ -56,6 +61,7 @@ public class Hypha implements SerializableEntity {
 
     /**
      * Beállítja, hogy mely gombászhoz tatozzon a fonal
+     * 
      * @param species Gombász, akihez beállítódik a fonal
      */
     public void setMychologist(Mycologist m) {
@@ -64,48 +70,50 @@ public class Hypha implements SerializableEntity {
 
     /**
      * Visszaadja, hogy mely gombához tartozik a fonal
+     * 
      * @return A fonalhoz tatozó gomba
      */
-    public Fungus getFungus(){
+    public Fungus getFungus() {
         return fungus;
     }
 
     /**
      * Beállítja, hogy mely gombához tatozzon a fonal
+     * 
      * @param f Gomba, akihez beállítódik a fonal
      */
-    public void setFungus(Fungus f){
+    public void setFungus(Fungus f) {
         fungus = f;
     }
 
-    public int getLifespan(){
+    public int getLifespan() {
         return lifespan;
     }
 
-    public void setLifespan(int i){
+    public void setLifespan(int i) {
         lifespan = i;
     }
 
     /**
-     * Folytatja a már megkeztedd fonalat. Hozzáad "egy tectonnyi fonalat" a lista végére
+     * Folytatja a már megkeztedd fonalat. Hozzáad "egy tectonnyi fonalat" a lista
+     * végére
      */
     public boolean continueHypha(Tecton t) {
-    // Ha ez az első tecton (pl. új fonalnál), engedjük
-    if (tectons.isEmpty()) {
-        tectons.add(t);
-        return true;
+        // Ha ez az első tecton (pl. új fonalnál), engedjük
+        if (tectons.isEmpty()) {
+            tectons.add(t);
+            return true;
+        }
+
+        // Ellenőrizzük, hogy az utolsó tecton szomszédja-e a cél
+        Tecton last = tectons.get(tectons.size() - 1);
+        if (last.isNeighbor(t)) {
+            tectons.add(t);
+            return true;
+        }
+
+        return false;
     }
-
-    // Ellenőrizzük, hogy az utolsó tecton szomszédja-e a cél
-    Tecton last = tectons.get(tectons.size() - 1);
-    if (last.isNeighbor(t)) {
-        tectons.add(t);
-        return true;
-    }
-
-    return false;
-}
-
 
     /**
      * Fonal haladásának tektonjai, konkrétan maga a fonal
@@ -118,20 +126,18 @@ public class Hypha implements SerializableEntity {
         Collections.addAll(tectons, path);
     }
 
-    public boolean eatInsect(Insect i){
+    public boolean eatInsect(Insect i) {
         // Megnézzük, hogy a rovar rajta van-e az egyik olyan tektonon, amin fut a fonál
         Tecton targetTecton = null;
-        for (Tecton t : tectons){
-            if (i.getTecton().equals(t) && i.isParalyzed()){
+        for (Tecton t : tectons) {
+            if (i.getTecton().equals(t) && i.isParalyzed()) {
                 targetTecton = t;
                 break;
             }
         }
-        if (targetTecton == null){
+        if (targetTecton == null) {
             return false;
         }
-
-        
 
         // A rovart eltűntetjük a céltektonról, létrehozunk egy új gombát
         i.destroyInsect();
@@ -151,4 +157,52 @@ public class Hypha implements SerializableEntity {
 
         return obj;
     }
+
+    public static Hypha deserialize(JsonObject obj, EntityRegistry registry, Logger logger) {
+        Hypha h = new Hypha();
+
+        // species
+        String speciesName = obj.get("species").getAsString();
+        Object s = registry.getByName(speciesName);
+        if (s instanceof Mycologist) {
+            h.setSpecies((Mycologist) s);
+        } else {
+            logger.logError("Hypha", speciesName, "Ismeretlen vagy nem Mycologist típus");
+        }
+
+        // fungus
+        String fungusName = obj.get("fungus").getAsString();
+        Object f = registry.getByName(fungusName);
+        if (f instanceof Fungus) {
+            h.setFungus((Fungus) f);
+        } else {
+            logger.logError("Hypha", fungusName, "Ismeretlen vagy nem Fungus típus");
+        }
+
+        // tectons
+        List<Tecton> tectonList = new ArrayList<>();
+        JsonArray tArray = obj.getAsJsonArray("tectons");
+
+        for (JsonElement e : tArray) {
+            String tName = e.getAsString();
+            Object t = registry.getByName(tName);
+            if (t instanceof Tecton) {
+                tectonList.add((Tecton) t);
+            } else {
+                logger.logError("Hypha", tName, "Ismeretlen vagy nem Tecton típus");
+            }
+        }
+
+        h.setTectons(tectonList);
+        return h;
+    }
+
+    private void setSpecies(Mycologist s) {
+        this.mycologist = s;
+    }
+
+    public void setTectons(List<Tecton> t) {
+        this.tectons = t;
+    }
+
 } // End of Hypha
