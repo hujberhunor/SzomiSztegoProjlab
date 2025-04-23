@@ -477,6 +477,7 @@ public class Main {
     }
 
     public static void SerializeTest() {
+        Game game = new Game(3);
         try {
             // Dummy Mycologist
             Mycologist m = new Mycologist();
@@ -515,7 +516,7 @@ public class Main {
             t.neighbours.add(t);
 
             // Mentés
-            Serializer.saveToFile(t, "tecton_save.json");
+            Serializer.saveToFile(t, "tecton_save.json", game.getRegistry());
 
             System.out.println("Sikeres mentés!");
 

@@ -1,6 +1,5 @@
 package com.dino.tecton;
 
-import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -11,14 +10,17 @@ import com.dino.core.Hexagon;
 import com.dino.core.Hypha;
 import com.dino.core.Insect;
 import com.dino.player.Mycologist;
+import com.dino.util.EntityRegistry;
 import com.dino.util.SerializableEntity;
 import com.dino.util.SerializerUtil;
 import com.dino.util.Skeleton;
 import com.google.gson.JsonObject;
 
 /**
- * Ennek az absztrakt osztálynak a leszármazottjai reprezentálják a játékteret alkotó egységeket, vagy mezőket.
- * Tárolja a mezőket alkotó kisebb hatszögeket, illetve az egész egységre vonatkozó tulajdonságokat és annak állapotát.
+ * Ennek az absztrakt osztálynak a leszármazottjai reprezentálják a játékteret
+ * alkotó egységeket, vagy mezőket.
+ * Tárolja a mezőket alkotó kisebb hatszögeket, illetve az egész egységre
+ * vonatkozó tulajdonságokat és annak állapotát.
  * A tekton altípusoknak az ősosztálya.
  */
 public abstract class Tecton implements SerializableEntity {
@@ -34,7 +36,7 @@ public abstract class Tecton implements SerializableEntity {
     public Fungus fungus;
     public List<Insect> insects;
     public Map<Mycologist, Integer> spores;
-    // TODO ÁTÍRNI 
+    // TODO ÁTÍRNI
     // publicted List<Spores> spores;
     public List<Hypha> hyphas;
 
@@ -59,7 +61,7 @@ public abstract class Tecton implements SerializableEntity {
         return this.hyphas;
     }
 
-    public void setHyphas(List<Hypha> hyphas){
+    public void setHyphas(List<Hypha> hyphas) {
         this.hyphas = hyphas;
     }
 
@@ -67,16 +69,17 @@ public abstract class Tecton implements SerializableEntity {
         return neighbours;
     }
 
-
     /**
      * Létrehoz egy ugyanolyan típusú új tektont.
      * Minden alosztály felülírja ezt a metódust.
+     * 
      * @return Új, az aktuálissal megegyező típusú tekton
      */
     public abstract Tecton createCopy();
 
     /**
      * A tektonon elhelyez egy darab, m gombász gombájából származó spórát.
+     * 
      * @param m A gombász, akinek a gombájából a spóra származik
      */
     public void addSpores(Mycologist m) {
@@ -90,20 +93,21 @@ public abstract class Tecton implements SerializableEntity {
     }
 
     /**
-     * A tektonról eltávolít egy darab, m gombász gombájából származó spórát, amennyiben lehetséges.
+     * A tektonról eltávolít egy darab, m gombász gombájából származó spórát,
+     * amennyiben lehetséges.
+     * 
      * @param m A gombász, akinek a gombájából a spóra származik
      */
     public void removeSpores(Mycologist m) {
         Skeleton skeleton = Skeleton.getInstance();
         skeleton.startMethod("Tecton", "remove spores");
 
-        spores.computeIfPresent(m, (key, value ) -> (value > 1) ? value - 1 : null);
+        spores.computeIfPresent(m, (key, value) -> (value > 1) ? value - 1 : null);
         skeleton.log("Spóra eltávolítva");
-        if (!spores.isEmpty()){
+        if (!spores.isEmpty()) {
             skeleton.log("A tektonon található gombász-spóraszám párok:");
             spores.forEach((key, value) -> skeleton.log(key + " = " + value));
-        }
-        else {
+        } else {
             skeleton.log("A tektonon nem található spóra");
         }
     }
@@ -117,7 +121,6 @@ public abstract class Tecton implements SerializableEntity {
     public void addHypha(Hypha h) {
         hyphas.add(h);
     }
-
 
     /**
      * Kétirányú asszociáció miatt delegáltam fv-be
@@ -141,9 +144,12 @@ public abstract class Tecton implements SerializableEntity {
     }
 
     /**
-     * Minden kör után hívódó függvény, ami breakChance eséllyel, hatszögek mentén létrehoz két új tektont
-     * a saját helyén, míg magát megszűnteti. Az új tektonok tulajdonságai egyeznek az őket létrehozó tulajdonságaival,
-     * amiről a gombatest és rovarok véletlenszerűen választott töredékekre kerülnek át, a gombafonalak pedig megsemmisülnek.
+     * Minden kör után hívódó függvény, ami breakChance eséllyel, hatszögek mentén
+     * létrehoz két új tektont
+     * a saját helyén, míg magát megszűnteti. Az új tektonok tulajdonságai egyeznek
+     * az őket létrehozó tulajdonságaival,
+     * amiről a gombatest és rovarok véletlenszerűen választott töredékekre kerülnek
+     * át, a gombafonalak pedig megsemmisülnek.
      * Visszaadja a két új tektont listaként.
      *
      * @param breakChance Törési esély
@@ -165,8 +171,7 @@ public abstract class Tecton implements SerializableEntity {
         // Ellenőrizzük, hogy a tekton nem csak egy hexagonból áll-e
         if (hexagons.size() == 1) {
             skeleton.log(
-                "A tekton nem törhet el, mert csak egy hexagonból áll"
-            );
+                    "A tekton nem törhet el, mert csak egy hexagonból áll");
             skeleton.endMethod();
             return resultTectons; // Üres lista
         }
@@ -185,10 +190,9 @@ public abstract class Tecton implements SerializableEntity {
         // A tekton ketté törése
         skeleton.log("A tekton kettétört");
 
-        //Két új tekton létrehozása a törés után
+        // Két új tekton létrehozása a törés után
         skeleton.log(
-            "Két új tekton jön létre,a típusuk megegyezik az eredetivel"
-        );
+                "Két új tekton jön létre,a típusuk megegyezik az eredetivel");
 
         Tecton tecton1 = null;
         Tecton tecton2 = null;
@@ -198,10 +202,9 @@ public abstract class Tecton implements SerializableEntity {
         // Törési valószínűségek frissítése
         if (breakCount == 0) {
             skeleton.log(
-                "Első törés - törési valószínűség felezve: " +
-                (this.breakChance / 2) +
-                "%"
-            );
+                    "Első törés - törési valószínűség felezve: " +
+                            (this.breakChance / 2) +
+                            "%");
             skeleton.log("breakCount növelése 1-re");
         } else if (breakCount == 1) {
             skeleton.log("Második törés - törési valószínűség nullázva");
@@ -214,8 +217,7 @@ public abstract class Tecton implements SerializableEntity {
         // Gombatestek véletlenszerű áthelyezése
         if (fungus != null) {
             skeleton.log(
-                "Gombatest véletlenszerűen áthelyezve az egyik új tektonra"
-            );
+                    "Gombatest véletlenszerűen áthelyezve az egyik új tektonra");
         }
 
         // Spórák elosztása
@@ -248,6 +250,7 @@ public abstract class Tecton implements SerializableEntity {
      * Ellenőrzi, hogy az aktuális tekton és a paraméterként megadott tekton
      * között van-e gombafonál összeköttetés.
      * Elsősorban a rovar szempontjából fontos, a fonal vágás akciójához.
+     * 
      * @param t A tekton, amellyel az összeköttetést ellenőrizzük
      * @return Igaz, ha van gombafonál a két tekton között, egyébként hamis
      */
@@ -259,15 +262,15 @@ public abstract class Tecton implements SerializableEntity {
                 Tecton b = path.get(i + 1);
                 if ((a == this && b == t) || (a == t && b == this)) {
                     return true;
+                }
             }
         }
+        return false;
     }
-    return false;
-}
-
 
     /**
      * Ellenőrzi, hogy a tektonon van-e a megadott gombásztól származó spóra.
+     * 
      * @param m A gombász, akinek a spóráját keressük.
      * @return Igaz, ha van legalább egy spóra a gombásztól, egyébként hamis.
      */
@@ -277,62 +280,56 @@ public abstract class Tecton implements SerializableEntity {
 
     /**
      * Visszaadja a tektonon lévő gombatestet
+     * 
      * @return A tektonon lévő gombatest
      */
-    public Fungus getFungus(){
+    public Fungus getFungus() {
         return fungus;
     }
 
     /**
      * Beállítja a tektonon lévő gombatestet.
+     * 
      * @param f Az új gombatest, amelyet elhelyezünk a tektonon.
      */
     public void setFungus(Fungus f) {
         this.fungus = f;
     }
 
-    public void setNeighbours(List<Tecton> t){
+    public void setNeighbours(List<Tecton> t) {
         this.neighbours = t;
     }
 
-    public List<Insect> getInsects(){ 
+    public List<Insect> getInsects() {
         return insects;
     }
 
-    public void addInsect(Insect insect){ insects.add(insect); }
+    public void addInsect(Insect insect) {
+        insects.add(insect);
+    }
 
     @Override
-    public JsonObject serialize() {
+    public JsonObject serialize(EntityRegistry registry) {
         JsonObject obj = new JsonObject();
 
-        obj.addProperty("id", "tecton_" + hashCode());
+        obj.addProperty("type", this.getClass().getSimpleName());
         obj.addProperty("breakChance", breakChance);
         obj.addProperty("breakCount", breakCount);
 
-        // Hexagonok ID-val
         obj.add("hexagons", SerializerUtil.toJsonArray(hexagons, Hexagon::getId));
+        obj.add("neighbours", SerializerUtil.toJsonArray(neighbours, t -> registry.getNameOf(t)));
+        obj.add("spores", SerializerUtil.toJsonMap(spores, registry::getNameOf));
+        obj.add("insects", SerializerUtil.toJsonArray(insects, i -> registry.getNameOf(i)));
+        obj.add("hyphas", SerializerUtil.toJsonArray(hyphas, h -> registry.getNameOf(h)));
 
-        // Neighbour Tecton ID-val
-        obj.add("neighbours", SerializerUtil.toJsonArray(neighbours, t -> "tecton_" + t.hashCode()));
-
-        // Fungus serialize
         if (fungus != null) {
-            obj.add("fungus", fungus.serialize());
+            obj.add("fungus", fungus.serialize(registry));
         }
-
-        // Insect serialize
-        obj.add("insects", SerializerUtil.toJsonArray(insects, Insect::serialize));
-
-        // Spore Map serialize
-        obj.add("spores", SerializerUtil.toJsonMap(spores, m -> "mycologist_" + m.hashCode()));
-
-        // Hypha serialize
-        obj.add("hyphas", SerializerUtil.toJsonArray(hyphas, Hypha::serialize));
 
         return obj;
     }
 
-    public double getBreakChance(){
+    public double getBreakChance() {
         return breakChance;
     }
 }

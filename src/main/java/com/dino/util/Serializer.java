@@ -9,9 +9,9 @@ import com.google.gson.*;
 public class Serializer {
     private static final Gson gson = new GsonBuilder().setPrettyPrinting().create();
 
-    public static void saveToFile(SerializableEntity entity, String filename) throws IOException {
+    public static void saveToFile(SerializableEntity entity, String filename, EntityRegistry registry) throws IOException {
         try (FileWriter writer = new FileWriter(filename)) {
-            gson.toJson(entity.serialize(), writer);
+            gson.toJson(entity.serialize(registry), writer);
         }
     }
 

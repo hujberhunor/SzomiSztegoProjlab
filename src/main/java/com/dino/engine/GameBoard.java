@@ -11,6 +11,7 @@ import com.dino.tecton.NoFungiTecton;
 import com.dino.tecton.ShortHyphaTecton;
 import com.dino.tecton.SingleHyphaTecton;
 import com.dino.tecton.Tecton;
+import com.dino.util.EntityRegistry;
 import com.dino.util.SerializableEntity;
 import com.dino.util.SerializerUtil;
 import com.google.gson.JsonArray;
@@ -309,12 +310,12 @@ public class GameBoard implements SerializableEntity {
     }
 
     @Override
-    public JsonObject serialize() {
+    public JsonObject serialize(EntityRegistry registry) {
         JsonObject obj = new JsonObject();
 
         JsonArray tectonArray = SerializerUtil.toJsonArray(
                 tectons,
-                t -> t.serialize() // feltételezzük, hogy Tecton is SerializableEntity
+                t -> t.serialize(registry) // feltételezzük, hogy Tecton is SerializableEntity
         );
         obj.add("tectons", tectonArray);
 
@@ -331,6 +332,13 @@ public class GameBoard implements SerializableEntity {
             }
         }
         return null;
+    }
+
+    /// CSAK DESZERIALIZÁLÁSHOZ HASZNÁLHATÓ!!!!
+    public void addTecton(Tecton t) {
+        if (tectons == null)
+            tectons = new ArrayList<>();
+        tectons.add(t);
     }
 
 }

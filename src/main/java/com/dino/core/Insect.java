@@ -16,6 +16,7 @@ import com.dino.effects.StunningEffect;
 import com.dino.player.Entomologist;
 import com.dino.player.Mycologist;
 import com.dino.tecton.Tecton;
+import com.dino.util.EntityRegistry;
 import com.dino.util.SerializableEntity;
 import com.dino.util.SerializerUtil;
 import com.dino.util.Skeleton;
@@ -303,7 +304,7 @@ public class Insect implements SerializableEntity {
     }
 
 @Override
-    public JsonObject serialize() {
+    public JsonObject serialize(EntityRegistry registry) {
         JsonObject obj = new JsonObject();
 
         // Rovarász ID
@@ -313,7 +314,7 @@ public class Insect implements SerializableEntity {
         obj.addProperty("currentTecton", "tecton_" + currentTecton.hashCode());
 
         // Aktív effektek (spórák)
-        obj.add("effects", SerializerUtil.toJsonArray(effects, s -> s.serialize()));
+        obj.add("effects", SerializerUtil.toJsonArray(effects, s -> s.serialize(registry)));
 
         return obj;
     }

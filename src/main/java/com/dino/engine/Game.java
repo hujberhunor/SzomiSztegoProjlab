@@ -7,6 +7,7 @@ import java.util.List;
 import com.dino.core.Hypha;
 import com.dino.player.Player;
 import com.dino.util.EntityRegistry;
+import com.dino.util.InitLoader;
 import com.dino.util.Logger;
 import com.dino.util.SerializableEntity;
 import com.google.gson.JsonArray;
@@ -348,11 +349,11 @@ public class Game implements SerializableEntity {
     }
 
     @Override
-    public JsonObject serialize() {
+    public JsonObject serialize(EntityRegistry registry) {
         JsonObject obj = new JsonObject();
         obj.addProperty("totalRounds", this.totalRounds);
         obj.addProperty("currentRound", this.currRound);
-        obj.add("board", this.map.serialize());
+        obj.add("board", this.map.serialize(registry));
 
         JsonArray playersJson = new JsonArray();
         for (Player p : this.players) {
@@ -369,6 +370,11 @@ public class Game implements SerializableEntity {
         }
 
         return obj;
+    }
+
+    public void initGameFromSave(String filename) throws Exception {
+        this.map = new GameBoard(); // üres board, nem hívjuk meg a generateBoard()-ot
+        InitLoader.loadFromFile(filename, this);
     }
 
 }

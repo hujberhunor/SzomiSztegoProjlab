@@ -8,6 +8,7 @@ import java.util.Map;
 import com.dino.player.Mycologist;
 import com.dino.tecton.NoFungiTecton;
 import com.dino.tecton.Tecton;
+import com.dino.util.EntityRegistry;
 import com.dino.util.SerializableEntity;
 import com.dino.util.SerializerUtil;
 import com.dino.util.Skeleton;
@@ -195,7 +196,7 @@ public class Fungus implements SerializableEntity{
     }
 
  @Override
-    public JsonObject serialize() {
+    public JsonObject serialize(EntityRegistry registry) {
         JsonObject obj = new JsonObject();
 
         // Kié a gomba (csak id)
@@ -206,10 +207,10 @@ public class Fungus implements SerializableEntity{
         obj.addProperty("lifespan", lifespan);
 
         // Hyphak listája (maguk serialize-olják magukat)
-        obj.add("hyphas", SerializerUtil.toJsonArray(hyphas, h -> h.serialize()));
+        obj.add("hyphas", SerializerUtil.toJsonArray(hyphas, h -> h.serialize(registry)));
 
         // Spórák listája (maguk serialize-olják magukat)
-        obj.add("spores", SerializerUtil.toJsonArray(spores, s -> s.serialize()));
+        obj.add("spores", SerializerUtil.toJsonArray(spores, s -> s.serialize(registry)));
 
         return obj;
     }
