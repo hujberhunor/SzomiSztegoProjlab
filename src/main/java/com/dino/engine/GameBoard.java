@@ -29,6 +29,9 @@ public class GameBoard implements SerializableEntity {
      */
     private List<Tecton> tectons;
 
+    public GameBoard() {
+       tectons = new ArrayList<>(); 
+    }
     /**
      * Paraméter nélkül hívható függvény, ami legenerálja a játékteret.
      * Létrehozza a hexagonokat, kitöröl párat véletlenszerűen, a maradékot pedig
@@ -340,6 +343,10 @@ public class GameBoard implements SerializableEntity {
         if (tectons == null)
             tectons = new ArrayList<>();
         tectons.add(t);
+    }
+
+    public List<Tecton> getTectons() {
+        return tectons;
     }
 
 }

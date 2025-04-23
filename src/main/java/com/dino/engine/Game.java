@@ -7,6 +7,7 @@ import java.util.List;
 import com.dino.core.Hypha;
 import com.dino.core.Insect;
 import com.dino.player.Entomologist;
+import com.dino.player.Mycologist;
 import com.dino.player.Player;
 import com.dino.util.EntityRegistry;
 import com.dino.util.InitLoader;
@@ -357,19 +358,17 @@ public class Game implements SerializableEntity {
         obj.addProperty("currentRound", this.currRound);
         obj.add("board", this.map.serialize(registry, logger));
 
-        JsonArray playersJson = new JsonArray();
-        for (Player p : this.players) {
-            String name = registry.getNameOf(p);
-            if (name != null)
-                playersJson.add(name);
+        JsonArray playerArray = new JsonArray();
+        for (Player p : players) {
+            JsonObject playerObj = new JsonObject();
+            if (p instanceof Mycologist) {
+                playerObj.addProperty("type", "mycologist");
+            } else if (p instanceof Entomologist) {
+                playerObj.addProperty("type", "entomologist");
+            }
+            playerArray.add(playerObj);
         }
-        obj.add("players", playersJson);
-
-        if (currentPlayer != null) {
-            obj.addProperty("currentPlayer", registry.getNameOf(currentPlayer));
-        } else {
-            obj.add("currentPlayer", null);
-        }
+        obj.add("players", playerArray);
 
         // Insect gyűjtés az összes entomologistből
         JsonArray insectArray = new JsonArray();

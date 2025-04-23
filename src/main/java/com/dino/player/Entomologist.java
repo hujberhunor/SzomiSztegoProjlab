@@ -1,5 +1,6 @@
 package com.dino.player;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import com.dino.core.Insect;
@@ -22,10 +23,12 @@ public class Entomologist extends Player {
 
     public Entomologist(int actions) {
         this.remainingActions = actions;
+        insects = new ArrayList<>();
     }
 
     public Entomologist() {
         this.remainingActions = 3;
+        insects = new ArrayList<>();
     }
 
     /**

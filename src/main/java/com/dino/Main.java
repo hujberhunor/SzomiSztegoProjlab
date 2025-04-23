@@ -11,6 +11,7 @@ import com.dino.core.Fungus;
 import com.dino.core.Hexagon;
 import com.dino.core.Hypha;
 import com.dino.core.Insect;
+import com.dino.core.Spore;
 import com.dino.effects.AcceleratingEffect;
 import com.dino.effects.ParalyzingEffect;
 import com.dino.effects.SporeNoEffect;
@@ -27,6 +28,7 @@ import com.dino.util.EntityRegistry;
 import com.dino.util.Logger;
 import com.dino.util.Serializer;
 import com.dino.util.Skeleton;
+import com.google.gson.JsonObject;
 
 public class Main {
 
@@ -523,15 +525,64 @@ public class Main {
         } catch (IOException ex) {
             ex.printStackTrace();
         }
-
     }
 
-    /**
-     * A commandok beolvasásáért felel
-     * 
-     * @param game
-     * @param logger
-     */
+    public static void ComplexSerializeTest() {
+        try {
+            // Setup
+            Game game = new Game(10);
+            game.initBoard();
+
+            EntityRegistry registry = game.getRegistry();
+            Logger logger = game.getLogger();
+
+            // Játékosok
+            Mycologist myco = new Mycologist();
+            Entomologist ento = new Entomologist();
+            registry.register("myco_0", myco);
+            registry.register("ento_0", ento);
+            game.addPlayer(myco);
+            game.addPlayer(ento);
+
+            // Tecton kiválasztás
+            Tecton t1 = game.getBoard().getTectons().get(0);
+            Tecton t2 = game.getBoard().getTectons().get(1);
+
+            // Gombatest
+            Fungus fungus = new Fungus(myco, t1);
+            registry.register("fungus_0", fungus);
+            t1.setFungus(fungus);
+
+            // Insect
+            Insect insect = new Insect(ento, t2);
+            registry.register("insect_0", insect);
+            ento.getInsects().add(insect);
+            t2.addInsect(insect);
+
+            // Spóra és effect
+            Spore stun = new StunningEffect(myco);
+            registry.register("spore_0", stun);
+            insect.getEffects().add(stun);
+
+            // Hypha létrehozás
+            Hypha hypha = new Hypha(myco, fungus);
+            hypha.getTectons().add(t1);
+            hypha.getTectons().add(t2);
+            registry.register("hypha_0", hypha);
+            fungus.getHyphas().add(hypha);
+            t1.addHypha(hypha);
+            t2.addHypha(hypha);
+
+            // Serialize
+            Serializer.saveToFile(game, "game_state.json", registry, logger);
+            System.out.println("Sikeres mentés: game_state.json");
+
+        } catch (Exception e) {
+            e.printStackTrace();
+            System.out.println("Hiba a komplex serialize teszt során.");
+        }
+    }
+
     static void scanner(Game game, Logger logger) {
 
         Scanner scanner = new Scanner(System.in);
@@ -558,7 +609,7 @@ public class Main {
 
     public static void testCommand() {
         Game game = new Game(3);
-        EntityRegistry registry = game.getRegistry(); 
+        EntityRegistry registry = game.getRegistry();
         Logger logger = game.getLogger();
         GameBoard board = game.getBoard();
 
@@ -602,6 +653,18 @@ public class Main {
         inputScanner.close();
     }
 
+    public static void LoadTest() {
+        try {
+            Logger logger = new Logger(new EntityRegistry());
+            JsonObject root = Serializer.loadFromFile("game_state.json");
+            Game game = Game.deserialize(root, logger);
+            System.out.println("Sikeres betöltés!");
+        } catch (Exception e) {
+            e.printStackTrace();
+            System.out.println("Hiba történt a betöltés során.");
+        }
+    }
+
     // -------------------------------- //
     public static void main(String[] args) {
         boolean menuActive = true;
@@ -620,6 +683,7 @@ public class Main {
             System.out.println("8. Logger teszt");
             System.out.println("9. Serializáció teszt");
             System.out.println("10. Scanner teszt");
+            System.out.println("12. Load teszt");
             System.out.println("-----------------------");
             System.out.print("Select use case (e.g. 1, 2...): ");
             int useCase = scanner.nextInt();
@@ -653,10 +717,14 @@ public class Main {
                     loggerTest();
                     break;
                 case 9:
-                    SerializeTest();
+                    // SerializeTest();
+                    ComplexSerializeTest();
                     break;
                 case 10:
                     testCommand();
+                    break;
+                case 12:
+                    LoadTest();
                     break;
                 default:
                     System.out.println("Invalid input");

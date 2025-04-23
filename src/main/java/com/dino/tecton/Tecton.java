@@ -318,7 +318,12 @@ public abstract class Tecton implements SerializableEntity {
         obj.addProperty("breakCount", breakCount);
 
         obj.add("hexagons", SerializerUtil.toJsonArray(hexagons, Hexagon::getId));
-        obj.add("neighbours", SerializerUtil.toJsonArray(neighbours, t -> registry.getNameOf(t)));
+        
+        obj.add("neighbours", SerializerUtil.toJsonArray(neighbours, t -> {
+            String name = registry.getNameOf(t);
+            return name != null ? name : "unregistered";
+        }));
+
         obj.add("spores", SerializerUtil.toJsonMap(spores, registry::getNameOf));
         obj.add("insects", SerializerUtil.toJsonArray(insects, i -> registry.getNameOf(i)));
         obj.add("hyphas", SerializerUtil.toJsonArray(hyphas, h -> registry.getNameOf(h)));

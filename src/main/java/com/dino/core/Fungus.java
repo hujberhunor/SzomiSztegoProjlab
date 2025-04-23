@@ -209,7 +209,8 @@ public class Fungus implements SerializableEntity {
         JsonObject obj = new JsonObject();
 
         // Kié a gomba (csak id)
-        obj.addProperty("species", "mycologist_" + species.hashCode());
+        // obj.addProperty("species", "mycologist_" + species.hashCode());
+        obj.addProperty("species", registry.getNameOf(species));
 
         // Feltöltöttség / életciklus
         obj.addProperty("charge", charge);
@@ -227,7 +228,7 @@ public class Fungus implements SerializableEntity {
     public static Fungus deserialize(JsonObject obj, EntityRegistry registry, Logger logger) {
         Fungus f = new Fungus();
 
-        // A gomba fajához tartozó Mycologist visszakeresése
+        // 1. Gombafaj tulajdonos beállítása (Mycologist)
         String speciesName = obj.get("species").getAsString();
         Object speciesObj = registry.getByName(speciesName);
         if (speciesObj instanceof Mycologist) {
@@ -236,42 +237,42 @@ public class Fungus implements SerializableEntity {
             logger.logError("Fungus", registry.getNameOf(f), "Ismeretlen vagy hibás Mycologist: " + speciesName);
         }
 
-        // Feltöltöttség és élettartam betöltése
+        // 2. Alapértékek
         f.setCharge(obj.get("charge").getAsInt());
         f.setLifespan(obj.get("lifespan").getAsInt());
 
-        // Hypha-k visszatöltése név alapján
+        // 3. Hyphák visszatöltése objektumként
         if (obj.has("hyphas")) {
             JsonArray hyphaArray = obj.getAsJsonArray("hyphas");
             List<Hypha> hyphaList = new ArrayList<>();
 
             for (JsonElement e : hyphaArray) {
-                String name = e.getAsString();
-                Object h = registry.getByName(name);
-
-                if (h instanceof Hypha) {
-                    hyphaList.add((Hypha) h);
-                } else {
-                    logger.logError("Fungus", registry.getNameOf(f), "Ismeretlen vagy hibás Hypha: " + name);
+                try {
+                    JsonObject hyphaObj = e.getAsJsonObject();
+                    Hypha hypha = Hypha.deserialize(hyphaObj, registry, logger);
+                    hyphaList.add(hypha);
+                } catch (Exception ex) {
+                    logger.logError("Fungus", registry.getNameOf(f),
+                            "Nem sikerült hyphát deszerializálni: " + ex.getMessage());
                 }
             }
 
             f.hyphas = hyphaList;
         }
 
-        // Spórák visszatöltése név alapján
+        // 4. Spórák visszatöltése név alapján
         if (obj.has("spores")) {
             JsonArray sporeArray = obj.getAsJsonArray("spores");
             List<Spore> sporeList = new ArrayList<>();
 
             for (JsonElement e : sporeArray) {
-                String name = e.getAsString();
-                Object s = registry.getByName(name);
+                String sporeName = e.getAsString();
+                Object sporeObj = registry.getByName(sporeName);
 
-                if (s instanceof Spore) {
-                    sporeList.add((Spore) s);
+                if (sporeObj instanceof Spore) {
+                    sporeList.add((Spore) sporeObj);
                 } else {
-                    logger.logError("Fungus", registry.getNameOf(f), "Ismeretlen vagy hibás Spore: " + name);
+                    logger.logError("Fungus", registry.getNameOf(f), "Ismeretlen vagy hibás Spore: " + sporeName);
                 }
             }
 
@@ -284,4 +285,9 @@ public class Fungus implements SerializableEntity {
     public void setLifespan(int lifespan) {
         this.lifespan = lifespan;
     }
+
+    public List<Hypha> getHyphas() {
+        return hyphas;
+    }
+
 }
