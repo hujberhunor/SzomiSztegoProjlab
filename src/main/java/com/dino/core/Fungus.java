@@ -75,6 +75,12 @@ public class Fungus implements SerializableEntity{
         Skeleton skeleton = Skeleton.getInstance();
         skeleton.startMethod("Fungus", "spreadSpores");
 
+        if (charge < 2) {
+            skeleton.log("A gomba még nincs feltöltve.");
+            skeleton.endMethod();
+            return;
+        }
+
         HashSet<Tecton> alreadySpread = new HashSet<>();
 
         //ha a gomba töltöttsége legalább 2, spórákat szór(hat) a szomszédos tektonokra
@@ -98,12 +104,10 @@ public class Fungus implements SerializableEntity{
             skeleton.log("A gomba spórát szórt a szomszédos tektonok szomszédjaira.");
         }
 
-        if (charge < 2) {
-            skeleton.log("A gomba még nincs feltöltve.");
-        }
-
-        skeleton.endMethod();
+        lifespan--;
+        // species.decreaseActions(); // Uncomment if defined
         charge = 0;
+        skeleton.endMethod();
     }
 
     /**
@@ -164,6 +168,7 @@ public class Fungus implements SerializableEntity{
             skeleton.log("Gombafonál sikeresen növesztve a tektonon: " + currTecton.toString());
         }
 
+        // species.decreaseActions(); // Uncomment if defined
         skeleton.endMethod();
         return true; // Ha sikerült minden tektonra növeszteni
     }
