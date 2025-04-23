@@ -300,7 +300,7 @@ public class Game {
     public List<Hypha> getDecayedHypha() {
         return decayedHypha;
     }
-
+  
     public EntityRegistry getRegistry(){
         return registry;
     }
@@ -320,4 +320,5 @@ public class Game {
     public Logger getLogger(){
         return logger;
     }
+  
 }

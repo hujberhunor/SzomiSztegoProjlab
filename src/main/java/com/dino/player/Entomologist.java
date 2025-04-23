@@ -3,7 +3,11 @@ package com.dino.player;
 import java.util.List;
 
 import com.dino.core.Insect;
+import com.dino.util.EntityRegistry;
+import com.dino.util.Logger;
 import com.dino.util.Skeleton;
+
+import java.util.List;
 
 /**
  * Ez az osztály egy rovarászt reprezentál.
@@ -12,7 +16,7 @@ import com.dino.util.Skeleton;
 public class Entomologist extends Player {
 
     /**
-     * Egy rovar példány, amit a rovarász irányít.
+     * Rovarok, amiket a rovarász irányít.
      */
     List<Insect> insects;
 
@@ -29,40 +33,39 @@ public class Entomologist extends Player {
      * MIkor accel effect van rajta ez a roundban meg kell hívni
      */
     public void increaseActions() {
-        Skeleton skeleton = Skeleton.getInstance();
-        skeleton.startMethod("Entomologist", "increaseActions");
+        EntityRegistry registry = new EntityRegistry();
+        Logger logger = new Logger(registry);
+
         int prevActions = remainingActions;
-
         this.remainingActions++;
-        skeleton.log(
-            "remainingActions növelve:" +
-            prevActions +
-            "-->" +
-            this.remainingActions
-        );
 
-        skeleton.endMethod();
+        logger.logChange("ENTOMOLOGIST", this, "REMAINING_ACTIONS",
+                String.valueOf(prevActions), String.valueOf(this.remainingActions));
     }
 
     public void decreaseActions() {
-        Skeleton skeleton = Skeleton.getInstance();
-        skeleton.startMethod("Entomologist", "decreaseActions");
+        EntityRegistry registry = new EntityRegistry();
+        Logger logger = new Logger(registry);
 
+        int prevActions = remainingActions;
         if (remainingActions > 0) {
             remainingActions--;
-            skeleton.log("remainingActions csökkentve: " + remainingActions);
+            logger.logChange("ENTOMOLOGIST", this, "REMAINING_ACTIONS",
+                    String.valueOf(prevActions), String.valueOf(this.remainingActions));
         } else {
-            skeleton.log("Nincs több akció, nem csökkenthető.");
+            logger.logError("ENTOMOLOGIST", registry.getNameOf(this),
+                    "Nincs több akció, nem csökkenthető.");
         }
-
-        skeleton.endMethod();
     }
 
     public int getRemainingActions() {
         return this.remainingActions;
     }
-
-    public List<Insect> getInsects(){
-        return insects;
-    }
+  
+    public void setActions(int i) { remainingActions = i; }
+  
+    public List<Insect> getInsects() { return insects; }
+  
+    public void addInsects(Insect insect) { insects.add(insect); }
 }
+

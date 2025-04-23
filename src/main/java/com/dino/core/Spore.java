@@ -37,6 +37,9 @@ public abstract class Spore implements SerializableEntity {
     //Absztrakt függvény, amit a leszármazott spóratípusok megvalósítanak. Ezzel a függvénnyel fejtik ki hatásukat a paraméterként átadott rovaron.
     public abstract void applyTo(Insect i);
 
+    //Absztarkt függvény, ami visszaadja a spóra effektjét reprezentáló integert.
+    public abstract int sporeType();
+
 @Override
     public JsonObject serialize() {
         JsonObject obj = new JsonObject();

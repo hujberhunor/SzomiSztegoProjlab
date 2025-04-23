@@ -73,7 +73,7 @@ public abstract class Tecton implements SerializableEntity {
      * Minden alosztály felülírja ezt a metódust.
      * @return Új, az aktuálissal megegyező típusú tekton
      */
-    // public abstract Tecton createCopy();
+    public abstract Tecton createCopy();
 
     /**
      * A tektonon elhelyez egy darab, m gombász gombájából származó spórát.
@@ -299,6 +299,8 @@ public abstract class Tecton implements SerializableEntity {
         return insects;
     }
 
+    public void addInsect(Insect insect){ insects.add(insect); }
+
     @Override
     public JsonObject serialize() {
         JsonObject obj = new JsonObject();
@@ -326,6 +328,9 @@ public abstract class Tecton implements SerializableEntity {
 
         // Hypha serialize
         obj.add("hyphas", SerializerUtil.toJsonArray(hyphas, Hypha::serialize));
+
+        return obj;
+    }
 
         return obj;
     }

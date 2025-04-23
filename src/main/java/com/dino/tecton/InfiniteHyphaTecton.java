@@ -50,4 +50,8 @@ public class InfiniteHyphaTecton extends Tecton {
     public int getHyphaCount() {
         return hyphaCount;
     }
+    @Override
+    public Tecton createCopy() {
+        return new InfiniteHyphaTecton();
+    }
 }
