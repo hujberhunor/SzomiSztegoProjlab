@@ -2,6 +2,7 @@ package com.dino.core;
 
 import com.dino.player.Mycologist;
 import com.dino.util.EntityRegistry;
+import com.dino.util.Logger;
 import com.dino.util.SerializableEntity;
 import com.google.gson.JsonObject;
 
@@ -42,7 +43,7 @@ public abstract class Spore implements SerializableEntity {
     public abstract int sporeType();
 
 @Override
-    public JsonObject serialize(EntityRegistry registry) {
+    public JsonObject serialize(EntityRegistry registry, Logger logger) {
         JsonObject obj = new JsonObject();
 
         obj.addProperty("type", this.getClass().getSimpleName());

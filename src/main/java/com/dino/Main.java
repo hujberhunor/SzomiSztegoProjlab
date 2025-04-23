@@ -516,7 +516,7 @@ public class Main {
             t.neighbours.add(t);
 
             // Mentés
-            Serializer.saveToFile(t, "tecton_save.json", game.getRegistry());
+            Serializer.saveToFile(t, "tecton_save.json", game.getRegistry(), game.getLogger());
 
             System.out.println("Sikeres mentés!");
 

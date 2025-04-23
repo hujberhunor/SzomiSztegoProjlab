@@ -9,9 +9,12 @@ import com.dino.player.Mycologist;
 import com.dino.tecton.NoFungiTecton;
 import com.dino.tecton.Tecton;
 import com.dino.util.EntityRegistry;
+import com.dino.util.Logger;
 import com.dino.util.SerializableEntity;
 import com.dino.util.SerializerUtil;
 import com.dino.util.Skeleton;
+import com.google.gson.JsonArray;
+import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 
 /**
@@ -202,7 +205,7 @@ public class Fungus implements SerializableEntity {
     }
 
     @Override
-    public JsonObject serialize(EntityRegistry registry) {
+    public JsonObject serialize(EntityRegistry registry, Logger logger) {
         JsonObject obj = new JsonObject();
 
         // Kié a gomba (csak id)
@@ -213,15 +216,15 @@ public class Fungus implements SerializableEntity {
         obj.addProperty("lifespan", lifespan);
 
         // Hyphak listája (maguk serialize-olják magukat)
-        obj.add("hyphas", SerializerUtil.toJsonArray(hyphas, h -> h.serialize(registry)));
+        obj.add("hyphas", SerializerUtil.toJsonArray(hyphas, h -> h.serialize(registry, logger)));
 
         // Spórák listája (maguk serialize-olják magukat)
-        obj.add("spores", SerializerUtil.toJsonArray(spores, s -> s.serialize(registry)));
+        obj.add("spores", SerializerUtil.toJsonArray(spores, s -> s.serialize(registry, logger)));
 
         return obj;
     }
 
-    public static Fungus deserialize(JsonObject obj, EntityRegistry registry) {
+    public static Fungus deserialize(JsonObject obj, EntityRegistry registry, Logger logger) {
         Fungus f = new Fungus();
 
         String speciesName = obj.get("species").getAsString();
@@ -235,7 +238,43 @@ public class Fungus implements SerializableEntity {
         f.setCharge(obj.get("charge").getAsInt());
         f.setLifespan(obj.get("lifespan").getAsInt());
 
-        // később: hyphas, spores betöltése
+        if (obj.has("hyphas")) {
+            JsonArray hyphaArray = obj.getAsJsonArray("hyphas");
+            List<Hypha> hyphaList = new ArrayList<>();
+
+            for (JsonElement e : hyphaArray) {
+                String name = e.getAsString();
+                Object h = registry.getByName(name);
+
+                if (h instanceof Hypha) {
+                    hyphaList.add((Hypha) h);
+                } else {
+                    System.out.printf("[ERROR] FUNGUS HYPHA: Ismeretlen vagy hibás típus: %s%n", name);
+                }
+            }
+
+            f.hyphas = hyphaList;
+        }
+
+        if (obj.has("spores")) {
+            JsonArray sporeArray = obj.getAsJsonArray("spores");
+            List<Spore> sporeList = new ArrayList<>();
+
+            for (JsonElement e : sporeArray) {
+                String name = e.getAsString();
+                Object s = registry.getByName(name);
+
+                if (s instanceof Spore) {
+                    sporeList.add((Spore) s);
+                } else {
+                    logger.logError("Fungus", registry.getNameOf(f),
+                            "Ismeretlen vagy hibás Spore típus: " + name);
+                }
+            }
+
+            f.spores = sporeList;
+        }
+
         return f;
     }
 

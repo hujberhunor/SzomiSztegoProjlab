@@ -7,6 +7,7 @@ import java.util.List;
 import com.dino.player.Mycologist;
 import com.dino.tecton.Tecton;
 import com.dino.util.EntityRegistry;
+import com.dino.util.Logger;
 import com.dino.util.SerializableEntity;
 import com.dino.util.SerializerUtil;
 import com.google.gson.JsonObject;
@@ -139,7 +140,7 @@ public class Hypha implements SerializableEntity {
     }
 
     @Override
-    public JsonObject serialize(EntityRegistry registry) {
+    public JsonObject serialize(EntityRegistry registry, Logger logger) {
         JsonObject obj = new JsonObject();
 
         // Kihez tartozik a hypha (gombász ID)

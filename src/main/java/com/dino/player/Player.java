@@ -1,6 +1,10 @@
 package com.dino.player;
 
+import javax.swing.text.html.parser.Entity;
+
 import com.dino.tecton.Tecton;
+import com.dino.util.EntityRegistry;
+import com.dino.util.Logger;
 import com.google.gson.JsonObject;
 
 /**
@@ -56,7 +60,7 @@ public abstract class Player {
         return score;
     }
 
-    public JsonObject serialize() {
+    public JsonObject serialize(EntityRegistry registry, Logger logger) {
         JsonObject obj = new JsonObject();
         obj.addProperty("score", this.score);
         obj.addProperty("actionsPerTurn", this.actionsPerTurn);

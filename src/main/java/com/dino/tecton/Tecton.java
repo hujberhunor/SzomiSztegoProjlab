@@ -11,6 +11,7 @@ import com.dino.core.Hypha;
 import com.dino.core.Insect;
 import com.dino.player.Mycologist;
 import com.dino.util.EntityRegistry;
+import com.dino.util.Logger;
 import com.dino.util.SerializableEntity;
 import com.dino.util.SerializerUtil;
 import com.dino.util.Skeleton;
@@ -309,7 +310,7 @@ public abstract class Tecton implements SerializableEntity {
     }
 
     @Override
-    public JsonObject serialize(EntityRegistry registry) {
+    public JsonObject serialize(EntityRegistry registry, Logger logger) {
         JsonObject obj = new JsonObject();
 
         obj.addProperty("type", this.getClass().getSimpleName());
@@ -323,7 +324,7 @@ public abstract class Tecton implements SerializableEntity {
         obj.add("hyphas", SerializerUtil.toJsonArray(hyphas, h -> registry.getNameOf(h)));
 
         if (fungus != null) {
-            obj.add("fungus", fungus.serialize(registry));
+            obj.add("fungus", fungus.serialize(registry, logger));
         }
 
         return obj;

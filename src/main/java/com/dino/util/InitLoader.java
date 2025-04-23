@@ -19,13 +19,14 @@ import com.google.gson.JsonObject;
 public class InitLoader {
 
     public static void loadFromFile(String filename, Game game) throws Exception {
+        Logger logger = game.getLogger();
         JsonObject root = Serializer.loadFromFile(filename);
-        loadPlayers(root, game);
-        loadBoard(root, game);
+        loadPlayers(root, game, logger);
+        loadBoard(root, game, logger);
     }
 
     // Játékosok visszatöltése
-    private static void loadPlayers(JsonObject root, Game game) {
+    private static void loadPlayers(JsonObject root, Game game, Logger logger) {
         JsonArray playerArray = root.getAsJsonArray("players");
         int mycoCount = 0, entoCount = 0;
 
@@ -51,7 +52,7 @@ public class InitLoader {
     }
 
     // Tektonok + belső elemeik visszatöltése
-    private static void loadBoard(JsonObject root, Game game) {
+    private static void loadBoard(JsonObject root, Game game, Logger logger) {
         JsonObject boardJson = root.getAsJsonObject("board");
         JsonArray tectonArray = boardJson.getAsJsonArray("tectons");
 
@@ -75,7 +76,7 @@ public class InitLoader {
             if (tectonJson.has("fungus")) {
                 JsonObject fungusJson = tectonJson.getAsJsonObject("fungus");
                 // Helyes: Fungus.deserialize(...) a Fungus osztályban legyen!
-                t.setFungus(Fungus.deserialize(fungusJson, game.getRegistry()));
+                t.setFungus(Fungus.deserialize(fungusJson, game.getRegistry(), logger));
             }
 
             // TODO: később: hyphas, insects

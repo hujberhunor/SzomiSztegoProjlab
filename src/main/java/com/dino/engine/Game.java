@@ -349,11 +349,11 @@ public class Game implements SerializableEntity {
     }
 
     @Override
-    public JsonObject serialize(EntityRegistry registry) {
+    public JsonObject serialize(EntityRegistry registry, Logger logger) {
         JsonObject obj = new JsonObject();
         obj.addProperty("totalRounds", this.totalRounds);
         obj.addProperty("currentRound", this.currRound);
-        obj.add("board", this.map.serialize(registry));
+        obj.add("board", this.map.serialize(registry, logger));
 
         JsonArray playersJson = new JsonArray();
         for (Player p : this.players) {
@@ -376,5 +376,4 @@ public class Game implements SerializableEntity {
         this.map = new GameBoard(); // üres board, nem hívjuk meg a generateBoard()-ot
         InitLoader.loadFromFile(filename, this);
     }
-
 }

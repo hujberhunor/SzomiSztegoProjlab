@@ -12,6 +12,7 @@ import com.dino.tecton.ShortHyphaTecton;
 import com.dino.tecton.SingleHyphaTecton;
 import com.dino.tecton.Tecton;
 import com.dino.util.EntityRegistry;
+import com.dino.util.Logger;
 import com.dino.util.SerializableEntity;
 import com.dino.util.SerializerUtil;
 import com.google.gson.JsonArray;
@@ -310,12 +311,12 @@ public class GameBoard implements SerializableEntity {
     }
 
     @Override
-    public JsonObject serialize(EntityRegistry registry) {
+    public JsonObject serialize(EntityRegistry registry, Logger logger) {
         JsonObject obj = new JsonObject();
 
         JsonArray tectonArray = SerializerUtil.toJsonArray(
                 tectons,
-                t -> t.serialize(registry) // feltételezzük, hogy Tecton is SerializableEntity
+                t -> t.serialize(registry, logger) // feltételezzük, hogy Tecton is SerializableEntity
         );
         obj.add("tectons", tectonArray);
 
