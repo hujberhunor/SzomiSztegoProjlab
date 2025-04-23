@@ -1,17 +1,40 @@
 package com.dino.util;
 
 import com.dino.engine.Game;
-// importáld be az összes entitásosztályt
+import com.dino.player.Entomologist;
+import com.dino.player.Mycologist;
+import com.dino.player.Player;
+import com.google.gson.JsonArray;
+import com.google.gson.JsonElement;
+import com.google.gson.JsonObject;
 
 public class InitLoader {
 
     public static void loadFromFile(String filename, Game game) throws Exception {
-        // 1. Fájl beolvasása (pl. JSON -> object)
-        // 2. Entitások létrehozása és beregisztrálása
-        // 3. Kapcsolatok felépítése (pl. tecton-neighbours, hypha-k, fungus stb.)
-        // 4. Logger és Registry frissítése
-        // Példa: ObjectMapper mapper = new ObjectMapper(); // ha Jackson-t használsz
-        //        JsonNode root = mapper.readTree(new File(filename));
-        //        ... végigmenni rajta és game.getRegistry().register(...)
+        JsonObject root = Serializer.loadFromFile(filename);
+        int mycoCount = 0;
+        int entoCount = 0;
+
+        JsonArray playerArray = root.getAsJsonArray("players");
+        for (JsonElement e : playerArray) {
+            JsonObject playerObj = e.getAsJsonObject();
+            String type = playerObj.get("type").getAsString();
+
+            Player p;
+            String generatedName;
+
+            if ("mycologist".equalsIgnoreCase(type)) {
+                p = new Mycologist();
+                generatedName = "myco_" + mycoCount++;
+            } else if ("entomologist".equalsIgnoreCase(type)) {
+                p = new Entomologist();
+                generatedName = "ento_" + entoCount++;
+            } else {
+                throw new IllegalArgumentException("Ismeretlen játékos típus: " + type);
+            }
+
+            game.getRegistry().register(generatedName, p);
+            game.addPlayer(p);
+        }
     }
 }

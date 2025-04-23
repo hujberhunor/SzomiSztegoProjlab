@@ -15,7 +15,7 @@ import com.dino.util.Skeleton;
  * Megvalósítja a gombászokra specifikus olyan akciót, ami nem egy specifikus gombához tartozik,
  * hanem magához a játékoshoz, illetve számontartja a játékos gombatestjeit.
  */
-public class Mycologist {
+public class Mycologist extends Player {
 
     /**
      * Egy lista, ami a gombász által vezérelt gombatesteket tárolja.

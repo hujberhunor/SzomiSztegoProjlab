@@ -249,7 +249,7 @@ public class Game implements SerializableEntity {
         System.out.println("Végső állás:");
         for (int i = 0; i < players.size(); i++) {
             Player player = players.get(i);
-            System.out.println((i + 1) + ". helyezett: " + player.name + " - Pontszám: " + player.score);
+            System.out.println((i + 1) + ". helyezett: " + player + " - Pontszám: " + player.score);
         }
     }
 

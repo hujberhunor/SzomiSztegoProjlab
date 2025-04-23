@@ -13,7 +13,6 @@ public abstract class Player {
     /**
      * A játékos neve.
      */
-    public String name;
 
     /**
      * Egy egész szám, ami a játékos jelenlegi pontszámát reprezentálja.
@@ -32,8 +31,7 @@ public abstract class Player {
      */
     public int remainingActions;
 
-    public Player(String name) {
-        this.name = name;
+    public Player() {
         this.score = 0;
         this.actionsPerTurn = 3; // alapértelmezett érték, pl. rovarásznak
         this.remainingActions = 3;
@@ -60,7 +58,6 @@ public abstract class Player {
 
     public JsonObject serialize() {
         JsonObject obj = new JsonObject();
-        obj.addProperty("name", this.name);
         obj.addProperty("score", this.score);
         obj.addProperty("actionsPerTurn", this.actionsPerTurn);
         obj.addProperty("remainingActions", this.remainingActions);
