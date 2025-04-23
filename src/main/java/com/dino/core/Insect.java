@@ -46,6 +46,10 @@ public class Insect implements SerializableEntity {
         this.effects = new ArrayList<>();
     }
 
+    // Számontartja, hogy a rovar mozoghat-e ingyen a jelenlegi körében, ha gyorsító hatás alatt van
+    // Értéke minden kör kezdetén igaz, extra mozgás után értéke hamisra változik
+    private boolean extraMove;
+
     /*
      * Copy konstruktor
      * Klónozáshoz kell
@@ -84,13 +88,10 @@ public class Insect implements SerializableEntity {
         }
 
         // Ellenőrizzük, hogy bénító hatás alatt van-e
-        for (Spore s : effects) {
-            if (s instanceof ParalyzingEffect) {
-                skeleton.log(
-                        "Nem mozdulhat: ParalyzingEffect hatás alatt van.");
-                skeleton.endMethod();
-                return false;
-            }
+        if (isUnderEffect(3)) {
+            skeleton.log("Nem mozdulhat: ParalyzingEffect hatás alatt van.");
+            skeleton.endMethod();
+            return false;
         }
 
         // Ellenőrizzük, hogy a tektonok szomszédosak-e
@@ -110,7 +111,21 @@ public class Insect implements SerializableEntity {
         // Sikeres mozgás
         currentTecton = targetTecton;
         skeleton.log("Rovar sikeresen mozgott az új tektonra.");
-        entomologist.decreaseActions(); // Csökkentjük az akciópontját
+
+        if (isUnderEffect(1) && extraMove && isUnderEffect(4)){
+            setExtraMove(false);
+            entomologist.decreaseActions();
+        }
+        else if (isUnderEffect(1) && extraMove){
+            setExtraMove(false);
+        }
+        else if (isUnderEffect(4)){
+            entomologist.setActions(0);
+        }
+        else {
+            entomologist.decreaseActions(); // Csökkentjük az akciópontját
+        }
+
         skeleton.endMethod();
         return true;
     }
@@ -143,11 +158,7 @@ public class Insect implements SerializableEntity {
         }
 
         // Ellenőrizzük, hogy a rovar kábító spórák hatása alatt van-e
-        boolean isStunned = effects
-                .stream()
-                .anyMatch(spore -> spore instanceof StunningEffect);
-
-        if (isStunned) {
+        if (isUnderEffect(5)) {
             skeleton.log("Nem vághat: a rovar kábító spóra hatása alatt van.");
             skeleton.endMethod();
             return false;
@@ -269,13 +280,10 @@ public class Insect implements SerializableEntity {
         }
     }
 
-    /**
-     * Visszaadja, hogy a rovar le van-e bénulva?
-     */
-    public boolean isParalyzed(){
+    public boolean isUnderEffect(int effectId){
         if (effects != null && !effects.isEmpty()){
             for (Spore s : effects){
-                if (s.sporeType() == 3)
+                if (s.sporeType() == effectId)
                     return true;
             }
         }
@@ -302,6 +310,9 @@ public class Insect implements SerializableEntity {
         return currentTecton;
     }
 
+    public void setExtraMove(boolean b){
+        extraMove = b;
+    }
 @Override
     public JsonObject serialize() {
         JsonObject obj = new JsonObject();

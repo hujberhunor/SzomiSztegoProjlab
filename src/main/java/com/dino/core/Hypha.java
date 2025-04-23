@@ -120,7 +120,7 @@ public class Hypha implements SerializableEntity {
         // Megnézzük, hogy a rovar rajta van-e az egyik olyan tektonon, amin fut a fonál
         Tecton targetTecton = null;
         for (Tecton t : tectons){
-            if (i.getTecton().equals(t) && i.isParalyzed()){
+            if (i.getTecton().equals(t) && i.isUnderEffect(3)){
                 targetTecton = t;
                 break;
             }
@@ -128,8 +128,6 @@ public class Hypha implements SerializableEntity {
         if (targetTecton == null){
             return false;
         }
-
-        
 
         // A rovart eltűntetjük a céltektonról, létrehozunk egy új gombát
         i.destroyInsect();
