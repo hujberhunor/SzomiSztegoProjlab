@@ -77,7 +77,7 @@ public class GameBoard {
                 // Szomszédsági kapcsolatok átvitele az eredeti tektonról
                 for (Tecton neighbour : tecton.getNeighbours()) {
                     for (Tecton newTecton : splitResult) {
-                        if (areTectonsAdjacent(newTecton, neighbour)) {
+                        if (areTectonsNeighbours(newTecton, neighbour)) {
                             Tecton.connectTectons(newTecton, neighbour);
                         }
                     }
@@ -269,7 +269,7 @@ public class GameBoard {
                 Tecton tectonB = tectons.get(j);
                 
                 // Ellenőrizzük, hogy a két tekton szomszédos-e
-                if (areTectonsAdjacent(tectonA, tectonB)) {
+                if (areTectonsNeighbours(tectonA, tectonB)) {
                     // Kétirányú szomszédság beállítása a statikus metódussal
                     Tecton.connectTectons(tectonA, tectonB);
                 }
@@ -280,7 +280,7 @@ public class GameBoard {
     /**
      * Ellenőrzi, hogy két tekton szomszédos-e
      */
-    private boolean areTectonsAdjacent(Tecton a, Tecton b) {
+    private boolean areTectonsNeighbours(Tecton a, Tecton b) {
         for (Hexagon hexA : a.hexagons) {
             for (Hexagon hexB : b.hexagons) {
                 if (hexA.getNeighbours().contains(hexB)) {
