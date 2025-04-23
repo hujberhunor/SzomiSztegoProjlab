@@ -352,6 +352,7 @@ public class Game implements SerializableEntity {
         JsonObject obj = new JsonObject();
         obj.addProperty("totalRounds", this.totalRounds);
         obj.addProperty("currentRound", this.currRound);
+        obj.add("board", this.map.serialize());
 
         JsonArray playersJson = new JsonArray();
         for (Player p : this.players) {
