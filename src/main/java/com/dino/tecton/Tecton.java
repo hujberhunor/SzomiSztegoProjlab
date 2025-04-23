@@ -67,6 +67,14 @@ public abstract class Tecton implements SerializableEntity {
         return neighbours;
     }
 
+
+    /**
+     * Létrehoz egy ugyanolyan típusú új tektont.
+     * Minden alosztály felülírja ezt a metódust.
+     * @return Új, az aktuálissal megegyező típusú tekton
+     */
+    public abstract Tecton createCopy();
+
     /**
      * A tektonon elhelyez egy darab, m gombász gombájából származó spórát.
      * @param m A gombász, akinek a gombájából a spóra származik
@@ -294,34 +302,34 @@ public abstract class Tecton implements SerializableEntity {
     public void addInsect(Insect insect){ insects.add(insect); }
 
     @Override
-public JsonObject serialize() {
-    JsonObject obj = new JsonObject();
+    public JsonObject serialize() {
+        JsonObject obj = new JsonObject();
 
-    obj.addProperty("id", "tecton_" + hashCode());
-    obj.addProperty("breakChance", breakChance);
-    obj.addProperty("breakCount", breakCount);
+        obj.addProperty("id", "tecton_" + hashCode());
+        obj.addProperty("breakChance", breakChance);
+        obj.addProperty("breakCount", breakCount);
 
-    // Hexagonok ID-val
-    obj.add("hexagons", SerializerUtil.toJsonArray(hexagons, Hexagon::getId));
+        // Hexagonok ID-val
+        obj.add("hexagons", SerializerUtil.toJsonArray(hexagons, Hexagon::getId));
 
-    // Neighbour Tecton ID-val
-    obj.add("neighbours", SerializerUtil.toJsonArray(neighbours, t -> "tecton_" + t.hashCode()));
+        // Neighbour Tecton ID-val
+        obj.add("neighbours", SerializerUtil.toJsonArray(neighbours, t -> "tecton_" + t.hashCode()));
 
-    // Fungus serialize
-    if (fungus != null) {
-        obj.add("fungus", fungus.serialize());
+        // Fungus serialize
+        if (fungus != null) {
+            obj.add("fungus", fungus.serialize());
+        }
+
+        // Insect serialize
+        obj.add("insects", SerializerUtil.toJsonArray(insects, Insect::serialize));
+
+        // Spore Map serialize
+        obj.add("spores", SerializerUtil.toJsonMap(spores, m -> "mycologist_" + m.hashCode()));
+
+        // Hypha serialize
+        obj.add("hyphas", SerializerUtil.toJsonArray(hyphas, Hypha::serialize));
+
+        return obj;
     }
-
-    // Insect serialize
-    obj.add("insects", SerializerUtil.toJsonArray(insects, Insect::serialize));
-
-    // Spore Map serialize
-    obj.add("spores", SerializerUtil.toJsonMap(spores, m -> "mycologist_" + m.hashCode()));
-
-    // Hypha serialize
-    obj.add("hyphas", SerializerUtil.toJsonArray(hyphas, Hypha::serialize));
-
-    return obj;
-}
 
 }

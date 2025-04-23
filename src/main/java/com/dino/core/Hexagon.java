@@ -53,6 +53,15 @@ public class Hexagon {
      * és törli a játéktérről. Annak első generálásakor lesz szerepe.
      */
     public void destroy() {
-        // TODO IMPLEMENTÁLNI
+        // Minden szomszéd listájából eltávolítjuk a törlendőt
+        if (neighbours != null) {
+            for (Hexagon neighbour : neighbours) {
+                if (neighbour.getNeighbours() != null) {
+                    neighbour.getNeighbours().remove(this);
+                }
+            }
+            // Töröljük a saját szomszédaink listáját
+            neighbours.clear();
+        }
     }
 }

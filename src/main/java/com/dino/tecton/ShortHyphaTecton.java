@@ -30,5 +30,9 @@ public class ShortHyphaTecton extends Tecton {
     public void handleHypha(Hypha h) {
         //TODO
     }
+    @Override
+    public Tecton createCopy() {
+        return new ShortHyphaTecton();
+    }
 
 }
