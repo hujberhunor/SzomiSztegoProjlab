@@ -269,6 +269,27 @@ public class Insect implements SerializableEntity {
         }
     }
 
+    /**
+     * Visszaadja, hogy a rovar le van-e bénulva?
+     */
+    public boolean isParalyzed(){
+        if (effects != null && !effects.isEmpty()){
+            for (Spore s : effects){
+                if (s.sporeType() == 3)
+                    return true;
+            }
+        }
+        return false;
+    }
+
+    /**
+     * A rovar eltávolítása a játékból.
+     */
+    public void destroyInsect(){
+        currentTecton.getInsects().remove(this);
+        entomologist.getInsects().remove(this);
+    }
+
     public List<Spore> getEffects() {
         return effects;
     }

@@ -4,7 +4,10 @@ import com.dino.core.Insect;
 import com.dino.core.Spore;
 import com.dino.player.Mycologist;
 import com.dino.tecton.Tecton;
-import com.dino.util.Skeleton;
+import com.dino.util.EntityRegistry;
+import com.dino.util.Logger;
+
+import java.util.List;
 
 /*
  * Olyan spóra hatás amely az őt elfogyasztó rovart klónozza az elfogyasztásnak helyet adó tektonon
@@ -27,14 +30,21 @@ public class CloneEffect extends Spore {
         return "Clone Spore";
     }
 
+    @Override
+    public int sporeType() {
+        return 2;
+    }
+
     /*
      * A gomba hatását megvalósító függvény. A paraméterként átadott rovar az
      * eredeti rovart tartalmazó tekronra klónozza
      */
     @Override
     public void applyTo(Insect original) {
-        Skeleton skeleton = Skeleton.getInstance();
-        skeleton.startMethod("CloneEffect", "applyTo");
+        EntityRegistry registry = new EntityRegistry();
+        Logger logger = new Logger(registry);
+
+        List<Spore> prevEffects = original.getEffects();
 
         // Hatás alkalmazása a rovar instance-ra (bekerül az effects listájába)
         original.addEffects(this);
@@ -42,11 +52,23 @@ public class CloneEffect extends Spore {
         // Copy konstruktort meghívjuk
         Insect clone = new Insect(original);
         Tecton currTecton = original.getTecton();
-        // Hozzáadaom a klónt az eredeti tektonjához
-        currTecton.getInsects().add(clone);
+        // Hozzáadom a klónt az eredeti tektonjához
+        currTecton.addInsect(clone);
+        clone.getEntomologist().addInsects(clone);
 
-        skeleton.log("CloneEffect hatás alkalmazva: Klón a tektonra helyezve.");
-        skeleton.endMethod();
+        if(original.getEffects().contains(this)){
+            logger.logChange("INSECT", original, "EFFECT", prevEffects, original.getEffects());
+        }
+        else {
+            logger.logError("EFFECT", "ACCELERATING EFFECT", "Nem sikerült alkalmazni a rovarra!");
+        }
+
+        if(currTecton.getInsects().contains(clone) && original.getEntomologist().getInsects().contains(clone)){
+            logger.logOk("INSECT", "NEW INSECT", "", "null", "created");
+        }
+        else {
+            logger.logError("INSECT", "NEW INSECT", "Nem sikerült a klónt hozzáadni a tektonhoz vagy a rovarászhoz!");
+        }
     }
 
 } // end of cloneEffect

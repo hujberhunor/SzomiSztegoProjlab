@@ -1,6 +1,7 @@
 package com.dino.core;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 
 import com.dino.player.Mycologist;
@@ -31,13 +32,15 @@ public class Hypha implements SerializableEntity {
      */
     private Fungus fungus;
 
+    private int lifespan = 4;
+
     public Hypha() {
         tectons = new ArrayList<>();
     }
 
     public Hypha(Mycologist m, Fungus f) {
         tectons = new ArrayList<>();
-        mycologist = m; // Kinek a gombájáró
+        mycologist = m; // Kinek a gombájáról
         fungus = f; // source fungus, ahonna indul a fonal
     }
 
@@ -54,27 +57,84 @@ public class Hypha implements SerializableEntity {
      * @param species Gombász, akihez beállítódik a fonal
      */
     public void setMychologist(Mycologist m) {
-        this.mycologist = m;
+        mycologist = m;
+    }
+
+    /**
+     * Visszaadja, hogy mely gombához tartozik a fonal
+     * @return A fonalhoz tatozó gomba
+     */
+    public Fungus getFungus(){
+        return fungus;
+    }
+
+    /**
+     * Beállítja, hogy mely gombához tatozzon a fonal
+     * @param f Gomba, akihez beállítódik a fonal
+     */
+    public void setFungus(Fungus f){
+        fungus = f;
+    }
+
+    public int getLifespan(){
+        return lifespan;
+    }
+
+    public void setLifespan(int i){
+        lifespan = i;
     }
 
     /**
      * Folytatja a már megkeztedd fonalat. Hozzáad "egy tectonnyi fonalat" a lista végére
      */
-    public void continueHypha(Tecton t) {
+    public boolean continueHypha(Tecton t) {
+    // Ha ez az első tecton (pl. új fonalnál), engedjük
+    if (tectons.isEmpty()) {
         tectons.add(t);
+        return true;
     }
 
+    // Ellenőrizzük, hogy az utolsó tecton szomszédja-e a cél
+    Tecton last = tectons.get(tectons.size() - 1);
+    if (last.isNeighbor(t)) {
+        tectons.add(t);
+        return true;
+    }
+
+    return false;
+}
+
+
     /**
-     * Fonal haladásának tektonja, konkrétan maga a fonal
+     * Fonal haladásának tektonjai, konkrétan maga a fonal
      */
     public List<Tecton> getTectons() {
         return tectons;
     }
 
     public void connectTectons(Tecton... path) {
-        for (Tecton t : path) {
-            tectons.add(t);
+        Collections.addAll(tectons, path);
+    }
+
+    public boolean eatInsect(Insect i){
+        // Megnézzük, hogy a rovar rajta van-e az egyik olyan tektonon, amin fut a fonál
+        Tecton targetTecton = null;
+        for (Tecton t : tectons){
+            if (i.getTecton().equals(t) && i.isParalyzed()){
+                targetTecton = t;
+                break;
+            }
         }
+        if (targetTecton == null){
+            return false;
+        }
+
+        
+
+        // A rovart eltűntetjük a céltektonról, létrehozunk egy új gombát
+        i.destroyInsect();
+        mycologist.placeFungus(targetTecton);
+        return true;
     }
 
     @Override
