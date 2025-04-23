@@ -332,8 +332,6 @@ public abstract class Tecton implements SerializableEntity {
         return obj;
     }
 
-        return obj;
-    }
     public double getBreakChance(){
         return breakChance;
     }
