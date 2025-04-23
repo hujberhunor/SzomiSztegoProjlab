@@ -1,5 +1,7 @@
 package com.dino.player;
 
+import java.util.List;
+
 import com.dino.core.Insect;
 import com.dino.util.Skeleton;
 
@@ -61,8 +63,11 @@ public class Entomologist extends Player {
     public int getRemainingActions() {
         return this.remainingActions;
     }
+  
     public void setActions(int i) { remainingActions = i; }
-
+  
     public List<Insect> getInsects() { return insects; }
+  
     public void addInsects(Insect insect) { insects.add(insect); }
 }
+
