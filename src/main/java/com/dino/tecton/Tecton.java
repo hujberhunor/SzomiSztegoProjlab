@@ -291,6 +291,8 @@ public abstract class Tecton implements SerializableEntity {
         return insects;
     }
 
+    public void addInsect(Insect insect){ insects.add(insect); }
+
     @Override
 public JsonObject serialize() {
     JsonObject obj = new JsonObject();

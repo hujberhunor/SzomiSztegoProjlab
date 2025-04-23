@@ -5,6 +5,8 @@ import java.util.List;
 import com.dino.core.Insect;
 import com.dino.util.Skeleton;
 
+import java.util.List;
+
 /**
  * Ez az osztály egy rovarászt reprezentál.
  * Összeköti a Player osztályt az Insect osztállyal.
@@ -12,7 +14,7 @@ import com.dino.util.Skeleton;
 public class Entomologist extends Player {
 
     /**
-     * Egy rovar példány, amit a rovarász irányít.
+     * Rovarok, amiket a rovarász irányít.
      */
     List<Insect> insects;
 
@@ -61,8 +63,11 @@ public class Entomologist extends Player {
     public int getRemainingActions() {
         return this.remainingActions;
     }
-
-    public List<Insect> getInsects(){
-        return insects;
-    }
+  
+    public void setActions(int i) { remainingActions = i; }
+  
+    public List<Insect> getInsects() { return insects; }
+  
+    public void addInsects(Insect insect) { insects.add(insect); }
 }
+
