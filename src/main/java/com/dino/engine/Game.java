@@ -1,13 +1,12 @@
 package com.dino.engine;
-import java.util.ArrayList;
-import java.util.Comparator;
-import java.util.List;
-import java.util.Scanner;
+import java.util.*;
 
 import com.dino.core.Hypha;
+import com.dino.core.Insect;
 import com.dino.player.Entomologist;
 import com.dino.player.Mycologist;
 import com.dino.player.Player;
+import com.dino.tecton.Tecton;
 import com.dino.util.EntityRegistry;
 import com.dino.util.Logger;
 
@@ -43,7 +42,6 @@ public class Game {
      */
     private Player currentPlayer;
 
-    // Jó
     /**
      * Nem élő fonalak listája
      */
@@ -138,6 +136,8 @@ public class Game {
 
         totalRounds = numberOfRounds;
 
+        inputScanner.close();
+
         return true;
     }
 
@@ -145,15 +145,38 @@ public class Game {
      * A játék első körtől való indításáért felelő függvény.
      */
     public void startGame() {
-        currRound = 1;
+        Scanner inputScanner = new Scanner(System.in);
+        List<Tecton> tectons = map.getTectons();
+        List<Tecton> tectonsWithFungus = new ArrayList<>();
 
-        if (currentPlayer == null && !players.isEmpty()) {
-            currentPlayer = players.get(0);
+        for(Player player : players) {
+            if(player instanceof Mycologist) {
+                System.out.println("Melyik tektonról szeretne indulni?\nVálasszon egy számot 1-től " + tectons.size()+1 + "-ig");
+                int selectedIndex = -1;
+                while (selectedIndex < 1 || selectedIndex > tectons.size() + 1) {
+                    selectedIndex = inputScanner.nextInt();
+                    if(selectedIndex < 1 || selectedIndex > tectons.size() + 1) {
+                        System.out.println("Helytelen szám! Válasszon egy számot 1-től " + tectons.size()+1 + "-ig");
+                    }
+                }
+                Tecton selectedTecton = tectons.get(selectedIndex);
+                ((Mycologist) player).placeFungus(selectedTecton);
+                tectons.remove(selectedIndex);
+                tectonsWithFungus.add(selectedTecton);
+            }
         }
 
-        for (Player player : players) {
-            player.remainingActions = player.actionsPerTurn;
+        Random rnd = new Random();
+        for(Player player : players) {
+            if(player instanceof Entomologist) {
+                int selectedIndex = rnd.nextInt(tectons.size());
+                Insect insect = new Insect((Entomologist) player, tectonsWithFungus.get(selectedIndex));
+                ((Entomologist) player).addInsects(insect);
+                tectons.remove(selectedIndex);
+            }
         }
+
+        nextRound();
     }
 
     /**

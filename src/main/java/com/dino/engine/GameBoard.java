@@ -291,6 +291,9 @@ public class GameBoard {
         return false;
     }
 
+    public List<Tecton> getTectons(){
+        return tectons;
+    }
 
 }
 
