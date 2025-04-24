@@ -1,5 +1,6 @@
 package com.dino.player;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import com.dino.core.Insect;
@@ -20,18 +21,23 @@ public class Entomologist extends Player {
      */
     List<Insect> insects;
 
-    public Entomologist(int actions) {
-        this.remainingActions = actions;
+    public Entomologist() {
+        this.insects = new ArrayList<Insect>();
+        this.actionsPerTurn = 2;
+        this.remainingActions = 2;
     }
 
-    public Entomologist() {
-        this.remainingActions = 3;
+    public Entomologist(int actions) {
+        this.insects = new ArrayList<>();
+        this.actionsPerTurn = actions;
+        this.remainingActions = actions;
     }
 
     /**
      * AcceleratingEffect miatt kell.
      * MIkor accel effect van rajta ez a roundban meg kell hívni
      */
+    @Override
     public void increaseActions() {
         EntityRegistry registry = new EntityRegistry();
         Logger logger = new Logger(registry);
@@ -43,6 +49,7 @@ public class Entomologist extends Player {
                 String.valueOf(prevActions), String.valueOf(this.remainingActions));
     }
 
+    @Override
     public void decreaseActions() {
         EntityRegistry registry = new EntityRegistry();
         Logger logger = new Logger(registry);
@@ -57,15 +64,8 @@ public class Entomologist extends Player {
                     "Nincs több akció, nem csökkenthető.");
         }
     }
-
-    public int getRemainingActions() {
-        return this.remainingActions;
-    }
-  
-    public void setActions(int i) { remainingActions = i; }
   
     public List<Insect> getInsects() { return insects; }
   
     public void addInsects(Insect insect) { insects.add(insect); }
 }
-
