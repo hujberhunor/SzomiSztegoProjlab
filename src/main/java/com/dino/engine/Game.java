@@ -151,22 +151,29 @@ public class Game {
         List<Tecton> tectons = map.getTectons();
         List<Tecton> tectonsWithFungus = new ArrayList<>();
 
+        if (inputScanner.hasNextLine()) {
+            inputScanner.nextLine();
+        }
+
         for(Player player : players) {
             if(player instanceof Mycologist) {
                 System.out.println("Melyik tektonról szeretne indulni?\nVálasszon egy számot 1-től " + tectons.size()+1 + "-ig");
-                int selectedIndex = -1;
+                int selectedIndex = 0;
                 while (selectedIndex < 1 || selectedIndex > tectons.size() + 1) {
                     selectedIndex = inputScanner.nextInt();
                     if(selectedIndex < 1 || selectedIndex > tectons.size() + 1) {
                         System.out.println("Helytelen szám! Válasszon egy számot 1-től " + tectons.size()+1 + "-ig");
                     }
                 }
+                selectedIndex--;
                 Tecton selectedTecton = tectons.get(selectedIndex);
                 ((Mycologist) player).placeFungus(selectedTecton);
                 tectons.remove(selectedIndex);
                 tectonsWithFungus.add(selectedTecton);
             }
         }
+
+        inputScanner.close();
 
         Random rnd = new Random();
         for(Player player : players) {
@@ -177,6 +184,8 @@ public class Game {
                 tectons.remove(selectedIndex);
             }
         }
+
+        currentPlayer = players.get(0);
     }
 
     /**

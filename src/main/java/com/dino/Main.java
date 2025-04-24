@@ -601,6 +601,30 @@ public class Main {
         inputScanner.close();
     }
 
+    public static void stage2Main(){
+        Game game = new Game();
+        EntityRegistry registry = game.getRegistry();
+        Logger logger = game.getLogger();
+
+        game.initBoard();
+        game.initGame();
+        game.startGame();
+
+        int endOfRound = 1;
+        while(endOfRound != 0){
+            endOfRound = game.nextTurn();
+        }
+        endOfRound = 1;
+
+        int endOfGame = 1;
+        while(endOfGame != 0){
+            endOfGame = game.nextRound();
+            while(endOfRound != 0){
+                endOfRound = game.nextTurn();
+            }
+        }
+    }
+
     // -------------------------------- //
     public static void main(String[] args) {
         boolean menuActive = true;
@@ -656,6 +680,9 @@ public class Main {
                     break;
                 case 10:
                     testCommand();
+                    break;
+                case 11:
+                    stage2Main();
                     break;
                 default:
                     System.out.println("Invalid input");
