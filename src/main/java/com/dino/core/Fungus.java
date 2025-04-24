@@ -16,6 +16,7 @@ import com.dino.util.Skeleton;
 import com.google.gson.JsonArray;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
+import com.google.gson.JsonPrimitive;
 
 /**
  * Egy gombatestet reprezentáló osztály.
@@ -217,7 +218,12 @@ public class Fungus implements SerializableEntity {
         obj.addProperty("lifespan", lifespan);
 
         // Hyphak listája (maguk serialize-olják magukat)
-        obj.add("hyphas", SerializerUtil.toJsonArray(hyphas, h -> h.serialize(registry, logger)));
+        // obj.add("hyphas", SerializerUtil.toJsonArray(hyphas, h -> h.serialize(registry, logger)));
+
+        obj.add("hyphas", SerializerUtil.toJsonArray(hyphas, h -> {
+            String name = registry.getNameOf(h);
+            return new JsonPrimitive(name != null ? name : "unregistered");
+        }));
 
         // Spórák listája (maguk serialize-olják magukat)
         obj.add("spores", SerializerUtil.toJsonArray(spores, s -> s.serialize(registry, logger)));

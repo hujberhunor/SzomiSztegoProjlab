@@ -4,6 +4,7 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Scanner;
+import java.util.stream.Collectors;
 
 import com.dino.commands.Command;
 import com.dino.commands.CommandParser;
@@ -23,6 +24,7 @@ import com.dino.player.Mycologist;
 import com.dino.tecton.InfiniteHyphaTecton;
 import com.dino.tecton.KeepHyphaTecton;
 import com.dino.tecton.NoFungiTecton;
+import com.dino.tecton.ShortHyphaTecton;
 import com.dino.tecton.Tecton;
 import com.dino.util.EntityRegistry;
 import com.dino.util.Logger;
@@ -527,12 +529,19 @@ public class Main {
         }
     }
 
+    private static String tectonNameFromHexagons(Tecton t) {
+        return "tecton_" + t.hexagons.stream()
+                .map(Hexagon::getId)
+                .sorted()
+                .map(Object::toString)
+                .collect(Collectors.joining("_"));
+    }
+
     public static void ComplexSerializeTest() {
         try {
             // Setup
             Game game = new Game(10);
-            game.initBoard();
-
+            // game.initBoard();
             EntityRegistry registry = game.getRegistry();
             Logger logger = game.getLogger();
 
@@ -544,9 +553,30 @@ public class Main {
             game.addPlayer(myco);
             game.addPlayer(ento);
 
-            // Tecton kiválasztás
-            Tecton t1 = game.getBoard().getTectons().get(0);
-            Tecton t2 = game.getBoard().getTectons().get(1);
+            // Hexagonok létrehozása
+            Hexagon h1 = new Hexagon(14);
+            Hexagon h2 = new Hexagon(5);
+            Hexagon h3 = new Hexagon(6);
+            Hexagon h4 = new Hexagon(16);
+
+            // Tectonok létrehozása és hexagon hozzárendelés
+            Tecton t1 = new ShortHyphaTecton();
+            t1.hexagons.add(h1);
+            t1.hexagons.add(h2);
+
+            Tecton t2 = new ShortHyphaTecton();
+            t2.hexagons.add(h3);
+            t2.hexagons.add(h4);
+
+            // Tecton nevek generálása és regisztrálása
+            String name1 = tectonNameFromHexagons(t1);
+            String name2 = tectonNameFromHexagons(t2);
+            registry.register(name1, t1);
+            registry.register(name2, t2);
+
+            // Hozzáadás a játékhoz
+            game.getBoard().addTecton(t1);
+            game.getBoard().addTecton(t2);
 
             // Gombatest
             Fungus fungus = new Fungus(myco, t1);
