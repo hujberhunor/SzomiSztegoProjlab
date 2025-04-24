@@ -134,6 +134,8 @@ public class Fungus implements SerializableEntity{
             return false;
         }
 
+        // Ellenőrizzük, hogy ha tektonokon csak egy fonál lehet, akkor már van-e
+
         // Ellenőrizzük, hogy az első (nulladik) tektonon van-e spóra, ha kételemű a lista
         if (t.size() == 2){
             boolean found = false;

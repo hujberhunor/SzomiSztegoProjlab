@@ -14,6 +14,10 @@ public class SingleHyphaTecton extends Tecton {
         super();
         hyphaLimit = 1; // Garantáltan egy értékű konstans
     }
+
+    public int getHyphaLimit(){
+        return hyphaLimit;
+    }
     
     /**
      * A fonalakat kezelő virtuális függvény felülírása.
