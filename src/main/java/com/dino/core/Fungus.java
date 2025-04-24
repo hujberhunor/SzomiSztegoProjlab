@@ -7,6 +7,7 @@ import java.util.Map;
 
 import com.dino.player.Mycologist;
 import com.dino.tecton.NoFungiTecton;
+import com.dino.tecton.SingleHyphaTecton;
 import com.dino.tecton.Tecton;
 import com.dino.util.SerializableEntity;
 import com.dino.util.SerializerUtil;
@@ -135,6 +136,14 @@ public class Fungus implements SerializableEntity{
         }
 
         // Ellenőrizzük, hogy ha tektonokon csak egy fonál lehet, akkor már van-e
+        // TODO: csúnya type check-et feloldani
+        for (Tecton tec : t){
+            if (tec instanceof SingleHyphaTecton || !tec.getHyphas().isEmpty()){
+                skeleton.log("Nem lehet növeszteni gombafonalat: a tektonon már fut fonál, és nem enged többet.");
+                skeleton.endMethod();
+                return false;
+            }
+        }
 
         // Ellenőrizzük, hogy az első (nulladik) tektonon van-e spóra, ha kételemű a lista
         if (t.size() == 2){
