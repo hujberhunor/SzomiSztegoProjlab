@@ -1,6 +1,8 @@
 package com.dino.engine;
 import java.util.*;
 
+import com.dino.commands.Command;
+import com.dino.commands.CommandParser;
 import com.dino.core.Hypha;
 import com.dino.core.Insect;
 import com.dino.player.Entomologist;
@@ -175,8 +177,6 @@ public class Game {
                 tectons.remove(selectedIndex);
             }
         }
-
-        nextRound();
     }
 
     /**
@@ -247,20 +247,46 @@ public class Game {
      * Paraméter nélkül hívható függvény, ami lépteti a játékmenetet a következő játékosra.
      * Ha minden játékos sorra került, akkor meghívja a nextRound() függvényt.
      */
-    public void nextTurn() {
-        String oldPlayerName = registry.getNameOf(currentPlayer);
-
+    public int nextTurn() {
         int currentIndex = players.indexOf(currentPlayer);
         int nextIndex = (currentIndex + 1) % players.size();
 
+        Scanner inputScanner = new Scanner(System.in);
+        CommandParser parser = new CommandParser(this);
+
+        System.out.println("Készen állsz, gépelj commandokat (pl. MOVE_INSECT insect1 tectonB):");
+
+        while (inputScanner.hasNextLine()) {
+            String line = inputScanner.nextLine();
+            if (line.isBlank())
+                break;
+
+            try {
+                Command command = parser.parse(line);
+                if (command.validate(this)) {
+                    command.execute(this, logger);
+                    currentPlayer.decreaseActions();
+                } else {
+                    logger.logError("COMMAND", command.toString(), "Invalid command.");
+                }
+            } catch (Exception e) {
+                logger.logError("COMMAND", line, "Parsing failed: " + e.getMessage());
+            }
+        }
+
+        inputScanner.close();
+
         if (nextIndex == 0) {
-            nextRound();
+            return 0;
         } else {
+            String oldPlayerName = registry.getNameOf(currentPlayer);
             currentPlayer = players.get(nextIndex);
             currentPlayer.remainingActions = currentPlayer.actionsPerTurn;
 
             String newPlayerName = registry.getNameOf(currentPlayer);
             logger.logChange("GAME", this, "CURRENT_PLAYER", oldPlayerName, newPlayerName);
+
+            return 1;
         }
     }
 
@@ -268,16 +294,16 @@ public class Game {
      * Paraméter nélkül hívható függvény, ami lépteti a játékmenetet a következő körre.
      * Meghívódik, amikor minden játékos befejezte a saját körét.
      */
-    public void nextRound() {
+    public int nextRound() {
+        if (currRound == totalRounds) {
+            endGame();
+            return 0;
+        }
+
         int oldRound = currRound;
         currRound++;
 
         logger.logChange("GAME", this, "ROUND", String.valueOf(oldRound), String.valueOf(currRound));
-
-        if (currRound > totalRounds) {
-            endGame();
-            return;
-        }
 
         map.breakHandler();
 
@@ -287,6 +313,8 @@ public class Game {
 
         String newPlayerName = registry.getNameOf(currentPlayer);
         logger.logChange("GAME", this, "CURRENT_PLAYER", oldPlayerName, newPlayerName);
+
+        return 1;
     }
 
     /**
