@@ -6,8 +6,8 @@ import java.util.List;
 
 import com.dino.player.Mycologist;
 import com.dino.tecton.Tecton;
-import com.dino.util.EntityRegistry;
 import com.dino.util.Logger;
+import com.dino.util.ObjectNamer;
 import com.dino.util.SerializableEntity;
 import com.dino.util.SerializerUtil;
 import com.google.gson.JsonArray;
@@ -95,6 +95,25 @@ public class Hypha implements SerializableEntity {
     }
 
     /**
+     * Fonal haladásának tektonjai, konkrétan maga a fonal
+     */
+    public List<Tecton> getTectons() {
+        return tectons;
+    }
+
+    private void setSpecies(Mycologist s) {
+        this.mycologist = s;
+    }
+
+    public void setTectons(List<Tecton> t) {
+        this.tectons = t;
+    }
+
+    public void connectTectons(Tecton... path) {
+        Collections.addAll(tectons, path);
+    }
+
+    /**
      * Folytatja a már megkeztedd fonalat. Hozzáad "egy tectonnyi fonalat" a lista
      * végére
      */
@@ -113,17 +132,6 @@ public class Hypha implements SerializableEntity {
         }
 
         return false;
-    }
-
-    /**
-     * Fonal haladásának tektonjai, konkrétan maga a fonal
-     */
-    public List<Tecton> getTectons() {
-        return tectons;
-    }
-
-    public void connectTectons(Tecton... path) {
-        Collections.addAll(tectons, path);
     }
 
     public boolean eatInsect(Insect i) {
@@ -146,46 +154,53 @@ public class Hypha implements SerializableEntity {
     }
 
     @Override
-    public JsonObject serialize(EntityRegistry registry, Logger logger) {
+    public JsonObject serialize(ObjectNamer namer, Logger logger) {
         JsonObject obj = new JsonObject();
 
-        // Kihez tartozik a hypha (gombász ID)
-        obj.addProperty("mycologist", "mycologist_" + mycologist.hashCode());
+        // Gombász (determinált név)
+        obj.addProperty("mycologist", namer.getNameOf(mycologist));
 
-        // Mely tectonokon halad át (tecton ID lista)
-        obj.add("tectons", SerializerUtil.toJsonArray(tectons, t -> "tecton_" + t.hashCode()));
+        // Gombatest (ha van hozzárendelve)
+        if (fungus != null) {
+            obj.addProperty("fungus", namer.getNameOf(fungus));
+        }
+
+        // Tectonok (névlista)
+        obj.add("tectons", SerializerUtil.toJsonArray(tectons, namer::getNameOf));
 
         return obj;
     }
 
-    public static Hypha deserialize(JsonObject obj, EntityRegistry registry, Logger logger) {
+    public static Hypha deserialize(JsonObject obj, ObjectNamer namer, Logger logger) {
         Hypha h = new Hypha();
 
-        // species
-        String speciesName = obj.get("species").getAsString();
-        Object s = registry.getByName(speciesName);
+        // Mycologist visszakeresése
+        String speciesName = obj.get("mycologist").getAsString();
+        Object s = namer.getByName(speciesName);
         if (s instanceof Mycologist) {
             h.setSpecies((Mycologist) s);
         } else {
             logger.logError("Hypha", speciesName, "Ismeretlen vagy nem Mycologist típus");
         }
 
-        // fungus
-        String fungusName = obj.get("fungus").getAsString();
-        Object f = registry.getByName(fungusName);
-        if (f instanceof Fungus) {
-            h.setFungus((Fungus) f);
-        } else {
-            logger.logError("Hypha", fungusName, "Ismeretlen vagy nem Fungus típus");
+        // Fungus visszakeresése (ha szerepel)
+        if (obj.has("fungus")) {
+            String fungusName = obj.get("fungus").getAsString();
+            Object f = namer.getByName(fungusName);
+            if (f instanceof Fungus) {
+                h.setFungus((Fungus) f);
+            } else {
+                logger.logError("Hypha", fungusName, "Ismeretlen vagy nem Fungus típus");
+            }
         }
 
-        // tectons
+        // Tecton lista
         List<Tecton> tectonList = new ArrayList<>();
         JsonArray tArray = obj.getAsJsonArray("tectons");
 
         for (JsonElement e : tArray) {
             String tName = e.getAsString();
-            Object t = registry.getByName(tName);
+            Object t = namer.getByName(tName);
             if (t instanceof Tecton) {
                 tectonList.add((Tecton) t);
             } else {
@@ -196,13 +211,4 @@ public class Hypha implements SerializableEntity {
         h.setTectons(tectonList);
         return h;
     }
-
-    private void setSpecies(Mycologist s) {
-        this.mycologist = s;
-    }
-
-    public void setTectons(List<Tecton> t) {
-        this.tectons = t;
-    }
-
 } // End of Hypha
