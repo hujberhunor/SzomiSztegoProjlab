@@ -196,7 +196,7 @@ public class GameBoard {
      */
     private void createTectons(List<Hexagon> hexagons) {
         List<Hexagon> remainingHexagons = new ArrayList<>(hexagons);
-    
+        
         while (!remainingHexagons.isEmpty()) {
             // Kiválasztunk egy kezdő hatszöget
             int startIndex = (int)(Math.random() * remainingHexagons.size());
@@ -206,35 +206,15 @@ public class GameBoard {
             // Véletlenszerű tekton típus létrehozása
             Tecton newTecton = createRandomTectonType();
             
-            // Hatszögek gyűjtése a tektonhoz (1-4 darab)
+            // Hatszögek gyűjtése a tektonhoz (2-9 darab)
             List<Hexagon> tectonHexagons = new ArrayList<>();
             tectonHexagons.add(startHex);
             
-            // Véletlenszerű méret 1 és "4" között
-            int targetSize = 1 + (int)(Math.random() * 4);
+            // Véletlenszerű méret 2 és 9 között
+            int targetSize = 2 + (int)(Math.random() * 8);
             
-            // Tekton növelése további szomszédokkal
-            for (int i = 1; i < targetSize && !remainingHexagons.isEmpty(); i++) {
-                // Az aktuális tekton hatszögeinek szomszédai közül választunk
-                List<Hexagon> possibleNeighbours = new ArrayList<>();
-                
-                for (Hexagon hex : tectonHexagons) {
-                    for (Hexagon neighbour : hex.getNeighbours()) {
-                        if (remainingHexagons.contains(neighbour) && !possibleNeighbours.contains(neighbour)) {
-                            possibleNeighbours.add(neighbour);
-                        }
-                    }
-                }
-                
-                if (possibleNeighbours.isEmpty()) break;
-                
-                // Véletlenszerűen kiválasztunk egy szomszédot
-                int nextIndex = (int)(Math.random() * possibleNeighbours.size());
-                Hexagon nextHex = possibleNeighbours.get(nextIndex);
-                
-                tectonHexagons.add(nextHex);
-                remainingHexagons.remove(nextHex);
-            }
+            // Egybefüggő tekton kialakítása
+            growTecton(tectonHexagons, remainingHexagons, targetSize);
             
             // Beállítjuk a tekton hexagonjait
             newTecton.hexagons = tectonHexagons;
@@ -243,6 +223,7 @@ public class GameBoard {
             tectons.add(newTecton);
         }
     }
+    
 
     /**
      * Létrehoz egy véletlenszerű típusú tektont
@@ -291,6 +272,42 @@ public class GameBoard {
         return false;
     }
 
-
+    /**
+     * Növeszti a tektont egybefüggő formában a célméretig vagy amíg lehetséges
+     * 
+     * @param tectonHexagons Az aktuális tektonhoz már hozzáadott hexagonok
+     * @param remainingHexagons A még fel nem használt hexagonok
+     * @param targetSize A kívánt célméret
+     */
+    private void growTecton(List<Hexagon> tectonHexagons, List<Hexagon> remainingHexagons, int targetSize) {
+        // Folytatjuk a hexagonok hozzáadását, amíg el nem érjük a célméretet vagy nincs több szomszéd
+        while (tectonHexagons.size() < targetSize) {
+            // Összegyűjtjük az összes lehetséges szomszédot
+            List<Hexagon> possibleNeighbors = new ArrayList<>();
+            
+            // Minden már hozzáadott hexagon szomszédját vizsgáljuk
+            for (Hexagon hex : tectonHexagons) {
+                for (Hexagon neighbor : hex.getNeighbours()) {
+                    if (remainingHexagons.contains(neighbor) && !possibleNeighbors.contains(neighbor) && 
+                        !tectonHexagons.contains(neighbor)) {
+                        possibleNeighbors.add(neighbor);
+                    }
+                }
+            }
+            
+            if (possibleNeighbors.isEmpty()) {
+                // Nincs több lehetséges szomszéd, befejezzük a növekedést
+                break;
+            }
+            
+            // Véletlenszerűen kiválasztunk egy szomszédot
+            int nextIndex = (int)(Math.random() * possibleNeighbors.size());
+            Hexagon nextHex = possibleNeighbors.get(nextIndex);
+            
+            // Hozzáadjuk a kiválasztott hexagont a tektonhoz
+            tectonHexagons.add(nextHex);
+            remainingHexagons.remove(nextHex);
+        }
+    }
 }
 
