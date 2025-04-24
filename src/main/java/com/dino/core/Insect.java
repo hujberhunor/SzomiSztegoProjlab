@@ -16,8 +16,8 @@ import com.dino.effects.StunningEffect;
 import com.dino.player.Entomologist;
 import com.dino.player.Mycologist;
 import com.dino.tecton.Tecton;
-import com.dino.util.EntityRegistry;
 import com.dino.util.Logger;
+import com.dino.util.ObjectNamer;
 import com.dino.util.SerializableEntity;
 import com.dino.util.Skeleton;
 import com.google.gson.JsonArray;
@@ -307,11 +307,11 @@ public class Insect implements SerializableEntity {
     }
 
     @Override
-    public JsonObject serialize(EntityRegistry registry, Logger logger) {
+    public JsonObject serialize(ObjectNamer namer, Logger logger) {
         JsonObject obj = new JsonObject();
 
-        // Entomologist neve registry alapján
-        String ownerName = registry.getNameOf(entomologist);
+        // Entomologist neve
+        String ownerName = namer.getNameOf(entomologist);
         if (ownerName != null) {
             obj.addProperty("owner", ownerName);
         } else {
@@ -319,21 +319,21 @@ public class Insect implements SerializableEntity {
         }
 
         // Aktuális Tecton neve
-        String tectonName = registry.getNameOf(currentTecton);
+        String tectonName = namer.getNameOf(currentTecton);
         if (tectonName != null) {
             obj.addProperty("currentTecton", tectonName);
         } else {
-            logger.logError("Insect", registry.getNameOf(this), "CurrentTecton nincs regisztrálva: " + currentTecton);
+            logger.logError("Insect", namer.getNameOf(this), "CurrentTecton nincs regisztrálva: " + currentTecton);
         }
 
         // Effektek (Spore objektumok)
         JsonArray effectArray = new JsonArray();
         for (Spore s : effects) {
-            String name = registry.getNameOf(s);
-            if (name != null) {
-                effectArray.add(name);
+            String sporeName = namer.getNameOf(s);
+            if (sporeName != null) {
+                effectArray.add(sporeName);
             } else {
-                logger.logError("Insect", registry.getNameOf(this), "Ismeretlen effect (Spore): " + s);
+                logger.logError("Insect", namer.getNameOf(this), "Ismeretlen effect (Spore): " + s);
             }
         }
 
@@ -341,13 +341,13 @@ public class Insect implements SerializableEntity {
         return obj;
     }
 
-    public static Insect deserialize(JsonObject obj, EntityRegistry registry, Logger logger) {
+    public static Insect deserialize(JsonObject obj, ObjectNamer namer, Logger logger) {
         Entomologist owner = null;
         Tecton tecton = null;
 
         // Owner beállítása
         String ownerName = obj.get("owner").getAsString();
-        Object ownerObj = registry.getByName(ownerName);
+        Object ownerObj = namer.getByName(ownerName);
         if (ownerObj instanceof Entomologist) {
             owner = (Entomologist) ownerObj;
         } else {
@@ -356,7 +356,7 @@ public class Insect implements SerializableEntity {
 
         // Tecton beállítása
         String tectonName = obj.get("currentTecton").getAsString();
-        Object tectonObj = registry.getByName(tectonName);
+        Object tectonObj = namer.getByName(tectonName);
         if (tectonObj instanceof Tecton) {
             tecton = (Tecton) tectonObj;
         } else {
@@ -369,21 +369,21 @@ public class Insect implements SerializableEntity {
 
         // Insect példányosítás
         Insect insect = new Insect(owner, tecton);
+        namer.registerInsect(owner, insect); // FONTOS: itt regisztráljuk vissza!
 
-        // Effect lista (opcionális)
+        // Effektek (opcionális)
         if (obj.has("effects")) {
             JsonArray effectArray = obj.getAsJsonArray("effects");
             List<Spore> effectList = new ArrayList<>();
 
             for (JsonElement e : effectArray) {
                 String name = e.getAsString();
-                Object effect = registry.getByName(name);
+                Object effect = namer.getByName(name);
 
                 if (effect instanceof Spore) {
                     effectList.add((Spore) effect);
                 } else {
-                    logger.logError("Insect", registry.getNameOf(insect),
-                            "Ismeretlen vagy hibás Spore: " + name);
+                    logger.logError("Insect", namer.getNameOf(insect), "Ismeretlen vagy hibás Spore: " + name);
                 }
             }
 

@@ -11,7 +11,8 @@ import com.dino.player.Player;
 import com.dino.tecton.Tecton;
 
 /**
- * Ez az osztály kezeli az entitásokhoz tartozó determinisztikus neveket és regisztrálja is őket
+ * Ez az osztály kezeli az entitásokhoz tartozó determinisztikus neveket és
+ * regisztrálja is őket
  * az EntityRegistry-n keresztül.
  */
 public class ObjectNamer {
@@ -84,6 +85,10 @@ public class ObjectNamer {
 
     public String getNameOf(Object obj) {
         return registry.getNameOf(obj);
+    }
+
+    public Object getByName(String name) {
+        return registry.getByName(name);
     }
 
     public void reset() {
