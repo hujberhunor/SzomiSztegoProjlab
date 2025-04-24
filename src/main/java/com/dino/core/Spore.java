@@ -1,6 +1,10 @@
 package com.dino.core;
 
+import com.dino.effects.AcceleratingEffect;
+import com.dino.effects.CloneEffect;
 import com.dino.effects.ParalyzingEffect;
+import com.dino.effects.SlowingEffect;
+import com.dino.effects.SporeNoEffect;
 import com.dino.effects.StunningEffect;
 import com.dino.player.Mycologist;
 import com.dino.util.Logger;
@@ -84,17 +88,37 @@ public abstract class Spore implements SerializableEntity {
         int duration = obj.get("effectDuration").getAsInt();
         int nutrient = obj.get("nutrientValue").getAsInt();
 
+        Spore spore;
+
         switch (type) {
             case "StunningEffect":
-                return new StunningEffect(mycologist);
+                spore = new StunningEffect(mycologist);
+                break;
             case "ParalyzingEffect":
-                return new ParalyzingEffect(mycologist);
-            // TODO 
-            // Bővíthető további típusokkal
+                spore = new ParalyzingEffect(mycologist);
+                break;
+            case "SlowingEffect":
+                spore = new SlowingEffect(mycologist);
+                break;
+            case "AcceleratingEffect":
+                spore = new AcceleratingEffect(mycologist);
+                break;
+            case "SporeNoEffect":
+                spore = new SporeNoEffect(mycologist);
+                break;
+            case "CloneEffect":
+                spore = new CloneEffect(mycologist); // ha kell neki külön paraméter, itt érdemes logolni a hiányt
+                break;
             default:
                 logger.logError("Spore", type, "Ismeretlen Spore típus");
                 return null;
         }
+
+        // Állapotok visszaállítása
+        spore.effectDuration = duration;
+        spore.nutrientValue = nutrient;
+
+        return spore;
     }
 
 }
