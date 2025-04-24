@@ -150,86 +150,102 @@ public abstract class Tecton implements SerializableEntity {
      * @return Az újonnan létrehozott két tekton listája
      */
     public List<Tecton> split(double breakChance) {
-        Skeleton skeleton = Skeleton.getInstance();
-        skeleton.startMethod("Tecton", "split");
-
+        // Skeleton skeleton = Skeleton.getInstance();
+        // skeleton.startMethod("Tecton", "split");
+    
         List<Tecton> resultTectons = new ArrayList<>();
-
+    
         // Ha van rajta rovar, nem törhet el a tekton
-        if (insects.size() > 0) {
-            skeleton.log("A tekton nem törhet el, mert van rajta rovar");
-            skeleton.endMethod();
+        if (!insects.isEmpty()) {
+            // skeleton.log("A tekton nem törhet el, mert van rajta rovar");
+            // skeleton.endMethod();
             return resultTectons;
         }
-
+    
         // Ellenőrizzük, hogy a tekton nem csak egy hexagonból áll-e
-        if (hexagons.size() == 1) {
-            skeleton.log(
-                "A tekton nem törhet el, mert csak egy hexagonból áll"
-            );
-            skeleton.endMethod();
+        if (hexagons.size() <= 1) {
+            // skeleton.log("A tekton nem törhet el, mert csak egy hexagonból áll");
+            // skeleton.endMethod();
             return resultTectons; // Üres lista
         }
-
+    
+        // Ha már kétszer tört a tekton, akkor nem törhet újra
+        if (breakCount >= 2) {
+            // skeleton.log("A tekton már kétszer tört, nem törhet újra");
+            // skeleton.endMethod();
+            return resultTectons;
+        }
+    
         // Törési valószínűség megjelenítése
-        skeleton.log("Törési valószínűség: " + this.breakChance + "%");
-
+        // skeleton.log("Törési valószínűség: " + this.breakChance + "%");
+    
         // Random törési valószínűség generálásának szimulálása
         boolean shouldBreak = Math.random() * 100 < this.breakChance;
         if (!shouldBreak) {
-            skeleton.log("Valószínűség miatt nincs törés");
-            skeleton.endMethod();
+            // skeleton.log("Valószínűség miatt nincs törés");
+            // skeleton.endMethod();
             return resultTectons;
         }
-
+    
         // A tekton ketté törése
-        skeleton.log("A tekton kettétört");
-
-        //Két új tekton létrehozása a törés után
-        skeleton.log(
-            "Két új tekton jön létre,a típusuk megegyezik az eredetivel"
-        );
-
-        Tecton tecton1 = null;
-        Tecton tecton2 = null;
-
-        skeleton.log("Hexagonok felosztása a két új tekton között");
-
-        // Törési valószínűségek frissítése
-        if (breakCount == 0) {
-            skeleton.log(
-                "Első törés - törési valószínűség felezve: " +
-                (this.breakChance / 2) +
-                "%"
-            );
-            skeleton.log("breakCount növelése 1-re");
-        } else if (breakCount == 1) {
-            skeleton.log("Második törés - törési valószínűség nullázva");
-            skeleton.log("breakCount növelése 2-re");
+        // skeleton.log("A tekton kettétört");
+    
+        // Két új tekton létrehozása a törés után
+        // skeleton.log("Két új tekton jön létre, a típusuk megegyezik az eredetivel");
+        Tecton tecton1 = this.createCopy();
+        Tecton tecton2 = this.createCopy();
+    
+        // Törési valószínűségek és számláló frissítése az új tektonokban
+        double newBreakChance = this.breakChance;
+        int newBreakCount = this.breakCount + 1;
+        
+        if (newBreakCount == 1) {
+            // Első törés - törési valószínűség felezve
+            newBreakChance = this.breakChance / 2;
+            // skeleton.log("Első törés - törési valószínűség felezve: " + newBreakChance + "%");
+        } else if (newBreakCount == 2) {
+            // Második törés - törési valószínűség nullázva
+            newBreakChance = 0;
+            // skeleton.log("Második törés - törési valószínűség nullázva");
         }
-
-        // Gombafonalak törlése
-        skeleton.log("Gombafonalak törlése az eredeti tektonról");
-
+        
+        tecton1.breakChance = newBreakChance;
+        tecton1.breakCount = newBreakCount;
+        tecton2.breakChance = newBreakChance;
+        tecton2.breakCount = newBreakCount;
+    
+        // Hexagonok felosztása a két új tekton között
+        // skeleton.log("Hexagonok felosztása a két új tekton között");
+        divideHexagons(tecton1, tecton2);
+    
+        // Gombafonalak törlése - csak a "kapcsolatot", azaz a referenciát töröljük,
+        // a Hypha objektumokat nem semmisítjük meg, mert azok más tektonokban is lehetnek
+        // skeleton.log("Gombafonalak törlése az eredeti tektonról");
+        tecton1.hyphas = new ArrayList<>();
+        tecton2.hyphas = new ArrayList<>();
+    
         // Gombatestek véletlenszerű áthelyezése
         if (fungus != null) {
-            skeleton.log(
-                "Gombatest véletlenszerűen áthelyezve az egyik új tektonra"
-            );
+            Tecton targetTecton = (Math.random() < 0.5) ? tecton1 : tecton2;
+            targetTecton.fungus = this.fungus;
+            // skeleton.log("Gombatest véletlenszerűen áthelyezve az egyik új tektonra");
         }
-
-        // Spórák elosztása
-        skeleton.log("Spórák elosztása az új tektonok között");
-
+    
+        // Spórák elosztása az új tektonok között
+        // skeleton.log("Spórák elosztása az új tektonok között");
+        divideSpores(tecton1, tecton2);
+    
+        // Rovarok elosztása - de ebben a konkrét implementációban
+        // nem lehet rovar a tektonon a törés pillanatában
+    
         // Tekton törés befejezése
-        skeleton.log("Tekton sikeresen ketté tört");
-
-        skeleton.log("Két új tekton visszaadása az eredményben");
-
+        // skeleton.log("Tekton sikeresen ketté tört");
+    
         resultTectons.add(tecton1);
         resultTectons.add(tecton2);
-
-        skeleton.endMethod();
+        // skeleton.log("Két új tekton visszaadása az eredményben");
+    
+        // skeleton.endMethod();
         return resultTectons;
     }
 
@@ -334,5 +350,50 @@ public abstract class Tecton implements SerializableEntity {
 
     public double getBreakChance(){
         return breakChance;
+    }
+    /**
+     * Szétosztja a hexagonokat a két új tekton között.
+     * Minden hexagon az egyik vagy másik tektonhoz kerül.
+     * Az algoritmus a sok implementációs lehetőség közül egy egyszerű
+     * megoldást választ: a hexagonokat két részre osztja, de biztosítja,
+     * hogy mindkét részben legalább egy hexagon legyen.
+     * 
+     * @param tecton1 Az első új tekton
+     * @param tecton2 A második új tekton
+     */
+    private void divideHexagons(Tecton tecton1, Tecton tecton2) {
+        if (hexagons.size() <= 1) return;
+        
+        // Hexagonok számának meghatározása az első tekton számára
+        int firstTectonHexCount = Math.max(1, hexagons.size() / 2);
+        
+        tecton1.hexagons = new ArrayList<>(hexagons.subList(0, firstTectonHexCount));
+        tecton2.hexagons = new ArrayList<>(hexagons.subList(firstTectonHexCount, hexagons.size()));
+    }
+
+    /**
+     * Szétosztja a spórákat a két új tekton között.
+     * Minden gombász spórája véletlenszerűen kerül az egyik vagy másik tektonra.
+     * 
+     * @param tecton1 Az első új tekton
+     * @param tecton2 A második új tekton
+     */
+    private void divideSpores(Tecton tecton1, Tecton tecton2) {
+        tecton1.spores = new HashMap<>();
+        tecton2.spores = new HashMap<>();
+        
+        for (Map.Entry<Mycologist, Integer> entry : spores.entrySet()) {
+            Mycologist mycologist = entry.getKey();
+            Integer sporeCount = entry.getValue();
+            
+            if (sporeCount <= 0) continue;
+            
+            // Véletlenszerűen választunk a két tekton között
+            if (Math.random() < 0.5) {
+                tecton1.spores.put(mycologist, sporeCount);
+            } else {
+                tecton2.spores.put(mycologist, sporeCount);
+            }
+        }
     }
 }
