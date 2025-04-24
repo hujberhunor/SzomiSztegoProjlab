@@ -2,8 +2,11 @@ package com.dino.engine;
 import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.List;
+import java.util.Scanner;
 
 import com.dino.core.Hypha;
+import com.dino.player.Entomologist;
+import com.dino.player.Mycologist;
 import com.dino.player.Player;
 import com.dino.util.EntityRegistry;
 import com.dino.util.Logger;
@@ -50,6 +53,18 @@ public class Game {
     private EntityRegistry registry;
     private Logger logger;
 
+    public Game() {
+        this.map = new GameBoard();
+        this.players = new ArrayList<Player>();
+        this.currRound = 0;
+        this.totalRounds = 0;
+        this.currentPlayer = null;
+        this.decayedHypha = new ArrayList<>();
+        this.registry = new EntityRegistry();
+        this.logger = new Logger(registry);
+        this.selectedEntity = null;
+    }
+
     public Game(int totalRounds) {
         this.map = new GameBoard();
         this.players = new ArrayList<Player>();
@@ -59,6 +74,7 @@ public class Game {
         this.decayedHypha = new ArrayList<>();
         this.registry = new EntityRegistry();
         this.logger = new Logger(registry);
+        this.selectedEntity = null;
     }
 
     /**
@@ -75,21 +91,50 @@ public class Game {
      * @return A játék inicializálásának sikeressége.
      */
     public boolean initGame() {
-        if (players.isEmpty() || map == null) {
-            return false;
+        Scanner inputScanner = new Scanner(System.in);
+
+        System.out.println("Adja meg a gombászok számát!");
+        int numberOfMycologist = 0;
+        while(numberOfMycologist < 2 || numberOfMycologist > 4) {
+            numberOfMycologist = inputScanner.nextInt();
+            if(numberOfMycologist < 2) {
+                System.out.println("A gombászok száma nem lehet kevesebb kettőnél! Adjon meg egy újat!");
+            } else if (numberOfMycologist > 4) {
+                System.out.println("A gombászok száma nem lehet több négynél! Adjon meg egy újat!");
+            }
         }
 
-        for (Player player : players) {
-            player.score = 0;
-            player.remainingActions = player.actionsPerTurn;
+        System.out.println("Adja meg a rovarászok számát!");
+        int numberOfEntomologist = 0;
+        while(numberOfEntomologist < 2 || numberOfEntomologist > 4) {
+            numberOfEntomologist = inputScanner.nextInt();
+            if(numberOfEntomologist < 2) {
+                System.out.println("A rovarászok száma nem lehet kevesebb kettőnél! Adjon meg egy újat!");
+            } else if (numberOfEntomologist > 4) {
+                System.out.println("A rovarászok száma nem lehet több négynél! Adjon meg egy újat!");
+            }
         }
 
-        if (!players.isEmpty()) {
-            currentPlayer = players.get(0);
+        for(int i = 0; i < numberOfMycologist; i++) {
+            Mycologist mycologist = new Mycologist();
+            players.add(mycologist);
         }
 
-        currRound = 0;
-        decayedHypha.clear();
+        for(int i = 0; i < numberOfEntomologist; i++) {
+            Entomologist entomologist = new Entomologist();
+            players.add(entomologist);
+        }
+
+        System.out.println("Hány kör legyen a játék?");
+        int numberOfRounds = 0;
+        while(numberOfRounds < 1) {
+            numberOfRounds = inputScanner.nextInt();
+            if(numberOfRounds < 1) {
+                System.out.println("Legalább egy körnek lennie kell! Adjon meg egy újat!");
+            }
+        }
+
+        totalRounds = numberOfRounds;
 
         return true;
     }
