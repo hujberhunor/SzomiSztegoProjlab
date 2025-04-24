@@ -1,8 +1,10 @@
 package com.dino.core;
 
+import com.dino.effects.ParalyzingEffect;
+import com.dino.effects.StunningEffect;
 import com.dino.player.Mycologist;
-import com.dino.util.EntityRegistry;
 import com.dino.util.Logger;
+import com.dino.util.ObjectNamer;
 import com.dino.util.SerializableEntity;
 import com.google.gson.JsonObject;
 
@@ -11,19 +13,20 @@ import com.google.gson.JsonObject;
 //illetve hogy elfogyasztásakor a rovarász mennyi pontot kap (ez a tápanyagtartalom).
 //A spóra altípusok ősosztálya
 public abstract class Spore implements SerializableEntity {
-    //Attribútumok. Sorrendben: a gombász, akitől ered a spóra, hatásának hossza illetve a tápanyagtartalom
+    // Attribútumok. Sorrendben: a gombász, akitől ered a spóra, hatásának hossza
+    // illetve a tápanyagtartalom
     protected Mycologist species;
     protected int effectDuration;
     protected int nutrientValue;
 
-    //Default konstruktor
+    // Default konstruktor
     public Spore(Mycologist mycologist, int nutrientVal) {
         species = mycologist;
         effectDuration = 2;
         nutrientValue = nutrientVal;
     }
 
-    public int getEffectDuration(){
+    public int getEffectDuration() {
         return effectDuration;
     }
 
@@ -31,27 +34,67 @@ public abstract class Spore implements SerializableEntity {
         return nutrientValue;
     }
 
-    //Eggyel csökkenti a hátralévő körök számát, amelyek eltelte után a hatás elveszik
-    public void decreaseEffectDuration(){
-        if (effectDuration > 0) effectDuration--;
+    // Eggyel csökkenti a hátralévő körök számát, amelyek eltelte után a hatás
+    // elveszik
+    public void decreaseEffectDuration() {
+        if (effectDuration > 0)
+            effectDuration--;
     }
 
-    //Absztrakt függvény, amit a leszármazott spóratípusok megvalósítanak. Ezzel a függvénnyel fejtik ki hatásukat a paraméterként átadott rovaron.
+    // Absztrakt függvény, amit a leszármazott spóratípusok megvalósítanak. Ezzel a
+    // függvénnyel fejtik ki hatásukat a paraméterként átadott rovaron.
     public abstract void applyTo(Insect i);
 
-    //Absztarkt függvény, ami visszaadja a spóra effektjét reprezentáló integert.
+    // Absztarkt függvény, ami visszaadja a spóra effektjét reprezentáló integert.
     public abstract int sporeType();
 
-@Override
-    public JsonObject serialize(EntityRegistry registry, Logger logger) {
+    @Override
+    public JsonObject serialize(ObjectNamer namer, Logger logger) {
         JsonObject obj = new JsonObject();
 
+        // Típus (osztálynév)
         obj.addProperty("type", this.getClass().getSimpleName());
-        obj.addProperty("species", "mycologist_" + species.hashCode());
+
+        // Gombász név
+        String speciesName = namer.getNameOf(species);
+        if (speciesName != null) {
+            obj.addProperty("species", speciesName);
+        } else {
+            logger.logError("Spore", "?", "Ismeretlen vagy nem regisztrált species: " + species);
+        }
+
+        // Effekt hossz és tápanyagtartalom
         obj.addProperty("effectDuration", effectDuration);
         obj.addProperty("nutrientValue", nutrientValue);
 
         return obj;
     }
-}
 
+    public static Spore deserialize(JsonObject obj, ObjectNamer namer, Logger logger) {
+        String type = obj.get("type").getAsString();
+        String speciesName = obj.get("species").getAsString();
+        Object spec = namer.getByName(speciesName);
+
+        if (!(spec instanceof Mycologist)) {
+            logger.logError("Spore", speciesName, "Nem Mycologist típus");
+            return null;
+        }
+
+        Mycologist mycologist = (Mycologist) spec;
+        int duration = obj.get("effectDuration").getAsInt();
+        int nutrient = obj.get("nutrientValue").getAsInt();
+
+        switch (type) {
+            case "StunningEffect":
+                return new StunningEffect(mycologist);
+            case "ParalyzingEffect":
+                return new ParalyzingEffect(mycologist);
+            // TODO 
+            // Bővíthető további típusokkal
+            default:
+                logger.logError("Spore", type, "Ismeretlen Spore típus");
+                return null;
+        }
+    }
+
+}
