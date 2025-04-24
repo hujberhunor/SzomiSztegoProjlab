@@ -106,12 +106,14 @@ public class Game {
 
         System.out.println("Adja meg a rovarászok számát!");
         int numberOfEntomologist = 0;
-        while(numberOfEntomologist < 2 || numberOfEntomologist > 4) {
+        while(numberOfEntomologist < 2 || numberOfEntomologist > 4 || numberOfEntomologist > numberOfMycologist) {
             numberOfEntomologist = inputScanner.nextInt();
             if(numberOfEntomologist < 2) {
                 System.out.println("A rovarászok száma nem lehet kevesebb kettőnél! Adjon meg egy újat!");
             } else if (numberOfEntomologist > 4) {
                 System.out.println("A rovarászok száma nem lehet több négynél! Adjon meg egy újat!");
+            } else if (numberOfEntomologist > numberOfMycologist) {
+                System.out.println("Nem lehet több rovarász, mint gombász! Adjon meg egy újat!");
             }
         }
 
@@ -164,11 +166,17 @@ public class Game {
             return false;
         }
 
-        int oldPlayerCount = players.size();
-        players.add(player);
+        if (validatePlayerRatio()) {
+            int oldPlayerCount = players.size();
+            players.add(player);
 
-        logger.logChange("GAME", this, "PLAYERS_COUNT", String.valueOf(oldPlayerCount),
-                String.valueOf(players.size()));
+            logger.logChange("GAME", this, "PLAYERS_COUNT", String.valueOf(oldPlayerCount),
+                    String.valueOf(players.size()));
+        }
+        else{
+            logger.logError("GAME", "AddPlayer", "A játékos nem adható hozzá: a rovarászok száma nem lehet több, mint a gombászoké!");
+            return false;
+        }
 
         return true;
     }
@@ -364,6 +372,25 @@ public class Game {
 
     public Logger getLogger(){
         return logger;
+    }
+
+    /**
+     * Ellenőrzi, hogy a játékosok száma megfelel-e a szabályoknak:
+     * a rovarászok száma nem lehet több, mint a gombászoké.
+     * @return true, ha a játékosok aránya megfelelő, false ha nem
+     */
+    public boolean validatePlayerRatio() {
+        int entomologistCount = 0;
+        int mycologistCount = 0;
+
+        for (Player player : players) {
+            if (player instanceof Entomologist) {
+                entomologistCount++;
+            } else
+                mycologistCount++;
+        }
+
+        return entomologistCount <= mycologistCount;
     }
   
 }
