@@ -53,6 +53,8 @@ public class Game {
     private EntityRegistry registry;
     private Logger logger;
 
+    private Scanner scanner;
+
     public Game() {
         this.map = new GameBoard();
         this.players = new ArrayList<Player>();
@@ -63,6 +65,7 @@ public class Game {
         this.registry = new EntityRegistry();
         this.logger = new Logger(registry);
         this.selectedEntity = null;
+        this.scanner = new Scanner(System.in);
     }
 
     public Game(int totalRounds) {
@@ -91,12 +94,11 @@ public class Game {
      * @return A játék inicializálásának sikeressége.
      */
     public boolean initGame() {
-        Scanner inputScanner = new Scanner(System.in);
-
         System.out.println("Adja meg a gombászok számát!");
         int numberOfMycologist = 0;
         while(numberOfMycologist < 2 || numberOfMycologist > 4) {
-            numberOfMycologist = inputScanner.nextInt();
+            numberOfMycologist = scanner.nextInt();
+            scanner.nextLine();
             if(numberOfMycologist < 2) {
                 System.out.println("A gombászok száma nem lehet kevesebb kettőnél! Adjon meg egy újat!");
             } else if (numberOfMycologist > 4) {
@@ -107,7 +109,8 @@ public class Game {
         System.out.println("Adja meg a rovarászok számát!");
         int numberOfEntomologist = 0;
         while(numberOfEntomologist < 2 || numberOfEntomologist > 4 || numberOfEntomologist > numberOfMycologist) {
-            numberOfEntomologist = inputScanner.nextInt();
+            numberOfEntomologist = scanner.nextInt();
+            scanner.nextLine();
             if(numberOfEntomologist < 2) {
                 System.out.println("A rovarászok száma nem lehet kevesebb kettőnél! Adjon meg egy újat!");
             } else if (numberOfEntomologist > 4) {
@@ -130,16 +133,14 @@ public class Game {
         System.out.println("Hány kör legyen a játék?");
         int numberOfRounds = 0;
         while(numberOfRounds < 1) {
-            numberOfRounds = inputScanner.nextInt();
+            numberOfRounds = scanner.nextInt();
+            scanner.nextLine();
             if(numberOfRounds < 1) {
                 System.out.println("Legalább egy körnek lennie kell! Adjon meg egy újat!");
             }
         }
 
         totalRounds = numberOfRounds;
-
-        inputScanner.close();
-
         return true;
     }
 
@@ -147,20 +148,16 @@ public class Game {
      * A játék első körtől való indításáért felelő függvény.
      */
     public void startGame() {
-        Scanner inputScanner = new Scanner(System.in);
         List<Tecton> tectons = map.getTectons();
         List<Tecton> tectonsWithFungus = new ArrayList<>();
-
-        if (inputScanner.hasNextLine()) {
-            inputScanner.nextLine();
-        }
 
         for(Player player : players) {
             if(player instanceof Mycologist) {
                 System.out.println("Melyik tektonról szeretne indulni?\nVálasszon egy számot 1-től " + tectons.size()+1 + "-ig");
                 int selectedIndex = 0;
                 while (selectedIndex < 1 || selectedIndex > tectons.size() + 1) {
-                    selectedIndex = inputScanner.nextInt();
+                    selectedIndex = scanner.nextInt();
+                    scanner.nextLine();
                     if(selectedIndex < 1 || selectedIndex > tectons.size() + 1) {
                         System.out.println("Helytelen szám! Válasszon egy számot 1-től " + tectons.size()+1 + "-ig");
                     }
@@ -172,8 +169,6 @@ public class Game {
                 tectonsWithFungus.add(selectedTecton);
             }
         }
-
-        inputScanner.close();
 
         Random rnd = new Random();
         for(Player player : players) {
@@ -260,13 +255,11 @@ public class Game {
         int currentIndex = players.indexOf(currentPlayer);
         int nextIndex = (currentIndex + 1) % players.size();
 
-        Scanner inputScanner = new Scanner(System.in);
         CommandParser parser = new CommandParser(this);
 
         System.out.println("Készen állsz, gépelj commandokat (pl. MOVE_INSECT insect1 tectonB):");
-
-        while (inputScanner.hasNextLine()) {
-            String line = inputScanner.nextLine();
+        while (scanner.hasNextLine()) {
+            String line = scanner.nextLine();
             if (line.isBlank())
                 break;
 
@@ -282,8 +275,6 @@ public class Game {
                 logger.logError("COMMAND", line, "Parsing failed: " + e.getMessage());
             }
         }
-
-        inputScanner.close();
 
         if (nextIndex == 0) {
             return 0;
@@ -345,6 +336,10 @@ public class Game {
         for (int i = 0; i < players.size(); i++) {
             Player player = players.get(i);
             System.out.println((i + 1) + ". helyezett: " + player.name + " - Pontszám: " + player.score);
+        }
+
+        if (scanner != null) {
+            scanner.close();
         }
     }
 
