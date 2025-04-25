@@ -110,11 +110,11 @@ public class Mycologist extends Player {
         }
     }
 
-    /*
-     * CSAK DEBUG ÉS TESZT JELLEGGEL 
-     * INITELÉSHEZ LETT LÉRTEROZVA
+    /**
+     * Gomba lehelyezése gombafonál nélkül.
+     * Első gomba lehelyezéséhez
      */
-    void debugPlaceFungus(Tecton t){
+    public void debugPlaceFungus(Tecton t){
         Fungus f = new Fungus();
         t.setFungus(f);
     }

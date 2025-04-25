@@ -151,32 +151,34 @@ public class Game {
         List<Tecton> tectons = map.getTectons();
         List<Tecton> tectonsWithFungus = new ArrayList<>();
 
+        int numberOfMycologist = 1;
         for(Player player : players) {
             if(player instanceof Mycologist) {
-                System.out.println("Melyik tektonról szeretne indulni?\nVálasszon egy számot 1-től " + tectons.size()+1 + "-ig");
+                System.out.println(numberOfMycologist + ". gombász\nMelyik tektonról szeretne indulni?\nVálasszon egy számot 1-től " + tectons.size() + "-ig");
                 int selectedIndex = 0;
-                while (selectedIndex < 1 || selectedIndex > tectons.size() + 1) {
+                while (selectedIndex < 1 || selectedIndex > tectons.size()) {
                     selectedIndex = scanner.nextInt();
                     scanner.nextLine();
-                    if(selectedIndex < 1 || selectedIndex > tectons.size() + 1) {
-                        System.out.println("Helytelen szám! Válasszon egy számot 1-től " + tectons.size()+1 + "-ig");
+                    if(selectedIndex < 1 || selectedIndex > tectons.size()) {
+                        System.out.println("Helytelen szám! Válasszon egy számot 1-től " + tectons.size() + "-ig");
                     }
                 }
                 selectedIndex--;
                 Tecton selectedTecton = tectons.get(selectedIndex);
-                ((Mycologist) player).placeFungus(selectedTecton);
+                ((Mycologist) player).debugPlaceFungus(selectedTecton);
                 tectons.remove(selectedIndex);
                 tectonsWithFungus.add(selectedTecton);
+                numberOfMycologist++;
             }
         }
 
         Random rnd = new Random();
         for(Player player : players) {
             if(player instanceof Entomologist) {
-                int selectedIndex = rnd.nextInt(tectons.size());
+                int selectedIndex = rnd.nextInt(tectonsWithFungus.size());
                 Insect insect = new Insect((Entomologist) player, tectonsWithFungus.get(selectedIndex));
                 ((Entomologist) player).addInsects(insect);
-                tectons.remove(selectedIndex);
+                tectonsWithFungus.remove(selectedIndex);
             }
         }
 
