@@ -396,4 +396,8 @@ public abstract class Tecton implements SerializableEntity {
             }
         }
     }
+
+    public List<Hexagon> getHexagons(){
+        return hexagons;
+    }
 }
