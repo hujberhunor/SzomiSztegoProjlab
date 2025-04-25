@@ -9,8 +9,8 @@ import com.dino.core.Hypha;
 public class InfiniteHyphaTecton extends Tecton {
 
     /// Attribútum
-    private int hyphaCount; /// A tektonon lévő fonalak száma == hpyhas.size()
-    private int hyphaLimit;
+    private int hyphaCount; // A tektonon lévő fonalak száma
+    private int hyphaLimit; // Korlátlan (-1)
     
     /**
      * Konstruktor
@@ -18,17 +18,20 @@ public class InfiniteHyphaTecton extends Tecton {
     public InfiniteHyphaTecton() {
         super();
         this.hyphaLimit = -1; // Végtelen számú fonál biztosítása
-        this.hyphaCount = hyphas.size();
+        this.hyphaCount = 0;
     }
 
     /**
      * A fonalakat kezelő virtuális függvény felülírása.
+     * Elfogad bármilyen gombafonalat, mivel korlátlan számú fonál lehet rajta.
      *
      * @param h A kezelendő gombafonál
      */
     @Override
     public void handleHypha(Hypha h) {
-        //TODO
+        // Minden fonalat elfogadunk, mivel korlátlan számú lehet
+        hyphas.add(h);
+        hyphaCount++;
     }
 
     /**
@@ -38,8 +41,13 @@ public class InfiniteHyphaTecton extends Tecton {
         this.hyphaCount++;
     }
    
+    /**
+     * Hyphacount csökkentése
+     */
     public void decreaseHyphaCount() {
-        this.hyphaCount--;
+        if (this.hyphaCount > 0) {
+            this.hyphaCount--;
+        }
     }
 
     /**
@@ -50,6 +58,12 @@ public class InfiniteHyphaTecton extends Tecton {
     public int getHyphaCount() {
         return hyphaCount;
     }
+    
+    /**
+     * Létrehoz egy új, ugyanolyan típusú tektont
+     * 
+     * @return Új InfiniteHyphaTecton példány
+     */
     @Override
     public Tecton createCopy() {
         return new InfiniteHyphaTecton();
