@@ -3,24 +3,26 @@ package com.dino.player;
 import java.util.ArrayList;
 import java.util.List;
 
-import com.dino.core.Hypha;
 import com.dino.core.Fungus;
+import com.dino.core.Hypha;
 import com.dino.tecton.Tecton;
 import com.dino.util.EntityRegistry;
 import com.dino.util.Logger;
 import com.dino.util.ObjectNamer;
 import com.dino.util.SerializableEntity;
-import com.dino.util.Skeleton;
+import com.dino.util.SerializerUtil;
 import com.google.gson.JsonObject;
 
 /**
  * Ez az osztály egy gombászt reprezentál.
- * Megvalósítja a gombászokra specifikus olyan akciót, ami nem egy specifikus gombához tartozik,
+ * Megvalósítja a gombászokra specifikus olyan akciót, ami nem egy specifikus
+ * gombához tartozik,
  * hanem magához a játékoshoz, illetve számontartja a játékos gombatestjeit.
  */
-public class Mycologist extends Player implements SerializableEntity{
+public class Mycologist extends Player implements SerializableEntity {
 
-    /**gg
+    /**
+     * gg
      * Egy lista, ami a gombász által vezérelt gombatesteket tárolja.
      */
     List<Fungus> mushrooms;
@@ -31,7 +33,9 @@ public class Mycologist extends Player implements SerializableEntity{
 
     /**
      * Elhelyez egy új gombatestet a paraméterként átadott tektonon,
-     * ha azon van a gombász által vezérelt fajnak fonala és kellő mennyiségű spórája.
+     * ha azon van a gombász által vezérelt fajnak fonala és kellő mennyiségű
+     * spórája.
+     * 
      * @param t Ezen a tektonon lesz elhelyezve a gomatest.
      */
     public void placeFungus(Tecton t) {
@@ -40,7 +44,8 @@ public class Mycologist extends Player implements SerializableEntity{
 
         String tectonName = registry.getNameOf(t);
 
-        // Ellenőrizzük, hogy a tekton tartalmaz-e a gombász által vezérelt fajnak megfelelő fonalat
+        // Ellenőrizzük, hogy a tekton tartalmaz-e a gombász által vezérelt fajnak
+        // megfelelő fonalat
         boolean tectonHasHypha = false;
         for (Hypha h : t.getHyphas()) {
             if (h.getMycologist().equals(this)) {
@@ -73,22 +78,36 @@ public class Mycologist extends Player implements SerializableEntity{
                 "ACTION", "ATTEMPT_PLACE_FUNGUS", "SUCCESS");
     }
 
-    public List<Fungus> getMushrooms(){
+    public List<Fungus> getMushrooms() {
         return mushrooms;
     }
 
     /*
-     * CSAK DEBUG ÉS TESZT JELLEGGEL 
+     * CSAK DEBUG ÉS TESZT JELLEGGEL
      * INITELÉSHEZ LETT LÉRTEROZVA
      */
-    void debugPlaceFungus(Tecton t){
+    void debugPlaceFungus(Tecton t) {
         Fungus f = new Fungus();
         t.setFungus(f);
     }
 
     @Override
     public JsonObject serialize(ObjectNamer namer) {
-        // TODO Auto-generated method stub
-        throw new UnsupportedOperationException("Unimplemented method 'serialize'");
+        JsonObject obj = new JsonObject();
+
+        obj.addProperty("name", namer.getName(this));
+        obj.addProperty("type", "Mycologist");
+
+        // Player mezők
+        obj.addProperty("score", this.score);
+        obj.addProperty("remainingActions", this.remainingActions);
+
+        // Gombatestek név szerinti felsorolása
+        obj.add("mushrooms", SerializerUtil.toJsonArray(
+                mushrooms,
+                namer::getName));
+
+        return obj;
     }
+
 }
