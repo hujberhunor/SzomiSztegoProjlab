@@ -123,11 +123,13 @@ public class Game {
         for(int i = 0; i < numberOfMycologist; i++) {
             Mycologist mycologist = new Mycologist();
             players.add(mycologist);
+            mycologist.setName("Gombász " + (i+1));
         }
 
         for(int i = 0; i < numberOfEntomologist; i++) {
             Entomologist entomologist = new Entomologist();
             players.add(entomologist);
+            entomologist.setName("Rovarász " + (i+1));
         }
 
         System.out.println("Hány kör legyen a játék?");
@@ -259,8 +261,10 @@ public class Game {
 
         CommandParser parser = new CommandParser(this);
 
+        System.out.println("Aktuális játékos: " + currentPlayer.name);
         System.out.println("Készen állsz, gépelj commandokat (pl. MOVE_INSECT insect1 tectonB):");
-        while (scanner.hasNextLine()) {
+
+        while (currentPlayer.remainingActions > 0) {
             String line = scanner.nextLine();
             if (line.isBlank())
                 break;
@@ -307,7 +311,7 @@ public class Game {
 
         logger.logChange("GAME", this, "ROUND", String.valueOf(oldRound), String.valueOf(currRound));
 
-        map.breakHandler();
+        //map.breakHandler();
 
         String oldPlayerName = registry.getNameOf(currentPlayer);
         currentPlayer = players.get(0);
@@ -340,9 +344,8 @@ public class Game {
             System.out.println((i + 1) + ". helyezett: " + player.name + " - Pontszám: " + player.score);
         }
 
-        if (scanner != null) {
-            scanner.close();
-        }
+
+        scanner.close();
     }
 
     /**
@@ -381,7 +384,7 @@ public class Game {
      * Visszaadja az összes kör számát
      * @return Az összes kör száma
      */
-    public int gettotalRounds() {
+    public int getTotalRounds() {
         return totalRounds;
     }
 

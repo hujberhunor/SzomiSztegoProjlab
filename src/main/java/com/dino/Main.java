@@ -616,12 +616,17 @@ public class Main {
         }
         endOfRound = 1;
 
-        int endOfGame = 1;
-        while(endOfGame != 0){
-            endOfGame = game.nextRound();
-            while(endOfRound != 0){
-                endOfRound = game.nextTurn();
+        if(game.getTotalRounds() > 1) {
+            int endOfGame = 1;
+            while (endOfGame != 0) {
+                endOfGame = game.nextRound();
+                while (endOfRound != 0) {
+                    endOfRound = game.nextTurn();
+                }
             }
+        }
+        else {
+            game.endGame();
         }
     }
 

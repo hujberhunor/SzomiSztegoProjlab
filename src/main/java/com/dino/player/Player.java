@@ -70,4 +70,6 @@ public abstract class Player {
      * Növeli a hátralévő akciók számát eggyel.
      */
     public abstract void increaseActions();
+
+    public void setName(String name) { this.name = name; }
 }
