@@ -8,16 +8,19 @@ import com.dino.core.Fungus;
 import com.dino.tecton.Tecton;
 import com.dino.util.EntityRegistry;
 import com.dino.util.Logger;
+import com.dino.util.ObjectNamer;
+import com.dino.util.SerializableEntity;
 import com.dino.util.Skeleton;
+import com.google.gson.JsonObject;
 
 /**
  * Ez az osztály egy gombászt reprezentál.
  * Megvalósítja a gombászokra specifikus olyan akciót, ami nem egy specifikus gombához tartozik,
  * hanem magához a játékoshoz, illetve számontartja a játékos gombatestjeit.
  */
-public class Mycologist {
+public class Mycologist extends Player implements SerializableEntity{
 
-    /**
+    /**gg
      * Egy lista, ami a gombász által vezérelt gombatesteket tárolja.
      */
     List<Fungus> mushrooms;
@@ -81,5 +84,11 @@ public class Mycologist {
     void debugPlaceFungus(Tecton t){
         Fungus f = new Fungus();
         t.setFungus(f);
+    }
+
+    @Override
+    public JsonObject serialize(ObjectNamer namer) {
+        // TODO Auto-generated method stub
+        throw new UnsupportedOperationException("Unimplemented method 'serialize'");
     }
 }

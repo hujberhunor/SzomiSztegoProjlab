@@ -5,7 +5,10 @@ import java.util.List;
 import com.dino.core.Insect;
 import com.dino.util.EntityRegistry;
 import com.dino.util.Logger;
+import com.dino.util.ObjectNamer;
+import com.dino.util.SerializableEntity;
 import com.dino.util.Skeleton;
+import com.google.gson.JsonObject;
 
 import java.util.List;
 
@@ -13,7 +16,7 @@ import java.util.List;
  * Ez az osztály egy rovarászt reprezentál.
  * Összeköti a Player osztályt az Insect osztállyal.
  */
-public class Entomologist extends Player {
+public class Entomologist extends Player implements SerializableEntity{
 
     /**
      * Rovarok, amiket a rovarász irányít.
@@ -67,5 +70,12 @@ public class Entomologist extends Player {
     public List<Insect> getInsects() { return insects; }
   
     public void addInsects(Insect insect) { insects.add(insect); }
+
+    @Override
+    public JsonObject serialize(ObjectNamer namer) {
+        // TODO Auto-generated method stub
+        throw new UnsupportedOperationException("Unimplemented method 'serialize'");
+    }
+
 }
 
