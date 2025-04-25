@@ -7,7 +7,6 @@ public class SkipTurnCommand implements Command {
 
     @Override
     public void execute(Game game, Logger logger) {
-        game.nextTurn();
         logger.logChange("GAME", game, "TURN", "-", "Skipped to next turn");
     }
 
