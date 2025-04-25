@@ -8,6 +8,7 @@ import java.util.Map;
 import com.dino.player.Mycologist;
 import com.dino.tecton.NoFungiTecton;
 import com.dino.tecton.Tecton;
+import com.dino.util.ObjectNamer;
 import com.dino.util.SerializableEntity;
 import com.dino.util.SerializerUtil;
 import com.dino.util.Skeleton;
@@ -16,7 +17,7 @@ import com.google.gson.JsonObject;
 /**
  * Egy gombatestet reprezentáló osztály.
  */
-public class Fungus implements SerializableEntity{
+public class Fungus implements SerializableEntity {
 
     /**
      * Az a gombász, akihez a gombatest tartozik.
@@ -28,9 +29,11 @@ public class Fungus implements SerializableEntity{
      */
     private Tecton tecton;
     /**
-     * Egy egész szám nulla és három között, ami megadja, hogy a gombatest mennyire van feltöltve, és kész-e a spóraszórásra.
+     * Egy egész szám nulla és három között, ami megadja, hogy a gombatest mennyire
+     * van feltöltve, és kész-e a spóraszórásra.
      * Értéke körönként automatikusan eggyel nő.
-     * Ha kettő, a gombatest a szomszédos tektonokra tud spórákat szórni, ha három, akkor azok szomszédjaira is.
+     * Ha kettő, a gombatest a szomszédos tektonokra tud spórákat szórni, ha három,
+     * akkor azok szomszédjaira is.
      */
     private int charge;
     /**
@@ -70,7 +73,8 @@ public class Fungus implements SerializableEntity{
      * vagy a szomszédos tektonokra, vagy azok szomszédjaira.
      */
 
-    //Itt eredetileg kapott paraméterként egy listát, de kivettem, mert szerintem nem kell
+    // Itt eredetileg kapott paraméterként egy listát, de kivettem, mert szerintem
+    // nem kell
     public void spreadSpores() {
         Skeleton skeleton = Skeleton.getInstance();
         skeleton.startMethod("Fungus", "spreadSpores");
@@ -83,7 +87,7 @@ public class Fungus implements SerializableEntity{
 
         HashSet<Tecton> alreadySpread = new HashSet<>();
 
-        //ha a gomba töltöttsége legalább 2, spórákat szór(hat) a szomszédos tektonokra
+        // ha a gomba töltöttsége legalább 2, spórákat szór(hat) a szomszédos tektonokra
         if (charge >= 2) {
             for (Tecton t : tecton.getNeighbours()) {
                 t.addSpores(species);
@@ -91,11 +95,12 @@ public class Fungus implements SerializableEntity{
             }
             skeleton.log("A gomba spórát szórt a szomszédos tektonokra.");
         }
-        //ha a gomba töltöttsége 3, spórát szór(hat) a szomszédos tektonok szomszédaira is
+        // ha a gomba töltöttsége 3, spórát szór(hat) a szomszédos tektonok szomszédaira
+        // is
         if (charge == 3) {
             for (Tecton t : tecton.getNeighbours()) {
                 for (Tecton secondDegree : tecton.getNeighbours()) {
-                    if (secondDegree != t && !alreadySpread.contains(secondDegree)){
+                    if (secondDegree != t && !alreadySpread.contains(secondDegree)) {
                         secondDegree.addSpores(species);
                         alreadySpread.add(secondDegree);
                     }
@@ -113,6 +118,7 @@ public class Fungus implements SerializableEntity{
     /**
      * A függvény hívásakor a gombatest a paraméterként kapott,
      * legfeljebb kételemű listában tárolt tektonokra növeszt gombafonalakat.
+     * 
      * @param t
      * @return
      */
@@ -128,25 +134,26 @@ public class Fungus implements SerializableEntity{
         }
 
         // Ellenőrízzük, hogy a két tekton szomszédos-e egymással és a gomba tektonjával
-        if (!t.get(0).isNeighbor(tecton) || !t.get(1).isNeighbor(t.get(1))){
+        if (!t.get(0).isNeighbor(tecton) || !t.get(1).isNeighbor(t.get(1))) {
             skeleton.log("Nem lehet növeszteni gombafonalat: a tektonok nem szomszédosak egymással.");
             skeleton.endMethod();
             return false;
         }
 
-        // Ellenőrizzük, hogy az első (nulladik) tektonon van-e spóra, ha kételemű a lista
-        if (t.size() == 2){
+        // Ellenőrizzük, hogy az első (nulladik) tektonon van-e spóra, ha kételemű a
+        // lista
+        if (t.size() == 2) {
             boolean found = false;
-            for (Map.Entry<Mycologist, Integer> entry: t.get(0).spores.entrySet()){
+            for (Map.Entry<Mycologist, Integer> entry : t.get(0).spores.entrySet()) {
                 Mycologist mycologist = entry.getKey();
                 int quantity = entry.getValue();
 
-                if (mycologist.equals(species) && quantity > 0){
+                if (mycologist.equals(species) && quantity > 0) {
                     found = true;
                     break;
                 }
             }
-            if (!found){
+            if (!found) {
                 skeleton.log("Nem lehet növeszteni hosszú gombafonalat: az első tektonon nincs spóra.");
                 skeleton.endMethod();
                 return false;
@@ -173,50 +180,48 @@ public class Fungus implements SerializableEntity{
         return true; // Ha sikerült minden tektonra növeszteni
     }
 
-    public Mycologist getSpecies(){
+    public Mycologist getSpecies() {
         return species;
     }
 
-    public void setSpecies(Mycologist m){
+    public void setSpecies(Mycologist m) {
         species = m;
     }
 
-    public Tecton getTecton(){
+    public Tecton getTecton() {
         return tecton;
     }
 
-    public void setTecton(Tecton t){
+    public void setTecton(Tecton t) {
         tecton = t;
     }
 
-    public int getCharge(){
+    public int getCharge() {
         return charge;
     }
 
-    public void setCharge(int c){
-        if (c >= 0 && c <= 3){
+    public void setCharge(int c) {
+        if (c >= 0 && c <= 3) {
             charge = c;
         }
     }
 
- @Override
-    public JsonObject serialize() {
+    @Override
+    public JsonObject serialize(ObjectNamer namer) {
         JsonObject obj = new JsonObject();
 
-        // Kié a gomba (csak id)
-        obj.addProperty("species", "mycologist_" + species.hashCode());
+        obj.addProperty("name", namer.getName(this));
+        obj.addProperty("type", "Fungus");
 
-        // Feltöltöttség / életciklus
+        obj.addProperty("species", namer.getName(species));
         obj.addProperty("charge", charge);
         obj.addProperty("lifespan", lifespan);
+        obj.addProperty("tecton", namer.getName(tecton));
 
-        // Hyphak listája (maguk serialize-olják magukat)
-        obj.add("hyphas", SerializerUtil.toJsonArray(hyphas, h -> h.serialize()));
-
-        // Spórák listája (maguk serialize-olják magukat)
-        obj.add("spores", SerializerUtil.toJsonArray(spores, s -> s.serialize()));
+        obj.add("hyphas", SerializerUtil.toJsonArray(hyphas, h -> h.serialize(namer)));
+        obj.add("spores", SerializerUtil.toJsonArray(spores, s -> s.serialize(namer)));
 
         return obj;
     }
-}
 
+}
