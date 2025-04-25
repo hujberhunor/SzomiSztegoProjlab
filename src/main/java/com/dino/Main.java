@@ -648,6 +648,7 @@ public class Main {
             System.out.println("8. Logger teszt");
             System.out.println("9. Serializáció teszt");
             System.out.println("10. Scanner teszt");
+            System.out.println("11. Full gameplay");
             System.out.println("-----------------------");
             System.out.print("Select use case (e.g. 1, 2...): ");
             int useCase = scanner.nextInt();

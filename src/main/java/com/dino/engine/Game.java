@@ -271,6 +271,20 @@ public class Game {
 
             try {
                 Command command = parser.parse(line);
+
+                if(command.toString().equals("NEXT_TURN") || command.toString().equals("SKIP_TURN")) {
+                    currentPlayer.remainingActions = 0;
+                    command.execute(this, logger);
+                    break;
+                }
+
+                if(command.toString().equals("NEXT_ROUND")) {
+                    currentPlayer.remainingActions = 0;
+                    nextIndex = 0;
+                    command.execute(this, logger);
+                    break;
+                }
+
                 if (command.validate(this)) {
                     command.execute(this, logger);
                     currentPlayer.decreaseActions();
@@ -311,7 +325,7 @@ public class Game {
 
         logger.logChange("GAME", this, "ROUND", String.valueOf(oldRound), String.valueOf(currRound));
 
-        //map.breakHandler();
+        map.breakHandler();
 
         String oldPlayerName = registry.getNameOf(currentPlayer);
         currentPlayer = players.get(0);
@@ -343,9 +357,6 @@ public class Game {
             Player player = players.get(i);
             System.out.println((i + 1) + ". helyezett: " + player.name + " - Pontszám: " + player.score);
         }
-
-
-        scanner.close();
     }
 
     /**

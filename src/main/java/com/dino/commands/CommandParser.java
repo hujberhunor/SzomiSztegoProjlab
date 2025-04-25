@@ -24,6 +24,8 @@ public class CommandParser {
                 return new NextTurnCommand();
             case "SKIP_TURN":
                 return new SkipTurnCommand();
+            case "NEXT_ROUND":
+                return new NextRoundCommand();
 
             // case "CONSUME_SPORE":
             //     if (parts.length != 2) throw new IllegalArgumentException("CONSUME_SPORE needs 1 argument");
