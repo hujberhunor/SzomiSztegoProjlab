@@ -87,4 +87,12 @@ public class ShortHyphaTecton extends Tecton {
         return obj;
     }
 
+    public void setHyphaLimit(int limit) {
+        this.hyphaLimit = limit;
+    }
+
+    public void setHyphaLifespan(int lifespan) {
+        this.hyphaLifespan = lifespan;
+    }
+
 }

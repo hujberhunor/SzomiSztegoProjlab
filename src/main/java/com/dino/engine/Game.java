@@ -66,7 +66,7 @@ public class Game {
         this.currentPlayer = null;
         this.decayedHypha = new ArrayList<>();
         this.registry = new EntityRegistry();
-        this.namer = ObjectNamer.getInstance(registry); 
+        this.namer = ObjectNamer.getInstance(registry);
         this.logger = new Logger(registry);
     }
 
@@ -370,6 +370,14 @@ public class Game {
 
     public ObjectNamer getNamer() {
         return namer;
+    }
+
+    public void setCurrentTurn(int asInt) {
+        this.currRound = asInt;
+    }
+
+    public void setCurrentPlayer(Player byName) {
+        this.currentPlayer = byName;
     }
 
 }

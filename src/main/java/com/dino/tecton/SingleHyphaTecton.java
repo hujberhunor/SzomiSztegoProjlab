@@ -70,4 +70,9 @@ public class SingleHyphaTecton extends Tecton {
         return obj;
     }
 
+     public void setHyphaLimit(int limit) {
+        this.hyphaLimit = limit;
+    }
+
+
 }
