@@ -20,6 +20,12 @@ public class CommandParser {
             case "MOVE_INSECT":
                 if (parts.length != 3) throw new IllegalArgumentException("MOVE_INSECT needs 2 arguments");
                 return new MoveInsectCommand(parts[1], parts[2]);
+            case "NEXT_TURN":
+                return new NextTurnCommand();
+            case "SKIP_TURN":
+                return new SkipTurnCommand();
+            case "NEXT_ROUND":
+                return new NextRoundCommand();
 
             // case "CONSUME_SPORE":
             //     if (parts.length != 2) throw new IllegalArgumentException("CONSUME_SPORE needs 1 argument");

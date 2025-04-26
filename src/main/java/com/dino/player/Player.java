@@ -44,4 +44,32 @@ public abstract class Player {
     public int calculateScore() {
         return score;
     }
+
+    /**
+     * Visszaadja a hátralévő akciók számát.
+     * @return A játékos hátralévő akcióinak száma.
+     */
+    public int getRemainingActions() {
+        return this.remainingActions;
+    }
+
+    /**
+     * Beállítja a hátralévő akciók számát.
+     * @param actions A beállítandó akciók száma.
+     */
+    public void setActions(int actions) {
+        this.remainingActions = actions;
+    }
+
+    /**
+     * Csökkenti a hátralévő akciók számát eggyel.
+     */
+    public abstract void decreaseActions();
+
+    /**
+     * Növeli a hátralévő akciók számát eggyel.
+     */
+    public abstract void increaseActions();
+
+    public void setName(String name) { this.name = name; }
 }

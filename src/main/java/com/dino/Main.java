@@ -687,6 +687,7 @@ public class Main {
         inputScanner.close();
     }
 
+
     public static void FullGameDeserializeTest() {
         try {
             System.out.println("Betöltés elindult...");
@@ -703,6 +704,34 @@ public class Main {
 
         } catch (IOException ex) {
             ex.printStackTrace();
+    }
+
+    public static void stage2Main(){
+        Game game = new Game();
+        EntityRegistry registry = game.getRegistry();
+        Logger logger = game.getLogger();
+
+        game.initBoard();
+        game.initGame();
+        game.startGame();
+
+        int endOfRound = 1;
+        while(endOfRound != 0){
+            endOfRound = game.nextTurn();
+        }
+        endOfRound = 1;
+
+        if(game.getTotalRounds() > 1) {
+            int endOfGame = 1;
+            while (endOfGame != 0) {
+                endOfGame = game.nextRound();
+                while (endOfRound != 0) {
+                    endOfRound = game.nextTurn();
+                }
+            }
+        }
+        else {
+            game.endGame();
         }
     }
 
@@ -724,7 +753,8 @@ public class Main {
             System.out.println("8. Logger teszt");
             System.out.println("9. Serializáció teszt");
             System.out.println("10. Scanner teszt");
-            System.out.println("11. Deszerializáló teszt");
+            System.out.println("11. Full gameplay");
+            System.out.println("12. Deszerializáló teszt");
             System.out.println("-----------------------");
             System.out.print("Select use case (e.g. 1, 2...): ");
             int useCase = scanner.nextInt();
@@ -766,8 +796,11 @@ public class Main {
                     testCommand();
                     break;
                 case 11:
-                    FullGameDeserializeTest();
+                    stage2Main();
                     break;
+              case 12:
+                   FullGameDeserializeTest();
+                   break;
                 default:
                     System.out.println("Invalid input");
                     break;

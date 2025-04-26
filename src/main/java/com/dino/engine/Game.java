@@ -4,10 +4,14 @@ import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.List;
 
+import com.dino.commands.Command;
+import com.dino.commands.CommandParser;
 import com.dino.core.Hypha;
+import com.dino.core.Insect;
 import com.dino.player.Entomologist;
 import com.dino.player.Mycologist;
 import com.dino.player.Player;
+import com.dino.tecton.Tecton;
 import com.dino.util.EntityRegistry;
 import com.dino.util.Logger;
 import com.dino.util.ObjectNamer;
@@ -47,7 +51,6 @@ public class Game {
      */
     private Player currentPlayer;
 
-    // Jó
     /**
      * Nem élő fonalak listája
      */
@@ -57,6 +60,21 @@ public class Game {
     private EntityRegistry registry;
     private ObjectNamer namer;
     private Logger logger;
+
+    private Scanner scanner;
+
+    public Game() {
+        this.map = new GameBoard();
+        this.players = new ArrayList<Player>();
+        this.currRound = 0;
+        this.totalRounds = 0;
+        this.currentPlayer = null;
+        this.decayedHypha = new ArrayList<>();
+        this.registry = new EntityRegistry();
+        this.logger = new Logger(registry);
+        this.selectedEntity = null;
+        this.scanner = new Scanner(System.in);
+    }
 
     public Game(int totalRounds) {
         this.map = new GameBoard();
@@ -68,6 +86,7 @@ public class Game {
         this.registry = new EntityRegistry();
         this.namer = ObjectNamer.getInstance(registry);
         this.logger = new Logger(registry);
+        this.selectedEntity = null;
     }
 
     /**
@@ -88,22 +107,55 @@ public class Game {
      * @return A játék inicializálásának sikeressége.
      */
     public boolean initGame() {
-        if (players.isEmpty() || map == null) {
-            return false;
+        System.out.println("Adja meg a gombászok számát!");
+        int numberOfMycologist = 0;
+        while(numberOfMycologist < 2 || numberOfMycologist > 4) {
+            numberOfMycologist = scanner.nextInt();
+            scanner.nextLine();
+            if(numberOfMycologist < 2) {
+                System.out.println("A gombászok száma nem lehet kevesebb kettőnél! Adjon meg egy újat!");
+            } else if (numberOfMycologist > 4) {
+                System.out.println("A gombászok száma nem lehet több négynél! Adjon meg egy újat!");
+            }
         }
 
-        for (Player player : players) {
-            player.score = 0;
-            player.remainingActions = player.actionsPerTurn;
+        System.out.println("Adja meg a rovarászok számát!");
+        int numberOfEntomologist = 0;
+        while(numberOfEntomologist < 2 || numberOfEntomologist > 4 || numberOfEntomologist > numberOfMycologist) {
+            numberOfEntomologist = scanner.nextInt();
+            scanner.nextLine();
+            if(numberOfEntomologist < 2) {
+                System.out.println("A rovarászok száma nem lehet kevesebb kettőnél! Adjon meg egy újat!");
+            } else if (numberOfEntomologist > 4) {
+                System.out.println("A rovarászok száma nem lehet több négynél! Adjon meg egy újat!");
+            } else if (numberOfEntomologist > numberOfMycologist) {
+                System.out.println("Nem lehet több rovarász, mint gombász! Adjon meg egy újat!");
+            }
         }
 
-        if (!players.isEmpty()) {
-            currentPlayer = players.get(0);
+        for(int i = 0; i < numberOfMycologist; i++) {
+            Mycologist mycologist = new Mycologist();
+            players.add(mycologist);
+            mycologist.setName("Gombász " + (i+1));
         }
 
-        currRound = 0;
-        decayedHypha.clear();
+        for(int i = 0; i < numberOfEntomologist; i++) {
+            Entomologist entomologist = new Entomologist();
+            players.add(entomologist);
+            entomologist.setName("Rovarász " + (i+1));
+        }
 
+        System.out.println("Hány kör legyen a játék?");
+        int numberOfRounds = 0;
+        while(numberOfRounds < 1) {
+            numberOfRounds = scanner.nextInt();
+            scanner.nextLine();
+            if(numberOfRounds < 1) {
+                System.out.println("Legalább egy körnek lennie kell! Adjon meg egy újat!");
+            }
+        }
+
+        totalRounds = numberOfRounds;
         return true;
     }
 
@@ -111,15 +163,41 @@ public class Game {
      * A játék első körtől való indításáért felelő függvény.
      */
     public void startGame() {
-        currRound = 1;
+        List<Tecton> tectons = map.getTectons();
+        List<Tecton> tectonsWithFungus = new ArrayList<>();
 
-        if (currentPlayer == null && !players.isEmpty()) {
-            currentPlayer = players.get(0);
+        int numberOfMycologist = 1;
+        for(Player player : players) {
+            if(player instanceof Mycologist) {
+                System.out.println(numberOfMycologist + ". gombász\nMelyik tektonról szeretne indulni?\nVálasszon egy számot 1-től " + tectons.size() + "-ig");
+                int selectedIndex = 0;
+                while (selectedIndex < 1 || selectedIndex > tectons.size()) {
+                    selectedIndex = scanner.nextInt();
+                    scanner.nextLine();
+                    if(selectedIndex < 1 || selectedIndex > tectons.size()) {
+                        System.out.println("Helytelen szám! Válasszon egy számot 1-től " + tectons.size() + "-ig");
+                    }
+                }
+                selectedIndex--;
+                Tecton selectedTecton = tectons.get(selectedIndex);
+                ((Mycologist) player).debugPlaceFungus(selectedTecton);
+                tectons.remove(selectedIndex);
+                tectonsWithFungus.add(selectedTecton);
+                numberOfMycologist++;
+            }
         }
 
-        for (Player player : players) {
-            player.remainingActions = player.actionsPerTurn;
+        Random rnd = new Random();
+        for(Player player : players) {
+            if(player instanceof Entomologist) {
+                int selectedIndex = rnd.nextInt(tectonsWithFungus.size());
+                Insect insect = new Insect((Entomologist) player, tectonsWithFungus.get(selectedIndex));
+                ((Entomologist) player).addInsects(insect);
+                tectonsWithFungus.remove(selectedIndex);
+            }
         }
+
+        currentPlayer = players.get(0);
     }
 
     /**
@@ -134,11 +212,17 @@ public class Game {
             return false;
         }
 
-        int oldPlayerCount = players.size();
-        players.add(player);
+        if (validatePlayerRatio()) {
+            int oldPlayerCount = players.size();
+            players.add(player);
 
-        logger.logChange("GAME", this, "PLAYERS_COUNT", String.valueOf(oldPlayerCount),
-                String.valueOf(players.size()));
+            logger.logChange("GAME", this, "PLAYERS_COUNT", String.valueOf(oldPlayerCount),
+                    String.valueOf(players.size()));
+        }
+        else{
+            logger.logError("GAME", "AddPlayer", "A játékos nem adható hozzá: a rovarászok száma nem lehet több, mint a gombászoké!");
+            return false;
+        }
 
         return true;
     }
@@ -189,20 +273,58 @@ public class Game {
      * játékosra.
      * Ha minden játékos sorra került, akkor meghívja a nextRound() függvényt.
      */
-    public void nextTurn() {
-        String oldPlayerName = registry.getNameOf(currentPlayer);
-
+    public int nextTurn() {
         int currentIndex = players.indexOf(currentPlayer);
         int nextIndex = (currentIndex + 1) % players.size();
 
+        CommandParser parser = new CommandParser(this);
+
+        System.out.println("Aktuális játékos: " + currentPlayer.name);
+        System.out.println("Készen állsz, gépelj commandokat (pl. MOVE_INSECT insect1 tectonB):");
+
+        while (currentPlayer.remainingActions > 0) {
+            String line = scanner.nextLine();
+            if (line.isBlank())
+                break;
+
+            try {
+                Command command = parser.parse(line);
+
+                if(command.toString().equals("NEXT_TURN") || command.toString().equals("SKIP_TURN")) {
+                    currentPlayer.remainingActions = 0;
+                    command.execute(this, logger);
+                    break;
+                }
+
+                if(command.toString().equals("NEXT_ROUND")) {
+                    currentPlayer.remainingActions = 0;
+                    nextIndex = 0;
+                    command.execute(this, logger);
+                    break;
+                }
+
+                if (command.validate(this)) {
+                    command.execute(this, logger);
+                    currentPlayer.decreaseActions();
+                } else {
+                    logger.logError("COMMAND", command.toString(), "Invalid command.");
+                }
+            } catch (Exception e) {
+                logger.logError("COMMAND", line, "Parsing failed: " + e.getMessage());
+            }
+        }
+
         if (nextIndex == 0) {
-            nextRound();
+            return 0;
         } else {
+            String oldPlayerName = registry.getNameOf(currentPlayer);
             currentPlayer = players.get(nextIndex);
             currentPlayer.remainingActions = currentPlayer.actionsPerTurn;
 
             String newPlayerName = registry.getNameOf(currentPlayer);
             logger.logChange("GAME", this, "CURRENT_PLAYER", oldPlayerName, newPlayerName);
+
+            return 1;
         }
     }
 
@@ -211,16 +333,16 @@ public class Game {
      * körre.
      * Meghívódik, amikor minden játékos befejezte a saját körét.
      */
-    public void nextRound() {
+    public int nextRound() {
+        if (currRound == totalRounds) {
+            endGame();
+            return 0;
+        }
+
         int oldRound = currRound;
         currRound++;
 
         logger.logChange("GAME", this, "ROUND", String.valueOf(oldRound), String.valueOf(currRound));
-
-        if (currRound > totalRounds) {
-            endGame();
-            return;
-        }
 
         map.breakHandler();
 
@@ -230,6 +352,8 @@ public class Game {
 
         String newPlayerName = registry.getNameOf(currentPlayer);
         logger.logChange("GAME", this, "CURRENT_PLAYER", oldPlayerName, newPlayerName);
+
+        return 1;
     }
 
     /**
@@ -296,7 +420,7 @@ public class Game {
      * 
      * @return Az összes kör száma
      */
-    public int gettotalRounds() {
+    public int getTotalRounds() {
         return totalRounds;
     }
 
@@ -349,7 +473,26 @@ public class Game {
         return logger;
     }
 
-    // szerializálás
+    /**
+     * Ellenőrzi, hogy a játékosok száma megfelel-e a szabályoknak:
+     * a rovarászok száma nem lehet több, mint a gombászoké.
+     * @return true, ha a játékosok aránya megfelelő, false ha nem
+     */
+    public boolean validatePlayerRatio() {
+        int entomologistCount = 0;
+        int mycologistCount = 0;
+
+        for (Player player : players) {
+            if (player instanceof Entomologist) {
+                entomologistCount++;
+            } else
+                mycologistCount++;
+        }
+
+        return entomologistCount <= mycologistCount;
+    }
+  
+      // szerializálás
     public List<Mycologist> getAllMycologists() {
         List<Mycologist> result = new ArrayList<>();
         for (Player p : players) {

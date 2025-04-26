@@ -287,6 +287,12 @@ public class GameBoard {
         return false;
     }
 
+
+    public List<Tecton> getTectons(){
+        return tectons;
+    }
+
+
     /**
      * Növeszti a tektont egybefüggő formában a célméretig vagy amíg lehetséges
      * 

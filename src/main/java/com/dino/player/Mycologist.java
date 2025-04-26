@@ -22,13 +22,20 @@ import com.google.gson.JsonObject;
 public class Mycologist extends Player implements SerializableEntity {
 
     /**
-     * gg
      * Egy lista, ami a gombász által vezérelt gombatesteket tárolja.
      */
     List<Fungus> mushrooms;
 
     public Mycologist() {
         this.mushrooms = new ArrayList<Fungus>();
+        this.actionsPerTurn = 1;
+        this.remainingActions = 1;
+    }
+
+    public Mycologist(int actions) {
+        this.mushrooms = new ArrayList<Fungus>();
+        this.actionsPerTurn = actions;
+        this.remainingActions = actions;
     }
 
     /**
@@ -82,11 +89,39 @@ public class Mycologist extends Player implements SerializableEntity {
         return mushrooms;
     }
 
-    /*
-     * CSAK DEBUG ÉS TESZT JELLEGGEL
-     * INITELÉSHEZ LETT LÉRTEROZVA
+    @Override
+    public void increaseActions() {
+        EntityRegistry registry = new EntityRegistry();
+        Logger logger = new Logger(registry);
+
+        int prevActions = remainingActions;
+        this.remainingActions++;
+
+        logger.logChange("MYCOLOGIST", this, "REMAINING_ACTIONS",
+                String.valueOf(prevActions), String.valueOf(this.remainingActions));
+    }
+
+    @Override
+    public void decreaseActions() {
+        EntityRegistry registry = new EntityRegistry();
+        Logger logger = new Logger(registry);
+
+        int prevActions = remainingActions;
+        if (remainingActions > 0) {
+            remainingActions--;
+            logger.logChange("MYCOLOGIST", this, "REMAINING_ACTIONS",
+                    String.valueOf(prevActions), String.valueOf(this.remainingActions));
+        } else {
+            logger.logError("MYCOLOGIST", registry.getNameOf(this),
+                    "Nincs több akció, nem csökkenthető.");
+        }
+    }
+
+    /**
+     * Gomba lehelyezése gombafonál nélkül.
+     * Első gomba lehelyezéséhez
      */
-    void debugPlaceFungus(Tecton t) {
+    public void debugPlaceFungus(Tecton t){
         Fungus f = new Fungus();
         t.setFungus(f);
     }
