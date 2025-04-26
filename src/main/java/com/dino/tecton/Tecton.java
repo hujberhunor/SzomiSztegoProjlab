@@ -5,13 +5,10 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import javax.management.ObjectName;
-
 import com.dino.core.Fungus;
 import com.dino.core.Hexagon;
 import com.dino.core.Hypha;
 import com.dino.core.Insect;
-import com.dino.core.Spore;
 import com.dino.player.Mycologist;
 import com.dino.util.ObjectNamer;
 import com.dino.util.SerializableEntity;
@@ -333,37 +330,6 @@ public abstract class Tecton implements SerializableEntity {
         insects.add(insect);
     }
 
-    @Override
-    public JsonObject serialize(ObjectNamer namer) {
-        JsonObject obj = new JsonObject();
-
-        obj.addProperty("id", "tecton_" + hashCode());
-        obj.addProperty("breakChance", breakChance);
-        obj.addProperty("breakCount", breakCount);
-
-        // Hexagonok ID-val
-        obj.add("hexagons", SerializerUtil.toJsonArray(hexagons, Hexagon::getId));
-
-        // Neighbour Tecton ID-val
-        obj.add("neighbours", SerializerUtil.toJsonArray(neighbours, t -> "tecton_" + t.hashCode()));
-
-        // Fungus serialize
-        if (fungus != null) {
-            obj.add("fungus", fungus.serialize());
-        }
-
-        // Insect serialize
-        obj.add("insects", SerializerUtil.toJsonArray(insects, Insect::serialize));
-
-        // Spore Map serialize
-        obj.add("spores", SerializerUtil.toJsonMap(spores, m -> "mycologist_" + m.hashCode()));
-
-        // Hypha serialize
-        obj.add("hyphas", SerializerUtil.toJsonArray(hyphas, Hypha::serialize));
-
-        return obj;
-    }
-
     public double getBreakChance() {
         return breakChance;
     }
@@ -425,4 +391,23 @@ public abstract class Tecton implements SerializableEntity {
         return spores;
     }
 
+    @Override
+    public JsonObject serialize(ObjectNamer namer) {
+        JsonObject obj = new JsonObject();
+
+        obj.addProperty("name", namer.getName(this));
+        obj.addProperty("type", this.getClass().getSimpleName());
+
+        obj.add("hexagons", SerializerUtil.toJsonArray(
+                hexagons,
+                h -> Integer.toString(h.getId())));
+
+        obj.add("neighbours", SerializerUtil.toJsonArray(
+                neighbours,
+                namer::getName));
+
+        obj.addProperty("breakChance", breakChance);
+
+        return obj;
+    }
 }

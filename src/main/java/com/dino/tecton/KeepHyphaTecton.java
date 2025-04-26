@@ -1,6 +1,8 @@
 package com.dino.tecton;
 
 import com.dino.core.Hypha;
+import com.dino.util.ObjectNamer;
+import com.google.gson.JsonObject;
 
 /**
  * Egy olyan konkrét, példányosítható tektontípus, amely életben tartja a
@@ -8,7 +10,7 @@ import com.dino.core.Hypha;
  */
 public class KeepHyphaTecton extends Tecton {
     private int hyphaLifespan; // Korlátlan (-1)
-    private int hyphaLimit;    // Alapesetben 1
+    private int hyphaLimit; // Alapesetben 1
 
     /**
      * Konstruktor
@@ -16,7 +18,7 @@ public class KeepHyphaTecton extends Tecton {
     public KeepHyphaTecton() {
         super();
         this.hyphaLifespan = -1; // A fonalak korlátlan ideig élnek
-        this.hyphaLimit = 1;    // Alapértelmezetten 1 fonál lehet rajta
+        this.hyphaLimit = 1; // Alapértelmezetten 1 fonál lehet rajta
     }
 
     /**
@@ -32,7 +34,7 @@ public class KeepHyphaTecton extends Tecton {
         if (hyphaLimit > 0 && hyphas.size() >= hyphaLimit) {
             return;
         }
-        
+
         // Hozzáadjuk a fonalat és beállítjuk "örök" élettartamra
         hyphas.add(h);
         h.setLifespan(-1); // Beállítjuk végtelenre az élettartamot
@@ -47,4 +49,15 @@ public class KeepHyphaTecton extends Tecton {
     public Tecton createCopy() {
         return new KeepHyphaTecton();
     }
+
+    @Override
+    public JsonObject serialize(ObjectNamer namer) {
+        JsonObject obj = super.serialize(namer);
+
+        obj.addProperty("hyphaLifespan", hyphaLifespan);
+        obj.addProperty("hyphaLimit", hyphaLimit);
+
+        return obj;
+    }
+
 }
