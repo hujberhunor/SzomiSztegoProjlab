@@ -36,8 +36,6 @@ public abstract class Tecton implements SerializableEntity {
     public Fungus fungus;
     public List<Insect> insects;
     public Map<Mycologist, Integer> spores;
-    //NEM ITT KEZELJÜK 
-    // publicted List<Spores> spores;
     public List<Hypha> hyphas;
 
     /**
