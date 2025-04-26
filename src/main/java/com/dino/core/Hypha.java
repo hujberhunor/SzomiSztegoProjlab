@@ -58,7 +58,7 @@ public class Hypha implements SerializableEntity {
      * Beállítja, hogy mely gombászhoz tatozzon a fonal
      * @param species Gombász, akihez beállítódik a fonal
      */
-    public void setMycologist(Mycologist m) {
+    public void setMychologist(Mycologist m) {
         mycologist = m;
     }
 
