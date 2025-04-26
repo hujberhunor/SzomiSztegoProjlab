@@ -1,12 +1,14 @@
 package com.dino.effects;
 
+import java.util.List;
+
 import com.dino.core.Insect;
 import com.dino.core.Spore;
 import com.dino.player.Mycologist;
 import com.dino.util.EntityRegistry;
 import com.dino.util.Logger;
-
-import java.util.List;
+import com.dino.util.ObjectNamer;
+import com.google.gson.JsonObject;
 
 //Olyan spórát megvalósító osztály, aminek hatására őt elfogyaszó rovar a következő körökre teljesen mozgásképtelenné válik.
 //Ez a hatás felülír minden más mozgást befolyásoló effektet.
@@ -14,7 +16,7 @@ public class ParalyzingEffect extends Spore {
 
     private static final int PARALYZING_EFFECT_NUTRIENT_VALUE = 4;
 
-    //Default konstruktor, beállítja a tápanyagtartalom értékét.
+    // Default konstruktor, beállítja a tápanyagtartalom értékét.
     public ParalyzingEffect(Mycologist mycologist) {
         super(mycologist, PARALYZING_EFFECT_NUTRIENT_VALUE);
     }
@@ -24,7 +26,7 @@ public class ParalyzingEffect extends Spore {
         return PARALYZING_EFFECT_NUTRIENT_VALUE;
     }
 
-    public String toString(){
+    public String toString() {
         return "Paralyzing Spore";
     }
 
@@ -33,7 +35,8 @@ public class ParalyzingEffect extends Spore {
         return 3;
     }
 
-    //A gomba hatását megvalósító függvény. A paraméterként átadott rovar a következő két körben nem tud akciót kihasználni mozgásra.
+    // A gomba hatását megvalósító függvény. A paraméterként átadott rovar a
+    // következő két körben nem tud akciót kihasználni mozgásra.
     @Override
     public void applyTo(Insect insect) {
         EntityRegistry registry = new EntityRegistry();
@@ -41,35 +44,43 @@ public class ParalyzingEffect extends Spore {
 
         List<Spore> prevEffects = insect.getEffects();
 
-        //ellenőrzés, hogy már az adott spóra hatása alatt van-e
+        // ellenőrzés, hogy már az adott spóra hatása alatt van-e
         boolean alreadyHasEffect = false;
         for (Spore effect : prevEffects) {
-            if (effect.sporeType() == 3) alreadyHasEffect = true;
+            if (effect.sporeType() == 3)
+                alreadyHasEffect = true;
         }
 
-        if(alreadyHasEffect){
+        if (alreadyHasEffect) {
             logger.logError("SPORE", "PARALYZING_EFFECT", "A rovar már bénító hatás alatt van!");
-        }
-        else {
+        } else {
             int prevActions = insect.getEntomologist().getRemainingActions();
 
             // Hatás alkalmazása
             insect.addEffects(this); // effekt listára
             insect.getEntomologist().setActions(0);
 
-            if(insect.getEffects().contains(this)){
+            if (insect.getEffects().contains(this)) {
                 logger.logChange("INSECT", insect, "EFFECT", prevEffects, insect.getEffects());
-            }
-            else {
+            } else {
                 logger.logError("EFFECT", "PARALYZING EFFECT", "Nem sikerült alkalmazni a rovarra!");
             }
 
-            if(insect.getEntomologist().getRemainingActions() == 0){
+            if (insect.getEntomologist().getRemainingActions() == 0) {
                 logger.logChange("ENTOMOLOGIST", insect.getEntomologist(), "ACTIONS", prevActions, 0);
-            }
-            else {
+            } else {
                 logger.logError("ENTOMOLOGIST", "", "Nem sikerült beállítani az akciók számát!");
             }
         }
     }
+
+    @Override
+    public JsonObject serialize(ObjectNamer namer) {
+        JsonObject obj = super.serialize(namer);
+
+        obj.addProperty("sporeType", sporeType());
+
+        return obj;
+    }
+
 }
