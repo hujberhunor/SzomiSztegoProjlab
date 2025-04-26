@@ -1,8 +1,13 @@
 package com.dino.tecton;
 
 import com.dino.core.Hypha;
+
+import com.dino.util.EntityRegistry;
+import com.dino.util.Logger;
+
 import com.dino.util.ObjectNamer;
 import com.google.gson.JsonObject;
+
 
 /**
  * Egy olyan konkrét, példányosítható tektontípus, amely életben tartja a
@@ -30,14 +35,29 @@ public class KeepHyphaTecton extends Tecton {
      */
     @Override
     public void handleHypha(Hypha h) {
+        EntityRegistry registry = new EntityRegistry();
+        Logger logger = new Logger(registry);
+        
+        String hyphaName = registry.getNameOf(h);
+        String tectonName = registry.getNameOf(this);
+        
         // Ha van limit és már elértük, nem adhatunk hozzá újat
         if (hyphaLimit > 0 && hyphas.size() >= hyphaLimit) {
+            logger.logError("TECTON", tectonName, "Nem lehet több gombafonalat hozzáadni: elérte a limitet");
             return;
         }
+        
+        // Lementjük az eredeti élettartamot
+        int originalLifespan = h.getLifespan();
+        
 
         // Hozzáadjuk a fonalat és beállítjuk "örök" élettartamra
         hyphas.add(h);
         h.setLifespan(-1); // Beállítjuk végtelenre az élettartamot
+        
+        // Logoljuk a változásokat
+        logger.logChange("TECTON", this, "ADD_HYPHA", "-", hyphaName);
+        logger.logChange("HYPHA", h, "LIFESPAN", String.valueOf(originalLifespan), "-1");
     }
 
     /**

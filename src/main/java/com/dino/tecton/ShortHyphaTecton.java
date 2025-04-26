@@ -1,8 +1,13 @@
 package com.dino.tecton;
 
 import com.dino.core.Hypha;
+
+import com.dino.util.EntityRegistry;
+import com.dino.util.Logger;
+
 import com.dino.util.ObjectNamer;
 import com.google.gson.JsonObject;
+
 
 /**
  * Egy olyan konkrét, példányosítható tektontípus, amin a gombafonalak négy kör
@@ -26,17 +31,31 @@ public class ShortHyphaTecton extends Tecton {
      * Csökkenti az összes rajta lévő fonál élettartamát
      */
     public void decreaseLifespan() {
+        EntityRegistry registry = new EntityRegistry();
+        Logger logger = new Logger(registry);
+        
         for (Hypha hypha : hyphas) {
             int currentLifespan = hypha.getLifespan();
             if (currentLifespan > 0) {
+                // Csökkentjük az élettartamot
                 hypha.setLifespan(currentLifespan - 1);
+
+                
+                // Logoljuk az élettartam változását
+                logger.logChange("HYPHA", hypha, "LIFESPAN", String.valueOf(currentLifespan), 
+                                String.valueOf(hypha.getLifespan()));
+                
+                // Ha lejárt az élettartam
+
 
                 // Ha lejárt az élettartam, jelezzük a Game osztálynak vagy
                 // közvetlenül a tectonnak, hogy eltávolíthatja a listából
                 if (hypha.getLifespan() == 0) {
-                    // Ez a logika külső osztályban is lehet implementálva
-                    // TODO: Ide jöhet a hypha eltávolítására vagy
-                    // decayedHypha listához adására vonatkozó kód
+                    // TODO: Ide jöhet a hypha eltávolítására vagy decayedHypha listához adására vonatkozó kód
+                    logger.logChange("HYPHA", hypha, "STATUS", "ACTIVE", "DECAYED");
+                    
+                    // Game osztályhoz való hozzáadáshoz példa
+                    // game.addDecayedHypha(hypha);
                 }
             }
         }
@@ -50,11 +69,28 @@ public class ShortHyphaTecton extends Tecton {
      * @param h A kezelendő gombafonál
      */
     @Override
-    public void handleHypha(Hypha h) {
+   public void handleHypha(Hypha h) {
+        EntityRegistry registry = new EntityRegistry();
+        Logger logger = new Logger(registry);
+        
+        String hyphaName = registry.getNameOf(h);
+        String tectonName = registry.getNameOf(this);
+        
         if (hyphas.size() < hyphaLimit || hyphaLimit == -1) {
+            // Eredeti élettartam mentése
+            int originalLifespan = h.getLifespan();
+            
+            // Hozzáadjuk a hyphas listához
             hyphas.add(h);
-            // Minden új fonál élettartamát 4 körre állítjuk
+            
+            // Beállítjuk az élettartamot 4 körre
             h.setLifespan(hyphaLifespan);
+            
+            // Logoljuk a változásokat
+            logger.logChange("TECTON", this, "ADD_HYPHA", "-", hyphaName);
+            logger.logChange("HYPHA", h, "LIFESPAN", String.valueOf(originalLifespan), String.valueOf(hyphaLifespan));
+        } else {
+            logger.logError("TECTON", tectonName, "Nem lehet több gombafonalat hozzáadni: elérte a limitet");
         }
     }
 
