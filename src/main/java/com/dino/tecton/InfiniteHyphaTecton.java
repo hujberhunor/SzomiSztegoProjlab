@@ -1,9 +1,12 @@
 package com.dino.tecton;
 
 import com.dino.core.Hypha;
+import com.dino.util.ObjectNamer;
+import com.google.gson.JsonObject;
 
 /**
- * Egy olyan konkrét, példányosítható tektontípus, amin a gombafonalak korlátlan számban
+ * Egy olyan konkrét, példányosítható tektontípus, amin a gombafonalak korlátlan
+ * számban
  * lehetnek jelen.
  */
 public class InfiniteHyphaTecton extends Tecton {
@@ -11,7 +14,7 @@ public class InfiniteHyphaTecton extends Tecton {
     /// Attribútum
     private int hyphaCount; // A tektonon lévő fonalak száma
     private int hyphaLimit; // Korlátlan (-1)
-    
+
     /**
      * Konstruktor
      */
@@ -40,7 +43,7 @@ public class InfiniteHyphaTecton extends Tecton {
     public void increaseHyphaCount() {
         this.hyphaCount++;
     }
-   
+
     /**
      * Hyphacount csökkentése
      */
@@ -58,7 +61,7 @@ public class InfiniteHyphaTecton extends Tecton {
     public int getHyphaCount() {
         return hyphaCount;
     }
-    
+
     /**
      * Létrehoz egy új, ugyanolyan típusú tektont
      * 
@@ -67,5 +70,15 @@ public class InfiniteHyphaTecton extends Tecton {
     @Override
     public Tecton createCopy() {
         return new InfiniteHyphaTecton();
+    }
+
+    @Override
+    public JsonObject serialize(ObjectNamer namer) {
+        JsonObject obj = super.serialize(namer);
+
+        obj.addProperty("hyphaCount", hyphaCount);
+        obj.addProperty("hyphaLimit", hyphaLimit);
+
+        return obj;
     }
 }

@@ -16,6 +16,7 @@ import com.dino.effects.StunningEffect;
 import com.dino.player.Entomologist;
 import com.dino.player.Mycologist;
 import com.dino.tecton.Tecton;
+import com.dino.util.ObjectNamer;
 import com.dino.util.SerializableEntity;
 import com.dino.util.SerializerUtil;
 import com.dino.util.Skeleton;
@@ -46,7 +47,8 @@ public class Insect implements SerializableEntity {
         this.effects = new ArrayList<>();
     }
 
-    // Számontartja, hogy a rovar mozoghat-e ingyen a jelenlegi körében, ha gyorsító hatás alatt van
+    // Számontartja, hogy a rovar mozoghat-e ingyen a jelenlegi körében, ha gyorsító
+    // hatás alatt van
     // Értéke minden kör kezdetén igaz, extra mozgás után értéke hamisra változik
     private boolean extraMove;
 
@@ -59,7 +61,8 @@ public class Insect implements SerializableEntity {
         this.currentTecton = original.currentTecton;
         this.effects = new ArrayList<>();
 
-        /// Csak azokat az effekteket pakolom bele amelyek nem cloneEffectek (végtelen rekurzió elkerülése végett)
+        /// Csak azokat az effekteket pakolom bele amelyek nem cloneEffectek (végtelen
+        /// rekurzió elkerülése végett)
         for (Spore s : original.effects) {
             if (!(s instanceof CloneEffect)) {
                 this.effects.add(s);
@@ -112,17 +115,14 @@ public class Insect implements SerializableEntity {
         currentTecton = targetTecton;
         skeleton.log("Rovar sikeresen mozgott az új tektonra.");
 
-        if (isUnderEffect(1) && extraMove && isUnderEffect(4)){
+        if (isUnderEffect(1) && extraMove && isUnderEffect(4)) {
             setExtraMove(false);
             entomologist.decreaseActions();
-        }
-        else if (isUnderEffect(1) && extraMove){
+        } else if (isUnderEffect(1) && extraMove) {
             setExtraMove(false);
-        }
-        else if (isUnderEffect(4)){
+        } else if (isUnderEffect(4)) {
             entomologist.setActions(0);
-        }
-        else {
+        } else {
             entomologist.decreaseActions(); // Csökkentjük az akciópontját
         }
 
@@ -280,9 +280,9 @@ public class Insect implements SerializableEntity {
         }
     }
 
-    public boolean isUnderEffect(int effectId){
-        if (effects != null && !effects.isEmpty()){
-            for (Spore s : effects){
+    public boolean isUnderEffect(int effectId) {
+        if (effects != null && !effects.isEmpty()) {
+            for (Spore s : effects) {
                 if (s.sporeType() == effectId)
                     return true;
             }
@@ -293,7 +293,7 @@ public class Insect implements SerializableEntity {
     /**
      * A rovar eltávolítása a játékból.
      */
-    public void destroyInsect(){
+    public void destroyInsect() {
         currentTecton.getInsects().remove(this);
         entomologist.getInsects().remove(this);
     }
@@ -310,22 +310,26 @@ public class Insect implements SerializableEntity {
         return currentTecton;
     }
 
-    public void setExtraMove(boolean b){
+    public void setExtraMove(boolean b) {
         extraMove = b;
     }
-@Override
-    public JsonObject serialize() {
+
+    @Override
+    public JsonObject serialize(ObjectNamer namer) {
         JsonObject obj = new JsonObject();
 
-        // Rovarász ID
-        obj.addProperty("owner", "entomologist_" + entomologist.hashCode());
+        obj.addProperty("name", namer.getName(this));
+        obj.addProperty("type", "Insect");
 
-        // Jelenlegi tecton ID
-        obj.addProperty("currentTecton", "tecton_" + currentTecton.hashCode());
+        obj.addProperty("owner", namer.getName(entomologist));
+        obj.addProperty("currentTecton", namer.getName(currentTecton));
 
-        // Aktív effektek (spórák)
-        obj.add("effects", SerializerUtil.toJsonArray(effects, s -> s.serialize()));
+        // Effektek (Spore objektumok) szerializálása
+        obj.add("effects", SerializerUtil.toJsonArray(
+                effects,
+                s -> s.serialize(namer)));
 
         return obj;
     }
+
 }

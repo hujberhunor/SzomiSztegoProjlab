@@ -2,23 +2,26 @@ package com.dino.tecton;
 
 import com.dino.core.Fungus;
 import com.dino.core.Hypha;
+import com.dino.util.ObjectNamer;
+import com.google.gson.JsonObject;
 
 /**
- * Egy olyan konkrét, példányosítható tektontípus, amin nem nőhetnek gombatestek.
+ * Egy olyan konkrét, példányosítható tektontípus, amin nem nőhetnek
+ * gombatestek.
  */
 public class NoFungiTecton extends Tecton {
     private boolean fungiEnabled;
     private int hyphaLimit;
-    
+
     /**
      * Konstruktor
      */
     public NoFungiTecton() {
         super();
         fungiEnabled = false; // Garantáltan hamis értékű konstans
-        hyphaLimit = 1;       // Alapértelmezetten 1 fonál lehet rajta
+        hyphaLimit = 1; // Alapértelmezetten 1 fonál lehet rajta
     }
-    
+
     /**
      * A fonalakat kezelő virtuális függvény felülírása.
      * Ellenőrzi, hogy van-e már gombafonál a tektonon, és ha a limit engedi,
@@ -32,7 +35,7 @@ public class NoFungiTecton extends Tecton {
             hyphas.add(h);
         }
     }
-    
+
     /**
      * Felülírja a setFungus metódust, hogy megakadályozza a gombatestek növekedését
      * ezen a tektonon.
@@ -44,7 +47,7 @@ public class NoFungiTecton extends Tecton {
         // Nem tesz semmit, mivel ezen a típusú tektonon nem nőhet gombatest
         // Az alaposztály metódusa felül van írva, és nem hívjuk meg
     }
-    
+
     /**
      * Ellenőrzi, hogy ezen a tektonon lehet-e gombatestet növeszteni.
      * 
@@ -53,7 +56,7 @@ public class NoFungiTecton extends Tecton {
     public boolean isFungiEnabled() {
         return fungiEnabled; // Mindig false
     }
-    
+
     /**
      * Létrehoz egy új, ugyanolyan típusú tektont
      * 
@@ -63,4 +66,15 @@ public class NoFungiTecton extends Tecton {
     public Tecton createCopy() {
         return new NoFungiTecton();
     }
+
+    @Override
+    public JsonObject serialize(ObjectNamer namer) {
+        JsonObject obj = super.serialize(namer);
+
+        obj.addProperty("fungiEnabled", fungiEnabled);
+        obj.addProperty("hyphaLimit", hyphaLimit);
+
+        return obj;
+    }
+
 }
