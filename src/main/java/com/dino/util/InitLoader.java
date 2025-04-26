@@ -85,7 +85,7 @@ public class InitLoader {
 
         // --- Game State ---
         JsonObject gameState = new JsonObject();
-        gameState.addProperty("round", game.getCurrentTurn());
+        gameState.addProperty("round", game.getCurrentRound());
         gameState.addProperty("totalRounds", game.getTotalRounds());
         gameState.addProperty("currentPlayer", namer.getName(game.getCurrentPlayer()));
         root.add("gameState", gameState);
