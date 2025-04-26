@@ -15,7 +15,7 @@ public class InitCommand implements Command {
     @Override
     public void execute(Game game, Logger logger) {
         try {
-            InitLoader.loadFromFile(filename, game);
+            // InitLoader.loadFromFile(filename, game);
             logger.logChange("GAME", game, "INIT", "-", "SUCCESS");
         } catch (Exception e) {
             logger.logError("GAME", "InitCommand", "Failed to initialize from file: " + e.getMessage());
