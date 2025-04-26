@@ -18,7 +18,7 @@ jobs:
         uses: actions/setup-java@v4
         with:
           distribution: 'temurin'
-          java-version: '17'  # vagy amit a projekt használ
+          java-version: '20'  # vagy amit a projekt használ
 
       - name: Compile project
         run: mvn compile
