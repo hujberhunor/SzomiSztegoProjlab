@@ -31,17 +31,17 @@ public class InfiniteHyphaTecton extends Tecton {
      */
     @Override
     public void handleHypha(Hypha h) {
-    EntityRegistry registry = new EntityRegistry();
-    Logger logger = new Logger(registry);
-    
-    String hyphaName = registry.getNameOf(h);
-    String tectonName = registry.getNameOf(this);
-    
-    // Minden fonalat elfogadunk, mivel korlátlan számú lehet
-    hyphas.add(h);
-    hyphaCount++;
-    
-    logger.logChange("TECTON", this, "ADD_HYPHA", String.valueOf(hyphaCount-1), String.valueOf(hyphaCount));
+        EntityRegistry registry = new EntityRegistry();
+        Logger logger = new Logger(registry);
+        
+        String hyphaName = registry.getNameOf(h);
+        String tectonName = registry.getNameOf(this);
+        
+        // Minden fonalat elfogadunk, mivel korlátlan számú lehet
+        hyphas.add(h);
+        hyphaCount++;
+        
+        logger.logChange("TECTON", this, "ADD_HYPHA", String.valueOf(hyphaCount-1), String.valueOf(hyphaCount));
 }
 
     /**
