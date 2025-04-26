@@ -7,12 +7,10 @@ public class NextTurnCommand implements Command {
 
     @Override
     public void execute(Game game, Logger logger) {
-        logger.logChange("GAME", game, "TURN", "-", "Advanced to next turn");
+        // Csak annyi, hogy meghívjuk a játékosléptetést
+        game.nextTurn();
     }
 
-    /**
-     * Mindig érvényes, nem igényel paramétert
-     */
     @Override
     public boolean validate(Game game) {
         return true;
@@ -23,4 +21,3 @@ public class NextTurnCommand implements Command {
         return "NEXT_TURN";
     }
 }
-
