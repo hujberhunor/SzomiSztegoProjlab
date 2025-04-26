@@ -720,15 +720,26 @@ public class Main {
         while(endOfRound != 0){
             endOfRound = game.nextTurn();
         }
-        endOfRound = 1;
 
+        // After first round is complete
         if(game.getTotalRounds() > 1) {
-            int endOfGame = 1;
-            while (endOfGame != 0) {
-                endOfGame = game.nextRound();
-                while (endOfRound != 0) {
+            boolean gameIsEnded = false;
+            for(int currentRound = 1; currentRound < game.getTotalRounds() && !gameIsEnded; currentRound++) {
+                int endOfGame = game.nextRound();
+                if(endOfGame == 0) {
+                    gameIsEnded = true;  // Game has ended prematurely
+                    break;
+                }
+
+                endOfRound = 1;  // Reset for the new round
+                while(endOfRound != 0){
                     endOfRound = game.nextTurn();
                 }
+            }
+
+            // Make sure we call endGame() if we exited the loop normally
+            if(!gameIsEnded) {
+                game.endGame();
             }
         }
         else {
