@@ -704,6 +704,7 @@ public class Main {
 
         } catch (IOException ex) {
             ex.printStackTrace();
+        }
     }
 
     public static void stage2Main(){
@@ -799,7 +800,7 @@ public class Main {
                     stage2Main();
                     break;
                 case 12:
-                    FullGameSerializeTest();
+                    FullGameDeserializeTest();
                     break;
                 default:
                     System.out.println("Invalid input");
@@ -808,4 +809,4 @@ public class Main {
             System.out.println("");
         }
     }
-} // end of main
+}
