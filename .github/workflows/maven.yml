@@ -1,9 +1,10 @@
+# before merging a PR the code MUST compile and pass the tests
 name: Verify Maven Build
 
 on:
   pull_request:
     branches:
-      - master
+      - master  # vagy main, attól függ, nálatok mi az alap
 
 jobs:
   build:
@@ -13,22 +14,11 @@ jobs:
       - name: Checkout code
         uses: actions/checkout@v3
 
-      - name: Set up JDK 20
+      - name: Set up JDK
         uses: actions/setup-java@v4
         with:
           distribution: 'temurin'
-          java-version: '18'
-
-      - name: Install Maven 3.9.6
-        uses: s4u/setup-maven-action@v1
-        with:
-          maven-version: 3.9.6
-
-      - name: Display Java version (debug)
-        run: java -version
-
-      - name: Display Maven version (debug)
-        run: mvn --version
+          java-version: '18'  # vagy amit a projekt használ
 
       - name: Compile project
         run: mvn compile
