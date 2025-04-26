@@ -202,6 +202,43 @@ public class Game {
         currentPlayer = players.get(0);
     }
 
+    // MAIN 9-es teszt erre dependál
+     public boolean TSTinitGame() {
+        if (players.isEmpty() || map == null) {
+            return false;
+        }
+
+        for (Player player : players) {
+            player.score = 0;
+            player.remainingActions = player.actionsPerTurn;
+        }
+
+        if (!players.isEmpty()) {
+            currentPlayer = players.get(0);
+        }
+
+        currRound = 0;
+        decayedHypha.clear();
+
+        return true;
+    }
+
+    /**
+     * A játék első körtől való indításáért felelő függvény.
+     */
+    public void TSTstartGame() {
+        currRound = 1;
+
+        if (currentPlayer == null && !players.isEmpty()) {
+            currentPlayer = players.get(0);
+        }
+
+        for (Player player : players) {
+            player.remainingActions = player.actionsPerTurn;
+        }
+    }
+
+
     /**
      * Felveszi az új paraméterként kapott játékost, és visszaadja, hogy a művelet
      * sikeres volt-e.

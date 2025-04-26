@@ -597,8 +597,8 @@ public class Main {
             namer.register(e1);
 
             // --- Játék inicializálása ---
-            game.initGame();
-            game.startGame();
+            game.TSTinitGame();
+            game.TSTstartGame();
 
             // --- Mentés ---
             JsonObject gameState = InitLoader.serialize(game, namer);
@@ -754,7 +754,7 @@ public class Main {
             System.out.println("9. Serializáció teszt");
             System.out.println("10. Scanner teszt");
             System.out.println("11. Full gameplay");
-            System.out.println("12. Deszerializáló teszt");
+            System.out.println("12. Deszerializálás");
             System.out.println("-----------------------");
             System.out.print("Select use case (e.g. 1, 2...): ");
             int useCase = scanner.nextInt();
@@ -798,9 +798,9 @@ public class Main {
                 case 11:
                     stage2Main();
                     break;
-              case 12:
-                   FullGameDeserializeTest();
-                   break;
+                case 12:
+                    FullGameSerializeTest();
+                    break;
                 default:
                     System.out.println("Invalid input");
                     break;
