@@ -11,6 +11,8 @@ import com.dino.core.Hexagon;
 import com.dino.core.Hypha;
 import com.dino.core.Insect;
 import com.dino.player.Mycologist;
+import com.dino.util.EntityRegistry;
+import com.dino.util.Logger;
 import com.dino.util.SerializableEntity;
 import com.dino.util.SerializerUtil;
 import com.dino.util.Skeleton;
@@ -123,9 +125,22 @@ public abstract class Tecton implements SerializableEntity {
      * Kétirányú asszociáció miatt delegáltam fv-be
      */
     public static void connectTectons(Tecton a, Tecton b) {
+    EntityRegistry registry = new EntityRegistry();
+    Logger logger = new Logger(registry);
+    
+    if (a == null || b == null) {
+        logger.logError("TECTON", "connectTectons", "Null tekton összekapcsolási kísérlet");
+        return;
+    }
+    
+    if (!a.getNeighbours().contains(b)) {
         a.getNeighbours().add(b);
+    }
+    
+    if (!b.getNeighbours().contains(a)) {
         b.getNeighbours().add(a);
     }
+}
 
     /**
      * Kétirányú asszociáció miatt kell
@@ -241,6 +256,14 @@ public abstract class Tecton implements SerializableEntity {
         // Tekton törés befejezése
         // skeleton.log("Tekton sikeresen ketté tört");
     
+        EntityRegistry registry = new EntityRegistry();
+        Logger logger = new Logger(registry);
+
+        if (tecton1 == null || tecton2 == null) {
+            logger.logError("TECTON", "split", "Null tekton jött létre a törés során");
+            return new ArrayList<>(); // Üres lista visszaadása, inkább ne törjön
+        }
+        
         resultTectons.add(tecton1);
         resultTectons.add(tecton2);
         // skeleton.log("Két új tekton visszaadása az eredményben");
