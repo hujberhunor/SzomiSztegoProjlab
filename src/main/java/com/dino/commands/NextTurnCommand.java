@@ -7,7 +7,6 @@ public class NextTurnCommand implements Command {
 
     @Override
     public void execute(Game game, Logger logger) {
-        game.nextTurn();
         logger.logChange("GAME", game, "TURN", "-", "Advanced to next turn");
     }
 

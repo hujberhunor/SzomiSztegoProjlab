@@ -7,7 +7,6 @@ public class NextRoundCommand implements Command {
 
     @Override
     public void execute(Game game, Logger logger) {
-        game.nextRound();
         logger.logChange("GAME", game, "ROUND", "-", "Advanced to next round");
     }
 
