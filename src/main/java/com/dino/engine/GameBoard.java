@@ -11,6 +11,8 @@ import com.dino.tecton.NoFungiTecton;
 import com.dino.tecton.ShortHyphaTecton;
 import com.dino.tecton.SingleHyphaTecton;
 import com.dino.tecton.Tecton;
+import com.dino.util.EntityRegistry;
+import com.dino.util.Logger;
 
 /**
  * A játékteret kezelő és megvalósító osztály.
@@ -57,6 +59,9 @@ public class GameBoard {
      * A körök végén a tektonok törését kezelő függvény.
      */
     public void breakHandler() {
+        EntityRegistry registry = new EntityRegistry();
+        Logger logger = new Logger(registry);
+        
         List<Tecton> newTectons = new ArrayList<>();
         List<Tecton> tectonskToRemove = new ArrayList<>();
         
@@ -66,22 +71,53 @@ public class GameBoard {
             
             // Ha a split művelet új tektonokat eredményezett
             if (!splitResult.isEmpty()) {
+                // Regisztráljuk az új tektonokat
+                for (int i = 0; i < splitResult.size(); i++) {
+                    Tecton newTecton = splitResult.get(i);
+                    String baseName = registry.getNameOf(tecton);
+                    String suffix = (i == 0) ? "_A" : "_B";
+                    
+                    if (baseName == null) {
+                        baseName = "tecton_" + tecton.hashCode();
+                    }
+                    
+                    String newName = baseName + suffix;
+                    
+                    // Ha már létezik ez a név, adjunk hozzá egy timestamp-et
+                    if (registry.getByName(newName) != null) {
+                        newName += "_" + System.currentTimeMillis();
+                    }
+                    
+                    registry.register(newName, newTecton);
+                }
+                
                 newTectons.addAll(splitResult);
                 tectonskToRemove.add(tecton);
                 
                 // Szomszédsági kapcsolatok beállítása
                 if (splitResult.size() >= 2) {
                     Tecton.connectTectons(splitResult.get(0), splitResult.get(1));
+                    logger.logChange("TECTON", splitResult.get(0), "NEIGHBOURS_ADD", "-", 
+                                    registry.getNameOf(splitResult.get(1)));
                 }
                 
                 // Szomszédsági kapcsolatok átvitele az eredeti tektonról
                 for (Tecton neighbour : tecton.getNeighbours()) {
-                    for (Tecton newTecton : splitResult) {
-                        if (areTectonsNeighbours(newTecton, neighbour)) {
-                            Tecton.connectTectons(newTecton, neighbour);
+                    if (!tectonskToRemove.contains(neighbour)) {
+                        for (Tecton newTecton : splitResult) {
+                            if (areTectonsNeighbours(newTecton, neighbour)) {
+                                Tecton.connectTectons(newTecton, neighbour);
+                                logger.logChange("TECTON", newTecton, "NEIGHBOURS_ADD", "-", 
+                                                registry.getNameOf(neighbour));
+                            }
                         }
                     }
                 }
+                
+                // Logoljuk a sikeres törést
+                logger.logChange("GAMEBOARD", tecton, "BREAK", registry.getNameOf(tecton), 
+                                registry.getNameOf(splitResult.get(0)) + ", " + 
+                                registry.getNameOf(splitResult.get(1)));
             }
         }
         
@@ -196,6 +232,10 @@ public class GameBoard {
      */
     private void createTectons(List<Hexagon> hexagons) {
         List<Hexagon> remainingHexagons = new ArrayList<>(hexagons);
+        EntityRegistry registry = new EntityRegistry();
+        Logger logger = new Logger(registry);
+        
+        int tectonCounter = 0;
         
         while (!remainingHexagons.isEmpty()) {
             // Kiválasztunk egy kezdő hatszöget
@@ -205,6 +245,10 @@ public class GameBoard {
             
             // Véletlenszerű tekton típus létrehozása
             Tecton newTecton = createRandomTectonType();
+            
+            // Regisztráljuk a tekton-t a registryben egyedi névvel
+            String tectonName = "tecton_" + (tectonCounter++);
+            registry.register(tectonName, newTecton);
             
             // Hatszögek gyűjtése a tektonhoz (2-9 darab)
             List<Hexagon> tectonHexagons = new ArrayList<>();
@@ -221,6 +265,9 @@ public class GameBoard {
             
             // Hozzáadjuk a tektonok listájához
             tectons.add(newTecton);
+            
+            // Logoljuk a tekton létrehozását
+            logger.logOk("GAMEBOARD", "board", "CREATE_TECTON", "-", tectonName);
         }
     }
     
