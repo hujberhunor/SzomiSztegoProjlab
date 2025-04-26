@@ -687,6 +687,25 @@ public class Main {
         inputScanner.close();
     }
 
+    public static void FullGameDeserializeTest() {
+        try {
+            System.out.println("Betöltés elindult...");
+
+            Game loadedGame = InitLoader.loadFromFile("full_game_save.json");
+
+            System.out.println("Betöltés sikeres!");
+            System.out.println("Játékosok száma: " + loadedGame.getPlayers().size());
+            System.out.println("Tectonok száma: " + loadedGame.getBoard().getAllTectons().size());
+
+            if (loadedGame.getCurrentPlayer() != null) {
+                System.out.println("Jelenlegi játékos: " + loadedGame.getCurrentPlayer().name);
+            }
+
+        } catch (IOException ex) {
+            ex.printStackTrace();
+        }
+    }
+
     // -------------------------------- //
     public static void main(String[] args) {
         boolean menuActive = true;
@@ -705,6 +724,7 @@ public class Main {
             System.out.println("8. Logger teszt");
             System.out.println("9. Serializáció teszt");
             System.out.println("10. Scanner teszt");
+            System.out.println("11. Deszerializáló teszt");
             System.out.println("-----------------------");
             System.out.print("Select use case (e.g. 1, 2...): ");
             int useCase = scanner.nextInt();
@@ -744,6 +764,9 @@ public class Main {
                     break;
                 case 10:
                     testCommand();
+                    break;
+                case 11:
+                    FullGameDeserializeTest();
                     break;
                 default:
                     System.out.println("Invalid input");
