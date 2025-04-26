@@ -1,5 +1,10 @@
 package com.dino.engine;
-import java.util.*;
+
+import java.util.ArrayList;
+import java.util.Comparator;
+import java.util.List;
+import java.util.Random;
+import java.util.Scanner;
 
 import com.dino.commands.Command;
 import com.dino.commands.CommandParser;
@@ -11,9 +16,11 @@ import com.dino.player.Player;
 import com.dino.tecton.Tecton;
 import com.dino.util.EntityRegistry;
 import com.dino.util.Logger;
+import com.dino.util.ObjectNamer;
 
 /**
- * A játékmenet alapvető funkcióit vezérlő, és annak tulajdonságait tároló és kezelő osztály.
+ * A játékmenet alapvető funkcióit vezérlő, és annak tulajdonságait tároló és
+ * kezelő osztály.
  */
 public class Game {
     /**
@@ -27,7 +34,8 @@ public class Game {
     private List<Player> players;
 
     /**
-     * Egy egész szám, ami azt tartja számon, hogy a játék menete alatt hány kör telt el.
+     * Egy egész szám, ami azt tartja számon, hogy a játék menete alatt hány kör
+     * telt el.
      * Értéke eggyel nő, ha már minden játékos lépett.
      */
     private int currRound;
@@ -40,7 +48,8 @@ public class Game {
 
     /**
      * Az a játékos, aki éppen léphet.
-     * Értéke a maximális mennyiségű akció felhasználása után a soron következő játékosra vált.
+     * Értéke a maximális mennyiségű akció felhasználása után a soron következő
+     * játékosra vált.
      */
     private Player currentPlayer;
 
@@ -51,6 +60,7 @@ public class Game {
 
     private Object selectedEntity;
     private EntityRegistry registry;
+    private ObjectNamer namer;
     private Logger logger;
 
     private Scanner scanner;
@@ -76,6 +86,7 @@ public class Game {
         this.currentPlayer = null;
         this.decayedHypha = new ArrayList<>();
         this.registry = new EntityRegistry();
+        this.namer = ObjectNamer.getInstance(registry);
         this.logger = new Logger(registry);
         this.selectedEntity = null;
     }
@@ -88,9 +99,13 @@ public class Game {
     }
 
     /**
-     * Paraméter nélkül hívható függvény, ami a játék elemeinek inicializálásáért felel.
-     * A már legenerált játéktérben a felhasználótól kapott bemenetek szerint felveszi,
-     * és elhelyezi a játékosokat a kezdeti tektonokon, és inicializálja a játékmenet kezdeti értékeit.
+     * Paraméter nélkül hívható függvény, ami a játék elemeinek inicializálásáért
+     * felel.
+     * A már legenerált játéktérben a felhasználótól kapott bemenetek szerint
+     * felveszi,
+     * és elhelyezi a játékosokat a kezdeti tektonokon, és inicializálja a
+     * játékmenet kezdeti értékeit.
+     * 
      * @return A játék inicializálásának sikeressége.
      */
     public boolean initGame() {
@@ -187,8 +202,47 @@ public class Game {
         currentPlayer = players.get(0);
     }
 
+    // MAIN 9-es teszt erre dependál
+     public boolean TSTinitGame() {
+        if (players.isEmpty() || map == null) {
+            return false;
+        }
+
+        for (Player player : players) {
+            player.score = 0;
+            player.remainingActions = player.actionsPerTurn;
+        }
+
+        if (!players.isEmpty()) {
+            currentPlayer = players.get(0);
+        }
+
+        currRound = 0;
+        decayedHypha.clear();
+
+        return true;
+    }
+
     /**
-     * Felveszi az új paraméterként kapott játékost, és visszaadja, hogy a művelet sikeres volt-e.
+     * A játék első körtől való indításáért felelő függvény.
+     */
+    public void TSTstartGame() {
+        currRound = 1;
+
+        if (currentPlayer == null && !players.isEmpty()) {
+            currentPlayer = players.get(0);
+        }
+
+        for (Player player : players) {
+            player.remainingActions = player.actionsPerTurn;
+        }
+    }
+
+
+    /**
+     * Felveszi az új paraméterként kapott játékost, és visszaadja, hogy a művelet
+     * sikeres volt-e.
+     * 
      * @param player Felvenni kívánt új játékos.
      * @return Az új játékos felvételének sikeresége.
      */
@@ -213,7 +267,9 @@ public class Game {
     }
 
     /**
-     * Törli a paraméterként kapott játékost, és visszaadja, hogy a művelet sikeres volt-e.
+     * Törli a paraméterként kapott játékost, és visszaadja, hogy a művelet sikeres
+     * volt-e.
+     * 
      * @param player Töröli kívánt játékos.
      * @return Az játékos törlésének sikeressége.
      */
@@ -252,7 +308,8 @@ public class Game {
     }
 
     /**
-     * Paraméter nélkül hívható függvény, ami lépteti a játékmenetet a következő játékosra.
+     * Paraméter nélkül hívható függvény, ami lépteti a játékmenetet a következő
+     * játékosra.
      * Ha minden játékos sorra került, akkor meghívja a nextRound() függvényt.
      */
     public int nextTurn() {
@@ -311,7 +368,8 @@ public class Game {
     }
 
     /**
-     * Paraméter nélkül hívható függvény, ami lépteti a játékmenetet a következő körre.
+     * Paraméter nélkül hívható függvény, ami lépteti a játékmenetet a következő
+     * körre.
      * Meghívódik, amikor minden játékos befejezte a saját körét.
      */
     public int nextRound() {
@@ -340,7 +398,8 @@ public class Game {
     /**
      * Paraméter nélkül hívható függvény, ami befejezi a játékot.
      * Ez a függvény választja ki a két győztest a számontartott pontszámok alapján,
-     * és akkor hívódik, amikor a currRound értéke eléri a totalRounds plusz egy értéket.
+     * és akkor hívódik, amikor a currRound értéke eléri a totalRounds plusz egy
+     * értéket.
      */
     public void endGame() {
         for (Player player : players) {
@@ -361,6 +420,7 @@ public class Game {
 
     /**
      * Visszaadja a jelenlegi játékost
+     * 
      * @return Az aktuális játékos
      */
     public Player getCurrentPlayer() {
@@ -369,6 +429,7 @@ public class Game {
 
     /**
      * Visszaadja a játéktáblát
+     * 
      * @return A játéktábla objektum
      */
     public GameBoard getMap() {
@@ -377,6 +438,7 @@ public class Game {
 
     /**
      * Visszaadja a játékosok listáját
+     * 
      * @return A játékosok listája
      */
     public List<Player> getPlayers() {
@@ -385,6 +447,7 @@ public class Game {
 
     /**
      * Visszaadja a jelenlegi kör számát
+     * 
      * @return A jelenlegi kör száma
      */
     public int getCurrentTurn() {
@@ -393,6 +456,7 @@ public class Game {
 
     /**
      * Visszaadja az összes kör számát
+     * 
      * @return Az összes kör száma
      */
     public int getTotalRounds() {
@@ -401,6 +465,7 @@ public class Game {
 
     /**
      * Beállítja az összes kör számát
+     * 
      * @param totalRounds Az összes kör új értéke
      */
     public void settotalRounds(int totalRounds) {
@@ -409,6 +474,7 @@ public class Game {
 
     /**
      * Hozzáad egy fonalat a lebomlott fonalak listájához
+     * 
      * @param hypha A lebomlott fonal
      */
     public void addDecayedHypha(Hypha hypha) {
@@ -419,29 +485,30 @@ public class Game {
 
     /**
      * Visszaadja a lebomlott fonalak listáját
+     * 
      * @return A lebomlott fonalak listája
      */
     public List<Hypha> getDecayedHypha() {
         return decayedHypha;
     }
-  
-    public EntityRegistry getRegistry(){
+
+    public EntityRegistry getRegistry() {
         return registry;
     }
 
     public Object getSelectedEntity() {
         return selectedEntity;
     }
-    
+
     public void setSelectedEntity(Object selectedEntity) {
         this.selectedEntity = selectedEntity;
     }
 
-    public GameBoard getBoard(){
-        return map; 
+    public GameBoard getBoard() {
+        return map;
     }
 
-    public Logger getLogger(){
+    public Logger getLogger() {
         return logger;
     }
 
@@ -464,4 +531,35 @@ public class Game {
         return entomologistCount <= mycologistCount;
     }
   
+      // szerializálás
+    public List<Mycologist> getAllMycologists() {
+        List<Mycologist> result = new ArrayList<>();
+        for (Player p : players) {
+            if (p instanceof Mycologist)
+                result.add((Mycologist) p);
+        }
+        return result;
+    }
+
+    public List<Entomologist> getAllEntomologists() {
+        List<Entomologist> result = new ArrayList<>();
+        for (Player p : players) {
+            if (p instanceof Entomologist)
+                result.add((Entomologist) p);
+        }
+        return result;
+    }
+
+    public ObjectNamer getNamer() {
+        return namer;
+    }
+
+    public void setCurrentTurn(int asInt) {
+        this.currRound = asInt;
+    }
+
+    public void setCurrentPlayer(Player byName) {
+        this.currentPlayer = byName;
+    }
+
 }

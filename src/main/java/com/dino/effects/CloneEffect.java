@@ -1,13 +1,15 @@
 package com.dino.effects;
 
+import java.util.List;
+
 import com.dino.core.Insect;
 import com.dino.core.Spore;
 import com.dino.player.Mycologist;
 import com.dino.tecton.Tecton;
 import com.dino.util.EntityRegistry;
 import com.dino.util.Logger;
-
-import java.util.List;
+import com.dino.util.ObjectNamer;
+import com.google.gson.JsonObject;
 
 /*
  * Olyan spóra hatás amely az őt elfogyasztó rovart klónozza az elfogyasztásnak helyet adó tektonon
@@ -56,19 +58,26 @@ public class CloneEffect extends Spore {
         currTecton.addInsect(clone);
         clone.getEntomologist().addInsects(clone);
 
-        if(original.getEffects().contains(this)){
+        if (original.getEffects().contains(this)) {
             logger.logChange("INSECT", original, "EFFECT", prevEffects, original.getEffects());
-        }
-        else {
+        } else {
             logger.logError("EFFECT", "ACCELERATING EFFECT", "Nem sikerült alkalmazni a rovarra!");
         }
 
-        if(currTecton.getInsects().contains(clone) && original.getEntomologist().getInsects().contains(clone)){
+        if (currTecton.getInsects().contains(clone) && original.getEntomologist().getInsects().contains(clone)) {
             logger.logOk("INSECT", "NEW INSECT", "", "null", "created");
-        }
-        else {
+        } else {
             logger.logError("INSECT", "NEW INSECT", "Nem sikerült a klónt hozzáadni a tektonhoz vagy a rovarászhoz!");
         }
+    }
+
+    @Override
+    public JsonObject serialize(ObjectNamer namer) {
+        JsonObject obj = super.serialize(namer);
+
+        obj.addProperty("sporeType", sporeType());
+
+        return obj;
     }
 
 } // end of cloneEffect
