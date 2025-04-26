@@ -316,7 +316,6 @@ public class Game {
      */
     public int nextRound() {
         if (currRound == totalRounds) {
-            endGame();
             return 0;
         }
 
@@ -387,7 +386,7 @@ public class Game {
      * Visszaadja a jelenlegi kör számát
      * @return A jelenlegi kör száma
      */
-    public int getCurrentTurn() {
+    public int getCurrentRound() {
         return currRound;
     }
 
