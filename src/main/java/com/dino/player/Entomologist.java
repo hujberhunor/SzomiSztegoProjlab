@@ -74,10 +74,6 @@ public class Entomologist extends Player implements SerializableEntity {
         remainingActions = i;
     }
 
-    public void addInsects(Insect insect) {
-        insects.add(insect);
-    }
-
     @Override
     public JsonObject serialize(ObjectNamer namer) {
         JsonObject obj = new JsonObject();
