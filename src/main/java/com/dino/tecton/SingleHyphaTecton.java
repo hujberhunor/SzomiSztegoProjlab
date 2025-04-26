@@ -1,6 +1,8 @@
 package com.dino.tecton;
 
 import com.dino.core.Hypha;
+import com.dino.util.EntityRegistry;
+import com.dino.util.Logger;
 
 /**
  * Egy olyan konkrét, példányosítható tektontípus, amin egyszerre csak egy gombafonál lehet jelen.
@@ -26,16 +28,29 @@ public class SingleHyphaTecton extends Tecton {
      */
     @Override
     public void handleHypha(Hypha h) {
+        EntityRegistry registry = new EntityRegistry();
+        Logger logger = new Logger(registry);
+        
+        String hyphaName = registry.getNameOf(h);
+        String tectonName = registry.getNameOf(this);
+        
         if (hyphas.isEmpty()) {
             // Ha még nincs fonál, egyszerűen hozzáadjuk az újat
             hyphas.add(h);
+            logger.logChange("TECTON", this, "ADD_HYPHA", "-", hyphaName);
         } else {
             // Ha már van fonál, lecseréljük az újra
             Hypha existingHypha = hyphas.get(0);
+            String existingHyphaName = registry.getNameOf(existingHypha);
+            
             hyphas.clear();
             hyphas.add(h);
             
+            logger.logChange("TECTON", this, "REPLACE_HYPHA", existingHyphaName, hyphaName);
+            
             // Itt lehetne kód, ami bejelenti a Game osztálynak, hogy egy fonál eltűnt
+            // game.addDecayedHypha(existingHypha);
+            logger.logChange("HYPHA", existingHypha, "STATUS", "ACTIVE", "REPLACED");
         }
     }
     
