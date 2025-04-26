@@ -200,10 +200,22 @@ public class Fungus implements SerializableEntity {
         return charge;
     }
 
+    public List<Spore> getSpores() {
+        return spores;
+    }
+
+    public List<Hypha> getHyphas(){
+        return hyphas;
+    }
+
     public void setCharge(int c) {
         if (c >= 0 && c <= 3) {
             charge = c;
         }
+    }
+
+    public void setLifespan(int lifespan) {
+        this.lifespan = lifespan;
     }
 
     @Override

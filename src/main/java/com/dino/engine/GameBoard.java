@@ -23,6 +23,10 @@ public class GameBoard {
      */
     private List<Tecton> tectons;
 
+    public GameBoard() {
+        tectons = new ArrayList<>();
+    }
+
     /**
      * Paraméter nélkül hívható függvény, ami legenerálja a játékteret.
      * Létrehozza a hexagonokat, kitöröl párat véletlenszerűen, a maradékot pedig
