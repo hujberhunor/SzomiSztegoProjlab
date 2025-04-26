@@ -10,6 +10,7 @@ import com.dino.player.Mycologist;
 import com.dino.player.Player;
 import com.dino.util.EntityRegistry;
 import com.dino.util.Logger;
+import com.dino.util.ObjectNamer;
 
 /**
  * A játékmenet alapvető funkcióit vezérlő, és annak tulajdonságait tároló és
@@ -54,6 +55,7 @@ public class Game {
 
     private Object selectedEntity;
     private EntityRegistry registry;
+    private ObjectNamer namer;
     private Logger logger;
 
     public Game(int totalRounds) {
@@ -64,6 +66,7 @@ public class Game {
         this.currentPlayer = null;
         this.decayedHypha = new ArrayList<>();
         this.registry = new EntityRegistry();
+        this.namer = ObjectNamer.getInstance(registry); 
         this.logger = new Logger(registry);
     }
 
@@ -363,6 +366,10 @@ public class Game {
                 result.add((Entomologist) p);
         }
         return result;
+    }
+
+    public ObjectNamer getNamer() {
+        return namer;
     }
 
 }

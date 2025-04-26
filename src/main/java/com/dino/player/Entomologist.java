@@ -1,5 +1,6 @@
 package com.dino.player;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import com.dino.core.Insect;
@@ -23,10 +24,12 @@ public class Entomologist extends Player implements SerializableEntity {
 
     public Entomologist(int actions) {
         this.remainingActions = actions;
+        this.insects = new ArrayList<>();
     }
 
     public Entomologist() {
         this.remainingActions = 3;
+        this.insects = new ArrayList<>();
     }
 
     /**

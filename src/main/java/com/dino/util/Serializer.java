@@ -18,6 +18,12 @@ public class Serializer {
         }
     }
 
+    public static void saveJsonToFile(JsonObject obj, String filename) throws IOException {
+        try (FileWriter writer = new FileWriter(filename)) {
+            gson.toJson(obj, writer);
+        }
+    }
+
     public static JsonObject loadFromFile(String filename) throws IOException {
         try (FileReader reader = new FileReader(filename)) {
             return gson.fromJson(reader, JsonObject.class);

@@ -394,6 +394,13 @@ public abstract class Tecton implements SerializableEntity {
     @Override
     public JsonObject serialize(ObjectNamer namer) {
         JsonObject obj = new JsonObject();
+if (hexagons.contains(null)) {
+    throw new RuntimeException("Tecton hexagons list contains NULL!");
+}
+
+if (neighbours.contains(null)) {
+    throw new RuntimeException("Tecton neighbours list contains NULL!");
+}
 
         obj.addProperty("name", namer.getName(this));
         obj.addProperty("type", this.getClass().getSimpleName());
