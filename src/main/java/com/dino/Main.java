@@ -13,7 +13,6 @@ import com.dino.core.Hypha;
 import com.dino.core.Insect;
 import com.dino.effects.AcceleratingEffect;
 import com.dino.effects.ParalyzingEffect;
-import com.dino.effects.SporeNoEffect;
 import com.dino.effects.StunningEffect;
 import com.dino.engine.Game;
 import com.dino.engine.GameBoard;
@@ -22,11 +21,16 @@ import com.dino.player.Mycologist;
 import com.dino.tecton.InfiniteHyphaTecton;
 import com.dino.tecton.KeepHyphaTecton;
 import com.dino.tecton.NoFungiTecton;
+import com.dino.tecton.SingleHyphaTecton;
 import com.dino.tecton.Tecton;
+import com.dino.tests.TestOracle;
 import com.dino.util.EntityRegistry;
+import com.dino.util.InitLoader;
 import com.dino.util.Logger;
+import com.dino.util.ObjectNamer;
 import com.dino.util.Serializer;
 import com.dino.util.Skeleton;
+import com.google.gson.JsonObject;
 
 public class Main {
 
@@ -476,53 +480,136 @@ public class Main {
         logger.logChange("INSECT", i1, "POSITION", prevTectonName, newTectonName);
     }
 
-    public static void SerializeTest() {
+    public static void SimpleSerializeTest() {
         try {
+            ObjectNamer namer = ObjectNamer.getInstance(new EntityRegistry());
+
             // Dummy Mycologist
             Mycologist m = new Mycologist();
+            namer.register(m);
 
-            // Dummy Entomologist
-            Entomologist e = new Entomologist();
-
-            // Dummy Tecton (pl. KeepHyphaTecton)
-            Tecton t = new KeepHyphaTecton();
-
-            // Hexagon hozzáadása
-            t.hexagons.add(new Hexagon(1));
-            t.hexagons.add(new Hexagon(2));
+            // Dummy Tecton
+            Tecton t = new SingleHyphaTecton();
+            t.hexagons.add(new Hexagon(10));
+            t.hexagons.add(new Hexagon(11));
+            namer.register(t);
 
             // Dummy Fungus
-            Fungus f = new Fungus();
-            f.setSpecies(m);
-            f.setCharge(2);
+            Fungus f = new Fungus(m, t);
+            namer.register(f);
             t.setFungus(f);
 
-            // Dummy Hypha
-            Hypha h = new Hypha();
-            h.setMychologist(m);
-            h.continueHypha(t);
-            t.hyphas.add(h);
-
-            // Dummy Insect
-            Insect insect = new Insect(e, t);
-            insect.getEffects().add(new SporeNoEffect(m)); // Dummy Spore
-            t.insects.add(insect);
-
-            // Spóra hozzáadás
-            t.spores.put(m, 2);
-
-            // Neighbour (önmaga teszt kedvéért)
-            t.neighbours.add(t);
-
             // Mentés
-            Serializer.saveToFile(t, "tecton_save.json");
+            Serializer.saveToFile(t, namer, "simple_tecton_save.json");
 
-            System.out.println("Sikeres mentés!");
+            System.out.println("SimpleSerializeTest: Sikeres mentés!");
 
         } catch (IOException ex) {
             ex.printStackTrace();
         }
+    }
 
+    public static void ComplexSerializeTest() {
+        try {
+            ObjectNamer namer = ObjectNamer.getInstance(new EntityRegistry());
+
+            // Mycologists + Entomologists
+            Mycologist m1 = new Mycologist();
+            Mycologist m2 = new Mycologist();
+            Entomologist e1 = new Entomologist();
+            Entomologist e2 = new Entomologist();
+            namer.register(m1);
+            namer.register(m2);
+            namer.register(e1);
+            namer.register(e2);
+
+            // Tectons
+            Tecton t1 = new KeepHyphaTecton();
+            Tecton t2 = new NoFungiTecton();
+            t1.hexagons.add(new Hexagon(21));
+            t1.hexagons.add(new Hexagon(22));
+            t2.hexagons.add(new Hexagon(23));
+            t2.hexagons.add(new Hexagon(24));
+            namer.register(t1);
+            namer.register(t2);
+
+            // Fungus on t1
+            Fungus f1 = new Fungus(m1, t1);
+            namer.register(f1);
+            t1.setFungus(f1);
+
+            // Hypha connecting t1 and t2
+            Hypha h1 = new Hypha(m1, f1);
+            h1.continueHypha(t2);
+            t1.hyphas.add(h1);
+            t2.hyphas.add(h1);
+            namer.register(h1);
+
+            // Insects on t1 and t2
+            Insect insect1 = new Insect(e1, t1);
+            insect1.getEffects().add(new AcceleratingEffect(m1));
+            namer.register(insect1);
+            t1.insects.add(insect1);
+
+            Insect insect2 = new Insect(e2, t2);
+            insect2.getEffects().add(new ParalyzingEffect(m2));
+            namer.register(insect2);
+            t2.insects.add(insect2);
+
+            // Spóra számlálók
+            t1.spores.put(m1, 2);
+            t2.spores.put(m2, 1);
+
+            // Neighbours
+            t1.neighbours.add(t2);
+            t2.neighbours.add(t1);
+
+            // Mentés
+            Serializer.saveToFile(t1, namer, "complex_tecton_save.json");
+            Serializer.saveToFile(t2, namer, "complex_tecton2_save.json");
+
+            System.out.println("ComplexSerializeTest: Sikeres mentés!");
+
+        } catch (IOException ex) {
+            ex.printStackTrace();
+        }
+    }
+
+    public static void FullGameSerializeTest() {
+        try {
+            // Új Game példány
+            Game game = new Game(10); // 10 körös játék
+            ObjectNamer namer = game.getNamer(); // <<< a Game saját namer-jét használjuk
+
+            // --- Játéktér generálása ---
+            game.initBoard(); // <<< ez automatikusan legenerálja a tectonokat és hexagonokat
+
+            // --- Tectonok regisztrálása a namer-be ---
+            for (Tecton t : game.getBoard().getAllTectons()) {
+                namer.register(t);
+            }
+
+            // --- Játékosok létrehozása és regisztrálása ---
+            Mycologist m1 = new Mycologist();
+            Entomologist e1 = new Entomologist();
+            game.addPlayer(m1);
+            game.addPlayer(e1);
+            namer.register(m1);
+            namer.register(e1);
+
+            // --- Játék inicializálása ---
+            game.TSTinitGame();
+            game.TSTstartGame();
+
+            // --- Mentés ---
+            JsonObject gameState = InitLoader.serialize(game, namer);
+            Serializer.saveJsonToFile(gameState, "full_game_save.json");
+
+            System.out.println("FullGameSerializeTest: Sikeres mentés!");
+
+        } catch (Exception ex) {
+            ex.printStackTrace();
+        }
     }
 
     /**
@@ -557,7 +644,7 @@ public class Main {
 
     public static void testCommand() {
         Game game = new Game(3);
-        EntityRegistry registry = game.getRegistry(); 
+        EntityRegistry registry = game.getRegistry();
         Logger logger = game.getLogger();
         GameBoard board = game.getBoard();
 
@@ -601,7 +688,26 @@ public class Main {
         inputScanner.close();
     }
 
-    public static void stage2Main(){
+    public static void FullGameDeserializeTest() {
+        try {
+            System.out.println("Betöltés elindult...");
+
+            Game loadedGame = InitLoader.loadFromFile("full_game_save.json");
+
+            System.out.println("Betöltés sikeres!");
+            System.out.println("Játékosok száma: " + loadedGame.getPlayers().size());
+            System.out.println("Tectonok száma: " + loadedGame.getBoard().getAllTectons().size());
+
+            if (loadedGame.getCurrentPlayer() != null) {
+                System.out.println("Jelenlegi játékos: " + loadedGame.getCurrentPlayer().name);
+            }
+
+        } catch (IOException ex) {
+            ex.printStackTrace();
+        }
+    }
+
+    public static void stage2Main() {
         Game game = new Game();
         EntityRegistry registry = game.getRegistry();
         Logger logger = game.getLogger();
@@ -611,22 +717,57 @@ public class Main {
         game.startGame();
 
         int endOfRound = 1;
-        while(endOfRound != 0){
+        while (endOfRound != 0) {
             endOfRound = game.nextTurn();
         }
-        endOfRound = 1;
 
-        if(game.getTotalRounds() > 1) {
-            int endOfGame = 1;
-            while (endOfGame != 0) {
-                endOfGame = game.nextRound();
+        // After first round is complete
+        if (game.getTotalRounds() > 1) {
+            boolean gameIsEnded = false;
+            for (int currentRound = 1; currentRound < game.getTotalRounds() && !gameIsEnded; currentRound++) {
+                int endOfGame = game.nextRound();
+                if (endOfGame == 0) {
+                    gameIsEnded = true; // Game has ended prematurely
+                    break;
+                }
+
+                endOfRound = 1; // Reset for the new round
                 while (endOfRound != 0) {
                     endOfRound = game.nextTurn();
                 }
             }
-        }
-        else {
+
+            // Make sure we call endGame() if we exited the loop normally
+            if (!gameIsEnded) {
+                game.endGame();
+            }
+        } else {
             game.endGame();
+        }
+    }
+
+    private static void runTestOracleMenu() {
+        Scanner testScanner = new Scanner(System.in);
+
+        System.out.println("Tesztorákulum futtatása:");
+        System.out.println("1. Összes teszt futtatása");
+        System.out.println("2. Egy adott teszt futtatása");
+        System.out.print("Válassz: ");
+
+        int choice = testScanner.nextInt();
+
+        switch (choice) {
+            case 1:
+                com.dino.tests.TestRunner.runAllTests();
+                break;
+            case 2:
+                System.out.print("Add meg a teszt számát (pl. 0, 9, 10...): ");
+                int testNumber = testScanner.nextInt();
+                com.dino.tests.TestRunner.runSingleTest(testNumber);
+                break;
+            default:
+                System.out.println("Érvénytelen választás.");
+                break;
         }
     }
 
@@ -649,6 +790,8 @@ public class Main {
             System.out.println("9. Serializáció teszt");
             System.out.println("10. Scanner teszt");
             System.out.println("11. Full gameplay");
+            System.out.println("12. Deszerializálás");
+            System.out.println("13. Tesztek futtatása");
             System.out.println("-----------------------");
             System.out.print("Select use case (e.g. 1, 2...): ");
             int useCase = scanner.nextInt();
@@ -682,13 +825,21 @@ public class Main {
                     loggerTest();
                     break;
                 case 9:
-                    SerializeTest();
+                    // SimpleSerializeTest();
+                    // ComplexSerializeTest();
+                    FullGameSerializeTest();
                     break;
                 case 10:
                     testCommand();
                     break;
                 case 11:
                     stage2Main();
+                    break;
+                case 12:
+                    FullGameDeserializeTest();
+                    break;
+                case 13: 
+                    runTestOracleMenu();
                     break;
                 default:
                     System.out.println("Invalid input");
@@ -697,4 +848,4 @@ public class Main {
             System.out.println("");
         }
     }
-} // end of main
+}

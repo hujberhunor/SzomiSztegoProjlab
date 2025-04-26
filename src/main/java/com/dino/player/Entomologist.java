@@ -6,15 +6,16 @@ import java.util.List;
 import com.dino.core.Insect;
 import com.dino.util.EntityRegistry;
 import com.dino.util.Logger;
-import com.dino.util.Skeleton;
-
-import java.util.List;
+import com.dino.util.ObjectNamer;
+import com.dino.util.SerializableEntity;
+import com.dino.util.SerializerUtil;
+import com.google.gson.JsonObject;
 
 /**
  * Ez az osztály egy rovarászt reprezentál.
  * Összeköti a Player osztályt az Insect osztállyal.
  */
-public class Entomologist extends Player {
+public class Entomologist extends Player implements SerializableEntity {
 
     /**
      * Rovarok, amiket a rovarász irányít.
@@ -64,8 +65,35 @@ public class Entomologist extends Player {
                     "Nincs több akció, nem csökkenthető.");
         }
     }
+
+    public int getRemainingActions() {
+        return this.remainingActions;
+    }
+
+    public void setActions(int i) {
+        remainingActions = i;
+    }
+
+    @Override
+    public JsonObject serialize(ObjectNamer namer) {
+        JsonObject obj = new JsonObject();
+
+        obj.addProperty("name", namer.getName(this));
+        obj.addProperty("type", "Entomologist");
+
+        obj.addProperty("score", this.score);
+        obj.addProperty("remainingActions", this.remainingActions);
+
+        // Entomologist specifikus adatok (pl. irányított rovarok listája)
+        obj.add("insects", SerializerUtil.toJsonArray(
+                getInsects(), // kell hozzá egy getInsects() getter a saját rovarjaidra
+                namer::getName));
+
+        return obj;
+    }
   
     public List<Insect> getInsects() { return insects; }
   
     public void addInsects(Insect insect) { insects.add(insect); }
 }
+

@@ -1,18 +1,20 @@
 package com.dino.effects;
 
+import java.util.List;
+
 import com.dino.core.Insect;
 import com.dino.core.Spore;
 import com.dino.player.Mycologist;
 import com.dino.util.EntityRegistry;
 import com.dino.util.Logger;
-
-import java.util.List;
+import com.dino.util.ObjectNamer;
+import com.google.gson.JsonObject;
 
 //Olyan spórát megvalósító osztály, aminek nincs hatása az őt elfogyasztó rovarra.
 public class SporeNoEffect extends Spore {
     private static final int NO_EFFECT_NUTRIENT_VALUE = 1;
 
-    //Default konstruktor, beállítja a tápanyagtartalom értékét.
+    // Default konstruktor, beállítja a tápanyagtartalom értékét.
     public SporeNoEffect(Mycologist mycologist) {
         super(mycologist, NO_EFFECT_NUTRIENT_VALUE);
     }
@@ -22,7 +24,7 @@ public class SporeNoEffect extends Spore {
         return NO_EFFECT_NUTRIENT_VALUE;
     }
 
-    public String toString(){
+    public String toString() {
         return "Regular Spore";
     }
 
@@ -31,7 +33,8 @@ public class SporeNoEffect extends Spore {
         return 0;
     }
 
-    //A gomba hatását megvalósító függvény. Ennek a spórának az esetében nem valósít meg érdemi funkciót.
+    // A gomba hatását megvalósító függvény. Ennek a spórának az esetében nem
+    // valósít meg érdemi funkciót.
     public void applyTo(Insect insect) {
         EntityRegistry registry = new EntityRegistry();
         Logger logger = new Logger(registry);
@@ -40,12 +43,20 @@ public class SporeNoEffect extends Spore {
 
         insect.addEffects(this);
 
-        if(insect.getEffects().contains(this)){
+        if (insect.getEffects().contains(this)) {
             logger.logChange("INSECT", insect, "EFFECT", prevEffects, insect.getEffects());
-        }
-        else {
+        } else {
             logger.logError("EFFECT", "NO EFFECT", "Nem sikerült alkalmazni a rovarra!");
         }
     }
-}
 
+    @Override
+    public JsonObject serialize(ObjectNamer namer) {
+        JsonObject obj = super.serialize(namer);
+
+        obj.addProperty("sporeType", sporeType());
+
+        return obj;
+    }
+
+}

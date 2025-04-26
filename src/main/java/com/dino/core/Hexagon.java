@@ -1,5 +1,6 @@
 package com.dino.core;
 
+import java.util.ArrayList;
 import java.util.List;
 
 /**
@@ -11,7 +12,7 @@ public class Hexagon {
     // Attribútumok
     private int id;
     private List<Hexagon> neighbours;
-    
+
     /**
      * Hexagon konstruktor
      * 
@@ -19,8 +20,9 @@ public class Hexagon {
      */
     public Hexagon(int id) {
         this.id = id;
+        this.neighbours = new ArrayList<>();
     }
-    
+
     /**
      * Id getter
      * 
@@ -29,7 +31,7 @@ public class Hexagon {
     public int getId() {
         return id;
     }
-    
+
     /**
      * Szomszédok beállítása
      * 
@@ -38,7 +40,7 @@ public class Hexagon {
     public void setNeighbours(List<Hexagon> neighbours) {
         this.neighbours = neighbours;
     }
-    
+
     /**
      * Szomszédok lekérése
      * 
@@ -47,7 +49,7 @@ public class Hexagon {
     public List<Hexagon> getNeighbours() {
         return neighbours;
     }
-    
+
     /**
      * Paraméter nélkül hívható függvény, ami megszűnteti a hatszöget,
      * és törli a játéktérről. Annak első generálásakor lesz szerepe.
@@ -64,4 +66,10 @@ public class Hexagon {
             neighbours.clear();
         }
     }
+
+    @Override
+    public String toString() {
+        return String.valueOf(id);
+    }
+
 }
