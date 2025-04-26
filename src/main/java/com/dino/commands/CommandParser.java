@@ -26,26 +26,16 @@ public class CommandParser {
                 return new SkipTurnCommand();
             case "NEXT_ROUND":
                 return new NextRoundCommand();
-
-            // case "CONSUME_SPORE":
-            //     if (parts.length != 2) throw new IllegalArgumentException("CONSUME_SPORE needs 1 argument");
-            //     return new ConsumeSporeCommand(parts[1], game);
-
-            // case "APPLY_EFFECT":
-            //     if (parts.length != 3) throw new IllegalArgumentException("APPLY_EFFECT needs 2 arguments");
-            //     return new ApplyEffectCommand(parts[1], parts[2], game);
-
-            // case "CUT_HYPHA":
-            //     if (parts.length != 3) throw new IllegalArgumentException("CUT_HYPHA needs 2 arguments");
-            //     return new CutHyphaCommand(parts[1], parts[2], game);
-
-            // case "CLONE_INSECT":
-            //     if (parts.length != 2) throw new IllegalArgumentException("CLONE_INSECT needs 1 argument");
-            //     return new CloneInsectCommand(parts[1], game);
-
-            // case "END_TURN":
-            //     return new EndTurnCommand(game);
-
+            case "INIT":
+                if (parts.length != 2) throw new IllegalArgumentException("INIT needs 1 argument (filename)");
+                return new InitCommand(parts[1]);
+            case "SAVE":
+                if (parts.length != 2) throw new IllegalArgumentException("SAVE needs 1 argument (filename)");
+                return new SaveCommand(parts[1]);
+            case "LOAD":
+                if (parts.length != 2) throw new IllegalArgumentException("LOAD needs 1 argument (filename)");
+                return new LoadCommand(parts[1]);
+                // TODO  folytatni
             default:
                 throw new IllegalArgumentException("Unknown command: " + commandType);
         }

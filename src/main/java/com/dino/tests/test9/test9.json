@@ -1,0 +1,24 @@
+{
+    "mycologists": [],
+    "entomologists": [],
+    "tectons": [
+      {
+        "name": "tecton_0",
+        "type": "InfiniteHyphaTecton",
+        "hexagons": ["0"],
+        "neighbours": [],
+        "breakChance": 0.0,
+        "hyphaCount": 0,
+        "hyphaLimit": -1
+      }
+    ],
+    "hyphas": [],
+    "fungi": [],
+    "insects": [],
+    "gameState": {
+      "round": 1,
+      "totalRounds": 5,
+      "currentPlayer": null
+    }
+  }
+  

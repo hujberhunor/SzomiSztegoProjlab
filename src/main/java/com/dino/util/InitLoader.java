@@ -258,9 +258,13 @@ public class InitLoader {
         JsonObject gameState = json.getAsJsonObject("gameState");
         game.settotalRounds(gameState.get("totalRounds").getAsInt());
         game.setCurrentTurn(gameState.get("round").getAsInt());
-        String currentPlayerName = gameState.get("currentPlayer").getAsString();
-        game.setCurrentPlayer((Player) registry.getByName(currentPlayerName));
-
+        JsonElement currentPlayerElem = gameState.get("currentPlayer");
+        if (currentPlayerElem != null && !currentPlayerElem.isJsonNull()) {
+            String currentPlayerName = currentPlayerElem.getAsString();
+            game.setCurrentPlayer((Player) registry.getByName(currentPlayerName));
+        } else {
+            game.setCurrentPlayer(null);
+        }
         return game;
     }
 
