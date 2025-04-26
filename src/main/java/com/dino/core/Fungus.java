@@ -9,6 +9,8 @@ import com.dino.player.Mycologist;
 import com.dino.tecton.NoFungiTecton;
 import com.dino.tecton.SingleHyphaTecton;
 import com.dino.tecton.Tecton;
+import com.dino.util.EntityRegistry;
+import com.dino.util.Logger;
 import com.dino.util.SerializableEntity;
 import com.dino.util.SerializerUtil;
 import com.dino.util.Skeleton;
@@ -73,12 +75,16 @@ public class Fungus implements SerializableEntity{
 
     //Itt eredetileg kapott paraméterként egy listát, de kivettem, mert szerintem nem kell
     public void spreadSpores() {
-        Skeleton skeleton = Skeleton.getInstance();
-        skeleton.startMethod("Fungus", "spreadSpores");
+        EntityRegistry registry = new EntityRegistry();
+        Logger logger = new Logger(registry);
+
+        // Skeleton skeleton = Skeleton.getInstance();
+        // skeleton.startMethod("Fungus", "spreadSpores");
 
         if (charge < 2) {
-            skeleton.log("A gomba még nincs feltöltve.");
-            skeleton.endMethod();
+            logger.logError("FUNGUS", registry.getNameOf(this), "A gomba még nincs feltöltve.");
+            // skeleton.log("A gomba még nincs feltöltve.");
+            // skeleton.endMethod();
             return;
         }
 
@@ -90,7 +96,7 @@ public class Fungus implements SerializableEntity{
                 t.addSpores(species);
                 alreadySpread.add(t);
             }
-            skeleton.log("A gomba spórát szórt a szomszédos tektonokra.");
+            logger.logOk("FUNGUS", registry.getNameOf(this), "ACTION", "ATTEMPT_SPREAD_SPORE_1", "SUCCESS");
         }
         //ha a gomba töltöttsége 3, spórát szór(hat) a szomszédos tektonok szomszédaira is
         if (charge == 3) {
@@ -102,13 +108,21 @@ public class Fungus implements SerializableEntity{
                     }
                 }
             }
-            skeleton.log("A gomba spórát szórt a szomszédos tektonok szomszédjaira.");
+            logger.logOk("FUNGUS", registry.getNameOf(this), "ACTION", "ATTEMPT_SPREAD_SPORE_2", "SUCCESS");
         }
 
+        int prevLifespan = lifespan;
         lifespan--;
-        // species.decreaseActions(); // Uncomment if defined
+
+        species.decreaseActions();
+
+        int prevCharge = charge;
         charge = 0;
-        skeleton.endMethod();
+
+        logger.logChange("FUNGUS", this, "LIFESPAN", String.valueOf(prevLifespan), String.valueOf(lifespan));
+        logger.logChange("FUNGUS", this, "CHARGE", String.valueOf(prevCharge), String.valueOf(charge));
+
+        //skeleton.endMethod();
     }
 
     /**
@@ -118,25 +132,30 @@ public class Fungus implements SerializableEntity{
      * @return
      */
     public boolean growHypha(List<Tecton> t) {
-        Skeleton skeleton = Skeleton.getInstance();
-        skeleton.startMethod("Fungus", "growHypha");
+        EntityRegistry registry = new EntityRegistry();
+        Logger logger = new Logger(registry);
+
+        // Skeleton skeleton = Skeleton.getInstance();
+        // skeleton.startMethod("Fungus", "growHypha");
 
         // Ellenőrizzük, hogy a lista egy vagy két elemet tartalmaz-e
         if (t == null || t.isEmpty() || t.size() > 2 || t.contains(null)) {
-            skeleton.log("Nem lehet növeszteni gombafonalat: a lista üres vagy érvénytelen.");
-            skeleton.endMethod();
+            logger.logError("FUNGUS", registry.getNameOf(this),"Nem lehet növeszteni gombafonalat: a lista üres vagy érvénytelen.");
+            // skeleton.log("Nem lehet növeszteni gombafonalat: a lista üres vagy érvénytelen.");
+            // skeleton.endMethod();
             return false;
         }
 
         // Ellenőrízzük, hogy a két tekton szomszédos-e egymással és a gomba tektonjával
         if (!t.get(0).isNeighbor(tecton) || !t.get(1).isNeighbor(t.get(1))){
-            skeleton.log("Nem lehet növeszteni gombafonalat: a tektonok nem szomszédosak egymással.");
-            skeleton.endMethod();
+            logger.logError("FUNGUS", registry.getNameOf(this),"Nem lehet növeszteni gombafonalat: a tektonok nem szomszédosak egymással.");
+            // skeleton.log("Nem lehet növeszteni gombafonalat: a tektonok nem szomszédosak egymással.");
+            // skeleton.endMethod();
             return false;
         }
 
         // Ellenőrizzük, hogy ha tektonokon csak egy fonál lehet, akkor már van-e
-        // TODO: csúnya type check-et feloldani
+        /*
         for (Tecton tec : t){
             if (tec instanceof SingleHyphaTecton || !tec.getHyphas().isEmpty()){
                 skeleton.log("Nem lehet növeszteni gombafonalat: a tektonon már fut fonál, és nem enged többet.");
@@ -144,7 +163,7 @@ public class Fungus implements SerializableEntity{
                 return false;
             }
         }
-
+        */
         // Ellenőrizzük, hogy az első (nulladik) tektonon van-e spóra, ha kételemű a lista
         if (t.size() == 2){
             boolean found = false;
@@ -158,8 +177,9 @@ public class Fungus implements SerializableEntity{
                 }
             }
             if (!found){
-                skeleton.log("Nem lehet növeszteni hosszú gombafonalat: az első tektonon nincs spóra.");
-                skeleton.endMethod();
+                logger.logError("FUNGUS", registry.getNameOf(this),"Nem lehet növeszteni hosszú gombafonalat: az első tektonon nincs spóra.");
+                // skeleton.log("Nem lehet növeszteni hosszú gombafonalat: az első tektonon nincs spóra.");
+                // skeleton.endMethod();
                 return false;
             }
         }
@@ -176,11 +196,12 @@ public class Fungus implements SerializableEntity{
             newHypha.continueHypha(currTecton); // A fonal folytatása ezen a tektonon
             currTecton.addHypha(newHypha); // Hozzáadjuk a fonalat a tektonhoz
 
-            skeleton.log("Gombafonál sikeresen növesztve a tektonon: " + currTecton.toString());
+            logger.logOk("FUNGUS", registry.getNameOf(this),"ACTION", "GROW_HYPHA", "SUCCESS");
+            // skeleton.log("Gombafonál sikeresen növesztve a tektonon: " + currTecton.toString());
         }
 
-        // species.decreaseActions(); // Uncomment if defined
-        skeleton.endMethod();
+        species.decreaseActions();
+        // skeleton.endMethod();
         return true; // Ha sikerült minden tektonra növeszteni
     }
 
@@ -205,8 +226,13 @@ public class Fungus implements SerializableEntity{
     }
 
     public void setCharge(int c){
+        EntityRegistry registry = new EntityRegistry();
+        Logger logger = new Logger(registry);
+
         if (c >= 0 && c <= 3){
+            int prevCharge = charge;
             charge = c;
+            logger.logChange("FUNGUS", this, "CHARGE", String.valueOf(prevCharge), charge);
         }
     }
 
