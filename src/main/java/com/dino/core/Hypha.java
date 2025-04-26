@@ -6,6 +6,8 @@ import java.util.List;
 
 import com.dino.player.Mycologist;
 import com.dino.tecton.Tecton;
+import com.dino.util.EntityRegistry;
+import com.dino.util.Logger;
 import com.dino.util.ObjectNamer;
 import com.dino.util.SerializableEntity;
 import com.dino.util.SerializerUtil;
@@ -98,9 +100,14 @@ public class Hypha implements SerializableEntity {
      * végére
      */
     public boolean continueHypha(Tecton t) {
-        // Ha ez az első tecton (pl. új fonalnál), engedjük
+    // Ha ez az első tecton (pl. új fonalnál), engedjük
+        EntityRegistry registry = new EntityRegistry();
+        Logger logger = new Logger(registry);
+
         if (tectons.isEmpty()) {
             tectons.add(t);
+            logger.logOk("HYPHA", registry.getNameOf(this),"ACTION", "ATTEMPT_CONTINUE_HYPA", "SUCCESS");
+
             return true;
         }
 
@@ -108,9 +115,11 @@ public class Hypha implements SerializableEntity {
         Tecton last = tectons.get(tectons.size() - 1);
         if (last.isNeighbor(t)) {
             tectons.add(t);
+            logger.logOk("HYPHA", registry.getNameOf(this),"ACTION", "ATTEMPT_CONTINUE_HYPA", "SUCCESS");
             return true;
         }
 
+        logger.logError("HYPHA", registry.getNameOf(this), "A fonálnövesztés sikertelen.");
         return false;
     }
 
@@ -125,7 +134,10 @@ public class Hypha implements SerializableEntity {
         Collections.addAll(tectons, path);
     }
 
-    public boolean eatInsect(Insect i) {
+    public boolean eatInsect(Insect i){
+        EntityRegistry registry = new EntityRegistry();
+        Logger logger = new Logger(registry);
+
         // Megnézzük, hogy a rovar rajta van-e az egyik olyan tektonon, amin fut a fonál
         Tecton targetTecton = null;
         for (Tecton t : tectons) {
@@ -134,13 +146,16 @@ public class Hypha implements SerializableEntity {
                 break;
             }
         }
-        if (targetTecton == null) {
+      
+        if (targetTecton == null){
+            logger.logError("HYPHA", registry.getNameOf(this), "A rovar nem olyan tektonon van, amin fut fonál.");
             return false;
         }
 
         // A rovart eltűntetjük a céltektonról, létrehozunk egy új gombát
         i.destroyInsect();
         mycologist.placeFungus(targetTecton);
+        logger.logOk("HYPHA", registry.getNameOf(this),"ACTION", "ATTEMPT_EAT_INSECT", "SUCCESS");
         return true;
     }
 
