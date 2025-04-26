@@ -23,6 +23,7 @@ import com.dino.tecton.KeepHyphaTecton;
 import com.dino.tecton.NoFungiTecton;
 import com.dino.tecton.SingleHyphaTecton;
 import com.dino.tecton.Tecton;
+import com.dino.tests.TestOracle;
 import com.dino.util.EntityRegistry;
 import com.dino.util.InitLoader;
 import com.dino.util.Logger;
@@ -687,7 +688,6 @@ public class Main {
         inputScanner.close();
     }
 
-
     public static void FullGameDeserializeTest() {
         try {
             System.out.println("Betöltés elindult...");
@@ -707,7 +707,7 @@ public class Main {
         }
     }
 
-    public static void stage2Main(){
+    public static void stage2Main() {
         Game game = new Game();
         EntityRegistry registry = game.getRegistry();
         Logger logger = game.getLogger();
@@ -717,33 +717,57 @@ public class Main {
         game.startGame();
 
         int endOfRound = 1;
-        while(endOfRound != 0){
+        while (endOfRound != 0) {
             endOfRound = game.nextTurn();
         }
 
         // After first round is complete
-        if(game.getTotalRounds() > 1) {
+        if (game.getTotalRounds() > 1) {
             boolean gameIsEnded = false;
-            for(int currentRound = 1; currentRound < game.getTotalRounds() && !gameIsEnded; currentRound++) {
+            for (int currentRound = 1; currentRound < game.getTotalRounds() && !gameIsEnded; currentRound++) {
                 int endOfGame = game.nextRound();
-                if(endOfGame == 0) {
-                    gameIsEnded = true;  // Game has ended prematurely
+                if (endOfGame == 0) {
+                    gameIsEnded = true; // Game has ended prematurely
                     break;
                 }
 
-                endOfRound = 1;  // Reset for the new round
-                while(endOfRound != 0){
+                endOfRound = 1; // Reset for the new round
+                while (endOfRound != 0) {
                     endOfRound = game.nextTurn();
                 }
             }
 
             // Make sure we call endGame() if we exited the loop normally
-            if(!gameIsEnded) {
+            if (!gameIsEnded) {
                 game.endGame();
             }
-        }
-        else {
+        } else {
             game.endGame();
+        }
+    }
+
+    private static void runTestOracleMenu() {
+        Scanner testScanner = new Scanner(System.in);
+
+        System.out.println("Tesztorákulum futtatása:");
+        System.out.println("1. Összes teszt futtatása");
+        System.out.println("2. Egy adott teszt futtatása");
+        System.out.print("Válassz: ");
+
+        int choice = testScanner.nextInt();
+
+        switch (choice) {
+            case 1:
+                com.dino.tests.TestRunner.runAllTests();
+                break;
+            case 2:
+                System.out.print("Add meg a teszt számát (pl. 0, 9, 10...): ");
+                int testNumber = testScanner.nextInt();
+                com.dino.tests.TestRunner.runSingleTest(testNumber);
+                break;
+            default:
+                System.out.println("Érvénytelen választás.");
+                break;
         }
     }
 
@@ -812,6 +836,9 @@ public class Main {
                     break;
                 case 12:
                     FullGameDeserializeTest();
+                    break;
+                case 13: 
+                    runTestOracleMenu();
                     break;
                 default:
                     System.out.println("Invalid input");
