@@ -50,7 +50,7 @@ public class StunningEffect extends Spore {
         }
 
         if (alreadyHasEffect) {
-            logger.logError("SPORE", "STUNNING_EFFECT", "A rovar már kábító hatás alatt van!");
+            logger.logError("SPORE", this.getClass().getSimpleName(), "A rovar már kábító hatás alatt van!");
         } else {
             insect.addEffects(this);
 

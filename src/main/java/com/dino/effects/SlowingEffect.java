@@ -50,7 +50,7 @@ public class SlowingEffect extends Spore {
         }
 
         if (alreadyHasEffect) {
-            logger.logError("SPORE", "SLOWING_EFFECT", "A rovar már lassító hatás alatt van!");
+            logger.logError("SPORE", this.getClass().getSimpleName(), "A rovar már lassító hatás alatt van!");
         } else {
             int prevActions = insect.getEntomologist().getRemainingActions();
 

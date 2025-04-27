@@ -53,7 +53,7 @@ public class ParalyzingEffect extends Spore {
         }
 
         if (alreadyHasEffect) {
-            logger.logError("SPORE", "PARALYZING_EFFECT", "A rovar már bénító hatás alatt van!");
+            logger.logError("SPORE", this.getClass().getSimpleName(), "A rovar már bénító hatás alatt van!");
         } else {
             int prevActions = insect.getEntomologist().getRemainingActions();
 
