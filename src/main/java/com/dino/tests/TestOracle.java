@@ -18,7 +18,7 @@ public class TestOracle {
             Game game = InitLoader.loadFromFile("src/main/java/com/dino/tests/test" + testNumber + "/test" + testNumber + ".json");
 
             // 2. Logger inicializálása
-            Logger logger = new Logger(game.getRegistry());
+            Logger logger = Logger.getInstance();
 
             // 3. CommandParser inicializálása
             CommandParser parser = new CommandParser(game);

@@ -68,7 +68,7 @@ public abstract class Tecton implements SerializableEntity {
         return neighbours;
     }
 
-    private static final ObjectNamer namer = ObjectNamer.getInstance(new EntityRegistry());
+    private static final ObjectNamer namer = ObjectNamer.getInstance();
 
     /**
      * Létrehoz egy ugyanolyan típusú új tektont.

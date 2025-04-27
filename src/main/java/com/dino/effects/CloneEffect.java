@@ -43,8 +43,8 @@ public class CloneEffect extends Spore {
      */
     @Override
     public void applyTo(Insect original) {
-        EntityRegistry registry = new EntityRegistry();
-        Logger logger = new Logger(registry);
+        EntityRegistry registry = EntityRegistry.getInstance();
+        Logger logger = Logger.getInstance();
 
         List<Spore> prevEffects = original.getEffects();
 

@@ -31,8 +31,8 @@ public class ShortHyphaTecton extends Tecton {
      * Csökkenti az összes rajta lévő fonál élettartamát
      */
     public void decreaseLifespan() {
-        EntityRegistry registry = new EntityRegistry();
-        Logger logger = new Logger(registry);
+        EntityRegistry registry = EntityRegistry.getInstance();
+        Logger logger = Logger.getInstance();
         
         for (Hypha hypha : hyphas) {
             int currentLifespan = hypha.getLifespan();
@@ -70,8 +70,8 @@ public class ShortHyphaTecton extends Tecton {
      */
     @Override
    public void handleHypha(Hypha h) {
-        EntityRegistry registry = new EntityRegistry();
-        Logger logger = new Logger(registry);
+        EntityRegistry registry = EntityRegistry.getInstance();
+        Logger logger = Logger.getInstance();
         
         String hyphaName = registry.getNameOf(h);
         String tectonName = registry.getNameOf(this);

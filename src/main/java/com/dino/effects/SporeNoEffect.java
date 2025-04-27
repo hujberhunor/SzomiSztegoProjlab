@@ -36,8 +36,8 @@ public class SporeNoEffect extends Spore {
     // A gomba hatását megvalósító függvény. Ennek a spórának az esetében nem
     // valósít meg érdemi funkciót.
     public void applyTo(Insect insect) {
-        EntityRegistry registry = new EntityRegistry();
-        Logger logger = new Logger(registry);
+        EntityRegistry registry = EntityRegistry.getInstance();
+        Logger logger = Logger.getInstance();
 
         List<Spore> prevEffects = insect.getEffects();
 

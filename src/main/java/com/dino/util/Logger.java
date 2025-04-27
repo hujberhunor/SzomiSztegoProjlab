@@ -6,16 +6,28 @@ import java.nio.file.Path;
 import java.util.Objects;
 
 public class Logger {
-    private final EntityRegistry registry;
-    private final StringBuilder logBuffer = new StringBuilder();
+    private static Logger instance;
 
-    public Logger(EntityRegistry registry) {
-        this.registry = registry;
+    private final StringBuilder logBuffer = new StringBuilder();
+    private final EntityRegistry registry = EntityRegistry.getInstance();
+
+    private Logger() {
+    }
+
+    public static Logger getInstance() {
+        if (instance == null) {
+            instance = new Logger();
+        }
+        return instance;
+    }
+
+    public static void reset() {
+        instance = new Logger();
     }
 
     private void writeLog(String line) {
-        System.out.println(line); // Konzolra mindig megy!
-        logBuffer.append(line).append(System.lineSeparator()); // Bufferbe is mindig megy!
+        System.out.println(line);
+        logBuffer.append(line).append(System.lineSeparator());
     }
 
     public void logChange(String objectType, Object obj, String property, Object oldVal, Object newVal) {
@@ -25,14 +37,20 @@ public class Logger {
         }
     }
 
-    public void logOk(String objectType, String objectName, String property, String oldState, String newState) {
+    public void logOk(String objectType, Object obj, String property, String oldValue, String newValue) {
+        String name = registry.getNameOf(obj); // mindig registry alapján
         writeLog(String.format("[OK] %s %s %s: %s -> %s",
-            objectType.toUpperCase(), objectName, property.toUpperCase(), oldState, newState));
+                objectType.toUpperCase(), name, property.toUpperCase(), oldValue, newValue));
+    }
+
+    public void logOk(String objectType, String objectName, String property, String oldValue, String newValue) {
+        writeLog(String.format("[OK] %s %s %s: %s -> %s",
+                objectType.toUpperCase(), objectName, property.toUpperCase(), oldValue, newValue));
     }
 
     public void logError(String objectType, String objectName, String errorMsg) {
         writeLog(String.format("[ERROR] %s %s %s",
-            objectType.toUpperCase(), objectName, errorMsg));
+                objectType.toUpperCase(), objectName, errorMsg));
     }
 
     public String getLog() {
@@ -47,3 +65,4 @@ public class Logger {
         }
     }
 }
+

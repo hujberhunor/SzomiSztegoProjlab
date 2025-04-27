@@ -40,8 +40,8 @@ public class Entomologist extends Player implements SerializableEntity {
      */
     @Override
     public void increaseActions() {
-        EntityRegistry registry = new EntityRegistry();
-        Logger logger = new Logger(registry);
+        EntityRegistry registry = EntityRegistry.getInstance();
+        Logger logger = Logger.getInstance();
 
         int prevActions = remainingActions;
         this.remainingActions++;
@@ -52,8 +52,8 @@ public class Entomologist extends Player implements SerializableEntity {
 
     @Override
     public void decreaseActions() {
-        EntityRegistry registry = new EntityRegistry();
-        Logger logger = new Logger(registry);
+        EntityRegistry registry = EntityRegistry.getInstance();
+        Logger logger = Logger.getInstance();
 
         int prevActions = remainingActions;
         if (remainingActions > 0) {

@@ -72,8 +72,8 @@ public class Game {
         this.totalRounds = 0;
         this.currentPlayer = null;
         this.decayedHypha = new ArrayList<>();
-        this.registry = new EntityRegistry();
-        this.logger = new Logger(registry);
+        this.registry = EntityRegistry.getInstance();
+        this.logger = Logger.getInstance();
         this.selectedEntity = null;
         this.scanner = new Scanner(System.in);
     }
@@ -85,9 +85,9 @@ public class Game {
         this.totalRounds = totalRounds;
         this.currentPlayer = null;
         this.decayedHypha = new ArrayList<>();
-        this.registry = new EntityRegistry();
-        this.namer = ObjectNamer.getInstance(registry);
-        this.logger = new Logger(registry);
+        this.registry = EntityRegistry.getInstance();
+        this.namer = ObjectNamer.getInstance();
+        this.logger = Logger.getInstance();
         this.selectedEntity = null;
     }
 
