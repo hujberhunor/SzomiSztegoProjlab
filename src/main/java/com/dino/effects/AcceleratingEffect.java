@@ -1,5 +1,6 @@
 package com.dino.effects;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import com.dino.core.Insect;
@@ -42,39 +43,25 @@ public class AcceleratingEffect extends Spore {
     // következő két kör alatt eggyel több akciót használhat ki mozgásra.
     @Override
     public void applyTo(Insect insect) {
-        EntityRegistry registry = EntityRegistry.getInstance();
         Logger logger = Logger.getInstance();
 
-        List<Spore> prevEffects = insect.getEffects();
+        EffectList prevEffects = new EffectList(insect.getEffects());
 
         // ellenőrzés, hogy már az adott spóra hatása alatt van-e
         boolean alreadyHasEffect = false;
-        for (Spore effect : prevEffects) {
+        for (Spore effect : prevEffects.getList()) {
             if (effect.sporeType() == 1)
                 alreadyHasEffect = true;
         }
 
         if (alreadyHasEffect) {
-            logger.logError("SPORE", "ACCELERATING_EFFECT", "A rovar már gyorsító hatás alatt van!");
+            logger.logError("SPORE", this.getClass().getSimpleName(), "A rovar már gyorsító hatás alatt van!");
         } else {
-            int prevActions = insect.getEntomologist().getRemainingActions();
-
             // Hatás alkalmazása
             insect.addEffects(this); // effekt listára
-            insect.getEntomologist().increaseActions(); // +1 action
 
-            if (insect.getEffects().contains(this)) {
-                logger.logChange("INSECT", insect, "EFFECT", prevEffects, insect.getEffects());
-            } else {
-                logger.logError("EFFECT", "ACCELERATING EFFECT", "Nem sikerült alkalmazni a rovarra!");
-            }
-
-            if (prevActions < insect.getEntomologist().getRemainingActions()) {
-                logger.logChange("ENTOMOLOGIST", insect.getEntomologist(), "REMAINING ACTIONS", prevActions,
-                        insect.getEntomologist().getRemainingActions());
-            } else {
-                logger.logError("ENTOMOLOGIST", "", "Nem sikerült növelni az akciók számát!");
-            }
+            EffectList newEffects = new EffectList(insect.getEffects());
+            logger.logChange("INSECT", insect, "EFFECT", prevEffects, newEffects);
         }
     }
 

@@ -5,6 +5,9 @@ import com.dino.util.ObjectNamer;
 import com.dino.util.SerializableEntity;
 import com.google.gson.JsonObject;
 
+import java.util.ArrayList;
+import java.util.List;
+
 //Absztrakt osztály, aminek leszármazottai a specifikus spóratípusokat valósítják meg.
 //Az osztály attribútumaiban számontartja, hogy melyik gombászhoz tartozik a spóra, hány körig tart a hatása,
 //illetve hogy elfogyasztásakor a rovarász mennyi pontot kap (ez a tápanyagtartalom).
@@ -44,6 +47,24 @@ public abstract class Spore implements SerializableEntity {
 
     // Absztarkt függvény, ami visszaadja a spóra effektjét reprezentáló integert.
     public abstract int sporeType();
+
+    //az applyTo() függvényhez a logChange összehasonlítása miatt kell
+    protected class EffectList{
+        List<Spore> effects = new ArrayList<Spore>();
+
+        public EffectList(List<Spore> effects) {
+            this.effects = effects;
+        }
+
+        public List<Spore> getList() {
+            return effects;
+        }
+
+        @Override
+        public String toString() {
+            return effects.toString();
+        }
+    }
 
     @Override
     public JsonObject serialize(ObjectNamer namer) {
