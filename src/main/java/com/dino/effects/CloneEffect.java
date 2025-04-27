@@ -1,5 +1,6 @@
 package com.dino.effects;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import com.dino.core.Insect;
@@ -46,7 +47,7 @@ public class CloneEffect extends Spore {
         EntityRegistry registry = EntityRegistry.getInstance();
         Logger logger = Logger.getInstance();
 
-        List<Spore> prevEffects = original.getEffects();
+        List<Spore> prevEffects = new ArrayList<>(original.getEffects());
 
         // Hatás alkalmazása a rovar instance-ra (bekerül az effects listájába)
         original.addEffects(this);
@@ -58,17 +59,8 @@ public class CloneEffect extends Spore {
         currTecton.addInsect(clone);
         clone.getEntomologist().addInsects(clone);
 
-        if (original.getEffects().contains(this)) {
-            logger.logChange("INSECT", original, "EFFECT", prevEffects, original.getEffects());
-        } else {
-            logger.logError("EFFECT", "ACCELERATING EFFECT", "Nem sikerült alkalmazni a rovarra!");
-        }
-
-        if (currTecton.getInsects().contains(clone) && original.getEntomologist().getInsects().contains(clone)) {
-            logger.logOk("INSECT", "NEW INSECT", "", "null", "created");
-        } else {
-            logger.logError("INSECT", "NEW INSECT", "Nem sikerült a klónt hozzáadni a tektonhoz vagy a rovarászhoz!");
-        }
+        logger.logChange("INSECT", original, "EFFECT", prevEffects, original.getEffects());
+        logger.logOk("INSECT", "NEW INSECT", "", "null", "created");
     }
 
     @Override

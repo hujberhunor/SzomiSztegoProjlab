@@ -43,6 +43,7 @@ public class AcceleratingEffect extends Spore {
     // következő két kör alatt eggyel több akciót használhat ki mozgásra.
     @Override
     public void applyTo(Insect insect) {
+        EntityRegistry registry = EntityRegistry.getInstance();
         Logger logger = Logger.getInstance();
 
         List<Spore> prevEffects = new ArrayList<>(insect.getEffects());

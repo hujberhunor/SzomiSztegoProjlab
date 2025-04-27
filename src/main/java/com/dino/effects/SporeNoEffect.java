@@ -1,5 +1,6 @@
 package com.dino.effects;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import com.dino.core.Insect;
@@ -39,15 +40,11 @@ public class SporeNoEffect extends Spore {
         EntityRegistry registry = EntityRegistry.getInstance();
         Logger logger = Logger.getInstance();
 
-        List<Spore> prevEffects = insect.getEffects();
+        List<Spore> prevEffects = new ArrayList<>(insect.getEffects());
 
         insect.addEffects(this);
 
-        if (insect.getEffects().contains(this)) {
-            logger.logChange("INSECT", insect, "EFFECT", prevEffects, insect.getEffects());
-        } else {
-            logger.logError("EFFECT", "NO EFFECT", "Nem sikerült alkalmazni a rovarra!");
-        }
+        logger.logChange("INSECT", insect, "EFFECT", prevEffects, insect.getEffects());
     }
 
     @Override
