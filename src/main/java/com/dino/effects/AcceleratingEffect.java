@@ -45,11 +45,11 @@ public class AcceleratingEffect extends Spore {
     public void applyTo(Insect insect) {
         Logger logger = Logger.getInstance();
 
-        EffectList prevEffects = new EffectList(insect.getEffects());
+        List<Spore> prevEffects = new ArrayList<>(insect.getEffects());
 
         // ellenőrzés, hogy már az adott spóra hatása alatt van-e
         boolean alreadyHasEffect = false;
-        for (Spore effect : prevEffects.getList()) {
+        for (Spore effect : prevEffects) {
             if (effect.sporeType() == 1)
                 alreadyHasEffect = true;
         }
@@ -60,8 +60,7 @@ public class AcceleratingEffect extends Spore {
             // Hatás alkalmazása
             insect.addEffects(this); // effekt listára
 
-            EffectList newEffects = new EffectList(insect.getEffects());
-            logger.logChange("INSECT", insect, "EFFECT", prevEffects, newEffects);
+            logger.logChange("INSECT", insect, "EFFECT", prevEffects, insect.getEffects());
         }
     }
 

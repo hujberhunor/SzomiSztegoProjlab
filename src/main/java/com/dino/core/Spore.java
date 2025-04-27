@@ -48,24 +48,6 @@ public abstract class Spore implements SerializableEntity {
     // Absztarkt függvény, ami visszaadja a spóra effektjét reprezentáló integert.
     public abstract int sporeType();
 
-    //az applyTo() függvényhez a logChange összehasonlítása miatt kell
-    protected class EffectList{
-        List<Spore> effects = new ArrayList<Spore>();
-
-        public EffectList(List<Spore> effects) {
-            this.effects.addAll(effects);
-        }
-
-        public List<Spore> getList() {
-            return effects;
-        }
-
-        @Override
-        public String toString() {
-            return effects.toString();
-        }
-    }
-
     @Override
     public JsonObject serialize(ObjectNamer namer) {
         JsonObject obj = new JsonObject();
