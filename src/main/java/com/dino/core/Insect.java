@@ -16,6 +16,8 @@ import com.dino.effects.StunningEffect;
 import com.dino.player.Entomologist;
 import com.dino.player.Mycologist;
 import com.dino.tecton.Tecton;
+import com.dino.util.EntityRegistry;
+import com.dino.util.Logger;
 import com.dino.util.ObjectNamer;
 import com.dino.util.SerializableEntity;
 import com.dino.util.SerializerUtil;
@@ -80,40 +82,49 @@ public class Insect implements SerializableEntity {
      * @return true ha a mozgás sikeres volt, különben false
      */
     public boolean move(Tecton targetTecton) {
-        Skeleton skeleton = Skeleton.getInstance();
-        skeleton.startMethod("Insect", "move");
+        EntityRegistry registry = new EntityRegistry();
+        Logger logger = new Logger(registry);
+
+        // Skeleton skeleton = Skeleton.getInstance();
+        // skeleton.startMethod("Insect", "move");
 
         // Ellenőrizzük, hogy van-e még akciópont
         if (entomologist.getRemainingActions() <= 0) {
-            skeleton.log("Nem mozdulhat: nincs több akciópont a körben.");
-            skeleton.endMethod();
+            logger.logError("INSECT", registry.getNameOf(this), "Nem mozdulhat: nincs több akciópont a körben.");
+            // skeleton.log("Nem mozdulhat: nincs több akciópont a körben.");
+            // skeleton.endMethod();
             return false;
         }
 
         // Ellenőrizzük, hogy bénító hatás alatt van-e
         if (isUnderEffect(3)) {
-            skeleton.log("Nem mozdulhat: ParalyzingEffect hatás alatt van.");
-            skeleton.endMethod();
+            logger.logError("INSECT", registry.getNameOf(this), "Nem mozdulhat: ParalyzingEffect hatás alatt van.");
+            // skeleton.log("Nem mozdulhat: ParalyzingEffect hatás alatt van.");
+            // skeleton.endMethod();
             return false;
         }
 
         // Ellenőrizzük, hogy a tektonok szomszédosak-e
         if (!currentTecton.isNeighbor(targetTecton)) {
-            skeleton.log("Nem mozdulhat: a cél tekton nem szomszédos.");
-            skeleton.endMethod();
+            logger.logError("INSECT", registry.getNameOf(this), "Nem mozdulhat: a cél tekton nem szomszédos.");
+            // skeleton.log("Nem mozdulhat: a cél tekton nem szomszédos.");
+            // skeleton.endMethod();
             return false;
         }
 
         // Ellenőrizzük, hogy van-e összekötő gombafonál
         if (!currentTecton.hasHypha(targetTecton)) {
-            skeleton.log("Nem mozdulhat: nincs összekötő gombafonál.");
-            skeleton.endMethod();
+            logger.logError("INSECT", registry.getNameOf(this), "Nem mozdulhat: nincs összekötő gombafonál.");
+            // skeleton.log("Nem mozdulhat: nincs összekötő gombafonál.");
+            // skeleton.endMethod();
             return false;
         }
 
         // Sikeres mozgás
+        logger.logChange("INSECT", this, "TECTON", currentTecton, targetTecton);
+        logger.logOk("INSECT", registry.getNameOf(this), "ACTION", "ATTEMPT_MOVE", "SUCCESS");
         currentTecton = targetTecton;
-        skeleton.log("Rovar sikeresen mozgott az új tektonra.");
+        // skeleton.log("Rovar sikeresen mozgott az új tektonra.");
 
         if (isUnderEffect(1) && extraMove && isUnderEffect(4)) {
             setExtraMove(false);
@@ -126,7 +137,7 @@ public class Insect implements SerializableEntity {
             entomologist.decreaseActions(); // Csökkentjük az akciópontját
         }
 
-        skeleton.endMethod();
+        // skeleton.endMethod();
         return true;
     }
 
@@ -140,27 +151,32 @@ public class Insect implements SerializableEntity {
      * @return
      */
     public boolean cutHypha(Hypha h, Tecton targetTecton) {
-        Skeleton skeleton = Skeleton.getInstance();
-        skeleton.startMethod("Insect", "cut");
+        EntityRegistry registry = new EntityRegistry();
+        Logger logger = new Logger(registry);
+        // Skeleton skeleton = Skeleton.getInstance();
+        // skeleton.startMethod("Insect", "cut");
 
         // Ellenőrizzük, hogy a tektonok szomszédosak-e
         if (!currentTecton.isNeighbor(targetTecton)) {
-            skeleton.log("Nem vághat: a cél tekton nem szomszédos.");
-            skeleton.endMethod();
+            logger.logError("INSECT", registry.getNameOf(this), "Nem vághat: a cél tekton nem szomszédos.");
+            // skeleton.log("Nem vághat: a cél tekton nem szomszédos.");
+            // skeleton.endMethod();
             return false;
         }
 
         // Ellenőrizzük, hogy a fonál fut-e a tektonon
         if (!h.getTectons().contains(targetTecton)) {
-            skeleton.log("Nem vághat: a fonál nem a tektonon fut.");
-            skeleton.endMethod();
+            logger.logError("INSECT", registry.getNameOf(this), "Nem vághat: a fonál nem a tektonon fut.");
+            // skeleton.log("Nem vághat: a fonál nem a tektonon fut.");
+            // skeleton.endMethod();
             return false;
         }
 
         // Ellenőrizzük, hogy a rovar kábító spórák hatása alatt van-e
         if (isUnderEffect(5)) {
-            skeleton.log("Nem vághat: a rovar kábító spóra hatása alatt van.");
-            skeleton.endMethod();
+            logger.logError("INSECT", registry.getNameOf(this), "Nem vághat: a rovar kábító spóra hatása alatt van.");
+            // skeleton.log("Nem vághat: a rovar kábító spóra hatása alatt van.");
+            // skeleton.endMethod();
             return false;
         }
 
@@ -170,6 +186,8 @@ public class Insect implements SerializableEntity {
         // A kapott indextől kezdve töröljük a lista elemeit
         int index = -1;
 
+        // Obsolete logging
+        /*
         skeleton.log("A fonál tektonjai a vágás előtt:");
         for (int i = 0; i < h.getTectons().size(); i++) {
             skeleton.log(h.getTectons().get(i).toString());
@@ -177,17 +195,26 @@ public class Insect implements SerializableEntity {
                 index = i;
             }
         }
+        */
+        int oldTectonCount = h.getTectons().size();
+        Tecton last = h.getTectons().get(oldTectonCount - 1);
 
         h.getTectons().subList(index, h.getTectons().size()).clear();
 
+        logger.logChange("HYPHA", h, "LAST_TECTON", last, h.getTectons().get(h.getTectons().size() - 1));
+        logger.logChange("HYPHA", h, "TECTON_COUNT", oldTectonCount, h.getTectons().size());
+
+        /*
         skeleton.log("A fonál tektonjai a vágás után:");
         for (int i = 0; i < h.getTectons().size(); i++) {
             skeleton.log(h.getTectons().get(i).toString());
         }
+        */
 
-        skeleton.log("Rovar sikeresen elvágta a fonalat.");
+        // skeleton.log("Rovar sikeresen elvágta a fonalat.");
+        logger.logOk("INSECT", registry.getNameOf(this), "ACTION", "ATTEMPT_CUTTING_HYPHA", "SUCCESS");
         entomologist.decreaseActions();
-        skeleton.endMethod();
+        // skeleton.endMethod();
 
         return true;
     }
@@ -203,13 +230,16 @@ public class Insect implements SerializableEntity {
      * @param e
      */
     public boolean consumeSpores(Entomologist e) {
-        Skeleton skeleton = Skeleton.getInstance();
-        skeleton.startMethod("Insect", "consume");
+        EntityRegistry registry = new EntityRegistry();
+        Logger logger = new Logger(registry);
+        // Skeleton skeleton = Skeleton.getInstance();
+        // skeleton.startMethod("Insect", "consume");
 
         // Ellenőrizzük, hogy van-e spóra a tektonon
         if (currentTecton.spores.isEmpty()) {
-            skeleton.log("Nem lehet spórát enni: a tektonon nincs spóra.");
-            skeleton.endMethod();
+            logger.logError("INSECT", registry.getNameOf(this), "Nem lehet spórát enni: a tektonon nincs spóra.");
+            // skeleton.log("Nem lehet spórát enni: a tektonon nincs spóra.");
+            // skeleton.endMethod();
             return false;
         }
 
@@ -230,7 +260,8 @@ public class Insect implements SerializableEntity {
                 ParalyzingEffect.class,
                 SlowingEffect.class,
                 SporeNoEffect.class,
-                StunningEffect.class);
+                StunningEffect.class,
+                CloneEffect.class);
         Random random = new Random();
         Class<? extends Spore> randomSporeClass = sporeClasses.get(
                 random.nextInt(sporeClasses.size()));
@@ -244,9 +275,10 @@ public class Insect implements SerializableEntity {
             throw new RuntimeException("Failed to create spore instance", exc);
         }
 
-        skeleton.log("Rovar sikeresen elfogyasztotta a spórát.");
+        logger.logOk("INSECT", registry.getNameOf(this), "ACTION", "ATTEMPT_EATING_SPORE", "SUCCESS");
+        //skeleton.log("Rovar sikeresen elfogyasztotta a spórát.");
         entomologist.decreaseActions();
-        skeleton.endMethod();
+        //skeleton.endMethod();
 
         return true;
     }
@@ -257,24 +289,36 @@ public class Insect implements SerializableEntity {
      * @param s
      */
     public void addEffects(Spore s) {
-        Skeleton skeleton = Skeleton.getInstance();
-        skeleton.startMethod("Insect", "add effects");
+        EntityRegistry registry = new EntityRegistry();
+        Logger logger = new Logger(registry);
+
+        // Skeleton skeleton = Skeleton.getInstance();
+        // skeleton.startMethod("Insect", "add effects");
+
+        int prevScore = entomologist.score;
 
         entomologist.score += s.getNutrientValue();
         effects.add(s);
-        skeleton.log("Elfogyasztott spóra: " + s.toString());
+
+        logger.logChange("ENTOMOLOGIST", entomologist, "SCORE", prevScore, entomologist.score);
+        // skeleton.log("Elfogyasztott spóra: " + s.toString());
+        // skeleton.endMethod();
     }
 
     /**
      * A rovar effektlistájáról eltávolítja a lejárt effektet.
      */
     public void removeExpiredEffects() {
-        Skeleton skeleton = Skeleton.getInstance();
-        skeleton.startMethod("Insect", "remove effects");
+        EntityRegistry registry = new EntityRegistry();
+        Logger logger = new Logger(registry);
+
+        // Skeleton skeleton = Skeleton.getInstance();
+        // skeleton.startMethod("Insect", "remove effects");
 
         for (int i = 0; i < effects.size(); i++) {
             if (effects.get(i).getEffectDuration() == 0) {
-                skeleton.log("Törölt spóra: " + effects.get(i).toString());
+                logger.logChange("INSECT", this, "REMOVED_EFFECT", "-", i);
+                // skeleton.log("Törölt spóra: " + effects.get(i).toString());
                 effects.remove(i);
             }
         }
@@ -331,5 +375,4 @@ public class Insect implements SerializableEntity {
 
         return obj;
     }
-
 }

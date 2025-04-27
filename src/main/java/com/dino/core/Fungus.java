@@ -192,7 +192,7 @@ public class Fungus implements SerializableEntity {
             newHypha.continueHypha(currTecton); // A fonal folytatása ezen a tektonon
             currTecton.addHypha(newHypha); // Hozzáadjuk a fonalat a tektonhoz
 
-            logger.logOk("FUNGUS", registry.getNameOf(this),"ACTION", "GROW_HYPHA", "SUCCESS");
+            logger.logOk("FUNGUS", registry.getNameOf(this),"ACTION", "ATTEMPT_GROW_HYPHA", "SUCCESS");
             // skeleton.log("Gombafonál sikeresen növesztve a tektonon: " + currTecton.toString());
         }
 
