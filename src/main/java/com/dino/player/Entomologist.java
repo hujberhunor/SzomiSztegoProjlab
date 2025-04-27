@@ -22,6 +22,8 @@ public class Entomologist extends Player implements SerializableEntity {
      */
     List<Insect> insects;
 
+    private static final ObjectNamer namer = ObjectNamer.getInstance();
+
     public Entomologist() {
         this.insects = new ArrayList<Insect>();
         this.actionsPerTurn = 2;
@@ -40,7 +42,6 @@ public class Entomologist extends Player implements SerializableEntity {
      */
     @Override
     public void increaseActions() {
-        EntityRegistry registry = EntityRegistry.getInstance();
         Logger logger = Logger.getInstance();
 
         int prevActions = remainingActions;
@@ -52,7 +53,6 @@ public class Entomologist extends Player implements SerializableEntity {
 
     @Override
     public void decreaseActions() {
-        EntityRegistry registry = EntityRegistry.getInstance();
         Logger logger = Logger.getInstance();
 
         int prevActions = remainingActions;
@@ -61,7 +61,7 @@ public class Entomologist extends Player implements SerializableEntity {
             logger.logChange("ENTOMOLOGIST", this, "REMAINING_ACTIONS",
                     String.valueOf(prevActions), String.valueOf(this.remainingActions));
         } else {
-            logger.logError("ENTOMOLOGIST", registry.getNameOf(this),
+            logger.logError("ENTOMOLOGIST", namer.getName(this),
                     "Nincs több akció, nem csökkenthető.");
         }
     }

@@ -26,6 +26,8 @@ public class Mycologist extends Player implements SerializableEntity {
      */
     List<Fungus> mushrooms;
 
+    private static final ObjectNamer namer = ObjectNamer.getInstance();
+
     public Mycologist() {
         this.mushrooms = new ArrayList<Fungus>();
         this.actionsPerTurn = 1;
@@ -46,10 +48,9 @@ public class Mycologist extends Player implements SerializableEntity {
      * @param t Ezen a tektonon lesz elhelyezve a gomatest.
      */
     public void placeFungus(Tecton t) {
-        EntityRegistry registry = EntityRegistry.getInstance();
         Logger logger = Logger.getInstance();
 
-        String tectonName = registry.getNameOf(t);
+        String tectonName = namer.getName(t);
 
         // Ellenőrizzük, hogy a tekton tartalmaz-e a gombász által vezérelt fajnak
         // megfelelő fonalat
@@ -60,14 +61,14 @@ public class Mycologist extends Player implements SerializableEntity {
             }
         }
         if (!tectonHasHypha) {
-            logger.logError("MYCOLOGIST", registry.getNameOf(this),
+            logger.logError("MYCOLOGIST", namer.getName(this),
                     "Nem lehet elhelyezni a gombát: nincs megfelelő gombafonál a tektonon " + tectonName);
             return;
         }
 
         // Ellenőrizzük, hogy van-e elegendő spóra
         if (!t.hasSpores(this)) {
-            logger.logError("MYCOLOGIST", registry.getNameOf(this),
+            logger.logError("MYCOLOGIST", namer.getName(this),
                     "Nem lehet elhelyezni a gombát: nincs elegendő spóra a tektonon " + tectonName);
             return;
         }
@@ -81,7 +82,7 @@ public class Mycologist extends Player implements SerializableEntity {
 
         logger.logChange("MYCOLOGIST", this, "MUSHROOMS_COUNT",
                 String.valueOf(oldMushroomsCount), String.valueOf(mushrooms.size()));
-        logger.logOk("MYCOLOGIST", registry.getNameOf(this),
+        logger.logOk("MYCOLOGIST", namer.getName(this),
                 "ACTION", "ATTEMPT_PLACE_FUNGUS", "SUCCESS");
     }
 
@@ -91,7 +92,6 @@ public class Mycologist extends Player implements SerializableEntity {
 
     @Override
     public void increaseActions() {
-        EntityRegistry registry = EntityRegistry.getInstance();
         Logger logger = Logger.getInstance();
 
         int prevActions = remainingActions;
@@ -103,7 +103,6 @@ public class Mycologist extends Player implements SerializableEntity {
 
     @Override
     public void decreaseActions() {
-        EntityRegistry registry = EntityRegistry.getInstance();
         Logger logger = Logger.getInstance();
 
         int prevActions = remainingActions;
@@ -112,7 +111,7 @@ public class Mycologist extends Player implements SerializableEntity {
             logger.logChange("MYCOLOGIST", this, "REMAINING_ACTIONS",
                     String.valueOf(prevActions), String.valueOf(this.remainingActions));
         } else {
-            logger.logError("MYCOLOGIST", registry.getNameOf(this),
+            logger.logError("MYCOLOGIST", namer.getName(this),
                     "Nincs több akció, nem csökkenthető.");
         }
     }
