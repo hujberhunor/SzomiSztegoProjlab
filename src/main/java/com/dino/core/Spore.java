@@ -53,7 +53,7 @@ public abstract class Spore implements SerializableEntity {
         List<Spore> effects = new ArrayList<Spore>();
 
         public EffectList(List<Spore> effects) {
-            this.effects = effects;
+            this.effects.addAll(effects);
         }
 
         public List<Spore> getList() {
