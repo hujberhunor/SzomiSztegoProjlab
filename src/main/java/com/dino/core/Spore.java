@@ -5,6 +5,9 @@ import com.dino.util.ObjectNamer;
 import com.dino.util.SerializableEntity;
 import com.google.gson.JsonObject;
 
+import java.util.ArrayList;
+import java.util.List;
+
 //Absztrakt osztály, aminek leszármazottai a specifikus spóratípusokat valósítják meg.
 //Az osztály attribútumaiban számontartja, hogy melyik gombászhoz tartozik a spóra, hány körig tart a hatása,
 //illetve hogy elfogyasztásakor a rovarász mennyi pontot kap (ez a tápanyagtartalom).

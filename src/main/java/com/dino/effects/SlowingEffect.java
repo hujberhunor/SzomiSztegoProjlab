@@ -1,5 +1,6 @@
 package com.dino.effects;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import com.dino.core.Insect;
@@ -39,7 +40,7 @@ public class SlowingEffect extends Spore {
         EntityRegistry registry = EntityRegistry.getInstance();
         Logger logger = Logger.getInstance();
 
-        List<Spore> prevEffects = insect.getEffects();
+        List<Spore> prevEffects = new ArrayList<>(insect.getEffects());
 
         // ellenőrzés, hogy már az adott spóra hatása alatt van-e
         boolean alreadyHasEffect = false;
@@ -49,24 +50,15 @@ public class SlowingEffect extends Spore {
         }
 
         if (alreadyHasEffect) {
-            logger.logError("SPORE", "SLOWING_EFFECT", "A rovar már lassító hatás alatt van!");
+            logger.logError("SPORE", this.getClass().getSimpleName(), "A rovar már lassító hatás alatt van!");
         } else {
             int prevActions = insect.getEntomologist().getRemainingActions();
 
             insect.addEffects(this);
             insect.getEntomologist().setActions(1);
 
-            if (insect.getEffects().contains(this)) {
-                logger.logChange("INSECT", insect, "EFFECT", prevEffects, insect.getEffects());
-            } else {
-                logger.logError("EFFECT", "SLOWING EFFECT", "Nem sikerült alkalmazni a rovarra!");
-            }
-
-            if (insect.getEntomologist().getRemainingActions() == 1) {
-                logger.logChange("ENTOMOLOGIST", insect.getEntomologist(), "REMAINING ACTIONS", prevActions, 1);
-            } else {
-                logger.logError("ENTOMOLOGIST", "", "Nem sikerült beállítani az akciók számát!");
-            }
+            logger.logChange("INSECT", insect, "EFFECT", prevEffects, insect.getEffects());
+            logger.logChange("ENTOMOLOGIST", insect.getEntomologist(), "REMAINING ACTIONS", prevActions, 1);
         }
     }
 

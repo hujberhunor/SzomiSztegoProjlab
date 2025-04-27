@@ -78,7 +78,7 @@ public class Insect implements SerializableEntity {
      * tekton között.
      * Visszaadja, hogy sikeres volt-e a művelet.
      * 
-     * @param t
+     * @param targetTecton
      * @return true ha a mozgás sikeres volt, különben false
      */
     public boolean move(Tecton targetTecton) {

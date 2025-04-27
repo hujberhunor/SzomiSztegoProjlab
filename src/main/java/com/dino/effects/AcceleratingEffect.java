@@ -1,5 +1,6 @@
 package com.dino.effects;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import com.dino.core.Insect;
@@ -45,7 +46,7 @@ public class AcceleratingEffect extends Spore {
         EntityRegistry registry = EntityRegistry.getInstance();
         Logger logger = Logger.getInstance();
 
-        List<Spore> prevEffects = insect.getEffects();
+        List<Spore> prevEffects = new ArrayList<>(insect.getEffects());
 
         // ellenőrzés, hogy már az adott spóra hatása alatt van-e
         boolean alreadyHasEffect = false;
@@ -55,26 +56,12 @@ public class AcceleratingEffect extends Spore {
         }
 
         if (alreadyHasEffect) {
-            logger.logError("SPORE", "ACCELERATING_EFFECT", "A rovar már gyorsító hatás alatt van!");
+            logger.logError("SPORE", this.getClass().getSimpleName(), "A rovar már gyorsító hatás alatt van!");
         } else {
-            int prevActions = insect.getEntomologist().getRemainingActions();
-
             // Hatás alkalmazása
             insect.addEffects(this); // effekt listára
-            insect.getEntomologist().increaseActions(); // +1 action
 
-            if (insect.getEffects().contains(this)) {
-                logger.logChange("INSECT", insect, "EFFECT", prevEffects, insect.getEffects());
-            } else {
-                logger.logError("EFFECT", "ACCELERATING EFFECT", "Nem sikerült alkalmazni a rovarra!");
-            }
-
-            if (prevActions < insect.getEntomologist().getRemainingActions()) {
-                logger.logChange("ENTOMOLOGIST", insect.getEntomologist(), "REMAINING ACTIONS", prevActions,
-                        insect.getEntomologist().getRemainingActions());
-            } else {
-                logger.logError("ENTOMOLOGIST", "", "Nem sikerült növelni az akciók számát!");
-            }
+            logger.logChange("INSECT", insect, "EFFECT", prevEffects, insect.getEffects());
         }
     }
 

@@ -1,5 +1,6 @@
 package com.dino.effects;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import com.dino.core.Insect;
@@ -42,7 +43,7 @@ public class ParalyzingEffect extends Spore {
         EntityRegistry registry = EntityRegistry.getInstance();
         Logger logger = Logger.getInstance();
 
-        List<Spore> prevEffects = insect.getEffects();
+        List<Spore> prevEffects = new ArrayList<>(insect.getEffects());
 
         // ellenőrzés, hogy már az adott spóra hatása alatt van-e
         boolean alreadyHasEffect = false;
@@ -52,7 +53,7 @@ public class ParalyzingEffect extends Spore {
         }
 
         if (alreadyHasEffect) {
-            logger.logError("SPORE", "PARALYZING_EFFECT", "A rovar már bénító hatás alatt van!");
+            logger.logError("SPORE", this.getClass().getSimpleName(), "A rovar már bénító hatás alatt van!");
         } else {
             int prevActions = insect.getEntomologist().getRemainingActions();
 
@@ -60,17 +61,8 @@ public class ParalyzingEffect extends Spore {
             insect.addEffects(this); // effekt listára
             insect.getEntomologist().setActions(0);
 
-            if (insect.getEffects().contains(this)) {
-                logger.logChange("INSECT", insect, "EFFECT", prevEffects, insect.getEffects());
-            } else {
-                logger.logError("EFFECT", "PARALYZING EFFECT", "Nem sikerült alkalmazni a rovarra!");
-            }
-
-            if (insect.getEntomologist().getRemainingActions() == 0) {
-                logger.logChange("ENTOMOLOGIST", insect.getEntomologist(), "ACTIONS", prevActions, 0);
-            } else {
-                logger.logError("ENTOMOLOGIST", "", "Nem sikerült beállítani az akciók számát!");
-            }
+            logger.logChange("INSECT", insect, "EFFECT", prevEffects, insect.getEffects());
+            logger.logChange("ENTOMOLOGIST", insect.getEntomologist(), "ACTIONS", prevActions, 0);
         }
     }
 
