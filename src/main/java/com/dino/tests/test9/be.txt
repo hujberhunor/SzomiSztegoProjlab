@@ -1,2 +1,2 @@
-INIT src/main/java/com/dino/tests/test9/test9.json 
-SAVE src/main/java/com/dino/tests/output.json
+init test9.json
+SAVE output.json

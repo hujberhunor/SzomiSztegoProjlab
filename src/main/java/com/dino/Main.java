@@ -795,6 +795,8 @@ public class Main {
             System.out.println("-----------------------");
             System.out.print("Select use case (e.g. 1, 2...): ");
             int useCase = scanner.nextInt();
+            scanner.nextLine();
+            
             switch (useCase) {
                 case 0:
                     menuActive = false;
