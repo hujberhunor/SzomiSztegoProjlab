@@ -68,6 +68,8 @@ public abstract class Tecton implements SerializableEntity {
         return neighbours;
     }
 
+    private static final ObjectNamer namer = ObjectNamer.getInstance(new EntityRegistry());
+
     /**
      * Létrehoz egy ugyanolyan típusú új tektont.
      * Minden alosztály felülírja ezt a metódust.
@@ -125,7 +127,7 @@ public abstract class Tecton implements SerializableEntity {
     /**
      * Kétirányú asszociáció miatt delegáltam fv-be
      */
-    public static void connectTectons(Tecton a, Tecton b, ObjectNamer namer) {
+    public static void connectTectons(Tecton a, Tecton b) {
         if (a == null || b == null) {
             System.out.println("[ERROR] TECTON connectTectons Null Tecton connection");
             return;
@@ -171,7 +173,7 @@ public abstract class Tecton implements SerializableEntity {
      * @param namer       Az ObjectNamer példány, amit a névkezeléshez használunk
      * @return Az újonnan létrehozott két tekton listája
      */
-    public List<Tecton> split(double breakChance, ObjectNamer namer) {
+    public List<Tecton> split(double breakChance) {
         List<Tecton> resultTectons = new ArrayList<>();
 
         String currentTectonName = namer.getName(this);
