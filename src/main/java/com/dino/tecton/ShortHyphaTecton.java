@@ -47,11 +47,18 @@ public class ShortHyphaTecton extends Tecton {
                 
                 // Ha lejárt az élettartam
 
-
                 // Ha lejárt az élettartam, jelezzük a Game osztálynak vagy
                 // közvetlenül a tectonnak, hogy eltávolíthatja a listából
                 if (hypha.getLifespan() == 0) {
-                    // TODO: Ide jöhet a hypha eltávolítására vagy decayedHypha listához adására vonatkozó kód
+                    // Place holder - működni elméletileg működik, de ez az osztály nem fér hozzá a game-hez, szóval még nem tudtam megoldani, hogy
+                    // a fonalak bekerüljenek a decayed-ek közé
+                    int index = -1;
+                    for (int i = 0; i < hypha.getTectons().size(); i++) {
+                        if (hypha.getTectons().get(i).equals(this)) {
+                            index = i;
+                        }
+                    }
+                    hypha.getTectons().subList(index, hypha.getTectons().size()).clear();
                     logger.logChange("HYPHA", hypha, "STATUS", "ACTIVE", "DECAYED");
                     
                     // Game osztályhoz való hozzáadáshoz példa

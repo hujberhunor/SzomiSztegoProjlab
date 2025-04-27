@@ -41,6 +41,10 @@ public class Hypha implements SerializableEntity {
 
     private int lifespan = 4;
 
+    private final EntityRegistry registry = EntityRegistry.getInstance();
+    private final ObjectNamer namer = ObjectNamer.getInstance();
+    private final Logger logger = Logger.getInstance();
+
     public Hypha() {
         tectons = new ArrayList<>();
     }
@@ -101,13 +105,10 @@ public class Hypha implements SerializableEntity {
      */
     public boolean continueHypha(Tecton t) {
     // Ha ez az első tecton (pl. új fonalnál), engedjük
-        EntityRegistry registry = EntityRegistry.getInstance();
-        Logger logger = Logger.getInstance();
-
         if (tectons.isEmpty()) {
             tectons.add(t);
-            logger.logChange("HYPHA", registry.getNameOf(this), "LAST_TECTON", "-", registry.getNameOf(t));
-            logger.logOk("HYPHA", registry.getNameOf(this), "ACTION", "ATTEMPT_CONTINUE_HYPA", "SUCCESS");
+            logger.logChange("HYPHA", namer.getName(this), "LAST_TECTON", "-", namer.getName(t));
+            logger.logOk("HYPHA", namer.getName(this), "ACTION", "ATTEMPT_CONTINUE_HYPA", "SUCCESS");
             return true;
         }
 
@@ -115,12 +116,12 @@ public class Hypha implements SerializableEntity {
         Tecton last = tectons.get(tectons.size() - 1);
         if (last.isNeighbor(t)) {
             tectons.add(t);
-            logger.logChange("HYPHA", registry.getNameOf(this), "LAST_TECTON", registry.getNameOf(last), registry.getNameOf(t));
-            logger.logOk("HYPHA", registry.getNameOf(this), "ACTION", "ATTEMPT_CONTINUE_HYPA", "SUCCESS");
+            logger.logChange("HYPHA", namer.getName(this), "LAST_TECTON", namer.getName(last), namer.getName(t));
+            logger.logOk("HYPHA", namer.getName(this), "ACTION", "ATTEMPT_CONTINUE_HYPA", "SUCCESS");
             return true;
         }
 
-        logger.logError("HYPHA", registry.getNameOf(this), "A fonálnövesztés sikertelen.");
+        logger.logError("HYPHA", namer.getName(this), "A fonálnövesztés sikertelen.");
         return false;
     }
 
@@ -136,9 +137,6 @@ public class Hypha implements SerializableEntity {
     }
 
     public boolean eatInsect(Insect i){
-        EntityRegistry registry = EntityRegistry.getInstance();
-        Logger logger = Logger.getInstance();
-
         // Megnézzük, hogy a rovar rajta van-e az egyik olyan tektonon, amin fut a fonál
         Tecton targetTecton = null;
         for (Tecton t : tectons) {
@@ -149,14 +147,14 @@ public class Hypha implements SerializableEntity {
         }
       
         if (targetTecton == null){
-            logger.logError("HYPHA", registry.getNameOf(this), "A rovar nem olyan tektonon van, amin fut fonál.");
+            logger.logError("HYPHA", namer.getName(this), "A rovar nem olyan tektonon van, amin fut fonál.");
             return false;
         }
 
         // A rovart eltűntetjük a céltektonról, létrehozunk egy új gombát
         i.destroyInsect();
         mycologist.placeFungus(targetTecton);
-        logger.logOk("HYPHA", registry.getNameOf(this), "ACTION", "ATTEMPT_EAT_INSECT", "SUCCESS");
+        logger.logOk("HYPHA", namer.getName(this), "ACTION", "ATTEMPT_EAT_INSECT", "SUCCESS");
         return true;
     }
 
