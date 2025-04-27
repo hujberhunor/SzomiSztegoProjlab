@@ -60,7 +60,6 @@ public class AcceleratingEffect extends Spore {
         } else {
             // Hatás alkalmazása
             insect.addEffects(this); // effekt listára
-            insect.setExtraMove(true);
 
             logger.logChange("INSECT", insect, "EFFECT", prevEffects, insect.getEffects());
         }
