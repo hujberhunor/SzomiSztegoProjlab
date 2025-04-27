@@ -233,44 +233,103 @@ public class GameBoard {
      */
     private void createTectons(List<Hexagon> hexagons) {
         List<Hexagon> remainingHexagons = new ArrayList<>();
-    
+        
         for (Hexagon h : hexagons) {
             if (!h.getNeighbours().isEmpty()) {
                 remainingHexagons.add(h);
             }
         }
-    
+        
+        List<Tecton> singleHexTectons = new ArrayList<>(); // Itt gyűjtjük az 1 hexagonból álló tektonokat
+        
         while (!remainingHexagons.isEmpty()) {
             // Kiválasztunk egy kezdő hatszöget
             int startIndex = (int) (Math.random() * remainingHexagons.size());
             Hexagon startHex = remainingHexagons.remove(startIndex);
-    
+        
             // Véletlenszerű tekton típus létrehozása
             Tecton newTecton = createRandomTectonType();
-    
+            
             // Hatszögek gyűjtése a tektonhoz (2-9 darab)
             List<Hexagon> tectonHexagons = new ArrayList<>();
             tectonHexagons.add(startHex);
-    
+            
             // Véletlenszerű méret 2 és 9 között
             int targetSize = 2 + (int) (Math.random() * 8);
-    
+            
             // Egybefüggő tekton kialakítása
             growTecton(tectonHexagons, remainingHexagons, targetSize);
-    
+            
             // FONTOS: előbb hexagonokat beállítani!
             newTecton.hexagons = tectonHexagons;
-    
+            
             // Utána regisztrálni!
             namer.register(newTecton);
-    
-            // Hozzáadjuk a tektonok listájához
-            tectons.add(newTecton);
-    
-            // Logoljuk a tekton létrehozását
-            logger.logOk("GAMEBOARD", "board", "CREATE_TECTON", "-", namer.getName(newTecton));
+            
+            // Tekton típusának kiírása a megfelelő formátumban
+            String tectonName = namer.getName(newTecton);
+            String tectonType = newTecton.getClass().getSimpleName();
+            logger.logOk("TECTON", tectonName, "TYPE", "-", tectonType);
+            
+            // Ha csak egy hexagonból áll, félretesszük későbbi feldolgozásra
+            if (tectonHexagons.size() == 1) {
+                singleHexTectons.add(newTecton);
+            } else {
+                // Különben hozzáadjuk a rendes tektonok listájához
+                tectons.add(newTecton);
+                logger.logOk("GAMEBOARD", "board", "CREATE_TECTON", "-", tectonName);
+            }
+        }
+        
+        // Második körben feldolgozzuk az 1 hexagononból álló tektonokat
+        handleSingleHexagonTectons(singleHexTectons);
+    }
+
+
+
+    /**
+     * Feldolgozza az egy hexagonból álló tektonokat, megpróbálja őket más tektonhoz kapcsolni
+     */
+    private void handleSingleHexagonTectons(List<Tecton> singleHexTectons) {
+        for (Tecton singleTecton : singleHexTectons) {
+            boolean merged = false;
+            
+            // Ellenőrizzük, hogy van-e szomszédos tekton a játéktéren
+            Hexagon singleHex = singleTecton.hexagons.get(0);
+            
+            // Sorrendben próbáljuk összevonni a legkisebb tektonnal
+            List<Tecton> possibleMergeTectons = new ArrayList<>();
+            
+            for (Tecton existingTecton : tectons) {
+                for (Hexagon existingHex : existingTecton.hexagons) {
+                    if (singleHex.getNeighbours().contains(existingHex)) {
+                        possibleMergeTectons.add(existingTecton);
+                        break; // Elég egy kapcsolatot találni az adott tektonban
+                    }
+                }
+            }
+            
+            // Ha van lehetséges összevonási jelölt, rendezzük őket méret szerint növekvő sorrendbe
+            if (!possibleMergeTectons.isEmpty()) {
+                possibleMergeTectons.sort((t1, t2) -> Integer.compare(t1.hexagons.size(), t2.hexagons.size()));
+                
+                // Összevonjuk a legkisebb tektonnal
+                Tecton targetTecton = possibleMergeTectons.get(0);
+                targetTecton.hexagons.add(singleHex);
+                logger.logOk("GAMEBOARD", "board", "MERGE_TECTON", namer.getName(singleTecton), 
+                        namer.getName(targetTecton));
+                merged = true;
+            }
+            
+            // Ha nem sikerült összevonni, akkor is hozzáadjuk a tektonok listájához
+            if (!merged) {
+                tectons.add(singleTecton);
+                logger.logOk("GAMEBOARD", "board", "CREATE_TECTON", "-", namer.getName(singleTecton));
+            }
         }
     }
+
+
 
     /**
      * Létrehoz egy véletlenszerű típusú tektont
