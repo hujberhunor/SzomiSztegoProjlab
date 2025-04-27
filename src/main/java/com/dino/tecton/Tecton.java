@@ -7,6 +7,7 @@ import com.dino.core.Fungus;
 import com.dino.core.Hexagon;
 import com.dino.core.Hypha;
 import com.dino.core.Insect;
+import com.dino.engine.Game;
 import com.dino.player.Mycologist;
 import com.dino.util.EntityRegistry;
 import com.dino.util.Logger;
@@ -68,7 +69,11 @@ public abstract class Tecton implements SerializableEntity {
         return neighbours;
     }
 
+    // private static final ObjectNamer namer = ObjectNamer.getInstance(new EntityRegistry());
+
+    private static final EntityRegistry registry = EntityRegistry.getInstance();
     private static final ObjectNamer namer = ObjectNamer.getInstance();
+    private static final Logger logger = Logger.getInstance();
 
     /**
      * Létrehoz egy ugyanolyan típusú új tektont.
@@ -387,6 +392,30 @@ public abstract class Tecton implements SerializableEntity {
 
     public Map<Mycologist, Integer> getSporeMap() {
         return spores;
+    }
+
+    public void hyphaDecay(Game game){
+        for (Hypha h : hyphas){
+            if (h.getLifespan() <= 0){
+                int index = -1;
+                for (int i = 0; i < h.getTectons().size(); i++) {
+                    if (h.getTectons().get(i).equals(this)) {
+                        index = i;
+                        break;
+                    }
+                }
+                if (index >= 0) {
+                    Hypha newHypha = new Hypha(h.getMycologist(), h.getFungus());
+                    namer.register(newHypha);
+                    for (Tecton t : h.getTectons().subList(index, h.getTectons().size())){
+                        newHypha.getTectons().add(t);
+                    }
+                    h.getTectons().subList(index, h.getTectons().size()).clear();
+
+                    game.addDecayedHypha(newHypha);
+                }
+            }
+        }
     }
 
     @Override
