@@ -73,6 +73,7 @@ public class Game {
         this.currentPlayer = null;
         this.decayedHypha = new ArrayList<>();
         this.registry = EntityRegistry.getInstance();
+        this.namer = ObjectNamer.getInstance();
         this.logger = Logger.getInstance();
         this.selectedEntity = null;
         this.scanner = new Scanner(System.in);
@@ -280,7 +281,7 @@ public class Game {
 
         int playerIndex = players.indexOf(player);
         int oldPlayerCount = players.size();
-        String playerName = registry.getNameOf(player);
+        String playerName = namer.getName(player);
 
         boolean result = players.remove(player);
         if (result) {
@@ -298,7 +299,7 @@ public class Game {
                     int nextIndex = playerIndex % players.size();
                     currentPlayer = players.get(nextIndex);
 
-                    String newPlayerName = registry.getNameOf(currentPlayer);
+                    String newPlayerName = namer.getName(currentPlayer);
                     logger.logChange("GAME", this, "CURRENT_PLAYER", oldPlayerName, newPlayerName);
                 }
             }
@@ -356,11 +357,11 @@ public class Game {
         if (nextIndex == 0) {
             return 0;
         } else {
-            String oldPlayerName = registry.getNameOf(currentPlayer);
+            String oldPlayerName = namer.getName(currentPlayer);
             currentPlayer = players.get(nextIndex);
             currentPlayer.remainingActions = currentPlayer.actionsPerTurn;
 
-            String newPlayerName = registry.getNameOf(currentPlayer);
+            String newPlayerName = namer.getName(currentPlayer);
             logger.logChange("GAME", this, "CURRENT_PLAYER", oldPlayerName, newPlayerName);
 
             return 1;
@@ -384,11 +385,11 @@ public class Game {
 
         map.breakHandler();
 
-        String oldPlayerName = registry.getNameOf(currentPlayer);
+        String oldPlayerName = namer.getName(currentPlayer);
         currentPlayer = players.get(0);
         currentPlayer.remainingActions = currentPlayer.actionsPerTurn;
 
-        String newPlayerName = registry.getNameOf(currentPlayer);
+        String newPlayerName = namer.getName(currentPlayer);
         logger.logChange("GAME", this, "CURRENT_PLAYER", oldPlayerName, newPlayerName);
 
         return 1;
