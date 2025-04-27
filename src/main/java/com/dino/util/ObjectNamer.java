@@ -15,18 +15,22 @@ import com.dino.tecton.Tecton;
 
 public class ObjectNamer {
     private static ObjectNamer instance;
-    private final EntityRegistry registry;
+
+    private final EntityRegistry registry = EntityRegistry.getInstance();
     private final Map<Class<?>, Integer> counters = new HashMap<>();
 
-    private ObjectNamer(EntityRegistry registry) {
-        this.registry = registry;
+    private ObjectNamer() {
     }
 
-    public static ObjectNamer getInstance(EntityRegistry registry) {
+    public static ObjectNamer getInstance() {
         if (instance == null) {
-            instance = new ObjectNamer(registry);
+            instance = new ObjectNamer();
         }
         return instance;
+    }
+
+    public static void reset() {
+        instance = new ObjectNamer();
     }
 
     public void register(Object obj) {
@@ -51,10 +55,16 @@ public class ObjectNamer {
         if (obj instanceof Tecton) {
             Tecton tecton = (Tecton) obj;
             List<String> hexIds = tecton.getHexagons().stream()
-                    .map(Object::toString)
+                    .filter(h -> h != null)
+                    .map(h -> String.valueOf(h.getId()))
                     .sorted()
                     .collect(Collectors.toList());
-            return "tecton_" + String.join("_", hexIds);
+
+            if (hexIds.isEmpty()) {
+                return "tecton_" + nextIndex(Tecton.class);
+            } else {
+                return "tecton_" + String.join("_", hexIds);
+            }
         }
 
         if (obj instanceof Hypha) {

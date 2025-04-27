@@ -39,8 +39,8 @@ public class ParalyzingEffect extends Spore {
     // következő két körben nem tud akciót kihasználni mozgásra.
     @Override
     public void applyTo(Insect insect) {
-        EntityRegistry registry = new EntityRegistry();
-        Logger logger = new Logger(registry);
+        EntityRegistry registry = EntityRegistry.getInstance();
+        Logger logger = Logger.getInstance();
 
         List<Spore> prevEffects = insect.getEffects();
 

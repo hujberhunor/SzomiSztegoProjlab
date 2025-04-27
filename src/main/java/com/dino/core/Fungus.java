@@ -79,8 +79,8 @@ public class Fungus implements SerializableEntity {
     // Itt eredetileg kapott paraméterként egy listát, de kivettem, mert szerintem
     // nem kell
     public void spreadSpores() {
-        EntityRegistry registry = new EntityRegistry();
-        Logger logger = new Logger(registry);
+        EntityRegistry registry =  EntityRegistry.getInstance();
+        Logger logger = Logger.getInstance();
 
         // Skeleton skeleton = Skeleton.getInstance();
         // skeleton.startMethod("Fungus", "spreadSpores");
@@ -138,8 +138,8 @@ public class Fungus implements SerializableEntity {
      * @return
      */
     public boolean growHypha(List<Tecton> t) {
-        EntityRegistry registry = new EntityRegistry();
-        Logger logger = new Logger(registry);
+        EntityRegistry registry = EntityRegistry.getInstance();
+        Logger logger = Logger.getInstance();
 
         // Skeleton skeleton = Skeleton.getInstance();
         // skeleton.startMethod("Fungus", "growHypha");
@@ -230,8 +230,8 @@ public class Fungus implements SerializableEntity {
     }
 
     public void setCharge(int c){
-        EntityRegistry registry = new EntityRegistry();
-        Logger logger = new Logger(registry);
+        EntityRegistry registry = EntityRegistry.getInstance();
+        Logger logger = Logger.getInstance();
 
         if (c >= 0 && c <= 3){
             int prevCharge = charge;

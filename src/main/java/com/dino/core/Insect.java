@@ -82,8 +82,8 @@ public class Insect implements SerializableEntity {
      * @return true ha a mozgás sikeres volt, különben false
      */
     public boolean move(Tecton targetTecton) {
-        EntityRegistry registry = new EntityRegistry();
-        Logger logger = new Logger(registry);
+        EntityRegistry registry = EntityRegistry.getInstance();
+        Logger logger = Logger.getInstance();
 
         // Skeleton skeleton = Skeleton.getInstance();
         // skeleton.startMethod("Insect", "move");
@@ -151,8 +151,8 @@ public class Insect implements SerializableEntity {
      * @return
      */
     public boolean cutHypha(Hypha h, Tecton targetTecton) {
-        EntityRegistry registry = new EntityRegistry();
-        Logger logger = new Logger(registry);
+        EntityRegistry registry = EntityRegistry.getInstance();
+        Logger logger = Logger.getInstance();
         // Skeleton skeleton = Skeleton.getInstance();
         // skeleton.startMethod("Insect", "cut");
 
@@ -230,8 +230,8 @@ public class Insect implements SerializableEntity {
      * @param e
      */
     public boolean consumeSpores(Entomologist e) {
-        EntityRegistry registry = new EntityRegistry();
-        Logger logger = new Logger(registry);
+        EntityRegistry registry = EntityRegistry.getInstance();
+        Logger logger = Logger.getInstance();
         // Skeleton skeleton = Skeleton.getInstance();
         // skeleton.startMethod("Insect", "consume");
 
@@ -289,8 +289,8 @@ public class Insect implements SerializableEntity {
      * @param s
      */
     public void addEffects(Spore s) {
-        EntityRegistry registry = new EntityRegistry();
-        Logger logger = new Logger(registry);
+        EntityRegistry registry = EntityRegistry.getInstance();
+        Logger logger = Logger.getInstance();
 
         // Skeleton skeleton = Skeleton.getInstance();
         // skeleton.startMethod("Insect", "add effects");
@@ -309,8 +309,8 @@ public class Insect implements SerializableEntity {
      * A rovar effektlistájáról eltávolítja a lejárt effektet.
      */
     public void removeExpiredEffects() {
-        EntityRegistry registry = new EntityRegistry();
-        Logger logger = new Logger(registry);
+        EntityRegistry registry = EntityRegistry.getInstance();
+        Logger logger = Logger.getInstance();
 
         // Skeleton skeleton = Skeleton.getInstance();
         // skeleton.startMethod("Insect", "remove effects");

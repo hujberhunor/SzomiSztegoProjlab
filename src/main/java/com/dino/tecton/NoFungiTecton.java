@@ -36,8 +36,8 @@ public class NoFungiTecton extends Tecton {
      */
     @Override
     public void handleHypha(Hypha h) {
-        EntityRegistry registry = new EntityRegistry();
-        Logger logger = new Logger(registry);
+        EntityRegistry registry = EntityRegistry.getInstance();
+        Logger logger = Logger.getInstance();
         
         String hyphaName = registry.getNameOf(h);
         String tectonName = registry.getNameOf(this);
@@ -58,8 +58,8 @@ public class NoFungiTecton extends Tecton {
      */
     @Override
     public void setFungus(Fungus f) {
-        EntityRegistry registry = new EntityRegistry();
-        Logger logger = new Logger(registry);
+        EntityRegistry registry = EntityRegistry.getInstance();
+        Logger logger = Logger.getInstance();
         
         String fungusName = registry.getNameOf(f);
         String tectonName = registry.getNameOf(this);

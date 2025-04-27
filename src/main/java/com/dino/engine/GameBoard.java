@@ -26,9 +26,9 @@ public class GameBoard {
      */
     private List<Tecton> tectons;
 
-    private final EntityRegistry registry = new EntityRegistry();
-    private final ObjectNamer namer = ObjectNamer.getInstance(registry);
-    private final Logger logger = new Logger(registry);
+    private final EntityRegistry registry = EntityRegistry.getInstance();
+    private final ObjectNamer namer = ObjectNamer.getInstance();
+    private final Logger logger = Logger.getInstance();
 
     public GameBoard() {
         tectons = new ArrayList<>();

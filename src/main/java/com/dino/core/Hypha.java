@@ -101,8 +101,8 @@ public class Hypha implements SerializableEntity {
      */
     public boolean continueHypha(Tecton t) {
     // Ha ez az első tecton (pl. új fonalnál), engedjük
-        EntityRegistry registry = new EntityRegistry();
-        Logger logger = new Logger(registry);
+        EntityRegistry registry = EntityRegistry.getInstance();
+        Logger logger = Logger.getInstance();
 
         if (tectons.isEmpty()) {
             tectons.add(t);
@@ -136,8 +136,8 @@ public class Hypha implements SerializableEntity {
     }
 
     public boolean eatInsect(Insect i){
-        EntityRegistry registry = new EntityRegistry();
-        Logger logger = new Logger(registry);
+        EntityRegistry registry = EntityRegistry.getInstance();
+        Logger logger = Logger.getInstance();
 
         // Megnézzük, hogy a rovar rajta van-e az egyik olyan tektonon, amin fut a fonál
         Tecton targetTecton = null;

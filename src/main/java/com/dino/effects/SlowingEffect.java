@@ -36,8 +36,8 @@ public class SlowingEffect extends Spore {
     // A gomba hatását megvalósító függvény. A paraméterként átadott rovar a
     // következő két körben legfeljebb egy akciót használhat ki mozgásra.
     public void applyTo(Insect insect) {
-        EntityRegistry registry = new EntityRegistry();
-        Logger logger = new Logger(registry);
+        EntityRegistry registry = EntityRegistry.getInstance();
+        Logger logger = Logger.getInstance();
 
         List<Spore> prevEffects = insect.getEffects();
 

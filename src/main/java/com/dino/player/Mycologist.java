@@ -46,8 +46,8 @@ public class Mycologist extends Player implements SerializableEntity {
      * @param t Ezen a tektonon lesz elhelyezve a gomatest.
      */
     public void placeFungus(Tecton t) {
-        EntityRegistry registry = new EntityRegistry();
-        Logger logger = new Logger(registry);
+        EntityRegistry registry = EntityRegistry.getInstance();
+        Logger logger = Logger.getInstance();
 
         String tectonName = registry.getNameOf(t);
 
@@ -91,8 +91,8 @@ public class Mycologist extends Player implements SerializableEntity {
 
     @Override
     public void increaseActions() {
-        EntityRegistry registry = new EntityRegistry();
-        Logger logger = new Logger(registry);
+        EntityRegistry registry = EntityRegistry.getInstance();
+        Logger logger = Logger.getInstance();
 
         int prevActions = remainingActions;
         this.remainingActions++;
@@ -103,8 +103,8 @@ public class Mycologist extends Player implements SerializableEntity {
 
     @Override
     public void decreaseActions() {
-        EntityRegistry registry = new EntityRegistry();
-        Logger logger = new Logger(registry);
+        EntityRegistry registry = EntityRegistry.getInstance();
+        Logger logger = Logger.getInstance();
 
         int prevActions = remainingActions;
         if (remainingActions > 0) {

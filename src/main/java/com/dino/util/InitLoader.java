@@ -100,7 +100,7 @@ public class InitLoader {
         int totalRounds = json.getAsJsonObject("gameState").get("totalRounds").getAsInt();
         Game game = new Game(totalRounds);
         EntityRegistry registry = game.getRegistry();
-        ObjectNamer namer = ObjectNamer.getInstance(registry);
+        ObjectNamer namer = ObjectNamer.getInstance();
 
         // 2. Mycologist-ek visszatöltése
         JsonArray mycologists = json.getAsJsonArray("mycologists");
