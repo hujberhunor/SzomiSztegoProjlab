@@ -125,26 +125,23 @@ public abstract class Tecton implements SerializableEntity {
     /**
      * Kétirányú asszociáció miatt delegáltam fv-be
      */
-    public static void connectTectons(Tecton a, Tecton b) {
-        EntityRegistry registry = new EntityRegistry();
-        Logger logger = new Logger(registry);
-        
+    public static void connectTectons(Tecton a, Tecton b, ObjectNamer namer) {
         if (a == null || b == null) {
-            logger.logError("TECTON", "connectTectons", "Null Tecton connection");
+            System.out.println("[ERROR] TECTON connectTectons Null Tecton connection");
             return;
         }
-        
-        String aName = registry.getNameOf(a);
-        String bName = registry.getNameOf(b);
-        
+    
+        String aName = namer.getName(a);
+        String bName = namer.getName(b);
+    
         if (!a.getNeighbours().contains(b)) {
             a.getNeighbours().add(b);
-            logger.logChange("TECTON", a, "NEIGHBOURS_ADD", "-", bName);
+            System.out.println("[OK] TECTON " + aName + " NEIGHBOURS_ADD: - -> " + bName);
         }
-        
+    
         if (!b.getNeighbours().contains(a)) {
             b.getNeighbours().add(a);
-            logger.logChange("TECTON", b, "NEIGHBOURS_ADD", "-", aName);
+            System.out.println("[OK] TECTON " + bName + " NEIGHBOURS_ADD: - -> " + aName);
         }
     }
 
@@ -168,62 +165,62 @@ public abstract class Tecton implements SerializableEntity {
      * az őket létrehozó tulajdonságaival,
      * amiről a gombatest és rovarok véletlenszerűen választott töredékekre kerülnek
      * át, a gombafonalak pedig megsemmisülnek.
-     * Visszaadja a két új tektont listaként.
+     * Visszaadja a két új tekton listaként.
      *
      * @param breakChance Törési esély
+     * @param namer       Az ObjectNamer példány, amit a névkezeléshez használunk
      * @return Az újonnan létrehozott két tekton listája
      */
-    public List<Tecton> split(double breakChance) {
-
-        EntityRegistry registry = new EntityRegistry();
-        Logger logger = new Logger(registry);
-        String currentTectonName = registry.getNameOf(this);
-        
+    public List<Tecton> split(double breakChance, ObjectNamer namer) {
         List<Tecton> resultTectons = new ArrayList<>();
-        
+
+        String currentTectonName = namer.getName(this);
+
         // Ha van rajta rovar, nem törhet el a tekton
         if (!insects.isEmpty()) {
-            logger.logError("TECTON", currentTectonName, "Nem törhet el: van rajta rovar");
+            System.out.println("[ERROR] TECTON " + currentTectonName + " Nem törhet el: van rajta rovar");
             return resultTectons;
         }
+
         // Ellenőrizzük, hogy a tekton nem csak egy hexagonból áll-e
         if (hexagons.size() <= 1) {
-            logger.logError("TECTON", currentTectonName, "Nem törhet el: csak egy hexagonból áll");
+            System.out.println("[ERROR] TECTON " + currentTectonName + " Nem törhet el: csak egy hexagonból áll");
             return resultTectons;
         }
+
         // Ha már kétszer tört a tekton, akkor nem törhet újra
         if (breakCount >= 2) {
-            logger.logError("TECTON", currentTectonName, "Nem törhet el: már kétszer tört");
+            System.out.println("[ERROR] TECTON " + currentTectonName + " Nem törhet el: már kétszer tört");
             return resultTectons;
         }
-        
-        // Random törési valószínűség generálása
 
+        // Random törési valószínűség generálása
         boolean shouldBreak = Math.random() * 100 < this.breakChance;
         if (!shouldBreak) {
-            logger.logError("TECTON", currentTectonName, "Nem törhet el: valószínűség nem teljesült");
+            System.out.println("[ERROR] TECTON " + currentTectonName + " Nem törhet el: valószínűség nem teljesült");
             return resultTectons;
         }
-        
+
         // Két új tekton létrehozása
         Tecton tecton1 = this.createCopy();
         Tecton tecton2 = this.createCopy();
-        
-        // Regisztráljuk az új tektonokat
-        String newName1 = currentTectonName + "_A";
-        String newName2 = currentTectonName + "_B";
-        
-        registry.register(newName1, tecton1);
-        registry.register(newName2, tecton2);
-        
-        // Törési valószínűségek és számláló frissítése
 
+        // Hexagonok felosztása és egyéb műveletek
+        divideHexagons(tecton1, tecton2);
+
+        // FONTOS: csak a hexagonok beállítása után regisztrálunk!
+        namer.register(tecton1);
+        namer.register(tecton2);
+
+        String tecton1Name = namer.getName(tecton1);
+        String tecton2Name = namer.getName(tecton2);
+
+        // Törési valószínűségek és számláló frissítése
         double newBreakChance = this.breakChance;
         int newBreakCount = this.breakCount + 1;
 
         if (newBreakCount == 1) {
             newBreakChance = this.breakChance / 2;
-          
         } else if (newBreakCount == 2) {
             newBreakChance = 0;
         }
@@ -233,35 +230,26 @@ public abstract class Tecton implements SerializableEntity {
         tecton2.breakChance = newBreakChance;
         tecton2.breakCount = newBreakCount;
 
-        
-        // Hexagonok felosztása és egyéb műveletek
-        divideHexagons(tecton1, tecton2);
-        
         // Gombafonalak törlése
         tecton1.hyphas = new ArrayList<>();
         tecton2.hyphas = new ArrayList<>();
-        
-
-
-
 
         // Gombatestek véletlenszerű áthelyezése
         if (fungus != null) {
             Tecton targetTecton = (Math.random() < 0.5) ? tecton1 : tecton2;
             targetTecton.fungus = this.fungus;
-            logger.logChange("FUNGUS", fungus, "LOCATION", currentTectonName, registry.getNameOf(targetTecton));
+            System.out.println("[OK] FUNGUS " + namer.getName(fungus) + " LOCATION: " + currentTectonName + " -> " + namer.getName(targetTecton));
         }
 
-        
         // Spórák elosztása
         divideSpores(tecton1, tecton2);
-        
+
         // Logoljuk a sikeres törést
-        logger.logChange("TECTON", this, "SPLIT", "-", newName1 + ", " + newName2);
-        
+        System.out.println("[OK] TECTON " + currentTectonName + " SPLIT: - -> " + tecton1Name + ", " + tecton2Name);
+
         resultTectons.add(tecton1);
         resultTectons.add(tecton2);
-        
+
         return resultTectons;
     }
 

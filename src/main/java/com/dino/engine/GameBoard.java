@@ -78,7 +78,7 @@ public class GameBoard {
     
         // Minden tektonra megpróbáljuk elvégezni a törést
         for (Tecton tecton : tectons) {
-            List<Tecton> splitResult = tecton.split(tecton.breakChance);
+            List<Tecton> splitResult = tecton.split(tecton.breakChance, namer);
     
             // Ha a split művelet új tektonokat eredményezett
             if (!splitResult.isEmpty()) {
@@ -92,7 +92,7 @@ public class GameBoard {
     
                 // Szomszédsági kapcsolatok beállítása
                 if (splitResult.size() >= 2) {
-                    Tecton.connectTectons(splitResult.get(0), splitResult.get(1));
+                    Tecton.connectTectons(splitResult.get(0), splitResult.get(1), namer);
                     logger.logChange("TECTON", splitResult.get(0), "NEIGHBOURS_ADD", "-",
                             namer.getName(splitResult.get(1)));
                 }
@@ -102,7 +102,7 @@ public class GameBoard {
                     if (!tectonskToRemove.contains(neighbour)) {
                         for (Tecton newTecton : splitResult) {
                             if (areTectonsNeighbours(newTecton, neighbour)) {
-                                Tecton.connectTectons(newTecton, neighbour);
+                                Tecton.connectTectons(newTecton, neighbour, namer);
                                 logger.logChange("TECTON", newTecton, "NEIGHBOURS_ADD", "-",
                                         namer.getName(neighbour));
                             }
@@ -131,7 +131,7 @@ public class GameBoard {
      * is.
      */
     public Hypha connect(Tecton a, Tecton b) {
-        Tecton.connectTectons(a, b); // kétirányú szomszédság
+        Tecton.connectTectons(a, b, namer); // kétirányú szomszédság
 
         Hypha hypha = new Hypha();
         hypha.connectTectons(a, b);
@@ -304,7 +304,7 @@ public class GameBoard {
                 // Ellenőrizzük, hogy a két tekton szomszédos-e
                 if (areTectonsNeighbours(tectonA, tectonB)) {
                     // Kétirányú szomszédság beállítása a statikus metódussal
-                    Tecton.connectTectons(tectonA, tectonB);
+                    Tecton.connectTectons(tectonA, tectonB,namer);
                 }
             }
         }
