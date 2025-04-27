@@ -106,8 +106,8 @@ public class Hypha implements SerializableEntity {
 
         if (tectons.isEmpty()) {
             tectons.add(t);
-            logger.logOk("HYPHA", registry.getNameOf(this),"ACTION", "ATTEMPT_CONTINUE_HYPA", "SUCCESS");
-
+            logger.logChange("HYPHA", registry.getNameOf(this), "LAST_TECTON", "-", registry.getNameOf(t));
+            logger.logOk("HYPHA", registry.getNameOf(this), "ACTION", "ATTEMPT_CONTINUE_HYPA", "SUCCESS");
             return true;
         }
 
@@ -115,7 +115,8 @@ public class Hypha implements SerializableEntity {
         Tecton last = tectons.get(tectons.size() - 1);
         if (last.isNeighbor(t)) {
             tectons.add(t);
-            logger.logOk("HYPHA", registry.getNameOf(this),"ACTION", "ATTEMPT_CONTINUE_HYPA", "SUCCESS");
+            logger.logChange("HYPHA", registry.getNameOf(this), "LAST_TECTON", registry.getNameOf(last), registry.getNameOf(t));
+            logger.logOk("HYPHA", registry.getNameOf(this), "ACTION", "ATTEMPT_CONTINUE_HYPA", "SUCCESS");
             return true;
         }
 
@@ -155,7 +156,7 @@ public class Hypha implements SerializableEntity {
         // A rovart eltűntetjük a céltektonról, létrehozunk egy új gombát
         i.destroyInsect();
         mycologist.placeFungus(targetTecton);
-        logger.logOk("HYPHA", registry.getNameOf(this),"ACTION", "ATTEMPT_EAT_INSECT", "SUCCESS");
+        logger.logOk("HYPHA", registry.getNameOf(this), "ACTION", "ATTEMPT_EAT_INSECT", "SUCCESS");
         return true;
     }
 
