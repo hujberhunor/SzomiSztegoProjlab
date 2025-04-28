@@ -5,6 +5,7 @@ import java.util.IdentityHashMap;
 import java.util.Map;
 
 public class EntityRegistry {
+
     private static EntityRegistry instance;
 
     private final Map<String, Object> nameToObject = new HashMap<>();
@@ -14,7 +15,7 @@ public class EntityRegistry {
 
     public static EntityRegistry getInstance() {
         if (instance == null) {
-            instance = EntityRegistry.getInstance();
+            instance = new EntityRegistry();
         }
         return instance;
     }
