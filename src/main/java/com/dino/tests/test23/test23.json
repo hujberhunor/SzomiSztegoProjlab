@@ -1,0 +1,92 @@
+{
+    "mycologists": [
+      {
+        "name": "mycologist1",
+        "type": "Mycologist",
+        "score": 0,
+        "remainingActions": 2,
+        "mushrooms": ["fungus1"]
+      },
+      {
+        "name": "mycologist2",
+        "type": "Mycologist",
+        "score": 0,
+        "remainingActions": 2,
+        "mushrooms": ["fungus2"]
+      }
+    ],
+    "entomologists": [],
+    "tectons": [
+      {
+        "name": "tecton1",
+        "type": "InfiniteHyphaTecton",
+        "hexagons": ["hexagon1", "hexagon2", "hexagon3"],
+        "neighbours": ["infinite_tecton"],
+        "breakChance": 10.0,
+        "hyphaLimit": 1
+      },
+      {
+        "name": "tecton2",
+        "type": "InfiniteHyphaTecton",
+        "hexagons": ["hexagon4", "hexagon5", "hexagon6"],
+        "neighbours": ["infinite_tecton"],
+        "breakChance": 10.0,
+        "hyphaLimit": 1
+      },
+      {
+        "name": "infinite_tecton",
+        "type": "InfiniteHyphaTecton",
+        "hexagons": ["hexagon7", "hexagon8", "hexagon9", "hexagon10"],
+        "neighbours": ["tecton1", "tecton2"],
+        "breakChance": 10.0,
+        "hyphaLimit": 1
+      }
+    ],
+    "hyphas": [
+      {
+        "name": "hypha1",
+        "type": "Hypha",
+        "mycologist": "mycologist1",
+        "fungus": "fungus1",
+        "lifespan": 5,
+        "tectons": ["tecton1"]
+      },
+      {
+        "name": "hypha2",
+        "type": "Hypha",
+        "mycologist": "mycologist2",
+        "fungus": "fungus2",
+        "lifespan": 5,
+        "tectons": ["tecton2"]
+      }
+    ],
+    "fungi": [
+      {
+        "name": "fungus1",
+        "type": "Fungus",
+        "species": "mycologist1",
+        "charge": 0,
+        "lifespan": 5,
+        "tecton": "tecton1",
+        "hyphas": ["hypha1"],
+        "spores": []
+      },
+      {
+        "name": "fungus2",
+        "type": "Fungus",
+        "species": "mycologist2",
+        "charge": 0,
+        "lifespan": 5,
+        "tecton": "tecton2",
+        "hyphas": ["hypha2"],
+        "spores": []
+      }
+    ],
+    "insects": [],
+    "gameState": {
+      "round": 1,
+      "totalRounds": 10,
+      "currentPlayer": "mycologist1"
+    }
+  }
+  
