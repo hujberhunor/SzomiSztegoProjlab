@@ -1,0 +1,31 @@
+{
+    "mycologists": [
+      {
+        "name": "mycologist1",
+        "type": "Mycologist",
+        "score": 0,
+        "remainingActions": 2,
+        "mushrooms": []
+      }
+    ],
+    "entomologists": [],
+    "tectons": [
+      {
+        "name": "tecton1",
+        "type": "InfiniteHyphaTecton",
+        "hexagons": ["hexagon1", "hexagon2", "hexagon3", "hexagon4"],
+        "neighbours": [],
+        "breakChance": 20.0,
+        "hyphaLimit": 1
+      }
+    ],
+    "hyphas": [],
+    "fungi": [],
+    "insects": [],
+    "gameState": {
+      "round": 1,
+      "totalRounds": 10,
+      "currentPlayer": "mycologist1"
+    }
+  }
+  
