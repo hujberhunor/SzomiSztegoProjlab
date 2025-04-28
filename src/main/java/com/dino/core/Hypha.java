@@ -1,9 +1,5 @@
 package com.dino.core;
 
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.List;
-
 import com.dino.player.Mycologist;
 import com.dino.tecton.Tecton;
 import com.dino.util.EntityRegistry;
@@ -14,6 +10,10 @@ import com.dino.util.SerializerUtil;
 import com.google.gson.JsonArray;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.List;
+import java.util.stream.Collectors;
 
 /**
  * A gombafonalakat reprezentáló osztály. Egy objektum a növesztés sorrendjében
@@ -57,7 +57,7 @@ public class Hypha implements SerializableEntity {
 
     /**
      * Visszaadja, hogy mely gombászhoz tartozik a fonal
-     * 
+     *
      * @return A fonalhoz tatozó gombász
      */
     public Mycologist getMycologist() {
@@ -66,7 +66,7 @@ public class Hypha implements SerializableEntity {
 
     /**
      * Beállítja, hogy mely gombászhoz tatozzon a fonal
-     * 
+     *
      * @param species Gombász, akihez beállítódik a fonal
      */
     public void setMychologist(Mycologist m) {
@@ -75,7 +75,7 @@ public class Hypha implements SerializableEntity {
 
     /**
      * Visszaadja, hogy mely gombához tartozik a fonal
-     * 
+     *
      * @return A fonalhoz tatozó gomba
      */
     public Fungus getFungus() {
@@ -84,7 +84,7 @@ public class Hypha implements SerializableEntity {
 
     /**
      * Beállítja, hogy mely gombához tatozzon a fonal
-     * 
+     *
      * @param f Gomba, akihez beállítódik a fonal
      */
     public void setFungus(Fungus f) {
@@ -104,11 +104,23 @@ public class Hypha implements SerializableEntity {
      * végére
      */
     public boolean continueHypha(Tecton t) {
-    // Ha ez az első tecton (pl. új fonalnál), engedjük
+        // Ha ez az első tecton (pl. új fonalnál), engedjük
         if (tectons.isEmpty()) {
             tectons.add(t);
-            logger.logChange("HYPHA", namer.getName(this), "LAST_TECTON", "-", namer.getName(t));
-            logger.logOk("HYPHA", namer.getName(this), "ACTION", "ATTEMPT_CONTINUE_HYPA", "SUCCESS");
+            logger.logChange(
+                "HYPHA",
+                namer.getName(this),
+                "LAST_TECTON",
+                "-",
+                namer.getName(t)
+            );
+            logger.logOk(
+                "HYPHA",
+                namer.getName(this),
+                "ACTION",
+                "ATTEMPT_CONTINUE_HYPA",
+                "SUCCESS"
+            );
             return true;
         }
 
@@ -116,12 +128,28 @@ public class Hypha implements SerializableEntity {
         Tecton last = tectons.get(tectons.size() - 1);
         if (last.isNeighbor(t)) {
             tectons.add(t);
-            logger.logChange("HYPHA", namer.getName(this), "LAST_TECTON", namer.getName(last), namer.getName(t));
-            logger.logOk("HYPHA", namer.getName(this), "ACTION", "ATTEMPT_CONTINUE_HYPA", "SUCCESS");
+            logger.logChange(
+                "HYPHA",
+                namer.getName(this),
+                "LAST_TECTON",
+                namer.getName(last),
+                namer.getName(t)
+            );
+            logger.logOk(
+                "HYPHA",
+                namer.getName(this),
+                "ACTION",
+                "ATTEMPT_CONTINUE_HYPA",
+                "SUCCESS"
+            );
             return true;
         }
 
-        logger.logError("HYPHA", namer.getName(this), "A fonálnövesztés sikertelen.");
+        logger.logError(
+            "HYPHA",
+            namer.getName(this),
+            "A fonálnövesztés sikertelen."
+        );
         return false;
     }
 
@@ -136,7 +164,7 @@ public class Hypha implements SerializableEntity {
         Collections.addAll(tectons, path);
     }
 
-    public boolean eatInsect(Insect i){
+    public boolean eatInsect(Insect i) {
         // Megnézzük, hogy a rovar rajta van-e az egyik olyan tektonon, amin fut a fonál
         Tecton targetTecton = null;
         for (Tecton t : tectons) {
@@ -145,16 +173,26 @@ public class Hypha implements SerializableEntity {
                 break;
             }
         }
-      
-        if (targetTecton == null){
-            logger.logError("HYPHA", namer.getName(this), "A rovar nem olyan tektonon van, amin fut fonál.");
+
+        if (targetTecton == null) {
+            logger.logError(
+                "HYPHA",
+                namer.getName(this),
+                "A rovar nem olyan tektonon van, amin fut fonál."
+            );
             return false;
         }
 
         // A rovart eltűntetjük a céltektonról, létrehozunk egy új gombát
         i.destroyInsect();
         mycologist.placeFungus(targetTecton);
-        logger.logOk("HYPHA", namer.getName(this), "ACTION", "ATTEMPT_EAT_INSECT", "SUCCESS");
+        logger.logOk(
+            "HYPHA",
+            namer.getName(this),
+            "ACTION",
+            "ATTEMPT_EAT_INSECT",
+            "SUCCESS"
+        );
         return true;
     }
 
@@ -169,10 +207,31 @@ public class Hypha implements SerializableEntity {
         obj.addProperty("fungus", namer.getName(fungus));
         obj.addProperty("lifespan", lifespan);
 
-        obj.add("tectons", SerializerUtil.toJsonArray(
-                tectons,
-                namer::getName));
+        obj.add("tectons", SerializerUtil.toJsonArray(tectons, namer::getName));
 
         return obj;
+    }
+
+    @Override
+    public String toString() {
+        String name = namer.getName(this);
+        if (name != null) {
+            return name;
+        }
+
+        // If no name is registered, create a representation based on tectons
+        if (tectons != null && !tectons.isEmpty()) {
+            return (
+                "Hypha(" +
+                tectons
+                    .stream()
+                    .map(t -> t.toString())
+                    .collect(Collectors.joining("→")) +
+                ")"
+            );
+        }
+
+        // Fallback to default
+        return "Hypha@" + Integer.toHexString(System.identityHashCode(this));
     }
 } // End of Hypha

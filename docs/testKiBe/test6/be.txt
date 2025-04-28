@@ -1,6 +1,0 @@
-init test6
-
-eat ins1 accel1
-move ins1 B
-eat ins1 paralysis1
-move ins1 A

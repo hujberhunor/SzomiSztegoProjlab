@@ -1,0 +1,15 @@
+[OK] GAME null PLAYERS_COUNT: 0 -> 1
+[OK] GAME null PLAYERS_COUNT: 1 -> 2
+[OK] INSECT insect_0 TECTON: SingleHyphaTecton(1,2) -> SingleHyphaTecton(3,4)
+[OK] INSECT insect_0 ACTION: ATTEMPT_MOVE -> SUCCESS
+[OK] ENTOMOLOGIST entomologist_0 REMAINING_ACTIONS: 3 -> 2
+[OK] INSECT insect_0 POSITION: tecton_A -> tecton_B
+[OK] INSECT insect_0 TECTON: SingleHyphaTecton(3,4) -> SingleHyphaTecton(5,6)
+[OK] INSECT insect_0 ACTION: ATTEMPT_MOVE -> SUCCESS
+[OK] ENTOMOLOGIST entomologist_0 REMAINING_ACTIONS: 2 -> 1
+[OK] INSECT insect_0 POSITION: tecton_B -> tecton_C
+[OK] HYPHA hypha_0 LAST_TECTON: SingleHyphaTecton(5,6) -> SingleHyphaTecton(1,2)
+[OK] HYPHA hypha_0 TECTON_COUNT: 3 -> 1
+[OK] INSECT insect_0 ACTION: ATTEMPT_CUTTING_HYPHA -> SUCCESS
+[OK] ENTOMOLOGIST entomologist_0 REMAINING_ACTIONS: 1 -> 0
+[OK] INSECT insect_0 CUT_HYPHA: hypha_0:tecton_B -> SUCCESS

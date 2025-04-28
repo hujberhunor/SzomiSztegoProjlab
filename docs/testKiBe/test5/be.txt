@@ -1,8 +1,0 @@
-init test5.json
-
-applyEffect ins1 acceleratingEffect
-
-moveInsect insect1 tecton_B
-consumeSpore insect1
-moveInsect insect2 tecton_C
-moveInsect insect2 tecton_B

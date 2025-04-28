@@ -1,10 +1,5 @@
 package com.dino;
 
-import java.io.IOException;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Scanner;
-
 import com.dino.commands.Command;
 import com.dino.commands.CommandParser;
 import com.dino.core.Fungus;
@@ -31,6 +26,12 @@ import com.dino.util.ObjectNamer;
 import com.dino.util.Serializer;
 import com.dino.util.Skeleton;
 import com.google.gson.JsonObject;
+import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.Paths;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Scanner;
 
 public class Main {
 
@@ -57,7 +58,6 @@ public class Main {
             Serializer.saveToFile(t, namer, "simple_tecton_save.json");
 
             System.out.println("SimpleSerializeTest: Sikeres mentés!");
-
         } catch (IOException ex) {
             ex.printStackTrace();
         }
@@ -123,7 +123,6 @@ public class Main {
             Serializer.saveToFile(t2, namer, "complex_tecton2_save.json");
 
             System.out.println("ComplexSerializeTest: Sikeres mentés!");
-
         } catch (IOException ex) {
             ex.printStackTrace();
         }
@@ -160,7 +159,6 @@ public class Main {
             Serializer.saveJsonToFile(gameState, "full_game_save.json");
 
             System.out.println("FullGameSerializeTest: Sikeres mentés!");
-
         } catch (Exception ex) {
             ex.printStackTrace();
         }
@@ -168,12 +166,11 @@ public class Main {
 
     /**
      * A commandok beolvasásáért felel
-     * 
+     *
      * @param game
      * @param logger
      */
     static void scanner(Game game, Logger logger) {
-
         Scanner scanner = new Scanner(System.in);
         CommandParser parser = new CommandParser(game);
 
@@ -187,11 +184,18 @@ public class Main {
                 if (command.validate(game)) { // valid-e a command
                     command.execute(game, logger);
                 } else {
-                    logger.logError("COMMAND", command.toString(), "Invalid command.");
+                    logger.logError(
+                        "COMMAND",
+                        command.toString(),
+                        "Invalid command."
+                    );
                 }
-
             } catch (Exception e) {
-                logger.logError("COMMAND", line, "Parsing failed: " + e.getMessage());
+                logger.logError(
+                    "COMMAND",
+                    line,
+                    "Parsing failed: " + e.getMessage()
+                );
             }
         }
     }
@@ -220,22 +224,31 @@ public class Main {
         Scanner inputScanner = new Scanner(System.in);
         CommandParser parser = new CommandParser(game);
 
-        System.out.println("Készen állsz, gépelj commandokat (pl. MOVE_INSECT insect1 tectonB):");
+        System.out.println(
+            "Készen állsz, gépelj commandokat (pl. MOVE_INSECT insect1 tectonB):"
+        );
 
         while (inputScanner.hasNextLine()) {
             String line = inputScanner.nextLine();
-            if (line.isBlank())
-                break;
+            if (line.isBlank()) break;
 
             try {
                 Command command = parser.parse(line);
                 if (command.validate(game)) {
                     command.execute(game, logger);
                 } else {
-                    logger.logError("COMMAND", command.toString(), "Invalid command.");
+                    logger.logError(
+                        "COMMAND",
+                        command.toString(),
+                        "Invalid command."
+                    );
                 }
             } catch (Exception e) {
-                logger.logError("COMMAND", line, "Parsing failed: " + e.getMessage());
+                logger.logError(
+                    "COMMAND",
+                    line,
+                    "Parsing failed: " + e.getMessage()
+                );
             }
         }
 
@@ -249,13 +262,19 @@ public class Main {
             Game loadedGame = InitLoader.loadFromFile("full_game_save.json");
 
             System.out.println("Betöltés sikeres!");
-            System.out.println("Játékosok száma: " + loadedGame.getPlayers().size());
-            System.out.println("Tectonok száma: " + loadedGame.getBoard().getAllTectons().size());
+            System.out.println(
+                "Játékosok száma: " + loadedGame.getPlayers().size()
+            );
+            System.out.println(
+                "Tectonok száma: " +
+                loadedGame.getBoard().getAllTectons().size()
+            );
 
             if (loadedGame.getCurrentPlayer() != null) {
-                System.out.println("Jelenlegi játékos: " + loadedGame.getCurrentPlayer().name);
+                System.out.println(
+                    "Jelenlegi játékos: " + loadedGame.getCurrentPlayer().name
+                );
             }
-
         } catch (IOException ex) {
             ex.printStackTrace();
         }
@@ -278,7 +297,11 @@ public class Main {
         // After first round is complete
         if (game.getTotalRounds() > 1) {
             boolean gameIsEnded = false;
-            for (int currentRound = 1; currentRound < game.getTotalRounds() && !gameIsEnded; currentRound++) {
+            for (
+                int currentRound = 1;
+                currentRound < game.getTotalRounds() && !gameIsEnded;
+                currentRound++
+            ) {
                 int endOfGame = game.nextRound();
                 if (endOfGame == 0) {
                     gameIsEnded = true; // Game has ended prematurely
@@ -325,6 +348,306 @@ public class Main {
         }
     }
 
+    private static final String TEST_FILE = "serialization_test.json";
+
+    public static void cloudeTest(String[] args) {
+        try {
+            // Run the test and report results
+            boolean success = runSerializationTest();
+            System.out.println(
+                "\nTest result: " + (success ? "PASSED" : "FAILED")
+            );
+        } catch (Exception e) {
+            System.err.println("Test failed with exception: " + e.getMessage());
+            e.printStackTrace();
+        }
+    }
+
+    public static boolean runSerializationTest() {
+        try {
+            // Reset any existing state
+            EntityRegistry.reset();
+            ObjectNamer.reset();
+
+            // Step 1: Create a simple game state
+            System.out.println("Creating test game state...");
+            Game originalGame = createTestGame();
+            printGameState(originalGame, "Original");
+
+            // Step 2: Serialize the game state
+            System.out.println("\nSerializing game state...");
+            JsonObject jsonState = InitLoader.serialize(
+                originalGame,
+                ObjectNamer.getInstance()
+            );
+            Serializer.saveJsonToFile(jsonState, TEST_FILE);
+            System.out.println("Game state saved to " + TEST_FILE);
+
+            // Step 3: Deserialize the game state
+            System.out.println("\nDeserializing game state...");
+            Game loadedGame = InitLoader.loadFromFile(TEST_FILE);
+            printGameState(loadedGame, "Loaded");
+
+            // Step 4: Verify the loaded state
+            boolean success = verifyGameState(originalGame, loadedGame);
+
+            // Clean up test file
+            Files.deleteIfExists(Paths.get(TEST_FILE));
+
+            return success;
+        } catch (Exception e) {
+            System.err.println("Test failed with exception: " + e.getMessage());
+            e.printStackTrace();
+            return false;
+        }
+    }
+
+    /**
+     * Creates a simple test game with some basic entities.
+     */
+    private static Game createTestGame() {
+        // Create a game with 3 rounds
+        Game game = new Game(3);
+
+        // Add a mycologist and an entomologist
+        Mycologist mycologist = new Mycologist();
+        mycologist.score = 10;
+        mycologist.setName("Test Mycologist");
+
+        Entomologist entomologist = new Entomologist();
+        entomologist.score = 15;
+        entomologist.setName("Test Entomologist");
+
+        game.addPlayer(mycologist);
+        game.addPlayer(entomologist);
+
+        // Set up some tectons
+        Tecton tecton1 = new SingleHyphaTecton();
+        Tecton tecton2 = new NoFungiTecton();
+
+        // Connect the tectons
+        Tecton.connectTectons(tecton1, tecton2);
+
+        // Add tectons to the game board
+        game.getBoard().getAllTectons().add(tecton1);
+        game.getBoard().getAllTectons().add(tecton2);
+
+        // Register all entities with the namer
+        ObjectNamer namer = ObjectNamer.getInstance();
+        namer.register(mycologist);
+        namer.register(entomologist);
+        namer.register(tecton1);
+        namer.register(tecton2);
+
+        // Create a fungus and place it on tecton1
+        Fungus fungus = new Fungus(mycologist, tecton1);
+        fungus.setCharge(2);
+        namer.register(fungus);
+        tecton1.setFungus(fungus);
+        mycologist.getMushrooms().add(fungus);
+
+        // Create an insect and place it on tecton2
+        Insect insect = new Insect(entomologist, tecton2);
+        namer.register(insect);
+        tecton2.getInsects().add(insect);
+        entomologist.getInsects().add(insect);
+
+        // Set current player and round
+        game.setCurrentPlayer(mycologist);
+        game.setCurrentTurn(1);
+
+        return game;
+    }
+
+    /**
+     * Prints the current state of a game object for debugging.
+     */
+    private static void printGameState(Game game, String label) {
+        System.out.println("===== " + label + " Game State =====");
+        System.out.println("Total rounds: " + game.getTotalRounds());
+        System.out.println("Current round: " + game.getCurrentRound());
+
+        if (game.getCurrentPlayer() != null) {
+            System.out.println(
+                "Current player: " + game.getCurrentPlayer().name
+            );
+        } else {
+            System.out.println("Current player: null");
+        }
+
+        System.out.println("Players: " + game.getPlayers().size());
+        for (int i = 0; i < game.getPlayers().size(); i++) {
+            System.out.println(
+                "  Player " +
+                (i + 1) +
+                ": " +
+                game.getPlayers().get(i).name +
+                " (Score: " +
+                game.getPlayers().get(i).score +
+                ")"
+            );
+        }
+
+        System.out.println(
+            "Tectons: " + game.getBoard().getAllTectons().size()
+        );
+
+        // Count fungi and insects
+        int fungiCount = 0;
+        int insectCount = 0;
+        for (Tecton t : game.getBoard().getAllTectons()) {
+            if (t.getFungus() != null) fungiCount++;
+            insectCount += t.getInsects().size();
+        }
+        System.out.println("Fungi: " + fungiCount);
+        System.out.println("Insects: " + insectCount);
+    }
+
+    /**
+     * Verifies that the loaded game state matches the original.
+     */
+    private static boolean verifyGameState(Game original, Game loaded) {
+        System.out.println("\n===== Verification Results =====");
+
+        boolean success = true;
+
+        // Check basic game properties
+        if (original.getTotalRounds() != loaded.getTotalRounds()) {
+            System.out.println(
+                "❌ Total rounds mismatch: Original=" +
+                original.getTotalRounds() +
+                ", Loaded=" +
+                loaded.getTotalRounds()
+            );
+            success = false;
+        } else {
+            System.out.println(
+                "✓ Total rounds match: " + original.getTotalRounds()
+            );
+        }
+
+        if (original.getCurrentRound() != loaded.getCurrentRound()) {
+            System.out.println(
+                "❌ Current round mismatch: Original=" +
+                original.getCurrentRound() +
+                ", Loaded=" +
+                loaded.getCurrentRound()
+            );
+            success = false;
+        } else {
+            System.out.println(
+                "✓ Current round match: " + original.getCurrentRound()
+            );
+        }
+
+        // Check player count
+        if (original.getPlayers().size() != loaded.getPlayers().size()) {
+            System.out.println(
+                "❌ Player count mismatch: Original=" +
+                original.getPlayers().size() +
+                ", Loaded=" +
+                loaded.getPlayers().size()
+            );
+            success = false;
+        } else {
+            System.out.println(
+                "✓ Player count match: " + original.getPlayers().size()
+            );
+        }
+
+        // Check tecton count
+        if (
+            original.getBoard().getAllTectons().size() !=
+            loaded.getBoard().getAllTectons().size()
+        ) {
+            System.out.println(
+                "❌ Tecton count mismatch: Original=" +
+                original.getBoard().getAllTectons().size() +
+                ", Loaded=" +
+                loaded.getBoard().getAllTectons().size()
+            );
+            success = false;
+        } else {
+            System.out.println(
+                "✓ Tecton count match: " +
+                original.getBoard().getAllTectons().size()
+            );
+        }
+
+        // Count fungi and insects in both games
+        int originalFungiCount = 0;
+        int originalInsectCount = 0;
+        for (Tecton t : original.getBoard().getAllTectons()) {
+            if (t.getFungus() != null) originalFungiCount++;
+            originalInsectCount += t.getInsects().size();
+        }
+
+        int loadedFungiCount = 0;
+        int loadedInsectCount = 0;
+        for (Tecton t : loaded.getBoard().getAllTectons()) {
+            if (t.getFungus() != null) loadedFungiCount++;
+            loadedInsectCount += t.getInsects().size();
+        }
+
+        if (originalFungiCount != loadedFungiCount) {
+            System.out.println(
+                "❌ Fungi count mismatch: Original=" +
+                originalFungiCount +
+                ", Loaded=" +
+                loadedFungiCount
+            );
+            success = false;
+        } else {
+            System.out.println("✓ Fungi count match: " + originalFungiCount);
+        }
+
+        if (originalInsectCount != loadedInsectCount) {
+            System.out.println(
+                "❌ Insect count mismatch: Original=" +
+                originalInsectCount +
+                ", Loaded=" +
+                loadedInsectCount
+            );
+            success = false;
+        } else {
+            System.out.println("✓ Insect count match: " + originalInsectCount);
+        }
+
+        // Check if tecton connections are maintained
+        boolean originalConnectionExists = false;
+        boolean loadedConnectionExists = false;
+
+        if (original.getBoard().getAllTectons().size() >= 2) {
+            Tecton t1 = original.getBoard().getAllTectons().get(0);
+            Tecton t2 = original.getBoard().getAllTectons().get(1);
+            originalConnectionExists =
+                t1.getNeighbours().contains(t2) &&
+                t2.getNeighbours().contains(t1);
+        }
+
+        if (loaded.getBoard().getAllTectons().size() >= 2) {
+            Tecton t1 = loaded.getBoard().getAllTectons().get(0);
+            Tecton t2 = loaded.getBoard().getAllTectons().get(1);
+            loadedConnectionExists =
+                t1.getNeighbours().contains(t2) &&
+                t2.getNeighbours().contains(t1);
+        }
+
+        if (originalConnectionExists != loadedConnectionExists) {
+            System.out.println(
+                "❌ Tecton connection mismatch: Original=" +
+                originalConnectionExists +
+                ", Loaded=" +
+                loadedConnectionExists
+            );
+            success = false;
+        } else {
+            System.out.println("✓ Tecton connections preserved");
+        }
+
+        return success;
+    }
+
     // -------------------------------- //
     public static void main(String[] args) {
         boolean menuActive = true;
@@ -368,8 +691,11 @@ public class Main {
                 case 12:
                     FullGameDeserializeTest();
                     break;
-                case 13: 
+                case 13:
                     runTestOracleMenu();
+                    break;
+                case 14:
+                    cloudeTest(args);
                     break;
                 default:
                     System.out.println("Invalid input");

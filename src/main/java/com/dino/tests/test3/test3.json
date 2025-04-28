@@ -3,7 +3,7 @@
     {
       "name": "mycologist_0",
       "type": "Mycologist",
-      "score": 5,
+      "score": 0,
       "remainingActions": 1,
       "mushrooms": []
     }
@@ -12,7 +12,7 @@
     {
       "name": "entomologist_0",
       "type": "Entomologist",
-      "score": 3,
+      "score": 0,
       "remainingActions": 3,
       "insects": ["insect_0"]
     }
@@ -21,36 +21,60 @@
     {
       "name": "tecton_A",
       "type": "SingleHyphaTecton",
-      "hexagons": ["1", "2"],
+      "hexagons": ["1"],
       "neighbours": ["tecton_B"],
-      "breakChance": 15.0,
+      "breakChance": 0.0,
       "hyphaLimit": 1
     },
     {
       "name": "tecton_B",
       "type": "SingleHyphaTecton",
-      "hexagons": ["3", "4"],
+      "hexagons": ["2"],
       "neighbours": ["tecton_A", "tecton_C"],
-      "breakChance": 10.0,
+      "breakChance": 0.0,
       "hyphaLimit": 1
     },
     {
       "name": "tecton_C",
       "type": "SingleHyphaTecton",
-      "hexagons": ["5", "6"],
-      "neighbours": ["tecton_B"],
-      "breakChance": 10.0,
+      "hexagons": ["3"],
+      "neighbours": ["tecton_B", "tecton_D"],
+      "breakChance": 0.0,
+      "hyphaLimit": 1
+    },
+    {
+      "name": "tecton_D",
+      "type": "SingleHyphaTecton",
+      "hexagons": ["4"],
+      "neighbours": ["tecton_C"],
+      "breakChance": 0.0,
       "hyphaLimit": 1
     }
   ],
   "hyphas": [
     {
-      "name": "hypha_0",
+      "name": "hypha_AB",
       "type": "Hypha",
       "mycologist": "mycologist_0",
       "fungus": null,
-      "lifespan": 4,
-      "tectons": ["tecton_A", "tecton_B", "tecton_C"]
+      "lifespan": 5,
+      "tectons": ["tecton_A", "tecton_B"]
+    },
+    {
+      "name": "hypha_BC",
+      "type": "Hypha",
+      "mycologist": "mycologist_0",
+      "fungus": null,
+      "lifespan": 5,
+      "tectons": ["tecton_B", "tecton_C"]
+    },
+    {
+      "name": "hypha_CD",
+      "type": "Hypha",
+      "mycologist": "mycologist_0",
+      "fungus": null,
+      "lifespan": 5,
+      "tectons": ["tecton_C", "tecton_D"]
     }
   ],
   "fungi": [],

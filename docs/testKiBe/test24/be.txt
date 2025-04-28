@@ -1,4 +1,0 @@
-init test24.json
-setCharge fungus1 2
-move hypha hypha1 nofungi_tecton
-create Fungus fungus2 mycologist1 nofungi_tecton

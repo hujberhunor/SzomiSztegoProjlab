@@ -1,3 +1,0 @@
-[OK] INSECT insect1 EFFECT_ADDED: null -> ParalyzingEffect(species=mycologist1, duration=2, nutrientValue=4)
-[ERROR] HYPHA hypha1 CANNOT_EAT_INSECT: Cannot create fungus on NoFungiTecton
-[ERROR] TECTON nofungi_tecton FUNGI_DISABLED: Cannot create fungus on NoFungiTecton

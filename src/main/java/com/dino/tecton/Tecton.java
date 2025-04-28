@@ -1,8 +1,5 @@
 package com.dino.tecton;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+
 import com.dino.core.Fungus;
 import com.dino.core.Hexagon;
 import com.dino.core.Hypha;
@@ -16,6 +13,10 @@ import com.dino.util.SerializableEntity;
 import com.dino.util.SerializerUtil;
 import com.dino.util.Skeleton;
 import com.google.gson.JsonObject;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 
 /**
  * Ennek az absztrakt osztálynak a leszármazottjai reprezentálják a játékteret
@@ -37,7 +38,7 @@ public abstract class Tecton implements SerializableEntity {
     public Fungus fungus;
     public List<Insect> insects;
     public Map<Mycologist, Integer> spores;
-  
+
     public List<Hypha> hyphas;
 
     /**
@@ -78,14 +79,14 @@ public abstract class Tecton implements SerializableEntity {
     /**
      * Létrehoz egy ugyanolyan típusú új tektont.
      * Minden alosztály felülírja ezt a metódust.
-     * 
+     *
      * @return Új, az aktuálissal megegyező típusú tekton
      */
     public abstract Tecton createCopy();
 
     /**
      * A tektonon elhelyez egy darab, m gombász gombájából származó spórát.
-     * 
+     *
      * @param m A gombász, akinek a gombájából a spóra származik
      */
     public void addSpores(Mycologist m) {
@@ -101,20 +102,21 @@ public abstract class Tecton implements SerializableEntity {
     /**
      * A tektonról eltávolít egy darab, m gombász gombájából származó spórát,
      * amennyiben lehetséges.
-     * 
+     *
      * @param m A gombász, akinek a gombájából a spóra származik
      */
     public void removeSpores(Mycologist m) {
         //Skeleton skeleton = Skeleton.getInstance();
         // skeleton.startMethod("Tecton", "remove spores");
 
-        spores.computeIfPresent(m, (key, value ) -> (value > 1) ? value - 1 : null);
+        spores.computeIfPresent(m, (key, value) ->
+            (value > 1) ? value - 1 : null
+        );
         //skeleton.log("Spóra eltávolítva");
-        if (!spores.isEmpty()){
+        if (!spores.isEmpty()) {
             //skeleton.log("A tektonon található gombász-spóraszám párok:");
             //spores.forEach((key, value) -> skeleton.log(key + " = " + value));
-        }
-        else {
+        } else {
             //skeleton.log("A tektonon nem található spóra");
         }
     }
@@ -134,21 +136,27 @@ public abstract class Tecton implements SerializableEntity {
      */
     public static void connectTectons(Tecton a, Tecton b) {
         if (a == null || b == null) {
-            System.out.println("[ERROR] TECTON connectTectons Null Tecton connection");
+            System.out.println(
+                "[ERROR] TECTON connectTectons Null Tecton connection"
+            );
             return;
         }
-    
+
         String aName = namer.getName(a);
         String bName = namer.getName(b);
-    
+
         if (!a.getNeighbours().contains(b)) {
             a.getNeighbours().add(b);
-            System.out.println("[OK] TECTON " + aName + " NEIGHBOURS_ADD: - -> " + bName);
+            System.out.println(
+                "[OK] TECTON " + aName + " NEIGHBOURS_ADD: - -> " + bName
+            );
         }
-    
+
         if (!b.getNeighbours().contains(a)) {
             b.getNeighbours().add(a);
-            System.out.println("[OK] TECTON " + bName + " NEIGHBOURS_ADD: - -> " + aName);
+            System.out.println(
+                "[OK] TECTON " + bName + " NEIGHBOURS_ADD: - -> " + aName
+            );
         }
     }
 
@@ -185,26 +193,42 @@ public abstract class Tecton implements SerializableEntity {
 
         // Ha van rajta rovar, nem törhet el a tekton
         if (!insects.isEmpty()) {
-            System.out.println("[ERROR] TECTON " + currentTectonName + " Nem törhet el: van rajta rovar");
+            System.out.println(
+                "[ERROR] TECTON " +
+                currentTectonName +
+                " Nem törhet el: van rajta rovar"
+            );
             return resultTectons;
         }
 
         // Ellenőrizzük, hogy a tekton nem csak egy hexagonból áll-e
         if (hexagons.size() <= 1) {
-            System.out.println("[ERROR] TECTON " + currentTectonName + " Nem törhet el: csak egy hexagonból áll");
+            System.out.println(
+                "[ERROR] TECTON " +
+                currentTectonName +
+                " Nem törhet el: csak egy hexagonból áll"
+            );
             return resultTectons;
         }
 
         // Ha már kétszer tört a tekton, akkor nem törhet újra
         if (breakCount >= 2) {
-            System.out.println("[ERROR] TECTON " + currentTectonName + " Nem törhet el: már kétszer tört");
+            System.out.println(
+                "[ERROR] TECTON " +
+                currentTectonName +
+                " Nem törhet el: már kétszer tört"
+            );
             return resultTectons;
         }
 
         // Random törési valószínűség generálása
         boolean shouldBreak = Math.random() * 100 < this.breakChance;
         if (!shouldBreak) {
-            System.out.println("[ERROR] TECTON " + currentTectonName + " Nem törhet el: valószínűség nem teljesült");
+            System.out.println(
+                "[ERROR] TECTON " +
+                currentTectonName +
+                " Nem törhet el: valószínűség nem teljesült"
+            );
             return resultTectons;
         }
 
@@ -245,14 +269,28 @@ public abstract class Tecton implements SerializableEntity {
         if (fungus != null) {
             Tecton targetTecton = (Math.random() < 0.5) ? tecton1 : tecton2;
             targetTecton.fungus = this.fungus;
-            System.out.println("[OK] FUNGUS " + namer.getName(fungus) + " LOCATION: " + currentTectonName + " -> " + namer.getName(targetTecton));
+            System.out.println(
+                "[OK] FUNGUS " +
+                namer.getName(fungus) +
+                " LOCATION: " +
+                currentTectonName +
+                " -> " +
+                namer.getName(targetTecton)
+            );
         }
 
         // Spórák elosztása
         divideSpores(tecton1, tecton2);
 
         // Logoljuk a sikeres törést
-        System.out.println("[OK] TECTON " + currentTectonName + " SPLIT: - -> " + tecton1Name + ", " + tecton2Name);
+        System.out.println(
+            "[OK] TECTON " +
+            currentTectonName +
+            " SPLIT: - -> " +
+            tecton1Name +
+            ", " +
+            tecton2Name
+        );
 
         resultTectons.add(tecton1);
         resultTectons.add(tecton2);
@@ -275,7 +313,7 @@ public abstract class Tecton implements SerializableEntity {
      * Ellenőrzi, hogy az aktuális tekton és a paraméterként megadott tekton
      * között van-e gombafonál összeköttetés.
      * Elsősorban a rovar szempontjából fontos, a fonal vágás akciójához.
-     * 
+     *
      * @param t A tekton, amellyel az összeköttetést ellenőrizzük
      * @return Igaz, ha van gombafonál a két tekton között, egyébként hamis
      */
@@ -295,7 +333,7 @@ public abstract class Tecton implements SerializableEntity {
 
     /**
      * Ellenőrzi, hogy a tektonon van-e a megadott gombásztól származó spóra.
-     * 
+     *
      * @param m A gombász, akinek a spóráját keressük.
      * @return Igaz, ha van legalább egy spóra a gombásztól, egyébként hamis.
      */
@@ -305,7 +343,7 @@ public abstract class Tecton implements SerializableEntity {
 
     /**
      * Visszaadja a tektonon lévő gombatestet
-     * 
+     *
      * @return A tektonon lévő gombatest
      */
     public Fungus getFungus() {
@@ -314,7 +352,7 @@ public abstract class Tecton implements SerializableEntity {
 
     /**
      * Beállítja a tektonon lévő gombatestet.
-     * 
+     *
      * @param f Az új gombatest, amelyet elhelyezünk a tektonon.
      */
     public void setFungus(Fungus f) {
@@ -343,25 +381,28 @@ public abstract class Tecton implements SerializableEntity {
      * Az algoritmus a sok implementációs lehetőség közül egy egyszerű
      * megoldást választ: a hexagonokat két részre osztja, de biztosítja,
      * hogy mindkét részben legalább egy hexagon legyen.
-     * 
+     *
      * @param tecton1 Az első új tekton
      * @param tecton2 A második új tekton
      */
     private void divideHexagons(Tecton tecton1, Tecton tecton2) {
-        if (hexagons.size() <= 1)
-            return;
+        if (hexagons.size() <= 1) return;
 
         // Hexagonok számának meghatározása az első tekton számára
         int firstTectonHexCount = Math.max(1, hexagons.size() / 2);
 
-        tecton1.hexagons = new ArrayList<>(hexagons.subList(0, firstTectonHexCount));
-        tecton2.hexagons = new ArrayList<>(hexagons.subList(firstTectonHexCount, hexagons.size()));
+        tecton1.hexagons = new ArrayList<>(
+            hexagons.subList(0, firstTectonHexCount)
+        );
+        tecton2.hexagons = new ArrayList<>(
+            hexagons.subList(firstTectonHexCount, hexagons.size())
+        );
     }
 
     /**
      * Szétosztja a spórákat a két új tekton között.
      * Minden gombász spórája véletlenszerűen kerül az egyik vagy másik tektonra.
-     * 
+     *
      * @param tecton1 Az első új tekton
      * @param tecton2 A második új tekton
      */
@@ -373,8 +414,7 @@ public abstract class Tecton implements SerializableEntity {
             Mycologist mycologist = entry.getKey();
             Integer sporeCount = entry.getValue();
 
-            if (sporeCount <= 0)
-                continue;
+            if (sporeCount <= 0) continue;
 
             // Véletlenszerűen választunk a két tekton között
             if (Math.random() < 0.5) {
@@ -394,9 +434,9 @@ public abstract class Tecton implements SerializableEntity {
         return spores;
     }
 
-    public void hyphaDecay(Game game){
-        for (Hypha h : hyphas){
-            if (h.getLifespan() <= 0){
+    public void hyphaDecay(Game game) {
+        for (Hypha h : hyphas) {
+            if (h.getLifespan() <= 0) {
                 int index = -1;
                 for (int i = 0; i < h.getTectons().size(); i++) {
                     if (h.getTectons().get(i).equals(this)) {
@@ -405,12 +445,20 @@ public abstract class Tecton implements SerializableEntity {
                     }
                 }
                 if (index >= 0) {
-                    Hypha newHypha = new Hypha(h.getMycologist(), h.getFungus());
+                    Hypha newHypha = new Hypha(
+                        h.getMycologist(),
+                        h.getFungus()
+                    );
                     namer.register(newHypha);
-                    for (Tecton t : h.getTectons().subList(index, h.getTectons().size())){
+                    for (Tecton t : h
+                        .getTectons()
+                        .subList(index, h.getTectons().size())) {
                         newHypha.getTectons().add(t);
                     }
-                    h.getTectons().subList(index, h.getTectons().size()).clear();
+                    h
+                        .getTectons()
+                        .subList(index, h.getTectons().size())
+                        .clear();
 
                     game.addDecayedHypha(newHypha);
                 }
@@ -421,27 +469,58 @@ public abstract class Tecton implements SerializableEntity {
     @Override
     public JsonObject serialize(ObjectNamer namer) {
         JsonObject obj = new JsonObject();
-if (hexagons.contains(null)) {
-    throw new RuntimeException("Tecton hexagons list contains NULL!");
-}
+        if (hexagons.contains(null)) {
+            throw new RuntimeException("Tecton hexagons list contains NULL!");
+        }
 
-if (neighbours.contains(null)) {
-    throw new RuntimeException("Tecton neighbours list contains NULL!");
-}
+        if (neighbours.contains(null)) {
+            throw new RuntimeException("Tecton neighbours list contains NULL!");
+        }
 
         obj.addProperty("name", namer.getName(this));
         obj.addProperty("type", this.getClass().getSimpleName());
 
-        obj.add("hexagons", SerializerUtil.toJsonArray(
-                hexagons,
-                h -> Integer.toString(h.getId())));
+        obj.add(
+            "hexagons",
+            SerializerUtil.toJsonArray(hexagons, h ->
+                Integer.toString(h.getId())
+            )
+        );
 
-        obj.add("neighbours", SerializerUtil.toJsonArray(
-                neighbours,
-                namer::getName));
+        obj.add(
+            "neighbours",
+            SerializerUtil.toJsonArray(neighbours, namer::getName)
+        );
 
         obj.addProperty("breakChance", breakChance);
 
         return obj;
+    }
+
+    @Override
+    public String toString() {
+        String name = namer.getName(this);
+        if (name != null) {
+            return name;
+        }
+
+        // If no name is registered, try to create a meaningful representation
+        if (hexagons != null && !hexagons.isEmpty()) {
+            StringBuilder sb = new StringBuilder();
+            sb.append(this.getClass().getSimpleName()).append("(");
+            for (int i = 0; i < hexagons.size(); i++) {
+                if (i > 0) sb.append(",");
+                sb.append(hexagons.get(i).toString());
+            }
+            sb.append(")");
+            return sb.toString();
+        }
+
+        // Fallback to default
+        return (
+            this.getClass().getSimpleName() +
+            "@" +
+            Integer.toHexString(System.identityHashCode(this))
+        );
     }
 }

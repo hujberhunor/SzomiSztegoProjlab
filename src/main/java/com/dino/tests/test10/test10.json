@@ -5,7 +5,7 @@
       "type": "Mycologist",
       "score": 5,
       "remainingActions": 1,
-      "mushrooms": []
+      "mushrooms": ["fungus_0"]
     }
   ],
   "entomologists": [
@@ -13,33 +13,26 @@
       "name": "entomologist_0",
       "type": "Entomologist",
       "score": 3,
-      "remainingActions": 3,
+      "remainingActions": 2,
       "insects": ["insect_0"]
     }
   ],
   "tectons": [
     {
-      "name": "tecton_A",
+      "name": "tecton_0",
       "type": "SingleHyphaTecton",
       "hexagons": ["1", "2"],
-      "neighbours": ["tecton_B"],
+      "neighbours": ["tecton_1"],
       "breakChance": 15.0,
       "hyphaLimit": 1
     },
     {
-      "name": "tecton_B",
-      "type": "SingleHyphaTecton",
+      "name": "tecton_1",
+      "type": "NoFungiTecton",
       "hexagons": ["3", "4"],
-      "neighbours": ["tecton_A", "tecton_C"],
+      "neighbours": ["tecton_0"],
       "breakChance": 10.0,
-      "hyphaLimit": 1
-    },
-    {
-      "name": "tecton_C",
-      "type": "SingleHyphaTecton",
-      "hexagons": ["5", "6"],
-      "neighbours": ["tecton_B"],
-      "breakChance": 10.0,
+      "fungiEnabled": false,
       "hyphaLimit": 1
     }
   ],
@@ -48,24 +41,35 @@
       "name": "hypha_0",
       "type": "Hypha",
       "mycologist": "mycologist_0",
-      "fungus": null,
+      "fungus": "fungus_0",
       "lifespan": 4,
-      "tectons": ["tecton_A", "tecton_B", "tecton_C"]
+      "tectons": ["tecton_0", "tecton_1"]
     }
   ],
-  "fungi": [],
+  "fungi": [
+    {
+      "name": "fungus_0",
+      "type": "Fungus",
+      "species": "mycologist_0",
+      "charge": 1,
+      "lifespan": 5,
+      "tecton": "tecton_0",
+      "hyphas": ["hypha_0"],
+      "spores": []
+    }
+  ],
   "insects": [
     {
       "name": "insect_0",
       "type": "Insect",
       "owner": "entomologist_0",
-      "currentTecton": "tecton_A",
+      "currentTecton": "tecton_1",
       "effects": []
     }
   ],
   "gameState": {
     "round": 1,
     "totalRounds": 5,
-    "currentPlayer": "entomologist_0"
+    "currentPlayer": "mycologist_0"
   }
 }
