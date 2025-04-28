@@ -1,0 +1,59 @@
+{
+    "mycologists": [
+      {
+        "name": "mycologist1",
+        "type": "Mycologist",
+        "score": 0,
+        "remainingActions": 2,
+        "mushrooms": ["fungus1"]
+      }
+    ],
+    "entomologists": [],
+    "tectons": [
+      {
+        "name": "normal_tecton",
+        "type": "InfiniteHyphaTecton",
+        "hexagons": ["hexagon1", "hexagon2", "hexagon3"],
+        "neighbours": ["short_tecton"],
+        "breakChance": 5.0,
+        "hyphaLimit": 1
+      },
+      {
+        "name": "short_tecton",
+        "type": "ShortHyphaTecton",
+        "hexagons": ["hexagon4", "hexagon5", "hexagon6"],
+        "neighbours": ["normal_tecton"],
+        "breakChance": 5.0,
+        "hyphaLimit": 1
+      }
+    ],
+    "hyphas": [
+      {
+        "name": "hypha1",
+        "type": "Hypha",
+        "mycologist": "mycologist1",
+        "fungus": "fungus1",
+        "lifespan": 4,
+        "tectons": ["normal_tecton", "short_tecton"]
+      }
+    ],
+    "fungi": [
+      {
+        "name": "fungus1",
+        "type": "Fungus",
+        "species": "mycologist1",
+        "charge": 0,
+        "lifespan": 5,
+        "tecton": "normal_tecton",
+        "hyphas": ["hypha1"],
+        "spores": []
+      }
+    ],
+    "insects": [],
+    "gameState": {
+      "round": 1,
+      "totalRounds": 10,
+      "currentPlayer": "mycologist1"
+    }
+  }
+  
