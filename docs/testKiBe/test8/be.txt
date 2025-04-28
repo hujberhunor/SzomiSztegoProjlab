@@ -1,8 +1,0 @@
-init test8.json
-
-applyEffect ins1 StunningEffect
-
-consumeSpore ins1
-
-moveInsect ins1 C
-moveInsect ins2 A

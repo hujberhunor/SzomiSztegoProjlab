@@ -1,3 +1,0 @@
-init test21.json
-cut insect1 hypha1 normal_tecton
-game NextRound

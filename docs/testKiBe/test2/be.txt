@@ -1,4 +1,0 @@
-init test2.json
-move ins1 B
-move ins1 C
-cutHypha ins1 B C

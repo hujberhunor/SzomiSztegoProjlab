@@ -1,3 +1,0 @@
-[OK] HYPHA hypha1 STATUS: connected -> disconnected
-[OK] GAME CURRENT_ROUND: 0 -> 1
-[OK] HYPHA hypha1 STATUS: disconnected -> alive

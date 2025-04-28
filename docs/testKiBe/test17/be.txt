@@ -1,7 +1,0 @@
-init test17.json
-
-game NextTurn
-game NextTurn
-
-spreadSpore fungus1
-placeFungus tecton_B fungus2

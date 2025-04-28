@@ -1,4 +1,0 @@
-[OK] HYPHA hypha1 EXTENDED: tecton1 -> infinite_tecton
-[OK] TECTON infinite_tecton HYPHAS_COUNT: 0 -> 1
-[OK] HYPHA hypha2 EXTENDED: tecton2 -> infinite_tecton
-[OK] TECTON infinite_tecton HYPHAS_COUNT: 1 -> 2

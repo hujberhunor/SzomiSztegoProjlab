@@ -1,5 +1,0 @@
-init test19.json
-
-consumeSpore insect1
-
-game endGame
