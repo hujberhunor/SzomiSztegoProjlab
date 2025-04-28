@@ -1,0 +1,71 @@
+{
+  "mycologists": [
+    {
+      "name": "mycologist_0",
+      "type": "Mycologist",
+      "score": 5,
+      "remainingActions": 1,
+      "mushrooms": []
+    }
+  ],
+  "entomologists": [
+    {
+      "name": "entomologist_0",
+      "type": "Entomologist",
+      "score": 3,
+      "remainingActions": 3,
+      "insects": ["insect_0"]
+    }
+  ],
+  "tectons": [
+    {
+      "name": "tecton_A",
+      "type": "SingleHyphaTecton",
+      "hexagons": ["1", "2"],
+      "neighbours": ["tecton_B"],
+      "breakChance": 15.0,
+      "hyphaLimit": 1
+    },
+    {
+      "name": "tecton_B",
+      "type": "SingleHyphaTecton",
+      "hexagons": ["3", "4"],
+      "neighbours": ["tecton_A", "tecton_C"],
+      "breakChance": 10.0,
+      "hyphaLimit": 1
+    },
+    {
+      "name": "tecton_C",
+      "type": "SingleHyphaTecton",
+      "hexagons": ["5", "6"],
+      "neighbours": ["tecton_B"],
+      "breakChance": 10.0,
+      "hyphaLimit": 1
+    }
+  ],
+  "hyphas": [
+    {
+      "name": "hypha_0",
+      "type": "Hypha",
+      "mycologist": "mycologist_0",
+      "fungus": null,
+      "lifespan": 4,
+      "tectons": ["tecton_A", "tecton_B", "tecton_C"]
+    }
+  ],
+  "fungi": [],
+  "insects": [
+    {
+      "name": "insect_0",
+      "type": "Insect",
+      "owner": "entomologist_0",
+      "currentTecton": "tecton_A",
+      "effects": []
+    }
+  ],
+  "gameState": {
+    "round": 1,
+    "totalRounds": 5,
+    "currentPlayer": "entomologist_0"
+  }
+}
