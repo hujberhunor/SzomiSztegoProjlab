@@ -181,13 +181,17 @@ public class InitLoader {
         }
 
         // 4. Tecton-ok visszatöltése (neighbours-t később!)
+
+        // 4. Tecton-ok visszatöltése
         Map<String, Tecton> tectonMap = new HashMap<>();
         JsonArray tectons = json.getAsJsonArray("tectons");
         for (JsonElement elem : tectons) {
             JsonObject obj = elem.getAsJsonObject();
             Tecton t = createTectonFromJson(obj);
             String tectonName = obj.get("name").getAsString();
-            namer.register(tectonName, t);
+
+            registry.register(tectonName, t); // <<< EZ KELL
+            ObjectNamer.getInstance().register(tectonName, t); // meglévő
             tectonMap.put(tectonName, t);
             game.getBoard().getAllTectons().add(t);
         }
@@ -324,6 +328,8 @@ public class InitLoader {
         }
 
         // 8. Insects visszatöltése
+
+        // 8. Insects visszatöltése
         if (json.has("insects") && !json.get("insects").isJsonNull()) {
             JsonArray insects = json.getAsJsonArray("insects");
             for (JsonElement elem : insects) {
@@ -346,45 +352,13 @@ public class InitLoader {
                 if (owner != null && currentTecton != null) {
                     Insect insect = new Insect(owner, currentTecton);
 
-                    // Add to lists
                     owner.getInsects().add(insect);
                     currentTecton.getInsects().add(insect);
 
-                    // Add effects if present
-                    if (
-                        obj.has("effects") && !obj.get("effects").isJsonNull()
-                    ) {
-                        JsonArray effectsArray = obj.getAsJsonArray("effects");
-                        for (JsonElement effectElem : effectsArray) {
-                            try {
-                                if (effectElem.isJsonObject()) {
-                                    JsonObject effectObj =
-                                        effectElem.getAsJsonObject();
-                                    Spore spore = SporeDeserializer.deserialize(
-                                        effectObj,
-                                        registry
-                                    );
-                                    if (spore != null) {
-                                        insect.getEffects().add(spore);
-                                    }
-                                } else if (effectElem.isJsonPrimitive()) {
-                                    String effectName =
-                                        effectElem.getAsString();
-                                    Spore spore = (Spore) registry.getByName(
-                                        effectName
-                                    );
-                                    if (spore != null) {
-                                        insect.getEffects().add(spore);
-                                    }
-                                }
-                            } catch (Exception e) {
-                                System.err.println(
-                                    "Error loading effect: " + e.getMessage()
-                                );
-                            }
-                        }
-                    }
+                    // Effects visszatöltése (opcionális rész)
 
+                    // !!! EZT ADD HOZZÁ !!!
+                    registry.register(insectName, insect);
                     namer.register(insectName, insect);
                 }
             }
