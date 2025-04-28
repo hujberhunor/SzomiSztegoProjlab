@@ -1,4 +1,3 @@
-INIT src/main/java/com/dino/tests/test11/test11.json
 MOVE_INSECT insect_0 tecton_B
 MOVE_INSECT insect_0 tecton_C
 CUT_HYPHA insect_0 hypha_0 tecton_B

@@ -18,6 +18,7 @@ public class TestOracle {
             Logger.reset();
             EntityRegistry.reset();
             ObjectNamer.reset();
+
             // 1. Játékállapot betöltése
             Game game = InitLoader.loadFromFile(
                 "src/main/java/com/dino/tests/test" +

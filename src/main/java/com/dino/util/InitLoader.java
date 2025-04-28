@@ -137,14 +137,20 @@ public class InitLoader {
     public static Game loadFromFile(String filename) throws IOException {
         JsonObject json = Serializer.loadFromFile(filename);
 
+        EntityRegistry.reset();
+        ObjectNamer.reset();
+        Logger.reset();
+
+        EntityRegistry registry = EntityRegistry.getInstance();
+        ObjectNamer namer = ObjectNamer.getInstance();
+        Logger logger = Logger.getInstance();
+
         // 1. Game példány létrehozása
         int totalRounds = json
             .getAsJsonObject("gameState")
             .get("totalRounds")
             .getAsInt();
         Game game = new Game(totalRounds);
-        EntityRegistry registry = game.getRegistry();
-        ObjectNamer namer = ObjectNamer.getInstance();
 
         // 2. Mycologist-ek visszatöltése
         JsonArray mycologists = json.getAsJsonArray("mycologists");
@@ -357,7 +363,6 @@ public class InitLoader {
 
                     // Effects visszatöltése (opcionális rész)
 
-                    // !!! EZT ADD HOZZÁ !!!
                     registry.register(insectName, insect);
                     namer.register(insectName, insect);
                 }
