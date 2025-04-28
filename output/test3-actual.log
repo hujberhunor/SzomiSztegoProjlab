@@ -2,15 +2,15 @@
 [OK] GAME null PLAYERS_COUNT: 1 -> 2
 [ERROR] INSECT insect_0 Nem lehet spórát enni: a tektonon nincs spóra.
 [ERROR] INSECT insect_0 Failed to consume spore.
-[OK] INSECT insect_0 TECTON: tecton_A -> tecton_B
+[OK] INSECT insect_0 TECTON: SingleHyphaTecton(1) -> SingleHyphaTecton(2)
 [OK] INSECT insect_0 ACTION: ATTEMPT_MOVE -> SUCCESS
 [OK] ENTOMOLOGIST entomologist_0 REMAINING_ACTIONS: 3 -> 2
 [OK] INSECT insect_0 POSITION: tecton_A -> tecton_B
-[OK] INSECT insect_0 TECTON: tecton_B -> tecton_C
+[OK] INSECT insect_0 TECTON: SingleHyphaTecton(2) -> SingleHyphaTecton(3)
 [OK] INSECT insect_0 ACTION: ATTEMPT_MOVE -> SUCCESS
 [OK] ENTOMOLOGIST entomologist_0 REMAINING_ACTIONS: 2 -> 1
 [OK] INSECT insect_0 POSITION: tecton_B -> tecton_C
-[OK] INSECT insect_0 TECTON: tecton_C -> tecton_D
+[OK] INSECT insect_0 TECTON: SingleHyphaTecton(3) -> SingleHyphaTecton(4)
 [OK] INSECT insect_0 ACTION: ATTEMPT_MOVE -> SUCCESS
 [OK] ENTOMOLOGIST entomologist_0 REMAINING_ACTIONS: 1 -> 0
 [OK] INSECT insect_0 POSITION: tecton_C -> tecton_D
