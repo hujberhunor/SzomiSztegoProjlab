@@ -22,7 +22,7 @@ public class TestRunner {
 
     public static void runAllTests() {
         // Itt állíthatod be, hogy melyik tesztszámokat futtassa
-        runTests(List.of(2, 3, 6));
+        runTests(List.of(2, 3, 6, 7));
         // runTests(List.of(0)); // csak teszt0 most
     }
 
