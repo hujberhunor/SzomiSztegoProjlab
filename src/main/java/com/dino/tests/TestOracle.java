@@ -57,7 +57,8 @@ public class TestOracle {
             // Call the debug comparison
             debugComparison(normalizedExpected, normalizedActual);
 
-            if (normalizedExpected.equals(normalizedActual)) {
+            // Use flexible comparison to handle object references
+            if (flexibleCompare(normalizedExpected, normalizedActual)) {
                 return true; // Passed
             } else {
                 // Hibás eset: actual log mentése file-ba
@@ -90,8 +91,8 @@ public class TestOracle {
         for (int i = 0; i < minLength; i++) {
             if (expected.charAt(i) != actual.charAt(i)) {
                 System.out.println("Difference at position " + i + ":");
-                int start = Math.max(0, i - 10);
-                int end = Math.min(minLength, i + 10);
+                int start = Math.max(0, i - 20);
+                int end = Math.min(minLength, i + 20);
                 System.out.println(
                     "Expected: " + expected.substring(start, end)
                 );
@@ -116,7 +117,7 @@ public class TestOracle {
                 System.out.println(
                     "Expected has " +
                     (expected.length() - actual.length()) +
-                    " more characters at the end."
+                    " more characters at the end:"
                 );
                 System.out.println(
                     "Extra characters in expected: " +
@@ -126,7 +127,7 @@ public class TestOracle {
                 System.out.println(
                     "Actual has " +
                     (actual.length() - expected.length()) +
-                    " more characters at the end."
+                    " more characters at the end:"
                 );
                 System.out.println(
                     "Extra characters in actual: " +
@@ -134,5 +135,62 @@ public class TestOracle {
                 );
             }
         }
+    }
+
+    /**
+     * Compares expected and actual outputs with tolerance for object references.
+     * This method ignores the specific object reference strings and checks only
+     * the structure and content of the log messages.
+     */
+    private static boolean flexibleCompare(String expected, String actual) {
+        // Split both strings into lines
+        String[] expectedLines = expected.split("\n");
+        String[] actualLines = actual.split("\n");
+
+        // If line count doesn't match, comparison fails
+        if (expectedLines.length != actualLines.length) {
+            System.out.println(
+                "Line count mismatch: Expected " +
+                expectedLines.length +
+                " lines, got " +
+                actualLines.length +
+                " lines"
+            );
+            return false;
+        }
+
+        // Compare each line, but ignore object references
+        for (int i = 0; i < expectedLines.length; i++) {
+            String expLine = expectedLines[i].trim();
+            String actLine = actualLines[i].trim();
+
+            // If lines are identical, continue
+            if (expLine.equals(actLine)) {
+                continue;
+            }
+
+            // Replace object references with placeholders in both strings
+            String expNormalized = expLine.replaceAll(
+                "com\\.dino\\.[a-zA-Z\\.]+@[0-9a-f]+",
+                "<obj_ref>"
+            );
+            String actNormalized = actLine.replaceAll(
+                "com\\.dino\\.[a-zA-Z\\.]+@[0-9a-f]+",
+                "<obj_ref>"
+            );
+
+            // Compare normalized strings
+            if (!expNormalized.equals(actNormalized)) {
+                System.out.println("Line " + (i + 1) + " mismatch:");
+                System.out.println("  Expected: " + expLine);
+                System.out.println("  Actual:   " + actLine);
+                System.out.println("  (Normalized comparison)");
+                System.out.println("  Expected: " + expNormalized);
+                System.out.println("  Actual:   " + actNormalized);
+                return false;
+            }
+        }
+
+        return true;
     }
 }
