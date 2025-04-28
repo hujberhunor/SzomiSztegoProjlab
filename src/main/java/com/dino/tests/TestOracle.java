@@ -3,8 +3,10 @@ package com.dino.tests;
 import com.dino.commands.Command;
 import com.dino.commands.CommandParser;
 import com.dino.engine.Game;
+import com.dino.util.EntityRegistry;
 import com.dino.util.InitLoader;
 import com.dino.util.Logger;
+import com.dino.util.ObjectNamer;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.List;
@@ -13,6 +15,9 @@ public class TestOracle {
 
     public static boolean runTest(int testNumber) {
         try {
+            Logger.reset();
+            EntityRegistry.reset();
+            ObjectNamer.reset();
             // 1. Játékállapot betöltése
             Game game = InitLoader.loadFromFile(
                 "src/main/java/com/dino/tests/test" +
