@@ -21,10 +21,11 @@ public class EntityRegistry {
     }
 
     public static void reset() {
-        instance = EntityRegistry.getInstance();
+        instance = new EntityRegistry();
     }
 
     public void register(String name, Object obj) {
+        if (name == null || obj == null) return;
         nameToObject.put(name, obj);
         objectToName.put(obj, name);
     }
@@ -39,5 +40,9 @@ public class EntityRegistry {
 
     public boolean isRegistered(Object obj) {
         return objectToName.containsKey(obj);
+    }
+
+    public boolean isNameRegistered(String name) {
+        return nameToObject.containsKey(name);
     }
 }

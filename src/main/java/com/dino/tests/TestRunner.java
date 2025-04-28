@@ -9,11 +9,15 @@ public class TestRunner {
 
         for (int test : tests) {
             boolean ok = TestOracle.runTest(test);
-            System.out.println("Test " + test + ": " + (ok ? "PASSED" : "FAILED"));
+            System.out.println(
+                "Test " + test + ": " + (ok ? "PASSED" : "FAILED")
+            );
             if (ok) passed++;
         }
 
-        System.out.println("Summary: " + passed + " / " + tests.size() + " tests passed.");
+        System.out.println(
+            "Summary: " + passed + " / " + tests.size() + " tests passed."
+        );
     }
 
     public static void runAllTests() {
@@ -22,7 +26,6 @@ public class TestRunner {
         runTests(List.of(0)); // csak teszt0 most
     }
 
-  
     public static void runSingleTest(int testNumber) {
         runTests(List.of(testNumber));
     }
