@@ -107,4 +107,9 @@ public class ObjectNamer {
             }
         }
     }
+
+    public Object getByName(String name) {
+        return registry.getByName(name);
+    }
+
 }
