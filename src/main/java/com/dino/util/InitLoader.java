@@ -1,5 +1,13 @@
 package com.dino.util;
 
+import java.io.IOException;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Map;
+import java.util.Set;
+
 import com.dino.core.Fungus;
 import com.dino.core.Hexagon;
 import com.dino.core.Hypha;
@@ -18,13 +26,6 @@ import com.dino.tecton.Tecton;
 import com.google.gson.JsonArray;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
-import java.io.IOException;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
 
 public class InitLoader {
 
@@ -34,32 +35,29 @@ public class InitLoader {
         // --- Mycologists ---
         List<Mycologist> mycologists = game.getAllMycologists();
         root.add(
-            "mycologists",
-            SerializerUtil.toJsonArray(mycologists, m -> {
-                namer.register(m);
-                return m.serialize(namer);
-            })
-        );
+                "mycologists",
+                SerializerUtil.toJsonArray(mycologists, m -> {
+                    namer.register(m);
+                    return m.serialize(namer);
+                }));
 
         // --- Entomologists ---
         List<Entomologist> entomologists = game.getAllEntomologists();
         root.add(
-            "entomologists",
-            SerializerUtil.toJsonArray(entomologists, e -> {
-                namer.register(e);
-                return e.serialize(namer);
-            })
-        );
+                "entomologists",
+                SerializerUtil.toJsonArray(entomologists, e -> {
+                    namer.register(e);
+                    return e.serialize(namer);
+                }));
 
         // --- Tectons ---
         List<Tecton> tectons = game.getBoard().getAllTectons();
         root.add(
-            "tectons",
-            SerializerUtil.toJsonArray(tectons, t -> {
-                namer.register(t);
-                return t.serialize(namer);
-            })
-        );
+                "tectons",
+                SerializerUtil.toJsonArray(tectons, t -> {
+                    namer.register(t);
+                    return t.serialize(namer);
+                }));
 
         // --- Hyphas, Fungi, Insects (Tecton-okon keresztül) ---
         Set<Hypha> allHyphas = new HashSet<>();
@@ -96,23 +94,14 @@ public class InitLoader {
         }
 
         root.add(
-            "hyphas",
-            SerializerUtil.toJsonArray(new ArrayList<>(allHyphas), h ->
-                h.serialize(namer)
-            )
-        );
+                "hyphas",
+                SerializerUtil.toJsonArray(new ArrayList<>(allHyphas), h -> h.serialize(namer)));
         root.add(
-            "fungi",
-            SerializerUtil.toJsonArray(new ArrayList<>(allFungi), f ->
-                f.serialize(namer)
-            )
-        );
+                "fungi",
+                SerializerUtil.toJsonArray(new ArrayList<>(allFungi), f -> f.serialize(namer)));
         root.add(
-            "insects",
-            SerializerUtil.toJsonArray(new ArrayList<>(allInsects), i ->
-                i.serialize(namer)
-            )
-        );
+                "insects",
+                SerializerUtil.toJsonArray(new ArrayList<>(allInsects), i -> i.serialize(namer)));
 
         // --- Game State ---
         JsonObject gameState = new JsonObject();
@@ -122,9 +111,8 @@ public class InitLoader {
         Player currentPlayer = game.getCurrentPlayer();
         if (currentPlayer != null) {
             gameState.addProperty(
-                "currentPlayer",
-                namer.getName(currentPlayer)
-            );
+                    "currentPlayer",
+                    namer.getName(currentPlayer));
         } else {
             gameState.add("currentPlayer", null);
         }
@@ -147,9 +135,9 @@ public class InitLoader {
 
         // 1. Game példány létrehozása
         int totalRounds = json
-            .getAsJsonObject("gameState")
-            .get("totalRounds")
-            .getAsInt();
+                .getAsJsonObject("gameState")
+                .get("totalRounds")
+                .getAsInt();
         Game game = new Game(totalRounds);
 
         // 2. Mycologist-ek visszatöltése
@@ -186,9 +174,17 @@ public class InitLoader {
             game.addPlayer(e);
         }
 
-        // 4. Tecton-ok visszatöltése (neighbours-t később!)
+        // Spore visszatöltése
+        JsonArray sporesDefs = json.getAsJsonArray("spores_definitions");
+        if (sporesDefs != null) {
+            for (JsonElement elem : sporesDefs) {
+                JsonObject sporeJson = elem.getAsJsonObject();
+                Spore spore = SporeDeserializer.deserialize(sporeJson, registry);
+                // A SporeDeserializer automatikusan regisztrálja a nevet
+            }
+        }
 
-        // 4. Tecton-ok visszatöltése
+        // 4. Tecton-ok visszatöltése (neighbours-t később!)
         Map<String, Tecton> tectonMap = new HashMap<>();
         JsonArray tectons = json.getAsJsonArray("tectons");
         for (JsonElement elem : tectons) {
@@ -208,21 +204,16 @@ public class InitLoader {
             String tectonName = obj.get("name").getAsString();
             Tecton t = (Tecton) registry.getByName(tectonName);
 
-            if (
-                t != null &&
-                obj.has("neighbours") &&
-                !obj.get("neighbours").isJsonNull()
-            ) {
+            if (t != null &&
+                    obj.has("neighbours") &&
+                    !obj.get("neighbours").isJsonNull()) {
                 JsonArray neighbours = obj.getAsJsonArray("neighbours");
                 for (JsonElement neighbourElem : neighbours) {
                     String neighbourName = neighbourElem.getAsString();
                     Tecton neighbour = (Tecton) registry.getByName(
-                        neighbourName
-                    );
-                    if (
-                        neighbour != null &&
-                        !t.getNeighbours().contains(neighbour)
-                    ) {
+                            neighbourName);
+                    if (neighbour != null &&
+                            !t.getNeighbours().contains(neighbour)) {
                         t.getNeighbours().add(neighbour);
                         if (!neighbour.getNeighbours().contains(t)) {
                             neighbour.getNeighbours().add(t);
@@ -246,8 +237,7 @@ public class InitLoader {
                 if (obj.has("species") && !obj.get("species").isJsonNull()) {
                     String speciesName = obj.get("species").getAsString();
                     Mycologist mycologist = (Mycologist) registry.getByName(
-                        speciesName
-                    );
+                            speciesName);
                     if (mycologist != null) {
                         f.setSpecies(mycologist);
                         mycologist.getMushrooms().add(f);
@@ -255,12 +245,12 @@ public class InitLoader {
                 }
 
                 // Set charge and lifespan
-                if (obj.has("charge")) f.setCharge(
-                    obj.get("charge").getAsInt()
-                );
-                if (obj.has("lifespan")) f.setLifespan(
-                    obj.get("lifespan").getAsInt()
-                );
+                if (obj.has("charge"))
+                    f.setCharge(
+                            obj.get("charge").getAsInt());
+                if (obj.has("lifespan"))
+                    f.setLifespan(
+                            obj.get("lifespan").getAsInt());
 
                 // Set tecton reference
                 if (obj.has("tecton") && !obj.get("tecton").isJsonNull()) {
@@ -288,13 +278,10 @@ public class InitLoader {
                 Hypha h = new Hypha();
 
                 // Set Mycologist
-                if (
-                    obj.has("mycologist") && !obj.get("mycologist").isJsonNull()
-                ) {
+                if (obj.has("mycologist") && !obj.get("mycologist").isJsonNull()) {
                     String mycologistName = obj.get("mycologist").getAsString();
                     Mycologist mycologist = (Mycologist) registry.getByName(
-                        mycologistName
-                    );
+                            mycologistName);
                     if (mycologist != null) {
                         h.setMychologist(mycologist);
                     }
@@ -311,9 +298,9 @@ public class InitLoader {
                 }
 
                 // Set lifespan
-                if (obj.has("lifespan")) h.setLifespan(
-                    obj.get("lifespan").getAsInt()
-                );
+                if (obj.has("lifespan"))
+                    h.setLifespan(
+                            obj.get("lifespan").getAsInt());
 
                 // Add to tectons
                 if (obj.has("tectons") && !obj.get("tectons").isJsonNull()) {
@@ -344,15 +331,14 @@ public class InitLoader {
 
                 // Get owner and current tecton
                 String ownerName = obj.has("owner")
-                    ? obj.get("owner").getAsString()
-                    : null;
+                        ? obj.get("owner").getAsString()
+                        : null;
                 Entomologist owner = (Entomologist) registry.getByName(
-                    ownerName
-                );
+                        ownerName);
 
                 String tectonName = obj.has("currentTecton")
-                    ? obj.get("currentTecton").getAsString()
-                    : null;
+                        ? obj.get("currentTecton").getAsString()
+                        : null;
                 Tecton currentTecton = (Tecton) registry.getByName(tectonName);
 
                 if (owner != null && currentTecton != null) {
@@ -381,16 +367,13 @@ public class InitLoader {
                 game.settotalRounds(gameState.get("totalRounds").getAsInt());
             }
 
-            if (
-                gameState.has("currentPlayer") &&
-                !gameState.get("currentPlayer").isJsonNull()
-            ) {
+            if (gameState.has("currentPlayer") &&
+                    !gameState.get("currentPlayer").isJsonNull()) {
                 String currentPlayerName = gameState
-                    .get("currentPlayer")
-                    .getAsString();
+                        .get("currentPlayer")
+                        .getAsString();
                 Player currentPlayer = (Player) registry.getByName(
-                    currentPlayerName
-                );
+                        currentPlayerName);
                 if (currentPlayer != null) {
                     game.setCurrentPlayer(currentPlayer);
                 }
@@ -405,8 +388,8 @@ public class InitLoader {
      */
     private static Tecton createTectonFromJson(JsonObject obj) {
         String type = obj.has("type")
-            ? obj.get("type").getAsString()
-            : "SingleHyphaTecton";
+                ? obj.get("type").getAsString()
+                : "SingleHyphaTecton";
         Tecton t;
 
         // Create the appropriate tecton type
@@ -472,6 +455,40 @@ public class InitLoader {
             }
             if (obj.has("hyphaLimit")) {
                 kht.setHyphaLimit(obj.get("hyphaLimit").getAsInt());
+            }
+        }
+
+        if (obj.has("spores") && obj.get("spores").isJsonObject()) {
+            JsonObject sporesMap = obj.getAsJsonObject("spores");
+
+            for (Map.Entry<String, JsonElement> entry : sporesMap.entrySet()) {
+                String sporeName = entry.getKey();
+                JsonElement value = entry.getValue();
+
+                if (value != null && !value.isJsonNull()) {
+                    try {
+                        int count;
+                        if (value.getAsJsonPrimitive().isNumber()) {
+                            count = value.getAsInt();
+                        } else if (value.getAsJsonPrimitive().isString()) {
+                            count = Integer.parseInt(value.getAsString());
+                        } else {
+                            System.err.println("⚠️ Spore count is not a valid number: " + value);
+                            continue;
+                        }
+
+                        Spore spore = (Spore) EntityRegistry.getInstance().getByName(sporeName);
+                        if (spore != null) {
+                            t.spores.put(spore, count);
+                        } else {
+                            System.err.println("❌ Spore not found in registry: " + sporeName);
+                        }
+                    } catch (Exception e) {
+                        System.err.println("❌ Failed to parse spore count for " + sporeName + ": " + e.getMessage());
+                    }
+                } else {
+                    System.err.println("❌ Null or missing spore count for key: " + sporeName);
+                }
             }
         }
 
