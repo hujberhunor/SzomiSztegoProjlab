@@ -34,6 +34,10 @@ public abstract class Spore implements SerializableEntity {
         return nutrientValue;
     }
 
+    public Mycologist getSpecies(){
+        return species;
+    }
+
     // Eggyel csökkenti a hátralévő körök számát, amelyek eltelte után a hatás
     // elveszik
     public void decreaseEffectDuration() {

@@ -567,12 +567,24 @@ public class Game {
         }
     }
 
+    public void decayHyphas(){
+        for (Map.Entry<Hypha, Integer> entry : decayedHyphas.entrySet()){
+            int currentDecay = entry.getValue();
+            if (currentDecay <= 0){
+                entry.getKey().destroyHypha();
+            }
+            else {
+                entry.setValue(currentDecay - 1);
+            }
+        }
+    }
+
     /**
      * Visszaadja a lebomlott fonalak listáját
      *
      * @return A lebomlott fonalak listája
      */
-    public Map<Hypha, Integer> getDecayedHypha() {
+    public Map<Hypha, Integer> getDecayedHyphas() {
         return decayedHyphas;
     }
 

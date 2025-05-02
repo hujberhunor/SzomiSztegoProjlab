@@ -1,6 +1,7 @@
 package com.dino.core;
 
 import com.dino.effects.ParalyzingEffect;
+import com.dino.engine.Game;
 import com.dino.player.Mycologist;
 import com.dino.tecton.Tecton;
 import com.dino.util.EntityRegistry;
@@ -195,6 +196,17 @@ public class Hypha implements SerializableEntity {
             "SUCCESS"
         );
         return true;
+    }
+
+    public void destroyHypha(){
+        for (Tecton t: tectons){
+            if (t.getHyphas().contains(this)){
+                t.getHyphas().remove(this);
+            }
+        }
+        fungus.getHyphas().remove(this);
+        Game game = Game.getInstance();
+        game.getDecayedHyphas().remove(this);
     }
 
     @Override
