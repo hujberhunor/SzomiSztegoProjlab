@@ -59,4 +59,8 @@ public abstract class Spore implements SerializableEntity {
 
         return obj;
     }
+
+    public Mycologist getSpecies() {
+        return species;
+    }
 }

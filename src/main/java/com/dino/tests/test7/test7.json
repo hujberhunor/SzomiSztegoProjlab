@@ -1,55 +1,93 @@
 {
-  "mycologists": [],
-  "entomologists": [
+  "mycologists": [
     {
-      "name": "entomologist_0",
-      "type": "Entomologist",
+      "name": "mycologist_0",
+      "type": "Mycologist",
       "score": 0,
-      "remainingActions": 3,
-      "insects": ["insect_0"]
+      "remainingActions": 3
     }
-  ],
-  "tectons": [
-    {
-      "name": "tecton_A",
-      "type": "SingleHyphaTecton",
-      "hexagons": ["1"],
-      "neighbours": ["tecton_B"],
-      "breakChance": 0.0,
-      "hyphaLimit": 1
-    },
-    {
-      "name": "tecton_B",
-      "type": "SingleHyphaTecton",
-      "hexagons": ["2"],
-      "neighbours": ["tecton_A"],
-      "breakChance": 0.0,
-      "hyphaLimit": 1
-    }
-  ],
-  "hyphas": [
-    {
-      "name": "hypha_AB",
-      "type": "Hypha",
-      "mycologist": "mycologist_0",
-      "fungus": null,
-      "lifespan": 5,
-      "tectons": ["tecton_A", "tecton_B"]
-    }
-  ],
-  "fungi": [],
-  "insects": [
-    {
-      "name": "insect_0",
-      "type": "Insect",
-      "owner": "entomologist_0",
-      "currentTecton": "tecton_A",
-      "effects": ["ACCEL", "PARALYZING"]
-    }
-  ],
-  "gameState": {
-    "round": 1,
-    "totalRounds": 5,
-    "currentPlayer": "entomologist_0"
+],
+"entomologists": [
+  {
+    "name": "entomologist_0",
+    "type": "Entomologist",
+    "score": 0,
+    "remainingActions": 3,
+    "insects": [
+      "insect_0"
+    ]
   }
+],
+"spores_definitions": [
+  {
+    "name": "spore_0",
+    "type": "StunningEffect",
+    "species": "mycologist_0",
+    "effectDuration": 2,
+    "nutrientValue": 3
+  }
+],
+"tectons": [
+  {
+    "name": "tecton_A",
+    "type": "SingleHyphaTecton",
+    "hexagons": [
+      "1"
+    ],
+    "neighbours": [
+      "tecton_B"
+    ],
+    "breakChance": 0.0,
+    "hyphaLimit": 1,
+    "spores": {
+      "spore_0": 3
+    }
+  },
+  {
+    "name": "tecton_B",
+    "type": "SingleHyphaTecton",
+    "hexagons": [
+      "2"
+    ],
+    "neighbours": [
+      "tecton_A"
+    ],
+    "breakChance": 0.0,
+    "hyphaLimit": 1,
+    "spores": {
+      "spore_0": 1
+    }
+  }
+],
+"hyphas": [
+  {
+    "name": "hypha_AB",
+    "type": "Hypha",
+    "mycologist": "mycologist_0",
+    "fungus": null,
+    "lifespan": 5,
+    "tectons": [
+      "tecton_A",
+      "tecton_B"
+    ]
+  }
+],
+"fungi": [],
+"insects": [
+  {
+    "name": "insect_0",
+    "type": "Insect",
+    "owner": "entomologist_0",
+    "currentTecton": "tecton_A",
+    "effects": [
+      "ACCEL",
+      "PARALYZING"
+    ]
+  }
+],
+"gameState": {
+  "round": 1,
+  "totalRounds": 5,
+  "currentPlayer": "entomologist_0"
+}
 }

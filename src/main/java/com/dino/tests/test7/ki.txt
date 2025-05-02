@@ -1,13 +1,17 @@
 [OK] GAME null PLAYERS_COUNT: 0 -> 1
-[ERROR] INSECT insect_0 Nem lehet spórát enni: a tektonon nincs spóra.
-[ERROR] INSECT insect_0 Failed to consume spore.
-[ERROR] INSECT insect_0 Nem lehet spórát enni: a tektonon nincs spóra.
-[ERROR] INSECT insect_0 Failed to consume spore.
+[OK] GAME null PLAYERS_COUNT: 1 -> 2
+[OK] ENTOMOLOGIST entomologist_0 SCORE: 0 -> 3
+[OK] INSECT insect_0 EFFECT: [] -> [Stunning Spore]
+[OK] INSECT insect_0 ACTION: ATTEMPT_EATING_SPORE -> SUCCESS
+[OK] ENTOMOLOGIST entomologist_0 REMAINING_ACTIONS: 3 -> 2
+[OK] INSECT insect_0 CONSUME_SPORE: - -> SUCCESS
+[ERROR] SPORE StunningEffect A rovar már kábító hatás alatt van!
+[OK] INSECT insect_0 ACTION: ATTEMPT_EATING_SPORE -> SUCCESS
+[OK] ENTOMOLOGIST entomologist_0 REMAINING_ACTIONS: 2 -> 1
+[OK] INSECT insect_0 CONSUME_SPORE: - -> SUCCESS
 [OK] INSECT insect_0 TECTON: tecton_A -> tecton_B
 [OK] INSECT insect_0 ACTION: ATTEMPT_MOVE -> SUCCESS
-[OK] ENTOMOLOGIST entomologist_0 REMAINING_ACTIONS: 3 -> 2
+[OK] ENTOMOLOGIST entomologist_0 REMAINING_ACTIONS: 1 -> 0
 [OK] INSECT insect_0 POSITION: tecton_A -> tecton_B
-[OK] INSECT insect_0 TECTON: tecton_B -> tecton_A
-[OK] INSECT insect_0 ACTION: ATTEMPT_MOVE -> SUCCESS
-[OK] ENTOMOLOGIST entomologist_0 REMAINING_ACTIONS: 2 -> 1
+[ERROR] INSECT insect_0 Nem mozdulhat: nincs több akciópont a körben.
 [OK] INSECT insect_0 POSITION: tecton_B -> tecton_A

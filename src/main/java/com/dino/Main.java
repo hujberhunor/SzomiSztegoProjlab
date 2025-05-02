@@ -110,9 +110,11 @@ public class Main {
             namer.register(insect2);
             t2.insects.add(insect2);
 
+            ParalyzingEffect s1 = new ParalyzingEffect(m1);
+            ParalyzingEffect s2 = new ParalyzingEffect(m2);
             // Spóra számlálók
-            t1.spores.put(m1, 2);
-            t2.spores.put(m2, 1);
+            t1.spores.put(s1, 2);
+            t2.spores.put(s2, 1);
 
             // Neighbours
             t1.neighbours.add(t2);
