@@ -233,6 +233,26 @@ public abstract class Tecton implements SerializableEntity {
             return resultTectons;
         }
 
+        // A fonalakat elszakítjuk
+        for (Hypha h : hyphas) {
+            List<Tecton> tectons = h.getTectons();
+            Boolean onInfiniteHypha = false;
+            for (Tecton t: tectons){
+                if (t instanceof InfiniteHyphaTecton){
+                    onInfiniteHypha = true;
+                    break;
+                }
+            }
+            if (!onInfiniteHypha) {
+                for (int i = 0; i < tectons.size(); i++) {
+                    if (tectons.get(i).equals(this)) {
+                        tectons.subList(i, tectons.size()).clear();
+                        break;
+                    }
+                }
+            }
+        }
+
         // Két új tekton létrehozása
         Tecton tecton1 = this.createCopy();
         Tecton tecton2 = this.createCopy();
@@ -263,8 +283,8 @@ public abstract class Tecton implements SerializableEntity {
         tecton2.breakCount = newBreakCount;
 
         // Gombafonalak törlése
-        tecton1.hyphas = new ArrayList<>();
-        tecton2.hyphas = new ArrayList<>();
+        // tecton1.hyphas = new ArrayList<>();
+        // tecton2.hyphas = new ArrayList<>();
 
         // Gombatestek véletlenszerű áthelyezése
         if (fungus != null) {
@@ -433,38 +453,6 @@ public abstract class Tecton implements SerializableEntity {
 
     public Map<Spore, Integer> getSporeMap() {
         return spores;
-    }
-
-    public void hyphaDecay(Game game) {
-        for (Hypha h : hyphas) {
-            if (h.getLifespan() <= 0) {
-                int index = -1;
-                for (int i = 0; i < h.getTectons().size(); i++) {
-                    if (h.getTectons().get(i).equals(this)) {
-                        index = i;
-                        break;
-                    }
-                }
-                if (index >= 0) {
-                    Hypha newHypha = new Hypha(
-                        h.getMycologist(),
-                        h.getFungus()
-                    );
-                    namer.register(newHypha);
-                    for (Tecton t : h
-                        .getTectons()
-                        .subList(index, h.getTectons().size())) {
-                        newHypha.getTectons().add(t);
-                    }
-                    h
-                        .getTectons()
-                        .subList(index, h.getTectons().size())
-                        .clear();
-
-                    game.addDecayedHypha(newHypha);
-                }
-            }
-        }
     }
 
     @Override
