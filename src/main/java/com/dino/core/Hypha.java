@@ -1,5 +1,6 @@
 package com.dino.core;
 
+import com.dino.effects.ParalyzingEffect;
 import com.dino.player.Mycologist;
 import com.dino.tecton.Tecton;
 import com.dino.util.EntityRegistry;
@@ -168,7 +169,7 @@ public class Hypha implements SerializableEntity {
         // Megnézzük, hogy a rovar rajta van-e az egyik olyan tektonon, amin fut a fonál
         Tecton targetTecton = null;
         for (Tecton t : tectons) {
-            if (i.getTecton().equals(t) && i.isUnderEffect(3)) {
+            if (i.getTecton().equals(t) && i.isUnderEffect(ParalyzingEffect.class)) {
                 targetTecton = t;
                 break;
             }

@@ -22,6 +22,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 import java.util.Random;
+import java.util.stream.Collectors;
 
 /**
  * Egy rovart reprezentáló osztály.
@@ -101,7 +102,7 @@ public class Insect implements SerializableEntity {
         }
 
         // Ellenőrizzük, hogy bénító hatás alatt van-e
-        if (isUnderEffect(3)) {
+        if (isUnderEffect(ParalyzingEffect.class)) {
             logger.logError(
                 "INSECT",
                 namer.getName(this),
@@ -148,12 +149,12 @@ public class Insect implements SerializableEntity {
         currentTecton = targetTecton;
         // skeleton.log("Rovar sikeresen mozgott az új tektonra.");
 
-        if (isUnderEffect(1) && extraMove && isUnderEffect(4)) {
+        if (isUnderEffect(AcceleratingEffect.class) && extraMove && isUnderEffect(SlowingEffect.class)) {
             setExtraMove(false);
             entomologist.decreaseActions();
-        } else if (isUnderEffect(1) && extraMove) {
+        } else if (isUnderEffect(AcceleratingEffect.class) && extraMove) {
             setExtraMove(false);
-        } else if (isUnderEffect(4)) {
+        } else if (isUnderEffect(SlowingEffect.class)) {
             entomologist.setActions(0);
         } else {
             entomologist.decreaseActions(); // Csökkentjük az akciópontját
@@ -201,7 +202,7 @@ public class Insect implements SerializableEntity {
         }
 
         // Ellenőrizzük, hogy a rovar kábító spórák hatása alatt van-e
-        if (isUnderEffect(5)) {
+        if (isUnderEffect(StunningEffect.class)) {
             logger.logError(
                 "INSECT",
                 namer.getName(this),
@@ -294,39 +295,16 @@ public class Insect implements SerializableEntity {
         }
 
         // Spóra elfogyasztása
-        final Mycologist[] mycologistWrapper = new Mycologist[1];
+        Map<Mycologist, Long> sporeCountByMycologist= currentTecton.spores.keySet().stream().collect(Collectors.groupingBy(Spore::getSpecies, Collectors.counting()));
 
-        Optional<Map.Entry<Mycologist, Integer>> maxSporeCountEntry =
-            currentTecton.spores
-                .entrySet()
-                .stream()
-                .max(Map.Entry.comparingByValue());
-        maxSporeCountEntry.ifPresent(entry -> {
-            mycologistWrapper[0] = entry.getKey();
-            currentTecton.removeSpores(mycologistWrapper[0]);
+        Optional<Map.Entry<Mycologist, Long>> maxEntry = sporeCountByMycologist.entrySet().stream().max(Map.Entry.comparingByValue());
+
+        maxEntry.ifPresent(entry -> {Mycologist topMycologist = entry.getKey();
+        
+            Optional<Spore> sporeToRemove = currentTecton.spores.keySet().stream().filter(spore -> spore.getSpecies().equals(topMycologist)).findFirst();
+
+            sporeToRemove.ifPresent(spore -> currentTecton.removeSpores(spore));
         });
-
-        List<Class<? extends Spore>> sporeClasses = Arrays.asList(
-            AcceleratingEffect.class,
-            ParalyzingEffect.class,
-            SlowingEffect.class,
-            SporeNoEffect.class,
-            StunningEffect.class,
-            CloneEffect.class
-        );
-        Random random = new Random();
-        Class<? extends Spore> randomSporeClass = sporeClasses.get(
-            random.nextInt(sporeClasses.size())
-        );
-
-        try {
-            Spore spore = randomSporeClass
-                .getDeclaredConstructor(Mycologist.class)
-                .newInstance(mycologistWrapper[0]);
-            spore.applyTo(this);
-        } catch (Exception exc) {
-            throw new RuntimeException("Failed to create spore instance", exc);
-        }
 
         logger.logOk(
             "INSECT",
@@ -383,10 +361,10 @@ public class Insect implements SerializableEntity {
         }
     }
 
-    public boolean isUnderEffect(int effectId) {
+    public boolean isUnderEffect(Class<?> clazz) {
         if (effects != null && !effects.isEmpty()) {
             for (Spore s : effects) {
-                if (s.sporeType() == effectId) return true;
+                if (clazz.isInstance(s)) return true;
             }
         }
         return false;

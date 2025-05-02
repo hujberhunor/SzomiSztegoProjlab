@@ -4,6 +4,7 @@ import com.dino.core.Fungus;
 import com.dino.core.Hexagon;
 import com.dino.core.Hypha;
 import com.dino.core.Insect;
+import com.dino.core.Spore;
 import com.dino.engine.Game;
 import com.dino.player.Mycologist;
 import com.dino.util.EntityRegistry;
@@ -37,7 +38,7 @@ public abstract class Tecton implements SerializableEntity {
     public List<Tecton> neighbours;
     public Fungus fungus;
     public List<Insect> insects;
-    public Map<Mycologist, Integer> spores;
+    public Map<Spore, Integer> spores;
 
     public List<Hypha> hyphas;
 
@@ -89,11 +90,11 @@ public abstract class Tecton implements SerializableEntity {
      *
      * @param m A gombász, akinek a gombájából a spóra származik
      */
-    public void addSpores(Mycologist m) {
+    public void addSpores(Spore s) {
         //Skeleton skeleton = Skeleton.getInstance();
         //skeleton.startMethod("Tecton", "add spores");
 
-        spores.put(m, spores.getOrDefault(m, 0) + 1);
+        spores.put(s, spores.getOrDefault(s, 0) + 1);
         //skeleton.log("Spóra elhelyezve");
         //skeleton.log("A tektonon található gombász-spóraszám párok:");
         //spores.forEach((key, value) -> skeleton.log(key + " = " + value));
@@ -105,11 +106,11 @@ public abstract class Tecton implements SerializableEntity {
      *
      * @param m A gombász, akinek a gombájából a spóra származik
      */
-    public void removeSpores(Mycologist m) {
+    public void removeSpores(Spore s) {
         //Skeleton skeleton = Skeleton.getInstance();
         // skeleton.startMethod("Tecton", "remove spores");
 
-        spores.computeIfPresent(m, (key, value) ->
+        spores.computeIfPresent(s, (key, value) ->
             (value > 1) ? value - 1 : null
         );
         //skeleton.log("Spóra eltávolítva");
@@ -410,17 +411,17 @@ public abstract class Tecton implements SerializableEntity {
         tecton1.spores = new HashMap<>();
         tecton2.spores = new HashMap<>();
 
-        for (Map.Entry<Mycologist, Integer> entry : spores.entrySet()) {
-            Mycologist mycologist = entry.getKey();
+        for (Map.Entry<Spore, Integer> entry : spores.entrySet()) {
+            Spore spore = entry.getKey();
             Integer sporeCount = entry.getValue();
 
             if (sporeCount <= 0) continue;
 
             // Véletlenszerűen választunk a két tekton között
             if (Math.random() < 0.5) {
-                tecton1.spores.put(mycologist, sporeCount);
+                tecton1.spores.put(spore, sporeCount);
             } else {
-                tecton2.spores.put(mycologist, sporeCount);
+                tecton2.spores.put(spore, sporeCount);
             }
         }
     }
@@ -430,7 +431,7 @@ public abstract class Tecton implements SerializableEntity {
         return hexagons;
     }
 
-    public Map<Mycologist, Integer> getSporeMap() {
+    public Map<Spore, Integer> getSporeMap() {
         return spores;
     }
 
