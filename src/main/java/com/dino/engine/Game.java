@@ -5,6 +5,8 @@ import java.util.Comparator;
 import java.util.List;
 import java.util.Random;
 import java.util.Scanner;
+import java.util.Map;
+import java.util.HashMap;
 
 import com.dino.commands.Command;
 import com.dino.commands.CommandParser;
@@ -57,7 +59,7 @@ public class Game {
     /**
      * Nem élő fonalak listája
      */
-    private List<Hypha> decayedHypha;
+    private Map<Hypha, Integer> decayedHyphas;
 
     private Object selectedEntity;
     private EntityRegistry registry;
@@ -84,7 +86,7 @@ public class Game {
         this.currRound = 0;
         this.totalRounds = 0;
         this.currentPlayer = null;
-        this.decayedHypha = new ArrayList<>();
+        this.decayedHyphas = new HashMap<>();
         this.registry = EntityRegistry.getInstance();
         this.namer = ObjectNamer.getInstance();
         this.logger = Logger.getInstance();
@@ -98,7 +100,7 @@ public class Game {
         this.currRound = 0;
         this.totalRounds = totalRounds;
         this.currentPlayer = null;
-        this.decayedHypha = new ArrayList<>();
+        this.decayedHyphas = new HashMap<>();
         this.registry = EntityRegistry.getInstance();
         this.namer = ObjectNamer.getInstance();
         this.logger = Logger.getInstance();
@@ -249,7 +251,7 @@ public class Game {
         }
 
         currRound = 0;
-        decayedHypha.clear();
+        decayedHyphas.clear();
 
         return true;
     }
@@ -556,8 +558,24 @@ public class Game {
      * @param hypha A lebomlott fonal
      */
     public void addDecayedHypha(Hypha hypha) {
-        if (hypha != null && !decayedHypha.contains(hypha)) {
-            decayedHypha.add(hypha);
+        if (hypha == null) {
+            return;
+        }
+    
+        if (!decayedHyphas.containsKey(hypha)) {
+            decayedHyphas.put(hypha, 3);
+        }
+    }
+
+    public void decayHyphas(){
+        for (Map.Entry<Hypha, Integer> entry : decayedHyphas.entrySet()){
+            int currentDecay = entry.getValue();
+            if (currentDecay <= 0){
+                entry.getKey().destroyHypha();
+            }
+            else {
+                entry.setValue(currentDecay - 1);
+            }
         }
     }
 
@@ -566,8 +584,8 @@ public class Game {
      *
      * @return A lebomlott fonalak listája
      */
-    public List<Hypha> getDecayedHypha() {
-        return decayedHypha;
+    public Map<Hypha, Integer> getDecayedHyphas() {
+        return decayedHyphas;
     }
 
     public EntityRegistry getRegistry() {

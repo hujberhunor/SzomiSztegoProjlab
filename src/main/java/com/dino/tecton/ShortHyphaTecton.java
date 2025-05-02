@@ -1,13 +1,13 @@
 package com.dino.tecton;
 
 import com.dino.core.Hypha;
-
+import com.dino.engine.Game;
 import com.dino.util.EntityRegistry;
 import com.dino.util.Logger;
 
 import com.dino.util.ObjectNamer;
 import com.google.gson.JsonObject;
-
+import java.util.List;
 
 /**
  * Egy olyan konkrét, példányosítható tektontípus, amin a gombafonalak négy kör
@@ -31,8 +31,10 @@ public class ShortHyphaTecton extends Tecton {
      * Csökkenti az összes rajta lévő fonál élettartamát
      */
     public void decreaseLifespan() {
+        ObjectNamer namer = ObjectNamer.getInstance();
         EntityRegistry registry = EntityRegistry.getInstance();
         Logger logger = Logger.getInstance();
+        Game game = Game.getInstance();
         
         for (Hypha hypha : hyphas) {
             int currentLifespan = hypha.getLifespan();
@@ -50,19 +52,7 @@ public class ShortHyphaTecton extends Tecton {
                 // Ha lejárt az élettartam, jelezzük a Game osztálynak vagy
                 // közvetlenül a tectonnak, hogy eltávolíthatja a listából
                 if (hypha.getLifespan() == 0) {
-                    // Place holder - működni elméletileg működik, de ez az osztály nem fér hozzá a game-hez, szóval még nem tudtam megoldani, hogy
-                    // a fonalak bekerüljenek a decayed-ek közé
-                    int index = -1;
-                    for (int i = 0; i < hypha.getTectons().size(); i++) {
-                        if (hypha.getTectons().get(i).equals(this)) {
-                            index = i;
-                        }
-                    }
-                    hypha.getTectons().subList(index, hypha.getTectons().size()).clear();
-                    logger.logChange("HYPHA", hypha, "STATUS", "ACTIVE", "DECAYED");
-                    
-                    // Game osztályhoz való hozzáadáshoz példa
-                    // game.addDecayedHypha(hypha);
+                    hypha.splitHypha(this, game);
                 }
             }
         }

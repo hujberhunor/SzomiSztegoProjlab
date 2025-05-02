@@ -1,6 +1,9 @@
 package com.dino.core;
 
+import com.dino.effects.ParalyzingEffect;
+import com.dino.engine.Game;
 import com.dino.player.Mycologist;
+import com.dino.tecton.InfiniteHyphaTecton;
 import com.dino.tecton.Tecton;
 import com.dino.util.EntityRegistry;
 import com.dino.util.Logger;
@@ -168,7 +171,7 @@ public class Hypha implements SerializableEntity {
         // Megnézzük, hogy a rovar rajta van-e az egyik olyan tektonon, amin fut a fonál
         Tecton targetTecton = null;
         for (Tecton t : tectons) {
-            if (i.getTecton().equals(t) && i.isUnderEffect(3)) {
+            if (i.getTecton().equals(t) && i.isUnderEffect(ParalyzingEffect.class)) {
                 targetTecton = t;
                 break;
             }
@@ -194,6 +197,55 @@ public class Hypha implements SerializableEntity {
             "SUCCESS"
         );
         return true;
+    }
+
+    // Elpusztít egy fonalat - törli mindehonnan, ahol számon van tartva
+    public void destroyHypha(){
+        for (Tecton t: tectons){
+            if (t.getHyphas().contains(this)){
+                t.getHyphas().remove(this);
+            }
+        }
+        fungus.getHyphas().remove(this);
+        Game game = Game.getInstance();
+        game.getDecayedHyphas().remove(this);
+    }
+
+    // Visszaadja, hogy egy fonál fut-e át InfiniteHyphaTecton-on
+    public boolean containsInfiniteTecton() {
+        for (Tecton t : tectons) {
+            if (t instanceof InfiniteHyphaTecton) {
+                return true;
+            }
+        }
+        return false;
+    }
+
+    // Kettlvág egy fonalat - a második felét decay-eli, ha kell
+    public void splitHypha(Tecton tecton, Game game){
+        int index = -1;
+        for (int i = 0; i < tectons.size(); i++) {
+            if (tectons.get(i).equals(tecton)) {
+                index = i;
+                break;
+            }
+        }
+        Hypha newHypha = new Hypha(mycologist, fungus);
+        namer.register(newHypha);
+        for (Tecton t : tectons.subList(index, tectons.size())){
+            newHypha.getTectons().add(t);
+            t.getHyphas().add(newHypha);
+            t.getHyphas().remove(this);
+        }
+
+        tectons.subList(index, tectons.size()).clear();
+
+        if (!newHypha.containsInfiniteTecton()){
+            game.addDecayedHypha(newHypha);
+        }
+        lifespan = 4;
+
+        logger.logChange("HYPHA", newHypha, "STATUS", "ACTIVE", "DECAYED");
     }
 
     @Override

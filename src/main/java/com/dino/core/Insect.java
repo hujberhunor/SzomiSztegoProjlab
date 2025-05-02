@@ -6,6 +6,7 @@ import com.dino.effects.ParalyzingEffect;
 import com.dino.effects.SlowingEffect;
 import com.dino.effects.SporeNoEffect;
 import com.dino.effects.StunningEffect;
+import com.dino.engine.Game;
 import com.dino.player.Entomologist;
 import com.dino.player.Mycologist;
 import com.dino.tecton.Tecton;
@@ -22,6 +23,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 import java.util.Random;
+import java.util.stream.Collectors;
 
 /**
  * Egy rovart reprezentáló osztály.
@@ -101,7 +103,7 @@ public class Insect implements SerializableEntity {
         }
 
         // Ellenőrizzük, hogy bénító hatás alatt van-e
-        if (isUnderEffect(3)) {
+        if (isUnderEffect(ParalyzingEffect.class)) {
             logger.logError(
                 "INSECT",
                 namer.getName(this),
@@ -148,12 +150,12 @@ public class Insect implements SerializableEntity {
         currentTecton = targetTecton;
         // skeleton.log("Rovar sikeresen mozgott az új tektonra.");
 
-        if (isUnderEffect(1) && extraMove && isUnderEffect(4)) {
+        if (isUnderEffect(AcceleratingEffect.class) && extraMove && isUnderEffect(SlowingEffect.class)) {
             setExtraMove(false);
             entomologist.decreaseActions();
-        } else if (isUnderEffect(1) && extraMove) {
+        } else if (isUnderEffect(AcceleratingEffect.class) && extraMove) {
             setExtraMove(false);
-        } else if (isUnderEffect(4)) {
+        } else if (isUnderEffect(SlowingEffect.class)) {
             entomologist.setActions(0);
         } else {
             entomologist.decreaseActions(); // Csökkentjük az akciópontját
@@ -175,6 +177,7 @@ public class Insect implements SerializableEntity {
     public boolean cutHypha(Hypha h, Tecton targetTecton) {
         // Skeleton skeleton = Skeleton.getInstance();
         // skeleton.startMethod("Insect", "cut");
+        Game game = Game.getInstance();
 
         // Ellenőrizzük, hogy a tektonok szomszédosak-e
         if (!currentTecton.isNeighbor(targetTecton)) {
@@ -201,7 +204,7 @@ public class Insect implements SerializableEntity {
         }
 
         // Ellenőrizzük, hogy a rovar kábító spórák hatása alatt van-e
-        if (isUnderEffect(5)) {
+        if (isUnderEffect(StunningEffect.class)) {
             logger.logError(
                 "INSECT",
                 namer.getName(this),
@@ -216,51 +219,16 @@ public class Insect implements SerializableEntity {
         // Kikeressük, hogy a fonál tektonlistájában hol található a tekon, amire a
         // rovar vág
         // A kapott indextől kezdve töröljük a lista elemeit
-        int index = -1;
-
-        //skeleton.log("A fonál tektonjai a vágás előtt:");
-        for (int i = 0; i < h.getTectons().size(); i++) {
-            //skeleton.log(h.getTectons().get(i).toString());
-            if (h.getTectons().get(i).equals(targetTecton)) {
-                index = i;
-            }
-        }
+        h.splitHypha(targetTecton, game);
 
         int oldTectonCount = h.getTectons().size();
         Tecton last = h.getTectons().get(oldTectonCount - 1);
 
-        h.getTectons().subList(index, h.getTectons().size()).clear();
-
-        logger.logChange(
-            "HYPHA",
-            h,
-            "LAST_TECTON",
-            last,
-            h.getTectons().get(h.getTectons().size() - 1)
-        );
-        logger.logChange(
-            "HYPHA",
-            h,
-            "TECTON_COUNT",
-            oldTectonCount,
-            h.getTectons().size()
-        );
-
-        /*
-        skeleton.log("A fonál tektonjai a vágás után:");
-        for (int i = 0; i < h.getTectons().size(); i++) {
-            skeleton.log(h.getTectons().get(i).toString());
-        }
-        */
+        logger.logChange("HYPHA", h, "LAST_TECTON", last, h.getTectons().get(h.getTectons().size() - 1));
+        logger.logChange("HYPHA", h, "TECTON_COUNT", oldTectonCount, h.getTectons().size());
 
         // skeleton.log("Rovar sikeresen elvágta a fonalat.");
-        logger.logOk(
-            "INSECT",
-            namer.getName(this),
-            "ACTION",
-            "ATTEMPT_CUTTING_HYPHA",
-            "SUCCESS"
-        );
+        logger.logOk("INSECT", namer.getName(this), "ACTION", "ATTEMPT_CUTTING_HYPHA", "SUCCESS");
         entomologist.decreaseActions();
         // skeleton.endMethod();
 
@@ -294,39 +262,16 @@ public class Insect implements SerializableEntity {
         }
 
         // Spóra elfogyasztása
-        final Mycologist[] mycologistWrapper = new Mycologist[1];
+        Map<Mycologist, Long> sporeCountByMycologist= currentTecton.spores.keySet().stream().collect(Collectors.groupingBy(Spore::getSpecies, Collectors.counting()));
 
-        Optional<Map.Entry<Mycologist, Integer>> maxSporeCountEntry =
-            currentTecton.spores
-                .entrySet()
-                .stream()
-                .max(Map.Entry.comparingByValue());
-        maxSporeCountEntry.ifPresent(entry -> {
-            mycologistWrapper[0] = entry.getKey();
-            currentTecton.removeSpores(mycologistWrapper[0]);
+        Optional<Map.Entry<Mycologist, Long>> maxEntry = sporeCountByMycologist.entrySet().stream().max(Map.Entry.comparingByValue());
+
+        maxEntry.ifPresent(entry -> {Mycologist topMycologist = entry.getKey();
+        
+            Optional<Spore> sporeToRemove = currentTecton.spores.keySet().stream().filter(spore -> spore.getSpecies().equals(topMycologist)).findFirst();
+
+            sporeToRemove.ifPresent(spore -> currentTecton.removeSpores(spore));
         });
-
-        List<Class<? extends Spore>> sporeClasses = Arrays.asList(
-            AcceleratingEffect.class,
-            ParalyzingEffect.class,
-            SlowingEffect.class,
-            SporeNoEffect.class,
-            StunningEffect.class,
-            CloneEffect.class
-        );
-        Random random = new Random();
-        Class<? extends Spore> randomSporeClass = sporeClasses.get(
-            random.nextInt(sporeClasses.size())
-        );
-
-        try {
-            Spore spore = randomSporeClass
-                .getDeclaredConstructor(Mycologist.class)
-                .newInstance(mycologistWrapper[0]);
-            spore.applyTo(this);
-        } catch (Exception exc) {
-            throw new RuntimeException("Failed to create spore instance", exc);
-        }
 
         logger.logOk(
             "INSECT",
@@ -383,10 +328,10 @@ public class Insect implements SerializableEntity {
         }
     }
 
-    public boolean isUnderEffect(int effectId) {
+    public boolean isUnderEffect(Class<?> clazz) {
         if (effects != null && !effects.isEmpty()) {
             for (Spore s : effects) {
-                if (s.sporeType() == effectId) return true;
+                if (clazz.isInstance(s)) return true;
             }
         }
         return false;
