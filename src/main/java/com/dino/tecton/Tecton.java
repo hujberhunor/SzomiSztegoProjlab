@@ -236,14 +236,7 @@ public abstract class Tecton implements SerializableEntity {
         // A fonalakat elszakítjuk
         for (Hypha h : hyphas) {
             List<Tecton> tectons = h.getTectons();
-            Boolean onInfiniteHypha = false;
-            for (Tecton t: tectons){
-                if (t instanceof InfiniteHyphaTecton){
-                    onInfiniteHypha = true;
-                    break;
-                }
-            }
-            if (!onInfiniteHypha) {
+            if (!h.containsInfiniteTecton()) {
                 for (int i = 0; i < tectons.size(); i++) {
                     if (tectons.get(i).equals(this)) {
                         tectons.subList(i, tectons.size()).clear();

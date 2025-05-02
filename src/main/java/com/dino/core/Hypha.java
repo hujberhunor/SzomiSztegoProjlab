@@ -3,6 +3,7 @@ package com.dino.core;
 import com.dino.effects.ParalyzingEffect;
 import com.dino.engine.Game;
 import com.dino.player.Mycologist;
+import com.dino.tecton.InfiniteHyphaTecton;
 import com.dino.tecton.Tecton;
 import com.dino.util.EntityRegistry;
 import com.dino.util.Logger;
@@ -207,6 +208,15 @@ public class Hypha implements SerializableEntity {
         fungus.getHyphas().remove(this);
         Game game = Game.getInstance();
         game.getDecayedHyphas().remove(this);
+    }
+
+    public boolean containsInfiniteTecton() {
+        for (Tecton t : tectons) {
+            if (t instanceof InfiniteHyphaTecton) {
+                return true;
+            }
+        }
+        return false;
     }
 
     @Override
