@@ -1,10 +1,18 @@
 package com.dino.core;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
+import java.util.Random;
 
+import com.dino.effects.AcceleratingEffect;
+import com.dino.effects.CloneEffect;
+import com.dino.effects.ParalyzingEffect;
+import com.dino.effects.SlowingEffect;
+import com.dino.effects.SporeNoEffect;
+import com.dino.effects.StunningEffect;
 import com.dino.player.Mycologist;
 import com.dino.tecton.NoFungiTecton;
 import com.dino.tecton.SingleHyphaTecton;
@@ -80,6 +88,32 @@ public class Fungus implements SerializableEntity {
      * vagy a szomszédos tektonokra, vagy azok szomszédjaira.
      */
 
+    public Spore createRandomSpore(){
+        final Mycologist[] mycologistWrapper = new Mycologist[1];
+        mycologistWrapper[0] = species;
+
+        List<Class<? extends Spore>> sporeClasses = Arrays.asList(
+            AcceleratingEffect.class,
+            ParalyzingEffect.class,
+            SlowingEffect.class,
+            SporeNoEffect.class,
+            StunningEffect.class,
+            CloneEffect.class
+        );
+        Random random = new Random();
+        Class<? extends Spore> randomSporeClass = sporeClasses.get(
+            random.nextInt(sporeClasses.size())
+        );
+
+        try {
+            return randomSporeClass
+                .getDeclaredConstructor(Mycologist.class)
+                .newInstance(mycologistWrapper[0]);
+        } catch (Exception exc) {
+            throw new RuntimeException("Failed to create spore instance", exc);
+        }
+    }
+
     // Itt eredetileg kapott paraméterként egy listát, de kivettem, mert szerintem
     // nem kell
     public void spreadSpores() {
@@ -98,7 +132,7 @@ public class Fungus implements SerializableEntity {
         // ha a gomba töltöttsége legalább 2, spórákat szór(hat) a szomszédos tektonokra
         if (charge >= 2) {
             for (Tecton t : tecton.getNeighbours()) {
-                t.addSpores(species);
+                t.addSpores(createRandomSpore());
                 alreadySpread.add(t);
             }
             logger.logOk("FUNGUS", namer.getName(this), "ACTION", "ATTEMPT_SPREAD_SPORE_1", "SUCCESS");
@@ -109,7 +143,7 @@ public class Fungus implements SerializableEntity {
             for (Tecton t : tecton.getNeighbours()) {
                 for (Tecton secondDegree : tecton.getNeighbours()) {
                     if (secondDegree != t && !alreadySpread.contains(secondDegree)) {
-                        secondDegree.addSpores(species);
+                        secondDegree.addSpores(createRandomSpore());
                         alreadySpread.add(secondDegree);
                     }
                 }
@@ -161,11 +195,11 @@ public class Fungus implements SerializableEntity {
         // Ellenőrizzük, hogy az első (nulladik) tektonon van-e spóra, ha kételemű a lista
         if (t.size() == 2){
             boolean found = false;
-            for (Map.Entry<Mycologist, Integer> entry : t.get(0).spores.entrySet()) {
-                Mycologist mycologist = entry.getKey();
+            for (Map.Entry<Spore, Integer> entry : t.get(0).spores.entrySet()) {
+                Spore spore = entry.getKey();
                 int quantity = entry.getValue();
 
-                if (mycologist.equals(species) && quantity > 0) {
+                if (spore.getSpecies().equals(species) && quantity > 0) {
                     found = true;
                     break;
                 }

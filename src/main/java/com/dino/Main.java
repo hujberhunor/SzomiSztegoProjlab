@@ -11,6 +11,7 @@ import com.dino.core.Fungus;
 import com.dino.core.Hexagon;
 import com.dino.core.Hypha;
 import com.dino.core.Insect;
+import com.dino.core.Spore;
 import com.dino.effects.AcceleratingEffect;
 import com.dino.effects.ParalyzingEffect;
 import com.dino.effects.StunningEffect;
@@ -111,8 +112,11 @@ public class Main {
             t2.insects.add(insect2);
 
             // Spóra számlálók
-            t1.spores.put(m1, 2);
-            t2.spores.put(m2, 1);
+
+            Spore s1 = f1.createRandomSpore();
+            Spore s2 = f1.createRandomSpore();
+            t1.spores.put(s1, 2);
+            t2.spores.put(s2, 1);
 
             // Neighbours
             t1.neighbours.add(t2);
