@@ -199,6 +199,7 @@ public class Hypha implements SerializableEntity {
         return true;
     }
 
+    // Elpusztít egy fonalat - törli mindehonnan, ahol számon van tartva
     public void destroyHypha(){
         for (Tecton t: tectons){
             if (t.getHyphas().contains(this)){
@@ -210,6 +211,7 @@ public class Hypha implements SerializableEntity {
         game.getDecayedHyphas().remove(this);
     }
 
+    // Visszaadja, hogy egy fonál fut-e át InfiniteHyphaTecton-on
     public boolean containsInfiniteTecton() {
         for (Tecton t : tectons) {
             if (t instanceof InfiniteHyphaTecton) {
@@ -217,6 +219,33 @@ public class Hypha implements SerializableEntity {
             }
         }
         return false;
+    }
+
+    // Kettlvág egy fonalat - a második felét decay-eli, ha kell
+    public void splitHypha(Tecton tecton, Game game){
+        int index = -1;
+        for (int i = 0; i < tectons.size(); i++) {
+            if (tectons.get(i).equals(tecton)) {
+                index = i;
+                break;
+            }
+        }
+        Hypha newHypha = new Hypha(mycologist, fungus);
+        namer.register(newHypha);
+        for (Tecton t : tectons.subList(index, tectons.size())){
+            newHypha.getTectons().add(t);
+            t.getHyphas().add(newHypha);
+            t.getHyphas().remove(this);
+        }
+
+        tectons.subList(index, tectons.size()).clear();
+
+        if (!newHypha.containsInfiniteTecton()){
+            game.addDecayedHypha(newHypha);
+        }
+        lifespan = 4;
+
+        logger.logChange("HYPHA", newHypha, "STATUS", "ACTIVE", "DECAYED");
     }
 
     @Override

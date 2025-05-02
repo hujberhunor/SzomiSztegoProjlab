@@ -52,26 +52,7 @@ public class ShortHyphaTecton extends Tecton {
                 // Ha lejárt az élettartam, jelezzük a Game osztálynak vagy
                 // közvetlenül a tectonnak, hogy eltávolíthatja a listából
                 if (hypha.getLifespan() == 0) {
-                    int index = -1;
-                    for (int i = 0; i < hypha.getTectons().size(); i++) {
-                        if (hypha.getTectons().get(i).equals(this)) {
-                            index = i;
-                            break;
-                        }
-                    }
-                    Hypha newHypha = new Hypha(hypha.getMycologist(), hypha.getFungus());
-                    namer.register(newHypha);
-                    for (Tecton t : hypha.getTectons().subList(index, hypha.getTectons().size())){
-                        newHypha.getTectons().add(t);
-                    }
-
-                    hypha.getTectons().subList(index, hypha.getTectons().size()).clear();
-
-                    if (!newHypha.containsInfiniteTecton()){
-                        game.addDecayedHypha(newHypha);
-                    }
-
-                    logger.logChange("HYPHA", newHypha, "STATUS", "ACTIVE", "DECAYED");
+                    hypha.splitHypha(this, game);
                 }
             }
         }

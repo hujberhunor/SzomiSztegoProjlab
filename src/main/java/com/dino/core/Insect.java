@@ -6,6 +6,7 @@ import com.dino.effects.ParalyzingEffect;
 import com.dino.effects.SlowingEffect;
 import com.dino.effects.SporeNoEffect;
 import com.dino.effects.StunningEffect;
+import com.dino.engine.Game;
 import com.dino.player.Entomologist;
 import com.dino.player.Mycologist;
 import com.dino.tecton.Tecton;
@@ -176,6 +177,7 @@ public class Insect implements SerializableEntity {
     public boolean cutHypha(Hypha h, Tecton targetTecton) {
         // Skeleton skeleton = Skeleton.getInstance();
         // skeleton.startMethod("Insect", "cut");
+        Game game = Game.getInstance();
 
         // Ellenőrizzük, hogy a tektonok szomszédosak-e
         if (!currentTecton.isNeighbor(targetTecton)) {
@@ -217,51 +219,16 @@ public class Insect implements SerializableEntity {
         // Kikeressük, hogy a fonál tektonlistájában hol található a tekon, amire a
         // rovar vág
         // A kapott indextől kezdve töröljük a lista elemeit
-        int index = -1;
-
-        //skeleton.log("A fonál tektonjai a vágás előtt:");
-        for (int i = 0; i < h.getTectons().size(); i++) {
-            //skeleton.log(h.getTectons().get(i).toString());
-            if (h.getTectons().get(i).equals(targetTecton)) {
-                index = i;
-            }
-        }
+        h.splitHypha(targetTecton, game);
 
         int oldTectonCount = h.getTectons().size();
         Tecton last = h.getTectons().get(oldTectonCount - 1);
 
-        h.getTectons().subList(index, h.getTectons().size()).clear();
-
-        logger.logChange(
-            "HYPHA",
-            h,
-            "LAST_TECTON",
-            last,
-            h.getTectons().get(h.getTectons().size() - 1)
-        );
-        logger.logChange(
-            "HYPHA",
-            h,
-            "TECTON_COUNT",
-            oldTectonCount,
-            h.getTectons().size()
-        );
-
-        /*
-        skeleton.log("A fonál tektonjai a vágás után:");
-        for (int i = 0; i < h.getTectons().size(); i++) {
-            skeleton.log(h.getTectons().get(i).toString());
-        }
-        */
+        logger.logChange("HYPHA", h, "LAST_TECTON", last, h.getTectons().get(h.getTectons().size() - 1));
+        logger.logChange("HYPHA", h, "TECTON_COUNT", oldTectonCount, h.getTectons().size());
 
         // skeleton.log("Rovar sikeresen elvágta a fonalat.");
-        logger.logOk(
-            "INSECT",
-            namer.getName(this),
-            "ACTION",
-            "ATTEMPT_CUTTING_HYPHA",
-            "SUCCESS"
-        );
+        logger.logOk("INSECT", namer.getName(this), "ACTION", "ATTEMPT_CUTTING_HYPHA", "SUCCESS");
         entomologist.decreaseActions();
         // skeleton.endMethod();
 
