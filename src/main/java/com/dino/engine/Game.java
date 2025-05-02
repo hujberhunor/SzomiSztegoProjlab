@@ -23,7 +23,6 @@ import com.dino.util.ObjectNamer;
  * kezelő osztály.
  */
 public class Game {
-
     /**
      * A játékteret és annak tulajdonságait reprezentáló objektum.
      */
@@ -65,18 +64,6 @@ public class Game {
     private Logger logger;
 
     private Scanner scanner;
-    private static Game instance;
-
-    public static Game getInstance() {
-        if (instance == null) {
-            instance = new Game();
-        }
-        return instance;
-    }
-
-    public static void resetInstance() {
-        instance = null;
-    }
 
     public Game() {
         this.map = new GameBoard();
@@ -119,63 +106,55 @@ public class Game {
      * felveszi,
      * és elhelyezi a játékosokat a kezdeti tektonokon, és inicializálja a
      * játékmenet kezdeti értékeit.
-     *
+     * 
      * @return A játék inicializálásának sikeressége.
      */
     public boolean initGame() {
         System.out.println("Adja meg a gombászok számát!");
         int numberOfMycologist = 0;
-        while (numberOfMycologist < 2 || numberOfMycologist > 4) {
+        while(numberOfMycologist < 2 || numberOfMycologist > 4) {
             numberOfMycologist = scanner.nextInt();
             scanner.nextLine();
-            if (numberOfMycologist < 2) {
-                System.out.println(
-                        "A gombászok száma nem lehet kevesebb kettőnél! Adjon meg egy újat!");
+            if(numberOfMycologist < 2) {
+                System.out.println("A gombászok száma nem lehet kevesebb kettőnél! Adjon meg egy újat!");
             } else if (numberOfMycologist > 4) {
-                System.out.println(
-                        "A gombászok száma nem lehet több négynél! Adjon meg egy újat!");
+                System.out.println("A gombászok száma nem lehet több négynél! Adjon meg egy újat!");
             }
         }
 
         System.out.println("Adja meg a rovarászok számát!");
         int numberOfEntomologist = 0;
-        while (numberOfEntomologist < 2 ||
-                numberOfEntomologist > 4 ||
-                numberOfEntomologist > numberOfMycologist) {
+        while(numberOfEntomologist < 2 || numberOfEntomologist > 4 || numberOfEntomologist > numberOfMycologist) {
             numberOfEntomologist = scanner.nextInt();
             scanner.nextLine();
-            if (numberOfEntomologist < 2) {
-                System.out.println(
-                        "A rovarászok száma nem lehet kevesebb kettőnél! Adjon meg egy újat!");
+            if(numberOfEntomologist < 2) {
+                System.out.println("A rovarászok száma nem lehet kevesebb kettőnél! Adjon meg egy újat!");
             } else if (numberOfEntomologist > 4) {
-                System.out.println(
-                        "A rovarászok száma nem lehet több négynél! Adjon meg egy újat!");
+                System.out.println("A rovarászok száma nem lehet több négynél! Adjon meg egy újat!");
             } else if (numberOfEntomologist > numberOfMycologist) {
-                System.out.println(
-                        "Nem lehet több rovarász, mint gombász! Adjon meg egy újat!");
+                System.out.println("Nem lehet több rovarász, mint gombász! Adjon meg egy újat!");
             }
         }
 
-        for (int i = 0; i < numberOfMycologist; i++) {
+        for(int i = 0; i < numberOfMycologist; i++) {
             Mycologist mycologist = new Mycologist();
             players.add(mycologist);
-            mycologist.setName("Gombász " + (i + 1));
+            mycologist.setName("Gombász " + (i+1));
         }
 
-        for (int i = 0; i < numberOfEntomologist; i++) {
+        for(int i = 0; i < numberOfEntomologist; i++) {
             Entomologist entomologist = new Entomologist();
             players.add(entomologist);
-            entomologist.setName("Rovarász " + (i + 1));
+            entomologist.setName("Rovarász " + (i+1));
         }
 
         System.out.println("Hány kör legyen a játék?");
         int numberOfRounds = 0;
-        while (numberOfRounds < 1) {
+        while(numberOfRounds < 1) {
             numberOfRounds = scanner.nextInt();
             scanner.nextLine();
-            if (numberOfRounds < 1) {
-                System.out.println(
-                        "Legalább egy körnek lennie kell! Adjon meg egy újat!");
+            if(numberOfRounds < 1) {
+                System.out.println("Legalább egy körnek lennie kell! Adjon meg egy újat!");
             }
         }
 
@@ -191,22 +170,15 @@ public class Game {
         List<Tecton> tectonsWithFungus = new ArrayList<>();
 
         int numberOfMycologist = 1;
-        for (Player player : players) {
-            if (player instanceof Mycologist) {
-                System.out.println(
-                        numberOfMycologist +
-                                ". gombász\nMelyik tektonról szeretne indulni?\nVálasszon egy számot 1-től " +
-                                tectons.size() +
-                                "-ig");
+        for(Player player : players) {
+            if(player instanceof Mycologist) {
+                System.out.println(numberOfMycologist + ". gombász\nMelyik tektonról szeretne indulni?\nVálasszon egy számot 1-től " + tectons.size() + "-ig");
                 int selectedIndex = 0;
                 while (selectedIndex < 1 || selectedIndex > tectons.size()) {
                     selectedIndex = scanner.nextInt();
                     scanner.nextLine();
-                    if (selectedIndex < 1 || selectedIndex > tectons.size()) {
-                        System.out.println(
-                                "Helytelen szám! Válasszon egy számot 1-től " +
-                                        tectons.size() +
-                                        "-ig");
+                    if(selectedIndex < 1 || selectedIndex > tectons.size()) {
+                        System.out.println("Helytelen szám! Válasszon egy számot 1-től " + tectons.size() + "-ig");
                     }
                 }
                 selectedIndex--;
@@ -219,12 +191,10 @@ public class Game {
         }
 
         Random rnd = new Random();
-        for (Player player : players) {
-            if (player instanceof Entomologist) {
+        for(Player player : players) {
+            if(player instanceof Entomologist) {
                 int selectedIndex = rnd.nextInt(tectonsWithFungus.size());
-                Insect insect = new Insect(
-                        (Entomologist) player,
-                        tectonsWithFungus.get(selectedIndex));
+                Insect insect = new Insect((Entomologist) player, tectonsWithFungus.get(selectedIndex));
                 ((Entomologist) player).addInsects(insect);
                 tectonsWithFungus.remove(selectedIndex);
             }
@@ -234,7 +204,7 @@ public class Game {
     }
 
     // MAIN 9-es teszt erre dependál
-    public boolean TSTinitGame() {
+     public boolean TSTinitGame() {
         if (players.isEmpty() || map == null) {
             return false;
         }
@@ -269,14 +239,14 @@ public class Game {
         }
     }
 
+
     /**
      * Felveszi az új paraméterként kapott játékost, és visszaadja, hogy a művelet
      * sikeres volt-e.
-     *
+     * 
      * @param player Felvenni kívánt új játékos.
      * @return Az új játékos felvételének sikeresége.
      */
-
     public boolean addPlayer(Player player) {
         if (player == null || players.contains(player)) {
             return false;
@@ -286,17 +256,11 @@ public class Game {
             int oldPlayerCount = players.size();
             players.add(player);
 
-            logger.logOk(
-                    "GAME",
-                    "null",
-                    "PLAYERS_COUNT",
-                    String.valueOf(oldPlayerCount),
+            logger.logChange("GAME", this, "PLAYERS_COUNT", String.valueOf(oldPlayerCount),
                     String.valueOf(players.size()));
-        } else {
-            logger.logError(
-                    "GAME",
-                    "AddPlayer",
-                    "A játékos nem adható hozzá: a rovarászok száma nem lehet több, mint a gombászoké!");
+        }
+        else{
+            logger.logError("GAME", "AddPlayer", "A játékos nem adható hozzá: a rovarászok száma nem lehet több, mint a gombászoké!");
             return false;
         }
 
@@ -306,7 +270,7 @@ public class Game {
     /**
      * Törli a paraméterként kapott játékost, és visszaadja, hogy a művelet sikeres
      * volt-e.
-     *
+     * 
      * @param player Töröli kívánt játékos.
      * @return Az játékos törlésének sikeressége.
      */
@@ -321,11 +285,7 @@ public class Game {
 
         boolean result = players.remove(player);
         if (result) {
-            logger.logChange(
-                    "GAME",
-                    this,
-                    "PLAYERS_COUNT",
-                    String.valueOf(oldPlayerCount),
+            logger.logChange("GAME", this, "PLAYERS_COUNT", String.valueOf(oldPlayerCount),
                     String.valueOf(players.size()));
 
             if (player == currentPlayer) {
@@ -333,24 +293,14 @@ public class Game {
 
                 if (players.isEmpty()) {
                     currentPlayer = null;
-                    logger.logChange(
-                            "GAME",
-                            this,
-                            "CURRENT_PLAYER",
-                            oldPlayerName,
-                            "null");
+                    logger.logChange("GAME", this, "CURRENT_PLAYER", oldPlayerName, "null");
                 } else {
                     // A következő játékos lesz az aktuális, vagy az első, ha ez volt az utolsó
                     int nextIndex = playerIndex % players.size();
                     currentPlayer = players.get(nextIndex);
 
                     String newPlayerName = namer.getName(currentPlayer);
-                    logger.logChange(
-                            "GAME",
-                            this,
-                            "CURRENT_PLAYER",
-                            oldPlayerName,
-                            newPlayerName);
+                    logger.logChange("GAME", this, "CURRENT_PLAYER", oldPlayerName, newPlayerName);
                 }
             }
         }
@@ -370,8 +320,7 @@ public class Game {
         CommandParser parser = new CommandParser(this);
 
         System.out.println("Aktuális játékos: " + currentPlayer.name);
-        System.out.println(
-                "Készen állsz, gépelj commandokat (pl. MOVE_INSECT insect1 tectonB):");
+        System.out.println("Készen állsz, gépelj commandokat (pl. MOVE_INSECT insect1 tectonB):");
 
         while (currentPlayer.remainingActions > 0) {
             String line = scanner.nextLine();
@@ -381,14 +330,13 @@ public class Game {
             try {
                 Command command = parser.parse(line);
 
-                if (command.toString().equals("NEXT_TURN") ||
-                        command.toString().equals("SKIP_TURN")) {
+                if(command.toString().equals("NEXT_TURN") || command.toString().equals("SKIP_TURN")) {
                     currentPlayer.remainingActions = 0;
                     command.execute(this, logger);
                     break;
                 }
 
-                if (command.toString().equals("NEXT_ROUND")) {
+                if(command.toString().equals("NEXT_ROUND")) {
                     currentPlayer.remainingActions = 0;
                     nextIndex = 0;
                     command.execute(this, logger);
@@ -399,16 +347,10 @@ public class Game {
                     command.execute(this, logger);
                     currentPlayer.decreaseActions();
                 } else {
-                    logger.logError(
-                            "COMMAND",
-                            command.toString(),
-                            "Invalid command.");
+                    logger.logError("COMMAND", command.toString(), "Invalid command.");
                 }
             } catch (Exception e) {
-                logger.logError(
-                        "COMMAND",
-                        line,
-                        "Parsing failed: " + e.getMessage());
+                logger.logError("COMMAND", line, "Parsing failed: " + e.getMessage());
             }
         }
 
@@ -420,12 +362,7 @@ public class Game {
             currentPlayer.remainingActions = currentPlayer.actionsPerTurn;
 
             String newPlayerName = namer.getName(currentPlayer);
-            logger.logChange(
-                    "GAME",
-                    this,
-                    "CURRENT_PLAYER",
-                    oldPlayerName,
-                    newPlayerName);
+            logger.logChange("GAME", this, "CURRENT_PLAYER", oldPlayerName, newPlayerName);
 
             return 1;
         }
@@ -444,12 +381,7 @@ public class Game {
         int oldRound = currRound;
         currRound++;
 
-        logger.logChange(
-                "GAME",
-                this,
-                "ROUND",
-                String.valueOf(oldRound),
-                String.valueOf(currRound));
+        logger.logChange("GAME", this, "ROUND", String.valueOf(oldRound), String.valueOf(currRound));
 
         map.breakHandler();
 
@@ -458,12 +390,7 @@ public class Game {
         currentPlayer.remainingActions = currentPlayer.actionsPerTurn;
 
         String newPlayerName = namer.getName(currentPlayer);
-        logger.logChange(
-                "GAME",
-                this,
-                "CURRENT_PLAYER",
-                oldPlayerName,
-                newPlayerName);
+        logger.logChange("GAME", this, "CURRENT_PLAYER", oldPlayerName, newPlayerName);
 
         return 1;
     }
@@ -487,18 +414,13 @@ public class Game {
         System.out.println("Végső állás:");
         for (int i = 0; i < players.size(); i++) {
             Player player = players.get(i);
-            System.out.println(
-                    (i + 1) +
-                            ". helyezett: " +
-                            player.name +
-                            " - Pontszám: " +
-                            player.score);
+            System.out.println((i + 1) + ". helyezett: " + player.name + " - Pontszám: " + player.score);
         }
     }
 
     /**
      * Visszaadja a jelenlegi játékost
-     *
+     * 
      * @return Az aktuális játékos
      */
     public Player getCurrentPlayer() {
@@ -507,7 +429,7 @@ public class Game {
 
     /**
      * Visszaadja a játéktáblát
-     *
+     * 
      * @return A játéktábla objektum
      */
     public GameBoard getMap() {
@@ -516,7 +438,7 @@ public class Game {
 
     /**
      * Visszaadja a játékosok listáját
-     *
+     * 
      * @return A játékosok listája
      */
     public List<Player> getPlayers() {
@@ -525,7 +447,7 @@ public class Game {
 
     /**
      * Visszaadja a jelenlegi kör számát
-     *
+     * 
      * @return A jelenlegi kör száma
      */
     public int getCurrentRound() {
@@ -534,7 +456,7 @@ public class Game {
 
     /**
      * Visszaadja az összes kör számát
-     *
+     * 
      * @return Az összes kör száma
      */
     public int getTotalRounds() {
@@ -543,7 +465,7 @@ public class Game {
 
     /**
      * Beállítja az összes kör számát
-     *
+     * 
      * @param totalRounds Az összes kör új értéke
      */
     public void settotalRounds(int totalRounds) {
@@ -552,7 +474,7 @@ public class Game {
 
     /**
      * Hozzáad egy fonalat a lebomlott fonalak listájához
-     *
+     * 
      * @param hypha A lebomlott fonal
      */
     public void addDecayedHypha(Hypha hypha) {
@@ -563,7 +485,7 @@ public class Game {
 
     /**
      * Visszaadja a lebomlott fonalak listáját
-     *
+     * 
      * @return A lebomlott fonalak listája
      */
     public List<Hypha> getDecayedHypha() {
@@ -593,7 +515,6 @@ public class Game {
     /**
      * Ellenőrzi, hogy a játékosok száma megfelel-e a szabályoknak:
      * a rovarászok száma nem lehet több, mint a gombászoké.
-     * 
      * @return true, ha a játékosok aránya megfelelő, false ha nem
      */
     public boolean validatePlayerRatio() {
@@ -609,8 +530,8 @@ public class Game {
 
         return entomologistCount <= mycologistCount;
     }
-
-    // szerializálás
+  
+      // szerializálás
     public List<Mycologist> getAllMycologists() {
         List<Mycologist> result = new ArrayList<>();
         for (Player p : players) {
@@ -640,4 +561,5 @@ public class Game {
     public void setCurrentPlayer(Player byName) {
         this.currentPlayer = byName;
     }
+
 }
