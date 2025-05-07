@@ -16,6 +16,7 @@ import com.dino.engine.Game;
 import com.dino.engine.GameBoard;
 import com.dino.player.Entomologist;
 import com.dino.player.Mycologist;
+import com.dino.tecton.InfiniteHyphaTecton;
 import com.dino.tecton.KeepHyphaTecton;
 import com.dino.tecton.NoFungiTecton;
 import com.dino.tecton.SingleHyphaTecton;
@@ -205,8 +206,8 @@ public class Main {
 
         // Create tectons
         Tecton t1 = new NoFungiTecton();
-        Tecton t2 = new NoFungiTecton();
-        Tecton t3 = new NoFungiTecton();
+        Tecton t2 = new InfiniteHyphaTecton();
+        Tecton t3 = new KeepHyphaTecton();
         board.connect(t1, t2);
         board.connect(t2, t3);
 
@@ -244,13 +245,27 @@ public class Main {
         t1.spores.put(spore, 2);
 
         // Print initial state
-        System.out.println("Test environment ready.");
-        System.out.println("Tectons: tectonA, tectonB, tectonC");
-        System.out.println("Players: myco1 (Mycologist), ento1 (Entomologist)");
-        System.out.println("Insect: insect1 on tectonA");
-        System.out.println("Fungus: fungus1 on tectonB");
-        System.out.println("Hypha: hypha1 connecting tectonA and tectonB");
-        System.out.println("Spores: 2 on tectonA");
+        System.out.println("Tectons: ");
+        System.out.println("- " + registry.getNameOf(t1));
+        System.out.println("- " + registry.getNameOf(t2));
+        System.out.println("- " + registry.getNameOf(t3));
+
+        System.out.println("Players: ");
+        System.out.println("- " + registry.getNameOf(mycologist) + " (Mycologist)");
+        System.out.println("- " + registry.getNameOf(entomologist) + " (Entomologist)");
+
+        System.out.println("Insect: " + registry.getNameOf(insect) +
+                " on " + registry.getNameOf(insect.getTecton()));
+
+        System.out.println("Fungus: " + registry.getNameOf(fungus) +
+                " on " + registry.getNameOf(fungus.getTecton()));
+
+        System.out.println("Hypha: " + registry.getNameOf(hypha) +
+                " connects: " + registry.getNameOf(t1) +
+                " <-> " + registry.getNameOf(t2));
+
+        System.out.println("Spores on " + registry.getNameOf(t1) +
+                ": " + t1.spores.size());
 
         // Command parser
         CommandParser parser = new CommandParser(game);
