@@ -10,6 +10,9 @@ import java.util.HashMap;
 
 import com.dino.commands.Command;
 import com.dino.commands.CommandParser;
+import com.dino.commands.NextRoundCommand;
+import com.dino.commands.NextTurnCommand;
+import com.dino.commands.SkipTurnCommand;
 import com.dino.core.Hypha;
 import com.dino.core.Insect;
 import com.dino.player.Entomologist;
@@ -368,54 +371,17 @@ public class Game {
     public int nextTurn() {
         int currentIndex = players.indexOf(currentPlayer);
         int nextIndex = (currentIndex + 1) % players.size();
-
-        CommandParser parser = new CommandParser(this);
+        boolean turnEnded = false;
 
         System.out.println("Aktuális játékos: " + currentPlayer.name);
         System.out.println(
                 "Készen állsz, gépelj commandokat (pl. MOVE_INSECT insect1 tectonB):");
 
-        while (currentPlayer.remainingActions > 0) {
-            String line = scanner.nextLine();
-            if (line.isBlank())
-                break;
+        // Scanner kezelése külön metódusba kerül át
+        turnEnded = processPlayerCommands();
 
-            try {
-                Command command = parser.parse(line);
-
-                if (command.toString().equals("NEXT_TURN") ||
-                        command.toString().equals("SKIP_TURN")) {
-                    currentPlayer.remainingActions = 0;
-                    command.execute(this, logger);
-                    break;
-                }
-
-                if (command.toString().equals("NEXT_ROUND")) {
-                    currentPlayer.remainingActions = 0;
-                    nextIndex = 0;
-                    command.execute(this, logger);
-                    break;
-                }
-
-                if (command.validate(this)) {
-                    command.execute(this, logger);
-                    currentPlayer.decreaseActions();
-                } else {
-                    logger.logError(
-                            "COMMAND",
-                            command.toString(),
-                            "Invalid command.");
-                }
-            } catch (Exception e) {
-                logger.logError(
-                        "COMMAND",
-                        line,
-                        "Parsing failed: " + e.getMessage());
-            }
-        }
-
-        if (nextIndex == 0) {
-            return 0;
+        if (turnEnded) {
+            return 0; // Jelezzük, hogy kör vége
         } else {
             String oldPlayerName = namer.getName(currentPlayer);
             currentPlayer = players.get(nextIndex);
@@ -431,6 +397,54 @@ public class Game {
 
             return 1;
         }
+    }
+
+    /**
+     * Játékos commandjainak feldolgozása
+     * 
+     * @return true, ha körváltás (NEXT_ROUND) történt, false egyébként
+     */
+    private boolean processPlayerCommands() {
+        while (currentPlayer.remainingActions > 0) {
+            String line = scanner.nextLine();
+            if (line.isBlank())
+                break;
+
+            Command command = null;
+            try {
+                // A command parserelése a CommandParser osztály feladata
+                CommandParser parser = new CommandParser(this);
+                command = parser.parse(line);
+
+                if (command.validate(this)) {
+                    // Csak az execute-ot hívjuk meg
+                    command.execute(this, logger);
+
+                    // Speciális parancsok kezelése
+                    if (command instanceof NextTurnCommand ||
+                            command instanceof SkipTurnCommand) {
+                        return false; // Vége a körnek, de nem a rundnak
+                    } else if (command instanceof NextRoundCommand) {
+                        return true; // Vége a rundnak
+                    } else {
+                        // Minden más command elhasznál egy akciót
+                        currentPlayer.decreaseActions();
+                    }
+                } else {
+                    logger.logError(
+                            "COMMAND",
+                            command.toString(),
+                            "Invalid command.");
+                }
+            } catch (Exception e) {
+                logger.logError(
+                        "COMMAND",
+                        line,
+                        "Parsing failed: " + e.getMessage());
+            }
+        }
+
+        return false; // Alapértelmezetten nem váltunk rundot
     }
 
     /**
@@ -561,19 +575,18 @@ public class Game {
         if (hypha == null) {
             return;
         }
-    
+
         if (!decayedHyphas.containsKey(hypha)) {
             decayedHyphas.put(hypha, 3);
         }
     }
 
-    public void decayHyphas(){
-        for (Map.Entry<Hypha, Integer> entry : decayedHyphas.entrySet()){
+    public void decayHyphas() {
+        for (Map.Entry<Hypha, Integer> entry : decayedHyphas.entrySet()) {
             int currentDecay = entry.getValue();
-            if (currentDecay <= 0){
+            if (currentDecay <= 0) {
                 entry.getKey().destroyHypha();
-            }
-            else {
+            } else {
                 entry.setValue(currentDecay - 1);
             }
         }

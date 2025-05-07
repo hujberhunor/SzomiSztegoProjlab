@@ -7,8 +7,9 @@ public class NextTurnCommand implements Command {
 
     @Override
     public void execute(Game game, Logger logger) {
-        // Csak annyi, hogy meghívjuk a játékosléptetést
-        game.nextTurn();
+        // Jelenlegi játékos akcióinak nullázása
+        game.getCurrentPlayer().remainingActions = 0;
+        logger.logChange("GAME", game, "TURN", "-", "Turn ended");
     }
 
     @Override
