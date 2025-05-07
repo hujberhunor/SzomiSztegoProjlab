@@ -63,14 +63,13 @@ public class MoveInsectCommand implements Command {
     @Override
     public boolean validate(Game game) {
         EntityRegistry reg = game.getRegistry();
+
+        // Csak azt ellenőrizzük, hogy a paraméterek léteznek és megfelelő típusúak
         Insect insect = (Insect) reg.getByName(insectName);
         Tecton target = (Tecton) reg.getByName(tectonName);
 
-        if (insect == null || target == null)
-            return false;
-        Tecton current = insect.getTecton();
-
-        return current.isNeighbor(target) && current.hasHypha(target);
+        // Csak a paraméterek létezése a fontos
+        return (insect != null && target != null);
     }
 
     @Override
