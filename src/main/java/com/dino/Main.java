@@ -195,161 +195,193 @@ public class Main {
     }
 
     public static void testAllCommands() {
-    Game game = new Game(3);
-    EntityRegistry registry = game.getRegistry();
-    Logger logger = game.getLogger();
-    GameBoard board = game.getBoard();
-    
-    // Set up test environment
-    System.out.println("Setting up test environment...");
-    
-    // Create tectons
-    Tecton t1 = new NoFungiTecton();
-    Tecton t2 = new NoFungiTecton();
-    Tecton t3 = new NoFungiTecton();
-    board.connect(t1, t2);
-    board.connect(t2, t3);
-    
-    // Register tectons
-    registry.register("tectonA", t1);
-    registry.register("tectonB", t2);
-    registry.register("tectonC", t3);
-    
-    // Create and register players
-    Mycologist mycologist = new Mycologist();
-    Entomologist entomologist = new Entomologist();
-    registry.register("myco1", mycologist);
-    registry.register("ento1", entomologist);
-    game.addPlayer(mycologist);
-    game.addPlayer(entomologist);
-    
-    // Create and register insect
-    Insect insect = new Insect(entomologist, t1);
-    registry.register("insect1", insect);
-    
-    // Place fungus
-    mycologist.placeFungus(t2);
-    Fungus fungus = t2.getFungus();
-    registry.register("fungus1", fungus);
-    
-    // Create hypha
-    Hypha hypha = new Hypha(mycologist, fungus);
-    hypha.continueHypha(t1);
-    t1.hyphas.add(hypha);
-    t2.hyphas.add(hypha);
-    registry.register("hypha1", hypha);
-    
-    // Add spores
-    Spore spore = fungus.createRandomSpore();
-    t1.spores.put(spore, 2);
-    
-    // Print initial state
-    System.out.println("Test environment ready.");
-    System.out.println("Tectons: tectonA, tectonB, tectonC");
-    System.out.println("Players: myco1 (Mycologist), ento1 (Entomologist)");
-    System.out.println("Insect: insect1 on tectonA");
-    System.out.println("Fungus: fungus1 on tectonB");
-    System.out.println("Hypha: hypha1 connecting tectonA and tectonB");
-    System.out.println("Spores: 2 on tectonA");
-    
-    // Command parser
-    CommandParser parser = new CommandParser(game);
-    Scanner inputScanner = new Scanner(System.in);
-    
-    // List available commands
-    System.out.println("\nAvailable commands to test:");
-    System.out.println("1. MOVE_INSECT insect1 tectonB");
-    System.out.println("2. CONSUME_SPORE insect1");
-    System.out.println("3. CUT_HYPHA insect1 hypha1 tectonB");
-    System.out.println("4. PLACE_FUNGUS myco1 tectonC");
-    System.out.println("5. SPREAD_SPORE fungus1");
-    System.out.println("6. GROW_HYPHA fungus1");
-    System.out.println("7. BREAK_TECTON tectonB");
-    System.out.println("8. EAT_INSECT hypha1 insect1");
-    System.out.println("9. SET_FUNGUS_CHARGE fungus1 5");
-    System.out.println("10. NEXT_TURN");
-    System.out.println("11. NEXT_ROUND");
-    System.out.println("12. SKIP_TURN");
-    System.out.println("13. SELECT_ENTITY tectonA");
-    System.out.println("14. SAVE test_save.json");
-    System.out.println("15. LOAD test_save.json");
-    System.out.println("16. END_GAME");
-    System.out.println("17. AUTO_TEST (run all commands in sequence)");
-    System.out.println("0. EXIT");
-    
-    boolean testing = true;
-    while (testing) {
-        System.out.print("\nEnter command number or full command (0 to exit): ");
-        String input = inputScanner.nextLine();
-        
-        if (input.equals("0")) {
-            testing = false;
-            continue;
-        }
-        
-        if (input.equals("17")) {
-            autoTestAllCommands(game, parser, logger);
-            continue;
-        }
-        
-        String commandString = "";
-        
-        // Convert numbers to commands
-        try {
-            int option = Integer.parseInt(input);
-            switch (option) {
-                case 1: commandString = "MOVE_INSECT insect1 tectonB"; break;
-                case 2: commandString = "CONSUME_SPORE insect1"; break;
-                case 3: commandString = "CUT_HYPHA insect1 hypha1 tectonB"; break;
-                case 4: commandString = "PLACE_FUNGUS myco1 tectonC"; break;
-                case 5: commandString = "SPREAD_SPORE fungus1"; break;
-                case 6: commandString = "GROW_HYPHA fungus1"; break;
-                case 7: commandString = "BREAK_TECTON tectonB"; break;
-                case 8: commandString = "EAT_INSECT hypha1 insect1"; break;
-                case 9: commandString = "SET_FUNGUS_CHARGE fungus1 5"; break;
-                case 10: commandString = "NEXT_TURN"; break;
-                case 11: commandString = "NEXT_ROUND"; break;
-                case 12: commandString = "SKIP_TURN"; break;
-                case 13: commandString = "SELECT_ENTITY tectonA"; break;
-                case 14: commandString = "SAVE test_save.json"; break;
-                case 15: commandString = "LOAD test_save.json"; break;
-                case 16: commandString = "END_GAME"; break;
-                default: 
-                    System.out.println("Invalid option."); 
-                    continue;
-            }
-        } 
-        catch (Exception e) {
-            // TODO: handle exception
-        } {
+        Game game = new Game(3);
+        EntityRegistry registry = game.getRegistry();
+        Logger logger = game.getLogger();
+        GameBoard board = game.getBoard();
 
-        }
-        
-        try {
-            System.out.println("Executing: " + commandString);
-            Command command = parser.parse(commandString);
-            
-            boolean isValid = command.validate(game);
-            System.out.println("Command validation: " + (isValid ? "VALID" : "INVALID"));
-            
-            if (isValid) {
-                command.execute(game, logger);
-                System.out.println("Command executed successfully.");
-                
-                // Print relevant state after execution
-                printRelevantState(commandString, game, registry);
-            } else {
-                System.out.println("Command validation failed. Not executed.");
+        // Set up test environment
+        System.out.println("Setting up test environment...");
+
+        // Create tectons
+        Tecton t1 = new NoFungiTecton();
+        Tecton t2 = new NoFungiTecton();
+        Tecton t3 = new NoFungiTecton();
+        board.connect(t1, t2);
+        board.connect(t2, t3);
+
+        // Register tectons
+        registry.register("tectonA", t1);
+        registry.register("tectonB", t2);
+        registry.register("tectonC", t3);
+
+        // Create and register players
+        Mycologist mycologist = new Mycologist();
+        Entomologist entomologist = new Entomologist();
+        registry.register("myco1", mycologist);
+        registry.register("ento1", entomologist);
+        game.addPlayer(mycologist);
+        game.addPlayer(entomologist);
+
+        // Create and register insect
+        Insect insect = new Insect(entomologist, t1);
+        registry.register("insect1", insect);
+
+        // Place fungus
+        Fungus fungus = new Fungus(mycologist, t2);
+        t2.setFungus(fungus);
+        registry.register("fungus1", fungus);
+
+        // Create hypha
+        Hypha hypha = new Hypha(mycologist, fungus);
+        hypha.continueHypha(t1);
+        t1.hyphas.add(hypha);
+        t2.hyphas.add(hypha);
+        registry.register("hypha1", hypha);
+
+        // Add spores
+        Spore spore = fungus.createRandomSpore();
+        t1.spores.put(spore, 2);
+
+        // Print initial state
+        System.out.println("Test environment ready.");
+        System.out.println("Tectons: tectonA, tectonB, tectonC");
+        System.out.println("Players: myco1 (Mycologist), ento1 (Entomologist)");
+        System.out.println("Insect: insect1 on tectonA");
+        System.out.println("Fungus: fungus1 on tectonB");
+        System.out.println("Hypha: hypha1 connecting tectonA and tectonB");
+        System.out.println("Spores: 2 on tectonA");
+
+        // Command parser
+        CommandParser parser = new CommandParser(game);
+        Scanner inputScanner = new Scanner(System.in);
+
+        // List available commands
+        System.out.println("\nAvailable commands to test:");
+        System.out.println("1. MOVE_INSECT insect1 tectonB");
+        System.out.println("2. CONSUME_SPORE insect1");
+        System.out.println("3. CUT_HYPHA insect1 hypha1 tectonB");
+        System.out.println("4. PLACE_FUNGUS myco1 tectonC");
+        System.out.println("5. SPREAD_SPORE fungus1");
+        System.out.println("6. GROW_HYPHA fungus1");
+        System.out.println("7. BREAK_TECTON tectonB");
+        System.out.println("8. EAT_INSECT hypha1 insect1");
+        System.out.println("9. SET_FUNGUS_CHARGE fungus1 5");
+        System.out.println("10. NEXT_TURN");
+        System.out.println("11. NEXT_ROUND");
+        System.out.println("12. SKIP_TURN");
+        System.out.println("13. SELECT_ENTITY tectonA");
+        System.out.println("14. SAVE test_save.json");
+        System.out.println("15. LOAD test_save.json");
+        System.out.println("16. END_GAME");
+        System.out.println("17. AUTO_TEST (run all commands in sequence)");
+        System.out.println("0. EXIT");
+
+        boolean testing = true;
+        while (testing) {
+            System.out.print("\nEnter command number or full command (0 to exit): ");
+            String input = inputScanner.nextLine();
+
+            if (input.equals("0")) {
+                testing = false;
+                continue;
             }
-            
-        } catch (Exception e) {
-            System.out.println("Error: " + e.getMessage());
+
+            if (input.equals("17")) {
+                autoTestAllCommands(game, parser, logger);
+                continue;
+            }
+
+            String commandString = "";
+
+            // Convert numbers to commands
+            try {
+                int option = Integer.parseInt(input);
+                switch (option) {
+                    case 1:
+                        commandString = "MOVE_INSECT insect1 tectonB";
+                        break;
+                    case 2:
+                        commandString = "CONSUME_SPORE insect1";
+                        break;
+                    case 3:
+                        commandString = "CUT_HYPHA insect1 hypha1 tectonB";
+                        break;
+                    case 4:
+                        commandString = "PLACE_FUNGUS myco1 tectonC";
+                        break;
+                    case 5:
+                        commandString = "SPREAD_SPORE fungus1";
+                        break;
+                    case 6:
+                        commandString = "GROW_HYPHA fungus1";
+                        break;
+                    case 7:
+                        commandString = "BREAK_TECTON tectonB";
+                        break;
+                    case 8:
+                        commandString = "EAT_INSECT hypha1 insect1";
+                        break;
+                    case 9:
+                        commandString = "SET_FUNGUS_CHARGE fungus1 5";
+                        break;
+                    case 10:
+                        commandString = "NEXT_TURN";
+                        break;
+                    case 11:
+                        commandString = "NEXT_ROUND";
+                        break;
+                    case 12:
+                        commandString = "SKIP_TURN";
+                        break;
+                    case 13:
+                        commandString = "SELECT_ENTITY tectonA";
+                        break;
+                    case 14:
+                        commandString = "SAVE test_save.json";
+                        break;
+                    case 15:
+                        commandString = "LOAD test_save.json";
+                        break;
+                    case 16:
+                        commandString = "END_GAME";
+                        break;
+                    default:
+                        System.out.println("Invalid option.");
+                        continue;
+                }
+            } catch (Exception e) {
+                // TODO: handle exception
+            }
+            {
+
+            }
+
+            try {
+                System.out.println("Executing: " + commandString);
+                Command command = parser.parse(commandString);
+
+                boolean isValid = command.validate(game);
+                System.out.println("Command validation: " + (isValid ? "VALID" : "INVALID"));
+
+                if (isValid) {
+                    command.execute(game, logger);
+                    System.out.println("Command executed successfully.");
+
+                    // Print relevant state after execution
+                    printRelevantState(commandString, game, registry);
+                } else {
+                    System.out.println("Command validation failed. Not executed.");
+                }
+
+            } catch (Exception e) {
+                System.out.println("Error: " + e.getMessage());
+            }
         }
+
+        inputScanner.close();
+        System.out.println("Command testing completed.");
     }
-    
-    inputScanner.close();
-    System.out.println("Command testing completed.");
-}
 
     private static void autoTestAllCommands(Game game, CommandParser parser, Logger logger) {
         System.out.println("\n===== RUNNING AUTOMATIC TEST OF ALL COMMANDS =====");
