@@ -1,8 +1,6 @@
 package com.dino;
 
 import java.io.IOException;
-import java.util.ArrayList;
-import java.util.List;
 import java.util.Scanner;
 
 import com.dino.commands.Command;
@@ -14,23 +12,19 @@ import com.dino.core.Insect;
 import com.dino.core.Spore;
 import com.dino.effects.AcceleratingEffect;
 import com.dino.effects.ParalyzingEffect;
-import com.dino.effects.StunningEffect;
 import com.dino.engine.Game;
 import com.dino.engine.GameBoard;
 import com.dino.player.Entomologist;
 import com.dino.player.Mycologist;
-import com.dino.tecton.InfiniteHyphaTecton;
 import com.dino.tecton.KeepHyphaTecton;
 import com.dino.tecton.NoFungiTecton;
 import com.dino.tecton.SingleHyphaTecton;
 import com.dino.tecton.Tecton;
-import com.dino.tests.TestOracle;
 import com.dino.util.EntityRegistry;
 import com.dino.util.InitLoader;
 import com.dino.util.Logger;
 import com.dino.util.ObjectNamer;
 import com.dino.util.Serializer;
-import com.dino.util.Skeleton;
 import com.google.gson.JsonObject;
 
 public class Main {
@@ -200,50 +194,280 @@ public class Main {
         }
     }
 
-    public static void testCommand() {
-        Game game = new Game(3);
-        EntityRegistry registry = game.getRegistry();
-        Logger logger = game.getLogger();
-        GameBoard board = game.getBoard();
+    public static void testAllCommands() {
+    Game game = new Game(3);
+    EntityRegistry registry = game.getRegistry();
+    Logger logger = game.getLogger();
+    GameBoard board = game.getBoard();
+    
+    // Set up test environment
+    System.out.println("Setting up test environment...");
+    
+    // Create tectons
+    Tecton t1 = new NoFungiTecton();
+    Tecton t2 = new NoFungiTecton();
+    Tecton t3 = new NoFungiTecton();
+    board.connect(t1, t2);
+    board.connect(t2, t3);
+    
+    // Register tectons
+    registry.register("tectonA", t1);
+    registry.register("tectonB", t2);
+    registry.register("tectonC", t3);
+    
+    // Create and register players
+    Mycologist mycologist = new Mycologist();
+    Entomologist entomologist = new Entomologist();
+    registry.register("myco1", mycologist);
+    registry.register("ento1", entomologist);
+    game.addPlayer(mycologist);
+    game.addPlayer(entomologist);
+    
+    // Create and register insect
+    Insect insect = new Insect(entomologist, t1);
+    registry.register("insect1", insect);
+    
+    // Place fungus
+    mycologist.placeFungus(t2);
+    Fungus fungus = t2.getFungus();
+    registry.register("fungus1", fungus);
+    
+    // Create hypha
+    Hypha hypha = new Hypha(mycologist, fungus);
+    hypha.continueHypha(t1);
+    t1.hyphas.add(hypha);
+    t2.hyphas.add(hypha);
+    registry.register("hypha1", hypha);
+    
+    // Add spores
+    Spore spore = fungus.createRandomSpore();
+    t1.spores.put(spore, 2);
+    
+    // Print initial state
+    System.out.println("Test environment ready.");
+    System.out.println("Tectons: tectonA, tectonB, tectonC");
+    System.out.println("Players: myco1 (Mycologist), ento1 (Entomologist)");
+    System.out.println("Insect: insect1 on tectonA");
+    System.out.println("Fungus: fungus1 on tectonB");
+    System.out.println("Hypha: hypha1 connecting tectonA and tectonB");
+    System.out.println("Spores: 2 on tectonA");
+    
+    // Command parser
+    CommandParser parser = new CommandParser(game);
+    Scanner inputScanner = new Scanner(System.in);
+    
+    // List available commands
+    System.out.println("\nAvailable commands to test:");
+    System.out.println("1. MOVE_INSECT insect1 tectonB");
+    System.out.println("2. CONSUME_SPORE insect1");
+    System.out.println("3. CUT_HYPHA insect1 hypha1 tectonB");
+    System.out.println("4. PLACE_FUNGUS myco1 tectonC");
+    System.out.println("5. SPREAD_SPORE fungus1");
+    System.out.println("6. GROW_HYPHA fungus1");
+    System.out.println("7. BREAK_TECTON tectonB");
+    System.out.println("8. EAT_INSECT hypha1 insect1");
+    System.out.println("9. SET_FUNGUS_CHARGE fungus1 5");
+    System.out.println("10. NEXT_TURN");
+    System.out.println("11. NEXT_ROUND");
+    System.out.println("12. SKIP_TURN");
+    System.out.println("13. SELECT_ENTITY tectonA");
+    System.out.println("14. SAVE test_save.json");
+    System.out.println("15. LOAD test_save.json");
+    System.out.println("16. END_GAME");
+    System.out.println("17. AUTO_TEST (run all commands in sequence)");
+    System.out.println("0. EXIT");
+    
+    boolean testing = true;
+    while (testing) {
+        System.out.print("\nEnter command number or full command (0 to exit): ");
+        String input = inputScanner.nextLine();
+        
+        if (input.equals("0")) {
+            testing = false;
+            continue;
+        }
+        
+        if (input.equals("17")) {
+            autoTestAllCommands(game, parser, logger);
+            continue;
+        }
+        
+        String commandString = "";
+        
+        // Convert numbers to commands
+        try {
+            int option = Integer.parseInt(input);
+            switch (option) {
+                case 1: commandString = "MOVE_INSECT insect1 tectonB"; break;
+                case 2: commandString = "CONSUME_SPORE insect1"; break;
+                case 3: commandString = "CUT_HYPHA insect1 hypha1 tectonB"; break;
+                case 4: commandString = "PLACE_FUNGUS myco1 tectonC"; break;
+                case 5: commandString = "SPREAD_SPORE fungus1"; break;
+                case 6: commandString = "GROW_HYPHA fungus1"; break;
+                case 7: commandString = "BREAK_TECTON tectonB"; break;
+                case 8: commandString = "EAT_INSECT hypha1 insect1"; break;
+                case 9: commandString = "SET_FUNGUS_CHARGE fungus1 5"; break;
+                case 10: commandString = "NEXT_TURN"; break;
+                case 11: commandString = "NEXT_ROUND"; break;
+                case 12: commandString = "SKIP_TURN"; break;
+                case 13: commandString = "SELECT_ENTITY tectonA"; break;
+                case 14: commandString = "SAVE test_save.json"; break;
+                case 15: commandString = "LOAD test_save.json"; break;
+                case 16: commandString = "END_GAME"; break;
+                default: 
+                    System.out.println("Invalid option."); 
+                    continue;
+            }
+        } 
+        catch (Exception e) {
+            // TODO: handle exception
+        } {
 
-        Tecton t1 = new NoFungiTecton();
-        Tecton t2 = new NoFungiTecton();
-        board.connect(t1, t2);
+        }
+        
+        try {
+            System.out.println("Executing: " + commandString);
+            Command command = parser.parse(commandString);
+            
+            boolean isValid = command.validate(game);
+            System.out.println("Command validation: " + (isValid ? "VALID" : "INVALID"));
+            
+            if (isValid) {
+                command.execute(game, logger);
+                System.out.println("Command executed successfully.");
+                
+                // Print relevant state after execution
+                printRelevantState(commandString, game, registry);
+            } else {
+                System.out.println("Command validation failed. Not executed.");
+            }
+            
+        } catch (Exception e) {
+            System.out.println("Error: " + e.getMessage());
+        }
+    }
+    
+    inputScanner.close();
+    System.out.println("Command testing completed.");
+}
 
-        Entomologist entomologist = new Entomologist();
-        Insect insect = new Insect(entomologist, t1);
+    private static void autoTestAllCommands(Game game, CommandParser parser, Logger logger) {
+        System.out.println("\n===== RUNNING AUTOMATIC TEST OF ALL COMMANDS =====");
 
-        registry.register("tectonA", t1);
-        registry.register("tectonB", t2);
-        registry.register("insect1", insect);
+        String[] commands = {
+                "MOVE_INSECT insect1 tectonB",
+                "SET_FUNGUS_CHARGE fungus1 5",
+                "GROW_HYPHA fungus1",
+                "SPREAD_SPORE fungus1",
+                "MOVE_INSECT insect1 tectonA",
+                "CONSUME_SPORE insect1",
+                "CUT_HYPHA insect1 hypha1 tectonB",
+                "PLACE_FUNGUS myco1 tectonC",
+                "SELECT_ENTITY tectonA",
+                "SAVE test_save.json",
+                "BREAK_TECTON tectonB",
+                "NEXT_TURN",
+                "SKIP_TURN",
+                "NEXT_ROUND",
+                "LOAD test_save.json",
+                "EAT_INSECT hypha1 insect1"
+                // END_GAME not included in auto-test to allow further testing
+        };
 
-        System.out.println("Hyphák száma t1-en: " + t1.getHyphas().size());
-        System.out.println("t1 szomszédai: " + t1.getNeighbours().size());
-        System.out.println("t1 és t2 között van fonál? " + t1.hasHypha(t2));
-
-        Scanner inputScanner = new Scanner(System.in);
-        CommandParser parser = new CommandParser(game);
-
-        System.out.println("Készen állsz, gépelj commandokat (pl. MOVE_INSECT insect1 tectonB):");
-
-        while (inputScanner.hasNextLine()) {
-            String line = inputScanner.nextLine();
-            if (line.isBlank())
-                break;
-
+        for (String cmdStr : commands) {
             try {
-                Command command = parser.parse(line);
-                if (command.validate(game)) {
+                System.out.println("\n> Testing: " + cmdStr);
+                Command command = parser.parse(cmdStr);
+
+                boolean isValid = command.validate(game);
+                System.out.println("  Validation: " + (isValid ? "VALID" : "INVALID"));
+
+                if (isValid) {
                     command.execute(game, logger);
+                    System.out.println("  Execution: SUCCESS");
+
+                    // Print relevant state
+                    printRelevantState(cmdStr, game, game.getRegistry());
                 } else {
-                    logger.logError("COMMAND", command.toString(), "Invalid command.");
+                    System.out.println("  Execution: SKIPPED (invalid command)");
                 }
+
+                // Small delay between commands for readability
+                try {
+                    Thread.sleep(500);
+                } catch (InterruptedException e) {
+                    Thread.currentThread().interrupt();
+                }
+
             } catch (Exception e) {
-                logger.logError("COMMAND", line, "Parsing failed: " + e.getMessage());
+                System.out.println("  ERROR: " + e.getMessage());
             }
         }
 
-        inputScanner.close();
+        System.out.println("\n===== AUTO-TEST COMPLETED =====");
+    }
+
+    private static void printRelevantState(String command, Game game, EntityRegistry registry) {
+        String cmdType = command.split(" ")[0];
+
+        switch (cmdType) {
+            case "MOVE_INSECT":
+                String insectName = command.split(" ")[1];
+                Insect insect = (Insect) registry.getByName(insectName);
+                if (insect != null) {
+                    Tecton tecton = insect.getTecton();
+                    System.out.println("Insect location: " + registry.getNameOf(tecton));
+                    System.out.println("Effects on insect: " + insect.getEffects().size());
+                }
+                break;
+
+            case "CONSUME_SPORE":
+                insectName = command.split(" ")[1];
+                insect = (Insect) registry.getByName(insectName);
+                if (insect != null) {
+                    Tecton tecton = insect.getTecton();
+                    System.out.println("Spores on tecton: " + tecton.spores.size());
+                    System.out.println("Insect state updated");
+                }
+                break;
+
+            case "GROW_HYPHA":
+                String fungusName = command.split(" ")[1];
+                Fungus fungus = (Fungus) registry.getByName(fungusName);
+                if (fungus != null) {
+                    Tecton tecton = fungus.getTecton();
+                    System.out.println("Hyphae on tecton: " + tecton.hyphas.size());
+                }
+                break;
+
+            case "SPREAD_SPORE":
+                fungusName = command.split(" ")[1];
+                fungus = (Fungus) registry.getByName(fungusName);
+                if (fungus != null) {
+                    System.out.println("Fungus charge: " + fungus.getCharge());
+                    Tecton tecton = fungus.getTecton();
+                    for (Tecton neighbor : tecton.getNeighbours()) {
+                        System.out.println("Spores on neighbor: " + neighbor.spores.size());
+                    }
+                }
+                break;
+
+            case "BREAK_TECTON":
+                System.out.println("Tectons in board: " + game.getBoard().getAllTectons().size());
+                break;
+
+            case "SET_FUNGUS_CHARGE":
+                fungusName = command.split(" ")[1];
+                fungus = (Fungus) registry.getByName(fungusName);
+                if (fungus != null) {
+                    System.out.println("Fungus charge: " + fungus.getCharge());
+                }
+                break;
+
+            default:
+                System.out.println("Game state updated");
+                break;
+        }
     }
 
     public static void FullGameDeserializeTest() {
@@ -336,17 +560,8 @@ public class Main {
         System.out.println("Enter 0 to exit\n");
 
         while (menuActive) {
-            System.out.println("-----------------------\nUse case list:");
-            System.out.println("1. Insect movement");
-            System.out.println("2. Insect eating");
-            System.out.println("3. Insect cutting");
-            System.out.println("4. Place fungus");
-            System.out.println("5. Spread spore");
-            System.out.println("6. Grow hypha");
-            System.out.println("7. Tecton splitting");
-            System.out.println("8. Logger teszt");
             System.out.println("9. Serializáció teszt");
-            System.out.println("10. Scanner teszt");
+            System.out.println("10. Command test");
             System.out.println("11. Full gameplay");
             System.out.println("12. Deszerializálás");
             System.out.println("13. Tesztek futtatása");
@@ -364,7 +579,7 @@ public class Main {
                     FullGameSerializeTest();
                     break;
                 case 10:
-                    testCommand();
+                    testAllCommands();
                     break;
                 case 11:
                     stage2Main();
@@ -372,7 +587,7 @@ public class Main {
                 case 12:
                     FullGameDeserializeTest();
                     break;
-                case 13: 
+                case 13:
                     runTestOracleMenu();
                     break;
                 default:
