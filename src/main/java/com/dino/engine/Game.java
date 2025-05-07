@@ -231,6 +231,9 @@ public class Game {
                         (Entomologist) player,
                         tectonsWithFungus.get(selectedIndex));
                 ((Entomologist) player).addInsects(insect);
+                namer.register(insect);
+                System.out.println(
+                        "Insect regisztrálva, neve:" + namer.getName(insect) + "\nKezdp tekton:" + insect.getTecton());
                 tectonsWithFungus.remove(selectedIndex);
             }
         }
