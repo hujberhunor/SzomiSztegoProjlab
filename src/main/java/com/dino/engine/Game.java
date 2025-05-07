@@ -13,6 +13,7 @@ import com.dino.commands.CommandParser;
 import com.dino.commands.NextRoundCommand;
 import com.dino.commands.NextTurnCommand;
 import com.dino.commands.SkipTurnCommand;
+import com.dino.core.Fungus;
 import com.dino.core.Hypha;
 import com.dino.core.Insect;
 import com.dino.player.Entomologist;
@@ -108,6 +109,7 @@ public class Game {
         this.namer = ObjectNamer.getInstance();
         this.logger = Logger.getInstance();
         this.selectedEntity = null;
+        this.scanner = new Scanner(System.in);
     }
 
     /**
@@ -164,13 +166,13 @@ public class Game {
         for (int i = 0; i < numberOfMycologist; i++) {
             Mycologist mycologist = new Mycologist();
             players.add(mycologist);
-            mycologist.setName("Gombász " + (i + 1));
+            namer.register(mycologist);
         }
 
         for (int i = 0; i < numberOfEntomologist; i++) {
             Entomologist entomologist = new Entomologist();
             players.add(entomologist);
-            entomologist.setName("Rovarász " + (i + 1));
+            namer.register(entomologist);
         }
 
         System.out.println("Hány kör legyen a játék?");
@@ -218,8 +220,11 @@ public class Game {
                 Tecton selectedTecton = tectons.get(selectedIndex);
                 ((Mycologist) player).debugPlaceFungus(selectedTecton);
                 tectons.remove(selectedIndex);
+                Fungus fungus = new Fungus((Mycologist) player, selectedTecton);
+                namer.register(fungus);
                 tectonsWithFungus.add(selectedTecton);
                 numberOfMycologist++;
+                System.out.println("\nGomba: "+ namer.getName(fungus));
             }
         }
 
@@ -376,7 +381,7 @@ public class Game {
         int nextIndex = (currentIndex + 1) % players.size();
         boolean turnEnded = false;
 
-        System.out.println("Aktuális játékos: " + currentPlayer.name);
+        System.out.println("Aktuális játékos: " + namer.getName(currentPlayer));
         System.out.println(
                 "Készen állsz, gépelj commandokat (pl. MOVE_INSECT insect1 tectonB):");
 
@@ -431,7 +436,7 @@ public class Game {
                         return true; // Vége a rundnak
                     } else {
                         // Minden más command elhasznál egy akciót
-                        currentPlayer.decreaseActions();
+                        // currentPlayer.decreaseActions();
                     }
                 } else {
                     logger.logError(

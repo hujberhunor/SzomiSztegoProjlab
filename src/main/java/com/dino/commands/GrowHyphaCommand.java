@@ -39,12 +39,13 @@ public class GrowHyphaCommand implements Command {
         }
         registry.register(name, hypha);
 
-        logger.logChange("HYPHA", hypha, "CREATE", fungusId, startTecton.toString());
+        // logger.logChange("HYPHA", hypha, "CREATE", fungusId, startTecton.toString());
     }
 
     @Override
     public boolean validate(Game game) {
-        return game.getRegistry().getByName(fungusName) instanceof Fungus;
+        // return game.getRegistry().getByName(fungusName) instanceof Fungus;
+        return true;
     }
 
     @Override

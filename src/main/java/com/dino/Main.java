@@ -1,6 +1,7 @@
 package com.dino;
 
 import java.io.IOException;
+import java.util.List;
 import java.util.Scanner;
 
 import com.dino.commands.Command;
@@ -19,6 +20,7 @@ import com.dino.player.Mycologist;
 import com.dino.tecton.InfiniteHyphaTecton;
 import com.dino.tecton.KeepHyphaTecton;
 import com.dino.tecton.NoFungiTecton;
+import com.dino.tecton.ShortHyphaTecton;
 import com.dino.tecton.SingleHyphaTecton;
 import com.dino.tecton.Tecton;
 import com.dino.util.EntityRegistry;
@@ -517,6 +519,63 @@ public class Main {
         }
     }
 
+    /**
+     * GOMBÁSZ INTERATÍC teszt
+     */
+    public static void interactiveMycologistTest() {
+        Game game = new Game();
+        game.initBoard(); // véletlen board
+
+        // 1 gombász
+        Mycologist myco = new Mycologist();
+        game.addPlayer(myco);
+
+        // választható tektonok
+        List<Tecton> tectons = game.getBoard().getAllTectons();
+        Tecton startTecton = tectons.get(0); // egyszerűség kedvéért
+        myco.debugPlaceFungus(startTecton);
+
+        // register fungus névvel
+        Fungus f = startTecton.getFungus();
+        game.getRegistry().register("fungus1", f);
+        game.getRegistry().register("tectonA", startTecton);
+        game.getRegistry().register("myco1", myco);
+
+        System.out.println("Gombász készen áll! Használható commandok pl:");
+        System.out.println("  PLACE_FUNGUS myco1 tectonA");
+        System.out.println("  GROW_HYPHA fungus1");
+        System.out.println("  SPREAD_SPORE fungus1");
+        System.out.println("  SET_FUNGUS_CHARGE fungus1 5");
+        System.out.println("  NEXT_TURN / SKIP_TURN / END_GAME");
+
+        Scanner scanner = new Scanner(System.in);
+        CommandParser parser = new CommandParser(game);
+        Logger logger = game.getLogger();
+
+        myco.remainingActions = 5; // több akció a teszthez
+
+        while (myco.remainingActions > 0) {
+            System.out.print("> ");
+            String line = scanner.nextLine();
+            if (line.isBlank())
+                break;
+
+            try {
+                Command cmd = parser.parse(line);
+                if (cmd.validate(game)) {
+                    cmd.execute(game, logger);
+                    myco.decreaseActions();
+                } else {
+                    logger.logError("CMD", cmd.toString(), "Validation failed.");
+                }
+            } catch (Exception e) {
+                logger.logError("CMD", line, "Error: " + e.getMessage());
+            }
+        }
+
+        System.out.println("Teszt vége, maradék akciók: " + myco.remainingActions);
+    }
+
     public static void FullGameDeserializeTest() {
         try {
             System.out.println("Betöltés elindult...");
@@ -600,6 +659,109 @@ public class Main {
         }
     }
 
+    private static void staticMap() {
+        Game game = new Game(10);
+        GameBoard gameBoard = game.getBoard();
+        ObjectNamer namer = ObjectNamer.getInstance();
+
+        Tecton tectonA = new InfiniteHyphaTecton();
+        Tecton tectonB = new NoFungiTecton();
+        Tecton tectonC = new KeepHyphaTecton();
+        Tecton tectonD = new ShortHyphaTecton();
+        Tecton tectonE = new SingleHyphaTecton();
+        Tecton tectonF = new InfiniteHyphaTecton();
+        Tecton tectonG = new SingleHyphaTecton();
+
+        gameBoard.getAllTectons().add(tectonA);
+        gameBoard.getAllTectons().add(tectonB);
+        gameBoard.getAllTectons().add(tectonC);
+        gameBoard.getAllTectons().add(tectonD);
+        gameBoard.getAllTectons().add(tectonE);
+        gameBoard.getAllTectons().add(tectonF);
+        gameBoard.getAllTectons().add(tectonG);
+
+        // Nevek hozzárendelése
+        namer.register("A", tectonA);
+        namer.register("B", tectonB);
+        namer.register("C", tectonC);
+        namer.register("D", tectonD);
+        namer.register("E", tectonE);
+        namer.register("F", tectonF);
+        namer.register("G", tectonG);
+
+        // Kör
+        // gameBoard.connect(tectonA, tectonB);
+        // gameBoard.connect(tectonA, tectonC);
+        // gameBoard.connect(tectonA, tectonD);
+        // gameBoard.connect(tectonA, tectonE);
+        // gameBoard.connect(tectonA, tectonF);
+        // gameBoard.connect(tectonA, tectonG);
+
+        // gameBoard.connect(tectonB, tectonC);
+        // gameBoard.connect(tectonB, tectonG);
+
+        // gameBoard.connect(tectonC, tectonD);
+
+        // gameBoard.connect(tectonD, tectonE);
+
+        // gameBoard.connect(tectonE, tectonF);
+
+        // gameBoard.connect(tectonF, tectonG);
+
+        Tecton.connectTectons(tectonA, tectonB);
+        Tecton.connectTectons(tectonA, tectonC);
+        Tecton.connectTectons(tectonA, tectonD);
+        Tecton.connectTectons(tectonA, tectonE);
+        Tecton.connectTectons(tectonA, tectonF);
+        Tecton.connectTectons(tectonA, tectonG);
+
+        Tecton.connectTectons(tectonB, tectonC);
+        Tecton.connectTectons(tectonB, tectonG);
+
+        Tecton.connectTectons(tectonC, tectonD);
+
+        Tecton.connectTectons(tectonD, tectonE);
+
+        Tecton.connectTectons(tectonE, tectonF);
+
+        Tecton.connectTectons(tectonF, tectonG);
+
+        // ---
+        game.initGame();
+        game.startGame();
+
+        System.out.println("DEBUG " + game.getPlayers().get(0).toString());
+        System.out.println("DEBUG " + namer.getName(game.getPlayers().get(0)));
+        int endOfRound = 1;
+        while (endOfRound != 0) {
+            endOfRound = game.nextTurn();
+        }
+
+        // After first round is complete
+        if (game.getTotalRounds() > 1) {
+            boolean gameIsEnded = false;
+            for (int currentRound = 1; currentRound < game.getTotalRounds() && !gameIsEnded; currentRound++) {
+                int endOfGame = game.nextRound();
+                if (endOfGame == 0) {
+                    gameIsEnded = true; // Game has ended prematurely
+                    break;
+                }
+
+                endOfRound = 1; // Reset for the new round
+                while (endOfRound != 0) {
+                    endOfRound = game.nextTurn();
+                }
+            }
+
+            // Make sure we call endGame() if we exited the loop normally
+            if (!gameIsEnded) {
+                game.endGame();
+            }
+        } else {
+            game.endGame();
+        }
+    }
+
     // -------------------------------- //
     public static void main(String[] args) {
         boolean menuActive = true;
@@ -627,18 +789,17 @@ public class Main {
                     break;
                 case 10:
                     testAllCommands();
+                    // interactiveMycologistTest();
                     break;
                 case 11:
-                    stage2Main();
+                    // stage2Main();
+                    staticMap();
                     break;
                 case 12:
                     FullGameDeserializeTest();
                     break;
                 case 13:
                     runTestOracleMenu();
-                    break;
-                case 14:
-                    testAllCommands();
                     break;
                 default:
                     System.out.println("Invalid input");

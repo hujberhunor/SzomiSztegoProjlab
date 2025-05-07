@@ -111,19 +111,17 @@ public class Hypha implements SerializableEntity {
         if (tectons.isEmpty()) {
             tectons.add(t);
             logger.logChange(
-                "HYPHA",
-                namer.getName(this),
-                "LAST_TECTON",
-                "-",
-                namer.getName(t)
-            );
+                    "HYPHA",
+                    namer.getName(this),
+                    "LAST_TECTON",
+                    "-",
+                    namer.getName(t));
             logger.logOk(
-                "HYPHA",
-                namer.getName(this),
-                "ACTION",
-                "ATTEMPT_CONTINUE_HYPA",
-                "SUCCESS"
-            );
+                    "HYPHA",
+                    namer.getName(this),
+                    "ACTION",
+                    "ATTEMPT_CONTINUE_HYPA",
+                    "SUCCESS");
             return true;
         }
 
@@ -132,27 +130,24 @@ public class Hypha implements SerializableEntity {
         if (last.isNeighbor(t)) {
             tectons.add(t);
             logger.logChange(
-                "HYPHA",
-                namer.getName(this),
-                "LAST_TECTON",
-                namer.getName(last),
-                namer.getName(t)
-            );
+                    "HYPHA",
+                    namer.getName(this),
+                    "LAST_TECTON",
+                    namer.getName(last),
+                    namer.getName(t));
             logger.logOk(
-                "HYPHA",
-                namer.getName(this),
-                "ACTION",
-                "ATTEMPT_CONTINUE_HYPA",
-                "SUCCESS"
-            );
+                    "HYPHA",
+                    namer.getName(this),
+                    "ACTION",
+                    "ATTEMPT_CONTINUE_HYPA",
+                    "SUCCESS");
             return true;
         }
 
         logger.logError(
-            "HYPHA",
-            namer.getName(this),
-            "A fonálnövesztés sikertelen."
-        );
+                "HYPHA",
+                namer.getName(this),
+                "A fonálnövesztés sikertelen.");
         return false;
     }
 
@@ -179,10 +174,9 @@ public class Hypha implements SerializableEntity {
 
         if (targetTecton == null) {
             logger.logError(
-                "HYPHA",
-                namer.getName(this),
-                "A rovar nem olyan tektonon van, amin fut fonál."
-            );
+                    "HYPHA",
+                    namer.getName(this),
+                    "A rovar nem olyan tektonon van, amin fut fonál.");
             return false;
         }
 
@@ -190,19 +184,18 @@ public class Hypha implements SerializableEntity {
         i.destroyInsect();
         mycologist.placeFungus(targetTecton);
         logger.logOk(
-            "HYPHA",
-            namer.getName(this),
-            "ACTION",
-            "ATTEMPT_EAT_INSECT",
-            "SUCCESS"
-        );
+                "HYPHA",
+                namer.getName(this),
+                "ACTION",
+                "ATTEMPT_EAT_INSECT",
+                "SUCCESS");
         return true;
     }
 
     // Elpusztít egy fonalat - törli mindehonnan, ahol számon van tartva
-    public void destroyHypha(){
-        for (Tecton t: tectons){
-            if (t.getHyphas().contains(this)){
+    public void destroyHypha() {
+        for (Tecton t : tectons) {
+            if (t.getHyphas().contains(this)) {
                 t.getHyphas().remove(this);
             }
         }
@@ -222,7 +215,7 @@ public class Hypha implements SerializableEntity {
     }
 
     // Kettlvág egy fonalat - a második felét decay-eli, ha kell
-    public void splitHypha(Tecton tecton, Game game){
+    public void splitHypha(Tecton tecton, Game game) {
         int index = -1;
         for (int i = 0; i < tectons.size(); i++) {
             if (tectons.get(i).equals(tecton)) {
@@ -232,7 +225,7 @@ public class Hypha implements SerializableEntity {
         }
         Hypha newHypha = new Hypha(mycologist, fungus);
         namer.register(newHypha);
-        for (Tecton t : tectons.subList(index, tectons.size())){
+        for (Tecton t : tectons.subList(index, tectons.size())) {
             newHypha.getTectons().add(t);
             t.getHyphas().add(newHypha);
             t.getHyphas().remove(this);
@@ -240,7 +233,7 @@ public class Hypha implements SerializableEntity {
 
         tectons.subList(index, tectons.size()).clear();
 
-        if (!newHypha.containsInfiniteTecton()){
+        if (!newHypha.containsInfiniteTecton()) {
             game.addDecayedHypha(newHypha);
         }
         lifespan = 4;
@@ -273,14 +266,13 @@ public class Hypha implements SerializableEntity {
 
         // If no name is registered, create a representation based on tectons
         if (tectons != null && !tectons.isEmpty()) {
-            return (
-                "Hypha(" +
-                tectons
-                    .stream()
-                    .map(t -> t.toString())
-                    .collect(Collectors.joining("→")) +
-                ")"
-            );
+            return ("Hypha(" +
+                    tectons
+                            .stream()
+                            .map(t -> t.toString())
+                            .collect(Collectors.joining("→"))
+                    +
+                    ")");
         }
 
         // Fallback to default
