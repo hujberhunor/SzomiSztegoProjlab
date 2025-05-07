@@ -590,6 +590,9 @@ public class Main {
                 case 13:
                     runTestOracleMenu();
                     break;
+                case 14:
+                    testAllCommands();
+                    break;
                 default:
                     System.out.println("Invalid input");
                     break;
