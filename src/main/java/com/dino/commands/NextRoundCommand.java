@@ -7,12 +7,11 @@ public class NextRoundCommand implements Command {
 
     @Override
     public void execute(Game game, Logger logger) {
+        // Csak az akciókat nullázzuk le, a kör váltását a Game osztály kezeli
+        game.getCurrentPlayer().remainingActions = 0;
         logger.logChange("GAME", game, "ROUND", "-", "Advanced to next round");
     }
 
-    /**
-     * Mindig érvényes, mert nincs paraméter
-     */
     @Override
     public boolean validate(Game game) {
         return true;

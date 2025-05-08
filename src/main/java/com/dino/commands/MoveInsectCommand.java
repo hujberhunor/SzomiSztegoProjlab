@@ -28,32 +28,32 @@ public class MoveInsectCommand implements Command {
 
         String insectId = registry.getNameOf(insect);
 
-        /// Szomszéd-e a target tecton?
-        if (!board.getNeighbors(current).contains(target)) {
-            logger.logError("INSECT", insectId, "Target Tecton is not a neighbor.");
-            return;
-        }
+        // /// Szomszéd-e a target tecton?
+        // if (!board.getNeighbors(current).contains(target)) {
+        //     logger.logError("INSECT", insectId, "Target Tecton is not a neighbor.");
+        //     return;
+        // }
 
-        /// Van-e fonál curr és a target között?
-        if (!current.hasHypha(target)) {
-            logger.logError("INSECT", insectId, "No hypha between current and target Tecton.");
-            return;
-        }
+        // /// Van-e fonál curr és a target között?
+        // if (!current.hasHypha(target)) {
+        //     logger.logError("INSECT", insectId, "No hypha between current and target Tecton.");
+        //     return;
+        // }
 
-        // Bénult-e?
-        boolean isParalyzed = insect.getEffects().stream()
-                .anyMatch(e -> e.getClass().getSimpleName().equals("ParalyzingEffect"));
-        if (isParalyzed) {
-            logger.logError("INSECT", insectId, "Insect is paralyzed.");
-            return;
-        }
+        // // Bénult-e?
+        // boolean isParalyzed = insect.getEffects().stream()
+        //         .anyMatch(e -> e.getClass().getSimpleName().equals("ParalyzingEffect"));
+        // if (isParalyzed) {
+        //     logger.logError("INSECT", insectId, "Insect is paralyzed.");
+        //     return;
+        // }
 
         // Mozgás + logolás
         String prevTecton = registry.getNameOf(current);
         insect.move(target);
         String newTecton = registry.getNameOf(target);
 
-        logger.logChange("INSECT", insect, "POSITION", prevTecton, newTecton);
+        // logger.logChange("INSECT", insect, "POSITION", prevTecton, newTecton);
     }
 
     /**
@@ -63,14 +63,13 @@ public class MoveInsectCommand implements Command {
     @Override
     public boolean validate(Game game) {
         EntityRegistry reg = game.getRegistry();
+
+        // Csak azt ellenőrizzük, hogy a paraméterek léteznek és megfelelő típusúak
         Insect insect = (Insect) reg.getByName(insectName);
         Tecton target = (Tecton) reg.getByName(tectonName);
 
-        if (insect == null || target == null)
-            return false;
-        Tecton current = insect.getTecton();
-
-        return current.isNeighbor(target) && current.hasHypha(target);
+        // Csak a paraméterek létezése a fontos
+        return (insect != null && target != null);
     }
 
     @Override

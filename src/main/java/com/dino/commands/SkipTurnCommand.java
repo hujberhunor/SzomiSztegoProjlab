@@ -7,12 +7,11 @@ public class SkipTurnCommand implements Command {
 
     @Override
     public void execute(Game game, Logger logger) {
+        // Csak az akciókat nullázzuk le
+        game.getCurrentPlayer().remainingActions = 0;
         logger.logChange("GAME", game, "TURN", "-", "Skipped to next turn");
     }
 
-    /**
-     * Mindig érvényes, nem igényel paramétert
-     */
     @Override
     public boolean validate(Game game) {
         return true;
@@ -23,4 +22,3 @@ public class SkipTurnCommand implements Command {
         return "SKIP_TURN";
     }
 }
-

@@ -31,6 +31,8 @@ public class CommandParser {
                 return new ConsumeSporeCommand(parts[1]);
             case "GROW_HYPHA":
                 return new GrowHyphaCommand(parts[1]);
+            case "CONTINUE_HYPHA":
+                return new ContinueHyphaCommand(parts[1], parts[2]);
             case "CUT_HYPHA":
                 return new CutHyphaCommand(parts[1], parts[2], parts[3]);
             case "PLACE_FUNGUS":
@@ -42,10 +44,7 @@ public class CommandParser {
             case "EAT_INSECT":
                 return new EatInsectCommand(parts[1], parts[2]);
             case "SET_FUNGUS_CHARGE":
-                return new SetFungusChargeCommand(
-                    parts[1],
-                    Integer.parseInt(parts[2])
-                );
+                return new SetFungusChargeCommand( parts[1], Integer.parseInt(parts[2]));
             case "NEXT_TURN":
                 return new NextTurnCommand();
             case "NEXT_ROUND":
