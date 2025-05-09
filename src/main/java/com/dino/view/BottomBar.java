@@ -19,7 +19,8 @@ public class BottomBar implements ModelObserver {
      * @param entry Az új log bejegyzés szövege
      */
     public void appendLog(String entry) {
-
+        logDisplay.appendText(entry + "\n");
+        logDisplay.setScrollTop(Double.MAX_VALUE);
     }
 
     /**
@@ -34,7 +35,7 @@ public class BottomBar implements ModelObserver {
      * A beviteli mező törlése
      */
     public void clearInput() {
-
+        commandInput.clear();
     }
 
     /**
