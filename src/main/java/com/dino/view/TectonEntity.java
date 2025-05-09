@@ -14,6 +14,13 @@ public class TectonEntity extends Entity {
     protected List<Hypha> hyphas;
     protected List<Insect> insects;
 
+    public TectonEntity(Tecton t) {
+        type = t;
+        fungus = t.getFungus();
+        hyphas = t.getHyphas();
+        insects = t.getInsects();
+    }
+
     /**
      * A tecton kirajzolása
      * @return A kirajzolt tectont tartalmazó Node objektum

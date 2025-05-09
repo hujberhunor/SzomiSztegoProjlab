@@ -1,15 +1,20 @@
 package com.dino.view;
 
+import com.dino.core.*;
 import com.dino.player.Entomologist;
 import javafx.scene.Node;
-import javafx.scene.effect.Effect;
 
 import java.util.List;
 
 public class InsectEntity extends Entity {
     protected int movementPoints;
-    protected List<Effect> effects;
+    protected List<Spore> effects;
     protected Entomologist entomologist;
+
+    public InsectEntity(Insect i) {
+        effects = i.getEffects();
+        entomologist = i.getEntomologist();
+    }
 
     /**
      * A rovar kirajzolása

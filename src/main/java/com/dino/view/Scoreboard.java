@@ -27,7 +27,7 @@ public class Scoreboard implements ModelObserver {
      * A láthatóság átváltása
      */
     public void toggleVisibility() {
-
+        isVisible = !isVisible;
     }
 
     /**

@@ -9,6 +9,20 @@ public abstract class Entity {
     protected boolean isSelected;
     protected boolean isVisible;
 
+    public Entity() {
+        id = null;
+        location = null;
+        isSelected = false;
+        isVisible = false;
+    }
+
+    public Entity(String id, Point2D location) {
+        this.id = id;
+        this.location = location;
+        this.isSelected = false;
+        this.isVisible = true;
+    }
+
     /**
      * Az entitás vizuális megjelenítése
      * @return A vizuális reprezentációt tartalmazó Node objektum
