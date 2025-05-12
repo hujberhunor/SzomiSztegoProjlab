@@ -64,7 +64,7 @@ public class TopBar extends HBox implements ModelObserver {
 
         scoreboardButton = new Button("Scoreboard");
         scoreboardButton.setFont(Font.font("Georgia", FontWeight.BOLD, 16));
-        scoreboardButton.setTextFill(Color.WHITE);
+        scoreboardButton.setTextFill(Color.ORANGE);
         scoreboardButton.setBackground(new Background(new BackgroundFill(
             Color.rgb(60, 60, 60, 0.8),
             new CornerRadii(10),
@@ -73,7 +73,7 @@ public class TopBar extends HBox implements ModelObserver {
         scoreboardButton.setEffect(new DropShadow(2, Color.BLACK));
         scoreboardButton.setFocusTraversable(false);
         scoreboardButton.setOnAction(e -> scoreboard.toggleVisibility());
-
+        
         Region leftSpacer = new Region();
         Region centerSpacer = new Region();
         Region rightSpacer = new Region();

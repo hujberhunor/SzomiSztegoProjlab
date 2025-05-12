@@ -3,7 +3,10 @@ package com.dino.util;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Objects;
+import java.util.function.Consumer;
 
 public class Logger {
 
@@ -11,6 +14,7 @@ public class Logger {
 
     private final StringBuilder logBuffer = new StringBuilder();
     private final EntityRegistry registry = EntityRegistry.getInstance();
+    private final List<Consumer<String>> listeners = new ArrayList<>();
 
     private Logger() {}
 
@@ -25,9 +29,16 @@ public class Logger {
         instance = new Logger();
     }
 
+    public void addListener(Consumer<String> listener) {
+        listeners.add(listener);
+    }
+
     private void writeLog(String line) {
         System.out.println(line);
         logBuffer.append(line).append(System.lineSeparator());
+        for (Consumer<String> listener : listeners) {
+            listener.accept(line);
+        }
     }
 
     public void logChange(

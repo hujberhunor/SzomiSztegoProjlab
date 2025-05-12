@@ -1,5 +1,8 @@
 package com.dino;
 
+import com.dino.engine.Game;
+import com.dino.util.Logger;
+import com.dino.view.BottomBar;
 import com.dino.view.Scoreboard;
 import com.dino.view.TopBar;
 
@@ -21,6 +24,7 @@ public class MainApp extends Application {
 
         Scoreboard scoreboard = new Scoreboard();
         TopBar topBar = new TopBar(scoreboard);
+        BottomBar bottomBar = new BottomBar();
 
         VBox topContainer = new VBox(10);
         topContainer.setPadding(new Insets(20, 20, 0, 20));
@@ -35,6 +39,14 @@ public class MainApp extends Application {
         topContainer.getChildren().addAll(topBar, scoreboardContainer);
 
         root.setTop(topContainer);
+        root.setBottom(bottomBar);
+
+        Game game = new Game();
+        game.addObserver(topBar);
+        game.addObserver(bottomBar);
+        game.addObserver(scoreboard);
+
+        game.quickInit();
         
         Scene scene = new Scene(root);
         primaryStage.setTitle("Fungorium GUI");

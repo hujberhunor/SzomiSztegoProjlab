@@ -99,7 +99,7 @@ public class Scoreboard extends VBox implements ModelObserver {
         entomologistHeader.setTextFill(Color.ORANGE);
         entomologistHeader.setFont(Font.font("Georgia", FontWeight.BOLD, 14));
 
-        mycologistHeader.setTextFill(Color.BLUE);
+        mycologistHeader.setTextFill(Color.CORNFLOWERBLUE);
         mycologistHeader.setFont(Font.font("Georgia", FontWeight.BOLD, 14));
 
         scoreList.getChildren().add(entomologistHeader);
@@ -111,7 +111,7 @@ public class Scoreboard extends VBox implements ModelObserver {
 
         scoreList.getChildren().add(mycologistHeader);
         for (Map.Entry<Player, Integer> entry : mycologists) {
-            scoreList.getChildren().add(makePlayerLabel(entry.getKey(), entry.getValue(), Color.BLUE));
+            scoreList.getChildren().add(makePlayerLabel(entry.getKey(), entry.getValue(), Color.CORNFLOWERBLUE));
         }
     }
 
