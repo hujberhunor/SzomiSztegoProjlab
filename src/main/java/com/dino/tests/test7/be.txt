@@ -1,0 +1,4 @@
+CONSUME_SPORE insect_0 ACCEL
+CONSUME_SPORE insect_0 PARALYZING
+MOVE_INSECT insect_0 tecton_B
+MOVE_INSECT insect_0 tecton_A

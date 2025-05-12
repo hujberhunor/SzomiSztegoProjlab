@@ -1,0 +1,38 @@
+@startuml
+
+== Consume spore and effects ==
+
+actor Entomologist
+participant Insect
+participant Tecton
+participant Spore
+
+Entomologist -> Insect: consumeSpores()
+activate Insect
+
+Insect -> Tecton: getAvailableSpores()
+Tecton --> Insect: return List<Spore>
+
+Insect -> Tecton: selectDominantSpore()
+Tecton --> Insect:  return Spore
+
+activate Spore
+Spore -> Insect: consume()
+Spore -> Insect: applyEffect()
+deactivate Spore
+
+alt AcceleratingEffect
+    Spore -> Insect: increaseActions()
+else SlowingEffect
+    Spore -> Insect: decreaseActions()
+else ParalyzingEffect
+    Spore -> Insect: disableMovement()
+else StunningEffect
+    Spore -> Insect: disableHyphaCutting()
+end
+
+Insect -> Entomologist: increaseScore(nutrientValue)
+
+deactivate Insect
+
+@enduml

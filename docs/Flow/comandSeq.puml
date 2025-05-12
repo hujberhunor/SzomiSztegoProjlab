@@ -1,0 +1,26 @@
+@startuml
+title Command Flow
+
+actor User
+
+User -> CommandParser : beír parancsot 
+CommandParser -> ICommand : visszaad konkrét Command objektumot 
+ICommand -> Game : lekérdezi állapotot és a nevet (game és entityregistry)
+Game -> ICommand: return
+ICommand -> Game : módosít állapotot (method hívás)
+ICommand -> Logger : logol eseményt 
+
+note right of CommandParser
+  Egyetlen feladata:
+  - input feldolgozás
+  - Command példány létrehozás
+end note
+
+note right of ICommand
+  Execute feladata:
+  - előfeltételek ellenőrzése
+  - hatás kiváltása
+  - logolás
+end note
+
+@enduml

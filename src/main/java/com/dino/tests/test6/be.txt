@@ -1,0 +1,2 @@
+SPREAD_SPORE fungus_0
+SPREAD_SPORE fungus_0

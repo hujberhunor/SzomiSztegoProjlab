@@ -1,0 +1,22 @@
+@startuml
+actor Player
+participant Fungus
+participant Hypha
+participant Tecton
+participant Insect
+participant ParalyzingEffect
+participant Skeleton
+
+Player -> Fungus : growHypha(targetTecton)
+Fungus -> Hypha : continueHypha(targetTecton)
+Hypha -> Tecton : getInsects()
+Tecton -> Insect : getEffects()
+Insect -> ParalyzingEffect : instanceof check
+
+alt Insect is paralyzed
+    Hypha -> Tecton : removeInsect(insect)
+    Tecton -> Skeleton : log("Hypha megevett egy bénult rovart.")
+end
+
+Hypha -> Tecton : addHypha(this)
+@enduml

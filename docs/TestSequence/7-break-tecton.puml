@@ -1,0 +1,32 @@
+@startuml
+== Break Tecton ==
+
+participant Game
+participant Tecton
+participant Hypha
+
+Game -> Tecton: break()
+activate Tecton
+
+Tecton --> Game : return boolean
+
+Tecton -> Insect: getInstect()
+Insect --> Tecton: return boolean
+Game -> Tecton: getBrakeProbability()
+Tecton --> Game: return float
+
+alt Break Probability >= 0 és nics rovar a tectonon
+    Game -> Tecton: split()
+    Tecton --> Game: return new Tectons
+    
+    loop Minden új tekton esetében 
+        Tecton -> Hexagon: updateHexagons()
+        Tecton -> Hypha: removeHypha()
+    end
+    Game -> Tecton: setBreakProbability()
+    else Tekton nem törik 
+    Tecton --> Game: Nem lehet eltörni a tektont 
+end
+deactivate Tecton
+
+@enduml

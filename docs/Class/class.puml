@@ -1,0 +1,182 @@
+@startuml
+
+' NEM SZEREPELNEK BENNE: (HOGY ÁTLÁTHATÓBB LEGYEN)
+'   LESZÁRMAZOTTAK
+'   COMMANDOK
+
+' MEGJEGYZÉSEK
+' --> : használja, de nem tartalmazza '
+
+' ===== Alap játékosok és szereplők =====
+
+abstract class Player {
+    - name: String
+    - score: int
+    - actionsPerTurn: int
+    - remainingActions: int
+    + selectTecton(tecton: Tecton): Tecton
+    + calculateScore(): int
+}
+
+
+class Entomologist extends Player{
+    - insects: List<Insect>
+    + increaseActions()
+    + decreaseActions()
+    + getRemainingActions(): int
+}
+
+
+class Mycologist extends Player{
+    - mushrooms: List<Fungus>
+    + placeFungus(t: Tecton)
+}
+
+' ===== Térképelemek és logika =====
+abstract class Tecton {
+    - breakChance: double
+    - breakCount: int
+    - hexagons: List<Hexagon>
+    - neighbours: List<Tecton>
+    - fungus: Fungus
+    - insects: List<Insect>
+    - spores: Map<Mychologist, Int>
+    - hyphas: List<Mychologist>
+    + addSpores(Mycologist)
+    + removeSpores(Mycologist)
+    + addHypha(Hypha)
+    + split(double): List<Tecton>
+    + isNeighbor(Tecton): boolean
+    + hasHypha(Tecton): boolean
+    + hasSpores(Mycologist): boolean
+    + setFungus(Fungus)
+    # handleHypha(Hypha)
+    + hyphaDecay(): void
+    + eatInsect(): boolean
+}
+
+class Hexagon {
+    - id: int
+    - neighbours: List<Hexagon>
+    + getId(): int
+    + getNeighbours(): List<Hexagon>
+    + setNeighbours(List<Hexagon>)
+    + destroy()
+}
+
+class Hypha {
+    - tectons: List<Tecton>
+    - species: Mycologist
+    - fungus: Fungus
+    - lifespan: int 
+    + getSpecies(): Mycologist
+    + continueHypha(Tecton t)
+    + getTectons(): List<Tecton>
+}
+
+class Fungus {
+    - species: Mycologist
+    - tecton: Tecton
+    - charge: int
+    - lifespan: int
+    - hyphas: List<Hypha>
+    - spores: List<Spore>
+    + spreadSpores()
+    + growHypha(List<Tecton>): boolean
+}
+
+' ===== Spórák és hatásaik =====
+abstract class Spore {
+    - species: Mycologist
+    - effectDuration: int
+    - nutrientValue: int
+    + getEffectDuration(): int
+    + getNutrientValue(): int
+    + decreaseEffectDuration()
+    + applyTo(Insect)
+}
+
+' ===== Insect logika =====
+class Insect {
+    - entomologist: Entomologist
+    - currentTecton: Tecton
+    - effects: List<Spore>
+    + move(Tecton): boolean
+    + cutHypha(Hypha, Tecton): boolean
+    + consumeSpores(Entomologist): boolean
+    + addEffects(Spore)
+    + removeExpiredEffects()
+    + getEffects(): List<Spore>
+    + getEntomologist(): Entomologist
+}
+
+' ===== Game engine =====
+class GameBoard {
+    - tectons: List<Tecton>
+    + generateBoard()
+    + getNeighbors(Tecton): List<Tecton>
+    + breakHandler()
+    + connect(Tecton, Tecton): void
+}
+
+class Game {
+    - map: GameBoard
+    - players: List<Player>
+    - currRound: int
+    - totalRounds: int
+    - currentPlayer: Player
+    - decayedHypha: List<Hypha>
+    + initBoard()
+    + initGame(): boolean
+    + startGame()
+    + addPlayer(Player): boolean
+    + removePlayer(Player): boolean
+    + nextTurn()
+    + endGame()
+}
+
+' ===== UTIL =====
+class Parser{
+    + parseCommand()
+}
+
+class Logger {
+    - registry: EntityRegistry
+    + Logger(registry: EntityRegistry)
+    + logChange(objectType: String, obj: Object, property: String, oldVal: Object, newVal: Object)
+    + logOk(objectType: String, objectName: String, property: String, oldState: String, newState: String)
+    + logError(objectType: String, objectName: String, errorMsg: String)
+}
+
+class EntityRegistry {
+    - nameToObject: Map<String, Object>
+    - objectToName: Map<Object, String>
+    + register(name: String, obj: Object)
+    + getByName(name: String): Object
+    + getNameOf(obj: Object): String
+    + isRegistered(obj: Object): boolean
+}
+
+Logger --> EntityRegistry : uses
+
+' ===== Kapcsolatok =====
+Game o-r- GameBoard
+Game o-l- Player
+GameBoard o-- Tecton
+Tecton o-l- Hexagon
+Tecton o-- Hypha
+Tecton o-- Insect
+Tecton o-r- Fungus
+Tecton o-- Mycologist
+Insect o-- Spore
+Insect --> Entomologist
+Mycologist o-- Fungus
+Fungus o-- Hypha
+Fungus o-- Spore
+Spore --> Insect
+Spore --> Mycologist
+Hypha o-- Tecton
+Hypha --> Mycologist
+
+
+@enduml

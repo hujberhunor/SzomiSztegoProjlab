@@ -1,0 +1,99 @@
+@startuml
+
+abstract class Tecton {
+    - hyphaLimit: int 
+    - breakChance: double
+    - breakCount: int
+    - hexagons: List<Hexagon>
+    - neighbours: List<Tecton>
+    - fungus: Fungus
+    - insects: List<Insect>
+    - spores: Map<Mychologist, Int>
+    - hyphas: List<Mychologist>
+    + addSpores(Mycologist)
+    + removeSpores(Mycologist)
+    + addHypha(Hypha)
+    + split(double): List<Tecton>
+    + isNeighbor(Tecton): boolean
+    + hasHypha(Tecton): boolean
+    + hasSpores(Mycologist): boolean
+    + setFungus(Fungus)
+    # handleHypha(Hypha)
+    + hyphaDecay(): void
+    + eatInsect(): boolean
+}
+class SingleHyphaTecton extends Tecton{
+    - hyphaLimit: int = 1
+}
+class InfiniteHyphaTecton  extends Tecton{
+    - hyphaLimit: int = 1
+    - hyphaLimit: int = -1
+    - hyphas: List<hypha>
+}
+class ShortHyphaTecton  extends Tecton{
+    - hyphaLimit: int = 1
+    - hyphaLifespan: int = 4
+    + decreaseLifespan(): void 
+}
+class KeepHyphaTecton extends Tecton{ 
+    - hyphaLimit: int = 1
+    - hyphaLifespan: int = -1
+}
+class NoFungiTecton extends Tecton{
+    - hyphaLimit: int = 1
+    - fungus: Fungus = null
+}
+
+
+abstract class Spore {
+    - species: Mycologist
+    - effectDuration: int
+    - nutrientValue: int
+    + getEffectDuration(): int
+    + getNutrientValue(): int
+    + decreaseEffectDuration()
+    + applyTo(Insect)
+}
+
+class StunningEffect extends Spore{
+    {static} - nutrientValue: int = 3
+}
+class SlowingEffect extends Spore{
+    {static} - nutrientValue: int = 2
+}
+class SporeNoEffect extends Spore{
+    {static} - nutrientValue: int = 1
+}
+class ParalyzingEffect extends Spore{
+    {static} - nutrientValue: int = 4
+}
+class AcceleratingEffect extends Spore{
+    {static} - nutrientValue: int = 1
+}
+class CloneEffect extends Spore{
+    {static} - nutrientValue: int = ??
+}
+
+abstract class Player {
+    - name: String
+    - score: int
+    - actionsPerTurn: int
+    - remainingActions: int
+    + selectTecton(tecton: Tecton): Tecton
+    + calculateScore(): int
+}
+
+class Entomologist extends Player{
+    - insects: List<Insect>
+    + increaseActions()
+    + decreaseActions()
+    + getRemainingActions(): int
+}
+
+class Mycologist extends Player{
+    - mushrooms: List<Fungus>
+    + placeFungus(t: Tecton)
+}
+
+
+@enduml

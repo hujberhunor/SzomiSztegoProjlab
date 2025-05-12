@@ -1,0 +1,61 @@
+@startuml
+
+title Játékos kör kezelése 
+actor Game
+participant Player
+participant GameBoard
+participant Tecton
+participant Hypha
+participant Spore
+participant Insect
+
+Game -> Player: startTurn()
+activate Player
+Player -> Player: performActions()
+Player --> Game: endTurn()
+deactivate Player
+
+Game -> GameBoard: update()
+activate GameBoard
+
+GameBoard -> Tecton: update()
+activate Tecton
+
+loop Minden tectonon
+    
+    alt ShortHyphaTecton
+        Tecton -> Hypha: decreaseLifespan()
+    end
+    
+    loop Minden leválasztott gombafonálnak
+        alt Nem KeepHyphaTecton-on
+            Tecton -> Hypha: decreaseLifespan()
+            alt Hypha élettartam <= 0
+                Tecton -> Game: decayedHypha.add(hypha)
+            end
+        end
+    end
+end
+
+Tecton --> GameBoard: updatesComplete
+deactivate Tecton
+
+GameBoard -> GameBoard: checkTectonBreak()
+
+GameBoard --> Game: updatesComplete
+deactivate GameBoard
+
+Game -> Spore: updateSporeEffects()
+activate Spore
+loop Minden aktív spóra hatáshoz
+    Spore -> Spore: decreaseEffectDuration()
+end
+Spore --> Game: effectsUpdated
+deactivate Spore
+
+Game -> Game: cleanUpHypha()
+note right of Game: Minden élettartam nélküli fonál törlése
+
+Game -> Game: nextTurn()
+
+@enduml

@@ -1,0 +1,45 @@
+@startuml
+skinparam classAttributeIconSize 0
+
+interface SerializableEntity {
+    + String getID()
+    + Map<String, Object> serialize()
+}
+
+class EntityRegistry {
+    + Map<String, SerializableEntity> entities
+    + void register(SerializableEntity entity)
+    + SerializableEntity getByID(String id)
+}
+
+class Serializer {
+    + String serializeAll(EntityRegistry registry)
+    + void deserializeAll(String json, EntityRegistry registry)
+}
+
+class SerializerUtil {
+    + static String toJson(Map<String, Object> data)
+    + static Map<String, Object> fromJson(String json)
+}
+
+class Logger {
+    + void logStateChange(String objectType, String objectName, String property, Object oldValue, Object newValue)
+    + void logError(String objectType, String objectName, String errorMsg)
+}
+
+
+note right of SerializableEntity: Nem teljes lista, csak példák
+SerializableEntity <|.. Tecton
+SerializableEntity <|.. Fungus
+SerializableEntity <|.. Insect
+SerializableEntity <|.. Hypha
+SerializableEntity <|.. Spore
+SerializableEntity <|.. Mycologist
+SerializableEntity <|.. Entomologist
+
+EntityRegistry o-- "1..*" SerializableEntity : manages
+Serializer --> EntityRegistry : uses
+Serializer --> SerializerUtil : uses
+Serializer --> Logger : logs
+
+@enduml

@@ -1,0 +1,53 @@
+@startuml SD_init
+
+title SD:init
+
+actor Játékos
+participant ":Game" as Game
+participant ":GameBoard" as GameBoard
+participant ":Tecton" as Tecton
+participant ":Player" as Player
+participant ":Fungus/Insect" as FungusInsect
+
+Játékos -> Game: initGame()
+activate Game
+
+Game -> Player: addPlayer(Player) [loop 4-8 times]
+activate Player
+
+Player -> FungusInsect: Mycologist: new Fungus()\nEntomologist: new Insect()
+activate FungusInsect
+
+FungusInsect --> Player: record entities
+deactivate FungusInsect
+
+Player --> Game: players added
+deactivate Player
+
+Game -> GameBoard: initBoard()
+activate GameBoard
+
+GameBoard -> Tecton: generateBoard()
+activate Tecton
+
+note right of Tecton: setting break chance\nsetting tecton types
+
+Tecton --> GameBoard: return List <Tecton>
+deactivate Tecton
+
+GameBoard --> Game: starting position set
+deactivate GameBoard
+
+Player -> FungusInsect: Mycologist: placeFungus()
+activate FungusInsect
+
+note right of FungusInsect: insect position\nrandomly select
+
+FungusInsect --> Player: return starting position
+deactivate FungusInsect
+
+Game -> Game: startGame()
+
+
+deactivate Game
+@enduml

@@ -1,0 +1,23 @@
+@startuml
+== Determine Winners ==
+
+participant Game
+participant Player
+participant Mycologist
+participant Entomologist
+
+Game -> Player: getPlayers()
+Player --> Game: return List<Player>
+
+loop Minden játékos esetében
+    Game -> Player: getPlayers()
+    Player --> Game: return List<Mycholgist> , List<Entomologist>
+    Game -> Player: getHighestScoreEach()
+end
+
+
+
+Game -> Game: announceWinners()
+
+@enduml
+
