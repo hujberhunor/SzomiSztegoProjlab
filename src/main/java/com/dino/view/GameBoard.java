@@ -1,6 +1,6 @@
 package com.dino.view;
 
-import com.dino.engine.Game;
+import com.dino.engine.*;
 import com.dino.tecton.Tecton;
 import javafx.scene.Node;
 import javafx.scene.shape.Polygon;
