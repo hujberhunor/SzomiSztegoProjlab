@@ -24,14 +24,15 @@ import java.util.Map;
 public class GameBoard implements ModelObserver {
     private Pane boardPane;
     private Map<Integer, Polygon> hexagonShapes; // id -> polygon
+    private Map<Integer, Double[]> hexagonPositions; // id -> [x, y]
     private Map<Tecton, Color> tectonColors;
     private EntityRegistry registry;
     private ObjectNamer namer;
     
     // Hexagon méret és elrendezés változók
-    private final double HEX_SIZE = 30;
-    private final double HEX_WIDTH = HEX_SIZE * Math.sqrt(3);
-    private final double HEX_HEIGHT = HEX_SIZE * 2;
+    private final double HEX_SIZE = 25; // A hatszög oldalhossza
+    private final double HEX_HORIZ_DIST = HEX_SIZE * Math.sqrt(3); // Vízszintes távolság a középpontok között
+    private final double HEX_VERT_DIST = HEX_SIZE * 1.5; // Függőleges távolság a középpontok között
     
     public GameBoard() {
         boardPane = new Pane();
@@ -39,6 +40,7 @@ public class GameBoard implements ModelObserver {
         boardPane.setStyle("-fx-background-color: lightgreen;");
         
         hexagonShapes = new HashMap<>();
+        hexagonPositions = new HashMap<>();
         tectonColors = new HashMap<>();
         registry = EntityRegistry.getInstance();
         namer = ObjectNamer.getInstance();
@@ -56,15 +58,16 @@ public class GameBoard implements ModelObserver {
     public void render(Game game) {
         boardPane.getChildren().clear();
         hexagonShapes.clear();
+        hexagonPositions.clear();
         tectonColors.clear();
         
         // 1. Először határozzuk meg a tecton színeket
         setupTectonColors(game);
         
-        // 2. Hexagon rács kirajzolása
+        // 2. Hexagon rács kirajzolása - tökéletes méhsejt mintával
         drawHexagonGrid(10, 10);
         
-        // 3. Hexagonok színezése a tectonok alapján (később csináljuk)
+        // 3. Hexagonok színezése a tectonok alapján
         colorHexagonsByTecton(game);
     }
     
@@ -94,40 +97,44 @@ public class GameBoard implements ModelObserver {
         double centerX = boardPane.getPrefWidth() / 2;
         double centerY = boardPane.getPrefHeight() / 2;
         
-        // Rács kezdőpontja, hogy középre helyezzük
-        double startX = centerX - (cols * HEX_WIDTH * 0.75) / 2;
-        double startY = centerY - (rows * HEX_HEIGHT * 0.75) / 2;
+        // Számítsuk ki a rács szélességét és magasságát
+        double gridWidth = cols * HEX_HORIZ_DIST;
+        double gridHeight = rows * HEX_VERT_DIST + HEX_SIZE / 2;
         
-        // Minden sorban és oszlopban létrehozunk egy hexagont
-        int id = 0;
+        // Kezdőpont, hogy középre helyezzük a rácsot
+        double startX = centerX - gridWidth / 2 + HEX_HORIZ_DIST / 2;
+        double startY = centerY - gridHeight / 2 + HEX_SIZE;
+        
+        // Minden sorban és oszlopban létrehozunk egy hatszöget
+        int id = 1;
         for (int row = 0; row < rows; row++) {
+            // Páratlan sorok eltolása
+            double rowOffset = (row % 2 == 1) ? HEX_HORIZ_DIST / 2 : 0;
+            
             for (int col = 0; col < cols; col++) {
-                // Hexagon pozíciójának kiszámítása
-                double x = startX + col * HEX_WIDTH * 0.75;
-                double y = startY + row * HEX_HEIGHT * 0.75;
+                // Hexagon középpontjának kiszámítása
+                double x = startX + col * HEX_HORIZ_DIST + rowOffset;
+                double y = startY + row * HEX_VERT_DIST;
                 
-                // Páratlan sorokban eltoljuk a hexagonokat
-                if (row % 2 == 1) {
-                    x += HEX_WIDTH * 0.375;
-                }
-                
-                // Hexagon létrehozása
+                // Hexagon létrehozása a pontos pozícióban
                 Polygon hexagon = createHexagon(x, y);
-                hexagon.setFill(Color.WHITE); // Alapértelmezett színezés
+                hexagon.setFill(Color.WHITE);
                 hexagon.setStroke(Color.BLACK);
                 hexagon.setStrokeWidth(1);
                 
-                // Hexagon azonosító (sorszám)
-                id++;
+                // Hexagon tárolása
                 hexagonShapes.put(id, hexagon);
+                hexagonPositions.put(id, new Double[]{x, y});
                 
-                // Hexagon hozzáadása a pane-hez
+                // Hexagon és azonosító hozzáadása a képernyőhöz
                 boardPane.getChildren().add(hexagon);
                 
-                // ID kiírása (később törölhető)
-                Text idText = new Text(x - 5, y, String.valueOf(id));
+                // ID kiírása
+                Text idText = new Text(x - 5, y + 5, String.valueOf(id));
                 idText.setFont(Font.font(10));
                 boardPane.getChildren().add(idText);
+                
+                id++;
             }
         }
     }
@@ -138,35 +145,36 @@ public class GameBoard implements ModelObserver {
             Color color = tectonColors.get(tecton);
             
             if (color != null && tecton.hexagons != null) {
+                StringBuilder hexIds = new StringBuilder();
+                
                 for (Hexagon hexagon : tecton.hexagons) {
-                    Polygon hexShape = hexagonShapes.get(hexagon.getId());
+                    int hexId = hexagon.getId();
+                    hexIds.append(hexId).append(",");
+                    
+                    Polygon hexShape = hexagonShapes.get(hexId);
                     
                     if (hexShape != null) {
                         hexShape.setFill(color);
-                        
-                        // A hexagon közepét megkeressük, hogy a szöveget oda írjuk
-                        double centerX = 0, centerY = 0;
-                        for (int i = 0; i < 6; i++) {
-                            centerX += hexShape.getPoints().get(i*2);
-                            centerY += hexShape.getPoints().get(i*2+1);
-                        }
-                        centerX /= 6;
-                        centerY /= 6;
-                        
-                        // Tecton neve és típusa
+                    }
+                }
+                
+                // Tecton információinak kiírása
+                if (!tecton.hexagons.isEmpty()) {
+                    // Az első hexagon pozíciója alapján írjuk ki
+                    Hexagon firstHex = tecton.hexagons.get(0);
+                    Double[] pos = hexagonPositions.get(firstHex.getId());
+                    
+                    if (pos != null) {
                         String tectonName = registry.getNameOf(tecton);
                         String tectonType = tecton.getClass().getSimpleName();
                         
-                        // Csak egyszer írjuk ki tecton információit minden tectonra
-                        if (tecton.hexagons.indexOf(hexagon) == 0) {
-                            Text nameText = new Text(centerX - 30, centerY - 10, tectonName);
-                            nameText.setFont(Font.font(8));
-                            
-                            Text typeText = new Text(centerX - 30, centerY + 10, tectonType);
-                            typeText.setFont(Font.font(8));
-                            
-                            boardPane.getChildren().addAll(nameText, typeText);
-                        }
+                        Text nameText = new Text(pos[0] - 30, pos[1] - 10, tectonName);
+                        nameText.setFont(Font.font(8));
+                        
+                        Text typeText = new Text(pos[0] - 30, pos[1] + 10, tectonType);
+                        typeText.setFont(Font.font(8));
+                        
+                        boardPane.getChildren().addAll(nameText, typeText);
                     }
                 }
             }
@@ -176,11 +184,15 @@ public class GameBoard implements ModelObserver {
     private Polygon createHexagon(double centerX, double centerY) {
         Polygon hexagon = new Polygon();
         
+        // 6 pont, minden 60 fokkal - pontos szabályos hatszög
         for (int i = 0; i < 6; i++) {
-            double angle = 2 * Math.PI / 6 * i;
-            double xPoint = centerX + HEX_SIZE * Math.cos(angle);
-            double yPoint = centerY + HEX_SIZE * Math.sin(angle);
-            hexagon.getPoints().addAll(xPoint, yPoint);
+            double angleDeg = 60 * i - 30; // -30 fok kezdőszög a vízszintes hexagonhoz
+            double angleRad = Math.PI / 180 * angleDeg;
+            
+            double x = centerX + HEX_SIZE * Math.cos(angleRad);
+            double y = centerY + HEX_SIZE * Math.sin(angleRad);
+            
+            hexagon.getPoints().addAll(x, y);
         }
         
         return hexagon;
