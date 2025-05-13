@@ -19,8 +19,8 @@ public class MainApp extends Application {
     public void start(Stage primaryStage) {
         try {
             // Játék létrehozása és inicializálása
-            Game game = new Game();
-            game.initBoard(); // Játéktábla generálása
+            Game game = new Game(10); // Körök száma
+            game.initBoard(); // Játéktábla generálása - ez létrehozza a hexagonokat és a tectonokat
             
             // UI komponensek létrehozása
             BorderPane root = new BorderPane();
@@ -39,7 +39,7 @@ public class MainApp extends Application {
             root.setBottom(bottomBar.createNode(controller));
             root.setRight(scoreboard.createNode());
             
-            // Kezdeti frissítés
+            // Kezdeti frissítések
             gameBoard.update(game);
             topBar.update(game);
             bottomBar.update(game);

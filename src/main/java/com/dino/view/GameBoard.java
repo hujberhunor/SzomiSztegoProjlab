@@ -1,5 +1,6 @@
 package com.dino.view;
 
+import com.dino.core.Hexagon;
 import com.dino.engine.Game;
 import com.dino.tecton.Tecton;
 import com.dino.tecton.SingleHyphaTecton;
@@ -13,26 +14,23 @@ import com.dino.util.ObjectNamer;
 import javafx.scene.Node;
 import javafx.scene.layout.Pane;
 import javafx.scene.paint.Color;
-import javafx.scene.shape.Line;
 import javafx.scene.shape.Polygon;
 import javafx.scene.text.Font;
 import javafx.scene.text.Text;
-import javafx.scene.text.TextAlignment;
 
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
 
 public class GameBoard implements ModelObserver {
     private Pane boardPane;
-    private Map<Tecton, Polygon> tectonShapes;
+    private Map<Integer, Polygon> hexagonShapes; // id -> polygon
+    private Map<Tecton, Color> tectonColors;
     private EntityRegistry registry;
     private ObjectNamer namer;
     
     // Hexagon méret és elrendezés változók
-    private final double HEX_SIZE = 40; // Hatszögek mérete
-    private final double WIDTH_FACTOR = Math.sqrt(3);
-    private final double HEX_WIDTH = HEX_SIZE * WIDTH_FACTOR;
+    private final double HEX_SIZE = 30;
+    private final double HEX_WIDTH = HEX_SIZE * Math.sqrt(3);
     private final double HEX_HEIGHT = HEX_SIZE * 2;
     
     public GameBoard() {
@@ -40,7 +38,8 @@ public class GameBoard implements ModelObserver {
         boardPane.setPrefSize(800, 600);
         boardPane.setStyle("-fx-background-color: lightgreen;");
         
-        tectonShapes = new HashMap<>();
+        hexagonShapes = new HashMap<>();
+        tectonColors = new HashMap<>();
         registry = EntityRegistry.getInstance();
         namer = ObjectNamer.getInstance();
     }
@@ -56,147 +55,146 @@ public class GameBoard implements ModelObserver {
     
     public void render(Game game) {
         boardPane.getChildren().clear();
-        tectonShapes.clear();
+        hexagonShapes.clear();
+        tectonColors.clear();
         
-        List<Tecton> tectons = game.getBoard().getAllTectons();
-        drawTectons(tectons);
+        // 1. Először határozzuk meg a tecton színeket
+        setupTectonColors(game);
+        
+        // 2. Hexagon rács kirajzolása
+        drawHexagonGrid(10, 10);
+        
+        // 3. Hexagonok színezése a tectonok alapján (később csináljuk)
+        colorHexagonsByTecton(game);
     }
     
-    private void drawTectons(List<Tecton> tectons) {
-        int rows = (int)Math.sqrt(tectons.size() * 2);
-        int cols = (int)Math.ceil(tectons.size() / (double)rows);
-        
-        // Középpont kiszámítása
+    private void setupTectonColors(Game game) {
+        for (Tecton tecton : game.getBoard().getAllTectons()) {
+            Color color;
+            
+            if (tecton instanceof SingleHyphaTecton) {
+                color = Color.LIGHTBLUE;
+            } else if (tecton instanceof KeepHyphaTecton) {
+                color = Color.LIGHTYELLOW;
+            } else if (tecton instanceof NoFungiTecton) {
+                color = Color.LIGHTPINK;
+            } else if (tecton instanceof ShortHyphaTecton) {
+                color = Color.LIGHTGRAY;
+            } else if (tecton instanceof InfiniteHyphaTecton) {
+                color = Color.LIGHTGREEN;
+            } else {
+                color = Color.WHITE;
+            }
+            
+            tectonColors.put(tecton, color);
+        }
+    }
+    
+    private void drawHexagonGrid(int rows, int cols) {
         double centerX = boardPane.getPrefWidth() / 2;
         double centerY = boardPane.getPrefHeight() / 2;
         
-        // Eltolás kiszámítása, hogy középre helyezzük a méhsejt mintát
-        double startX = centerX - (cols * 0.75 * HEX_WIDTH) / 2;
+        // Rács kezdőpontja, hogy középre helyezzük
+        double startX = centerX - (cols * HEX_WIDTH * 0.75) / 2;
         double startY = centerY - (rows * HEX_HEIGHT * 0.75) / 2;
         
-        int index = 0;
-        for (int row = 0; row < rows && index < tectons.size(); row++) {
-            int colsInRow = (row % 2 == 0) ? cols : cols - 1;
-            
-            for (int col = 0; col < colsInRow && index < tectons.size(); col++) {
-                Tecton tecton = tectons.get(index);
-                
+        // Minden sorban és oszlopban létrehozunk egy hexagont
+        int id = 0;
+        for (int row = 0; row < rows; row++) {
+            for (int col = 0; col < cols; col++) {
                 // Hexagon pozíciójának kiszámítása
                 double x = startX + col * HEX_WIDTH * 0.75;
-                if (row % 2 == 1) {
-                    x += HEX_WIDTH * 0.375; // Páratlan sorok eltolása
-                }
                 double y = startY + row * HEX_HEIGHT * 0.75;
                 
-                // Hexagon kirajzolása
+                // Páratlan sorokban eltoljuk a hexagonokat
+                if (row % 2 == 1) {
+                    x += HEX_WIDTH * 0.375;
+                }
+                
+                // Hexagon létrehozása
                 Polygon hexagon = createHexagon(x, y);
-                styleHexagon(hexagon, tecton);
+                hexagon.setFill(Color.WHITE); // Alapértelmezett színezés
+                hexagon.setStroke(Color.BLACK);
+                hexagon.setStrokeWidth(1);
                 
+                // Hexagon azonosító (sorszám)
+                id++;
+                hexagonShapes.put(id, hexagon);
+                
+                // Hexagon hozzáadása a pane-hez
                 boardPane.getChildren().add(hexagon);
-                tectonShapes.put(tecton, hexagon);
                 
-                // Szöveg hozzáadása
-                String tectonName = registry.getNameOf(tecton);
-                String tectonType = tecton.getClass().getSimpleName();
-                
-                Text nameText = new Text(x - HEX_SIZE * 0.5, y - 5, tectonName);
-                nameText.setFont(Font.font(10));
-                nameText.setTextAlignment(TextAlignment.CENTER);
-                
-                Text typeText = new Text(x - HEX_SIZE * 0.5, y + 10, tectonType);
-                typeText.setFont(Font.font(8));
-                typeText.setTextAlignment(TextAlignment.CENTER);
-                
-                boardPane.getChildren().addAll(nameText, typeText);
-                
-                index++;
+                // ID kiírása (később törölhető)
+                Text idText = new Text(x - 5, y, String.valueOf(id));
+                idText.setFont(Font.font(10));
+                boardPane.getChildren().add(idText);
             }
         }
-        
-        // Szomszédok közötti kapcsolatok kirajzolása
-        drawConnections(tectons);
     }
     
-    private Polygon createHexagon(double x, double y) {
+    private void colorHexagonsByTecton(Game game) {
+        // Minden tecton minden hexagonját színezzük
+        for (Tecton tecton : game.getBoard().getAllTectons()) {
+            Color color = tectonColors.get(tecton);
+            
+            if (color != null && tecton.hexagons != null) {
+                for (Hexagon hexagon : tecton.hexagons) {
+                    Polygon hexShape = hexagonShapes.get(hexagon.getId());
+                    
+                    if (hexShape != null) {
+                        hexShape.setFill(color);
+                        
+                        // A hexagon közepét megkeressük, hogy a szöveget oda írjuk
+                        double centerX = 0, centerY = 0;
+                        for (int i = 0; i < 6; i++) {
+                            centerX += hexShape.getPoints().get(i*2);
+                            centerY += hexShape.getPoints().get(i*2+1);
+                        }
+                        centerX /= 6;
+                        centerY /= 6;
+                        
+                        // Tecton neve és típusa
+                        String tectonName = registry.getNameOf(tecton);
+                        String tectonType = tecton.getClass().getSimpleName();
+                        
+                        // Csak egyszer írjuk ki tecton információit minden tectonra
+                        if (tecton.hexagons.indexOf(hexagon) == 0) {
+                            Text nameText = new Text(centerX - 30, centerY - 10, tectonName);
+                            nameText.setFont(Font.font(8));
+                            
+                            Text typeText = new Text(centerX - 30, centerY + 10, tectonType);
+                            typeText.setFont(Font.font(8));
+                            
+                            boardPane.getChildren().addAll(nameText, typeText);
+                        }
+                    }
+                }
+            }
+        }
+    }
+    
+    private Polygon createHexagon(double centerX, double centerY) {
         Polygon hexagon = new Polygon();
         
         for (int i = 0; i < 6; i++) {
             double angle = 2 * Math.PI / 6 * i;
-            double xPoint = x + HEX_SIZE * Math.cos(angle);
-            double yPoint = y + HEX_SIZE * Math.sin(angle);
+            double xPoint = centerX + HEX_SIZE * Math.cos(angle);
+            double yPoint = centerY + HEX_SIZE * Math.sin(angle);
             hexagon.getPoints().addAll(xPoint, yPoint);
         }
         
         return hexagon;
     }
     
-    private void styleHexagon(Polygon hexagon, Tecton tecton) {
-        // Tecton típusa alapján színezés
-        if (tecton instanceof SingleHyphaTecton) {
-            hexagon.setFill(Color.LIGHTBLUE);
-        } else if (tecton instanceof KeepHyphaTecton) {
-            hexagon.setFill(Color.LIGHTYELLOW);
-        } else if (tecton instanceof NoFungiTecton) {
-            hexagon.setFill(Color.LIGHTPINK);
-        } else if (tecton instanceof ShortHyphaTecton) {
-            hexagon.setFill(Color.LIGHTGRAY);
-        } else if (tecton instanceof InfiniteHyphaTecton) {
-            hexagon.setFill(Color.LIGHTGREEN);
-        } else {
-            hexagon.setFill(Color.WHITE);
-        }
-        
-        hexagon.setStroke(Color.BLACK);
-        hexagon.setStrokeWidth(1.5);
-    }
-    
-    private void drawConnections(List<Tecton> tectons) {
-        for (Tecton tecton : tectons) {
-            if (tecton.getNeighbours() == null) continue;
-            
-            Polygon p1 = tectonShapes.get(tecton);
-            if (p1 == null) continue;
-            
-            // A hexagon középpontjának kiszámítása
-            double centerX1 = p1.getPoints().get(0);
-            double centerY1 = p1.getPoints().get(1);
-            for (int i = 1; i < 6; i++) {
-                centerX1 += p1.getPoints().get(i*2);
-                centerY1 += p1.getPoints().get(i*2+1);
-            }
-            centerX1 /= 6;
-            centerY1 /= 6;
-            
-            for (Tecton neighbour : tecton.getNeighbours()) {
-                Polygon p2 = tectonShapes.get(neighbour);
-                if (p2 == null) continue;
-                
-                // A szomszéd hexagon középpontjának kiszámítása
-                double centerX2 = p2.getPoints().get(0);
-                double centerY2 = p2.getPoints().get(1);
-                for (int i = 1; i < 6; i++) {
-                    centerX2 += p2.getPoints().get(i*2);
-                    centerY2 += p2.getPoints().get(i*2+1);
-                }
-                centerX2 /= 6;
-                centerY2 /= 6;
-                
-                // Összekötő vonal rajzolása
-                Line line = new Line(centerX1, centerY1, centerX2, centerY2);
-                line.setStroke(Color.GRAY);
-                line.setStrokeWidth(1.0);
-                
-                // Vonalak háttérbe helyezése
-                boardPane.getChildren().add(0, line);
-            }
-        }
-    }
-    
     public void highlightTecton(Tecton t) {
-        Polygon hexagon = tectonShapes.get(t);
-        if (hexagon != null) {
-            hexagon.setStroke(Color.RED);
-            hexagon.setStrokeWidth(3);
+        if (t.hexagons != null) {
+            for (Hexagon hex : t.hexagons) {
+                Polygon hexShape = hexagonShapes.get(hex.getId());
+                if (hexShape != null) {
+                    hexShape.setStroke(Color.RED);
+                    hexShape.setStrokeWidth(3);
+                }
+            }
         }
     }
 }
