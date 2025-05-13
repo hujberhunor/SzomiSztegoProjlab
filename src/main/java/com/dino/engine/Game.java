@@ -232,7 +232,7 @@ public class Game {
                 namer.register(fungus);
                 tectonsWithFungus.add(selectedTecton);
                 numberOfMycologist++;
-                System.out.println("\nGomba: "+ namer.getName(fungus));
+                System.out.println("Gomba: "+ namer.getName(fungus) + "\n");
             }
         }
 

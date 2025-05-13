@@ -29,6 +29,7 @@ public class PlaceFungusCommand implements Command {
 
         if (newFungiCount > prevFungiCount) {
             logger.logChange("MYCOLOGIST", mycologist, "PLACE_FUNGUS", tectonName, "SUCCESS");
+            mycologist.decreaseActions();
         } else {
             logger.logError("MYCOLOGIST", mycologistId, "Failed to place fungus on tecton.");
         }

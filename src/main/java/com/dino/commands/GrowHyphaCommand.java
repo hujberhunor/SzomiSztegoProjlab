@@ -31,17 +31,17 @@ public class GrowHyphaCommand implements Command {
         Hypha hypha = new Hypha(mycologist, fungus);
         boolean success = hypha.continueHypha(nextTecton);
 
+        String baseName = "hypha_" + fungusId;
+        String name = baseName;
+        int i = 1;
+        while (registry.getByName(name) != null) {
+            name = baseName + "_" + i++;
+        }
+        registry.register(name, hypha);
+
+        logger.logChange("HYPHA", hypha, "CREATE", fungusId, startTecton.toString());
+
         if(success) {
-            String baseName = "hypha_" + fungusId;
-            String name = baseName;
-            int i = 1;
-            while (registry.getByName(name) != null) {
-                name = baseName + "_" + i++;
-            }
-            registry.register(name, hypha);
-
-            logger.logChange("HYPHA", hypha, "CREATE", fungusId, startTecton.toString());
-
             fungus.getSpecies().decreaseActions();
         }
     }

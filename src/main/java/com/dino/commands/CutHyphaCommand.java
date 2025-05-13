@@ -35,6 +35,7 @@ public class CutHyphaCommand implements Command {
         if (success) {
             // Sikeres vágás esetén változás logolása
             logger.logChange("INSECT", insect, "CUT_HYPHA", hyphaName + ":" + targetTectonName, "SUCCESS");
+            insect.getEntomologist().decreaseActions();
         } else {
             // Sikertelen vágás esetén hiba logolása
             logger.logError("INSECT", insectId, "Failed to cut hypha at target tecton.");
