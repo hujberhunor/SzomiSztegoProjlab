@@ -270,6 +270,8 @@ public class Fungus implements SerializableEntity {
         }
     }
 
+    public void increaseCharge(){ charge += 1; }
+
     public int getLifespan() {  return lifespan; }
     public void setLifespan(int lifespan) {
         this.lifespan = lifespan;

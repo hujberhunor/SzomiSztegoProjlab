@@ -483,7 +483,17 @@ public class Game {
                 String.valueOf(oldRound),
                 String.valueOf(currRound));
 
-        map.breakHandler();
+        //map.breakHandler();
+
+        for (Player player : players) {
+            if(player instanceof Mycologist){
+                for (Fungus f : ((Mycologist) player).getMushrooms()){
+                    int oldCharge = f.getCharge();
+                    f.increaseCharge();
+                    logger.logChange("FUNGUS", f, "CHARGE", oldCharge, f.getCharge());
+                }
+            }
+        }
 
         String oldPlayerName = namer.getName(currentPlayer);
         currentPlayer = players.get(0);
