@@ -9,9 +9,10 @@ import com.dino.view.TopBar;
 
 import javafx.application.Application;
 import javafx.geometry.Insets;
+import javafx.geometry.Pos;
 import javafx.scene.Scene;
 import javafx.scene.layout.BorderPane;
-import javafx.scene.layout.Priority;
+import javafx.scene.layout.StackPane;
 import javafx.scene.layout.VBox;
 import javafx.scene.paint.Color;
 import javafx.stage.Stage;
@@ -46,27 +47,28 @@ public class MainApp extends Application {
             // Manuális frissítés az inicializálás után
             gameBoard.update(game);
             
-            // Scoreboard elhelyezése a jobb oldalon
-            scoreboard.setMaxWidth(250);
-            VBox rightPanel = new VBox(scoreboard);
-            rightPanel.setPadding(new Insets(10));
+            // Scoreboard elhelyezése jobboldalon, fix szélességgel
+            scoreboard.setMaxWidth(230);
+            scoreboard.setPrefWidth(230);
             
-            // GameBoard elhelyezése középen, maximális mérettel
-            VBox centerPanel = new VBox(gameBoard.createNode());
-            centerPanel.setPadding(new Insets(10));
-            VBox.setVgrow(centerPanel, Priority.ALWAYS);
+            // GameBoard középre igazítása egy StackPane-ben
+            StackPane centerContainer = new StackPane(gameBoard.createNode());
+            centerContainer.setAlignment(Pos.CENTER);
+            centerContainer.setPadding(new Insets(20));
+            
+            // Scoreboard elhelyezése a jobb oldalon
+            VBox rightPanel = new VBox(scoreboard);
+            rightPanel.setPadding(new Insets(20, 20, 20, 0));
+            rightPanel.setAlignment(Pos.TOP_CENTER);
             
             // Komponensek elhelyezése
             root.setTop(topBar);
-            root.setCenter(centerPanel);
+            root.setCenter(centerContainer);
             root.setBottom(bottomBar);
             root.setRight(rightPanel);
             
             // CommandParser és eseménykezelés beállítása a BottomBar-hoz
             CommandParser parser = new CommandParser(game);
-            
-            // BottomBar parancs eseménykezelő beállítása (ha szükséges)
-            // Ezt implementálhatod később a BottomBar osztályban
             
             // Scene létrehozása és megjelenítése
             Scene scene = new Scene(root);
