@@ -30,7 +30,7 @@ public class CommandParser {
             case "CONSUME_SPORE":
                 return new ConsumeSporeCommand(parts[1]);
             case "GROW_HYPHA":
-                return new GrowHyphaCommand(parts[1]);
+                return new GrowHyphaCommand(parts[1], parts[2]);
             case "CONTINUE_HYPHA":
                 return new ContinueHyphaCommand(parts[1], parts[2]);
             case "CUT_HYPHA":
