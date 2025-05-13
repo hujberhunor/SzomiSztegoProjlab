@@ -29,17 +29,21 @@ public class GrowHyphaCommand implements Command {
         Tecton nextTecton = (Tecton) registry.getByName(nextTectonName);
 
         Hypha hypha = new Hypha(mycologist, fungus);
-        hypha.continueHypha(nextTecton);
+        boolean success = hypha.continueHypha(nextTecton);
 
-        String baseName = "hypha_" + fungusId;
-        String name = baseName;
-        int i = 1;
-        while (registry.getByName(name) != null) {
-            name = baseName + "_" + i++;
+        if(success) {
+            String baseName = "hypha_" + fungusId;
+            String name = baseName;
+            int i = 1;
+            while (registry.getByName(name) != null) {
+                name = baseName + "_" + i++;
+            }
+            registry.register(name, hypha);
+
+            logger.logChange("HYPHA", hypha, "CREATE", fungusId, startTecton.toString());
+
+            fungus.getSpecies().decreaseActions();
         }
-        registry.register(name, hypha);
-
-        logger.logChange("HYPHA", hypha, "CREATE", fungusId, startTecton.toString());
     }
 
     @Override
