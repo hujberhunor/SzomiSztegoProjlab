@@ -23,6 +23,7 @@ import com.dino.tecton.Tecton;
 import com.dino.util.EntityRegistry;
 import com.dino.util.Logger;
 import com.dino.util.ObjectNamer;
+import com.dino.view.ModelObserver;
 
 /**
  * A játékmenet alapvető funkcióit vezérlő, és annak tulajdonságait tároló és
@@ -187,6 +188,9 @@ public class Game {
         }
 
         totalRounds = numberOfRounds;
+
+        notifyObservers();
+
         return true;
     }
 
@@ -678,5 +682,43 @@ public class Game {
 
     public void setCurrentPlayer(Player byName) {
         this.currentPlayer = byName;
+    }
+
+    private final List<ModelObserver> observers = new ArrayList<>();
+
+    public void addObserver(ModelObserver observer) {
+        observers.add(observer);
+    }
+
+    public void notifyObservers() {
+        for (ModelObserver obs : observers) {
+            obs.update(this);
+        }
+    }
+
+    public boolean quickInit(){
+        int numberOfMycologist = 2;
+        int numberOfEntomologist = 2;
+        int numberOfRounds = 5;
+
+        for (int i = 0; i < numberOfMycologist; i++) {
+            Mycologist mycologist = new Mycologist();
+            players.add(mycologist);
+            namer.register(mycologist);
+        }
+
+        for (int i = 0; i < numberOfEntomologist; i++) {
+            Entomologist entomologist = new Entomologist();
+            players.add(entomologist);
+            namer.register(entomologist);
+        }
+
+        totalRounds = numberOfRounds;
+
+        currentPlayer = players.get(0);
+
+        notifyObservers();
+
+        return true;
     }
 }
