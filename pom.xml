@@ -25,10 +25,27 @@
       <artifactId>gson</artifactId>
       <version>2.13.0</version>
     </dependency>
+    
+    <!-- JavaFX modulok -->
     <dependency>
       <groupId>org.openjfx</groupId>
       <artifactId>javafx-controls</artifactId>
-      <version>17</version> <!-- vagy 17, ha az van telepítve -->
+      <version>17</version>
+    </dependency>
+    <dependency>
+      <groupId>org.openjfx</groupId>
+      <artifactId>javafx-fxml</artifactId>
+      <version>17</version>
+    </dependency>
+    <dependency>
+      <groupId>org.openjfx</groupId>
+      <artifactId>javafx-graphics</artifactId>
+      <version>17</version>
+    </dependency>
+    <dependency>
+      <groupId>org.openjfx</groupId>
+      <artifactId>javafx-base</artifactId>
+      <version>17</version>
     </dependency>
   </dependencies>
 
@@ -46,25 +63,27 @@
       <plugin>
         <groupId>org.codehaus.mojo</groupId>
         <artifactId>exec-maven-plugin</artifactId>
-        <version>3.5.0</version>
-        <executions>
-          <execution>
-            <goals>
-              <goal>java</goal>
-            </goals>
-          </execution>
-        </executions>
+        <version>3.0.0</version>
         <configuration>
-          <mainClass>com.dino.Main</mainClass>
+          <mainClass>com.dino.MainApp</mainClass>
+          <arguments>
+            <argument>--module-path</argument>
+            <argument>${project.build.directory}/modules</argument>
+            <argument>--add-modules</argument>
+            <argument>javafx.controls,javafx.fxml,javafx.graphics</argument>
+          </arguments>
         </configuration>
       </plugin>
-      <!-- JavaFX Plugin (nem kötelező, de segíthet indításban) -->
       <plugin>
         <groupId>org.openjfx</groupId>
         <artifactId>javafx-maven-plugin</artifactId>
         <version>0.0.8</version>
         <configuration>
           <mainClass>com.dino.MainApp</mainClass>
+          <options>
+            <option>--add-modules</option>
+            <option>javafx.controls,javafx.fxml,javafx.graphics</option>
+          </options>
         </configuration>
       </plugin>
     </plugins>
