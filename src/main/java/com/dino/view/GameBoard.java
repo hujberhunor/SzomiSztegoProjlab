@@ -18,8 +18,13 @@ import javafx.scene.shape.Polygon;
 import javafx.scene.text.Font;
 import javafx.scene.text.Text;
 
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.HashSet;
+import java.util.List;
 import java.util.Map;
+import java.util.Random;
+import java.util.Set;
 
 public class GameBoard implements ModelObserver {
     private Pane boardPane;
@@ -28,20 +33,26 @@ public class GameBoard implements ModelObserver {
     private Map<Tecton, Color> tectonColors;
     private EntityRegistry registry;
     private ObjectNamer namer;
+    private Set<Integer> removedHexagons; // Az eltávolított hexagonok ID-i
+    private Random random = new Random();
     
     // Hexagon méret és elrendezés változók
     private final double HEX_SIZE = 25; // A hatszög oldalhossza
     private final double HEX_HORIZ_DIST = HEX_SIZE * Math.sqrt(3); // Vízszintes távolság a középpontok között
     private final double HEX_VERT_DIST = HEX_SIZE * 1.5; // Függőleges távolság a középpontok között
     
+    // Hézagok beállítása
+    private final double GAP_PERCENTAGE = 0.1; // A hexagonok 10%-a lesz hézag
+    
     public GameBoard() {
         boardPane = new Pane();
         boardPane.setPrefSize(800, 600);
-        boardPane.setStyle("-fx-background-color: lightgreen;");
+        boardPane.setStyle("-fx-background-color: ligt grey;");
         
         hexagonShapes = new HashMap<>();
         hexagonPositions = new HashMap<>();
         tectonColors = new HashMap<>();
+        removedHexagons = new HashSet<>();
         registry = EntityRegistry.getInstance();
         namer = ObjectNamer.getInstance();
     }
@@ -60,12 +71,13 @@ public class GameBoard implements ModelObserver {
         hexagonShapes.clear();
         hexagonPositions.clear();
         tectonColors.clear();
+        removedHexagons.clear();
         
         // 1. Először határozzuk meg a tecton színeket
         setupTectonColors(game);
         
-        // 2. Hexagon rács kirajzolása - tökéletes méhsejt mintával
-        drawHexagonGrid(10, 10);
+        // 2. Hexagon rács kirajzolása - tökéletes méhsejt mintával, hézagokkal
+        createHexagonGrid(10, 10);
         
         // 3. Hexagonok színezése a tectonok alapján
         colorHexagonsByTecton(game);
@@ -93,7 +105,7 @@ public class GameBoard implements ModelObserver {
         }
     }
     
-    private void drawHexagonGrid(int rows, int cols) {
+    private void createHexagonGrid(int rows, int cols) {
         double centerX = boardPane.getPrefWidth() / 2;
         double centerY = boardPane.getPrefHeight() / 2;
         
@@ -104,6 +116,24 @@ public class GameBoard implements ModelObserver {
         // Kezdőpont, hogy középre helyezzük a rácsot
         double startX = centerX - gridWidth / 2 + HEX_HORIZ_DIST / 2;
         double startY = centerY - gridHeight / 2 + HEX_SIZE;
+        
+        // Létrehozzuk az összes lehetséges hexagon ID-t
+        List<Integer> allHexIds = new ArrayList<>();
+        int totalHexagons = rows * cols;
+        for (int i = 1; i <= totalHexagons; i++) {
+            allHexIds.add(i);
+        }
+        
+        // Véletlenszerűen kiválasztjuk a hézagokat (a hexagonok GAP_PERCENTAGE %-a)
+        int gapCount = (int)(totalHexagons * GAP_PERCENTAGE);
+        for (int i = 0; i < gapCount; i++) {
+            if (!allHexIds.isEmpty()) {
+                int randomIndex = random.nextInt(allHexIds.size());
+                int hexId = allHexIds.get(randomIndex);
+                removedHexagons.add(hexId);
+                allHexIds.remove(randomIndex);
+            }
+        }
         
         // Minden sorban és oszlopban létrehozunk egy hatszöget
         int id = 1;
@@ -118,7 +148,14 @@ public class GameBoard implements ModelObserver {
                 
                 // Hexagon létrehozása a pontos pozícióban
                 Polygon hexagon = createHexagon(x, y);
-                hexagon.setFill(Color.WHITE);
+                
+                // Hézag esetén feketére színezzük
+                if (removedHexagons.contains(id)) {
+                    hexagon.setFill(Color.BLACK);
+                } else {
+                    hexagon.setFill(Color.WHITE);
+                }
+                
                 hexagon.setStroke(Color.BLACK);
                 hexagon.setStrokeWidth(1);
                 
@@ -129,10 +166,12 @@ public class GameBoard implements ModelObserver {
                 // Hexagon és azonosító hozzáadása a képernyőhöz
                 boardPane.getChildren().add(hexagon);
                 
-                // ID kiírása
-                Text idText = new Text(x - 5, y + 5, String.valueOf(id));
-                idText.setFont(Font.font(10));
-                boardPane.getChildren().add(idText);
+                // ID kiírása (kivéve a hézagokon)
+                if (!removedHexagons.contains(id)) {
+                    Text idText = new Text(x - 5, y + 5, String.valueOf(id));
+                    idText.setFont(Font.font(10));
+                    boardPane.getChildren().add(idText);
+                }
                 
                 id++;
             }
@@ -151,30 +190,38 @@ public class GameBoard implements ModelObserver {
                     int hexId = hexagon.getId();
                     hexIds.append(hexId).append(",");
                     
-                    Polygon hexShape = hexagonShapes.get(hexId);
-                    
-                    if (hexShape != null) {
-                        hexShape.setFill(color);
+                    // Csak akkor színezzük, ha nem hézag
+                    if (!removedHexagons.contains(hexId)) {
+                        Polygon hexShape = hexagonShapes.get(hexId);
+                        
+                        if (hexShape != null) {
+                            hexShape.setFill(color);
+                        }
                     }
                 }
                 
                 // Tecton információinak kiírása
                 if (!tecton.hexagons.isEmpty()) {
-                    // Az első hexagon pozíciója alapján írjuk ki
-                    Hexagon firstHex = tecton.hexagons.get(0);
-                    Double[] pos = hexagonPositions.get(firstHex.getId());
-                    
-                    if (pos != null) {
-                        String tectonName = registry.getNameOf(tecton);
-                        String tectonType = tecton.getClass().getSimpleName();
-                        
-                        Text nameText = new Text(pos[0] - 30, pos[1] - 10, tectonName);
-                        nameText.setFont(Font.font(8));
-                        
-                        Text typeText = new Text(pos[0] - 30, pos[1] + 10, tectonType);
-                        typeText.setFont(Font.font(8));
-                        
-                        boardPane.getChildren().addAll(nameText, typeText);
+                    // Keressünk egy nem-hézag hexagont, ahova kiírhatjuk az infót
+                    for (Hexagon hex : tecton.hexagons) {
+                        int hexId = hex.getId();
+                        if (!removedHexagons.contains(hexId)) {
+                            Double[] pos = hexagonPositions.get(hexId);
+                            
+                            if (pos != null) {
+                                String tectonName = registry.getNameOf(tecton);
+                                String tectonType = tecton.getClass().getSimpleName();
+                                
+                                Text nameText = new Text(pos[0] - 30, pos[1] - 10, tectonName);
+                                nameText.setFont(Font.font(8));
+                                
+                                Text typeText = new Text(pos[0] - 30, pos[1] + 10, tectonType);
+                                typeText.setFont(Font.font(8));
+                                
+                                boardPane.getChildren().addAll(nameText, typeText);
+                                break;
+                            }
+                        }
                     }
                 }
             }
@@ -201,10 +248,13 @@ public class GameBoard implements ModelObserver {
     public void highlightTecton(Tecton t) {
         if (t.hexagons != null) {
             for (Hexagon hex : t.hexagons) {
-                Polygon hexShape = hexagonShapes.get(hex.getId());
-                if (hexShape != null) {
-                    hexShape.setStroke(Color.RED);
-                    hexShape.setStrokeWidth(3);
+                // Csak a nem-hézag hexagonokat emeljük ki
+                if (!removedHexagons.contains(hex.getId())) {
+                    Polygon hexShape = hexagonShapes.get(hex.getId());
+                    if (hexShape != null) {
+                        hexShape.setStroke(Color.RED);
+                        hexShape.setStrokeWidth(3);
+                    }
                 }
             }
         }
