@@ -23,7 +23,6 @@ import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
-import java.util.Random;
 import java.util.Set;
 
 public class GameBoard implements ModelObserver {
@@ -33,17 +32,13 @@ public class GameBoard implements ModelObserver {
     private Map<Tecton, Color> tectonColors;
     private EntityRegistry registry;
     private ObjectNamer namer;
-    private Set<Integer> removedHexagons; // Az eltávolított hexagonok ID-i
-    private Random random = new Random();
-
-    // Hexagon méret és elrendezés változók - nagyobb értékek a jobb láthatóság
-    // érdekében
-    private final double HEX_SIZE = 35; // A hatszög oldalhossza - növelve a jobb láthatóságért
+    private Set<Integer> existingHexagonIds; // Csak a létező hexagonok ID-i
+    private final int GRID_SIZE = 10; // A rács mérete 10x10
+    
+    // Hexagon méret és elrendezés változók
+    private final double HEX_SIZE = 35; // A hatszög oldalhossza
     private final double HEX_HORIZ_DIST = HEX_SIZE * Math.sqrt(3); // Vízszintes távolság a középpontok között
     private final double HEX_VERT_DIST = HEX_SIZE * 1.5; // Függőleges távolság a középpontok között
-
-    // Hézagok beállítása
-    private final double GAP_PERCENTAGE = 0.1; // A hexagonok 10%-a lesz hézag
 
     public GameBoard() {
         boardPane = new Pane();
@@ -53,7 +48,7 @@ public class GameBoard implements ModelObserver {
         hexagonShapes = new HashMap<>();
         hexagonPositions = new HashMap<>();
         tectonColors = new HashMap<>();
-        removedHexagons = new HashSet<>();
+        existingHexagonIds = new HashSet<>();
         registry = EntityRegistry.getInstance();
         namer = ObjectNamer.getInstance();
     }
@@ -72,16 +67,35 @@ public class GameBoard implements ModelObserver {
         hexagonShapes.clear();
         hexagonPositions.clear();
         tectonColors.clear();
-        removedHexagons.clear();
+        existingHexagonIds.clear();
 
-        // 1. Először határozzuk meg a tecton színeket
+        // 1. Először azonosítsuk a létező hexagonokat a tectonok alapján
+        identifyExistingHexagons(game);
+        
+        // 2. Tecton színek meghatározása
         setupTectonColors(game);
 
-        // 2. Hexagon rács kirajzolása - tökéletes méhsejt mintával, hézagokkal
-        createHexagonGrid(10, 10);
+        // 3. A teljes hexagon rács pozíciójának kiszámítása
+        calculateGridPositions();
 
-        // 3. Hexagonok színezése a tectonok alapján
+        // 4. Csak a létező hexagonok kirajzolása
+        drawExistingHexagons();
+
+        // 5. Hexagonok színezése a tectonok alapján
         colorHexagonsByTecton(game);
+    }
+
+    private void identifyExistingHexagons(Game game) {
+        // Csak azok a hexagonok léteznek, amelyek valamelyik tectonhoz tartoznak
+        for (Tecton tecton : game.getBoard().getAllTectons()) {
+            if (tecton.hexagons != null) {
+                for (Hexagon hexagon : tecton.hexagons) {
+                    if (hexagon != null) {
+                        existingHexagonIds.add(hexagon.getId());
+                    }
+                }
+            }
+        }
     }
 
     private void setupTectonColors(Game game) {
@@ -106,75 +120,60 @@ public class GameBoard implements ModelObserver {
         }
     }
 
-    private void createHexagonGrid(int rows, int cols) {
+    private void calculateGridPositions() {
         double centerX = boardPane.getPrefWidth() / 2;
         double centerY = boardPane.getPrefHeight() / 2;
 
         // Számítsuk ki a rács szélességét és magasságát
-        double gridWidth = cols * HEX_HORIZ_DIST;
-        double gridHeight = rows * HEX_VERT_DIST + HEX_SIZE / 2;
+        double gridWidth = GRID_SIZE * HEX_HORIZ_DIST;
+        double gridHeight = GRID_SIZE * HEX_VERT_DIST + HEX_SIZE / 2;
 
         // Kezdőpont, hogy középre helyezzük a rácsot
         double startX = centerX - gridWidth / 2 + HEX_HORIZ_DIST / 2;
         double startY = centerY - gridHeight / 2 + HEX_SIZE;
 
-        // Létrehozzuk az összes lehetséges hexagon ID-t
-        List<Integer> allHexIds = new ArrayList<>();
-        int totalHexagons = rows * cols;
-        for (int i = 1; i <= totalHexagons; i++) {
-            allHexIds.add(i);
-        }
-
-        // Véletlenszerűen kiválasztjuk a hézagokat (a hexagonok GAP_PERCENTAGE %-a)
-        int gapCount = (int) (totalHexagons * GAP_PERCENTAGE);
-        for (int i = 0; i < gapCount; i++) {
-            if (!allHexIds.isEmpty()) {
-                int randomIndex = random.nextInt(allHexIds.size());
-                int hexId = allHexIds.get(randomIndex);
-                removedHexagons.add(hexId);
-                allHexIds.remove(randomIndex);
-            }
-        }
-
-        // Minden sorban és oszlopban létrehozunk egy hatszöget
+        // Számítsuk ki az összes pozíciót (a létező és nem létező hexagonokét is)
         int id = 1;
-        for (int row = 0; row < rows; row++) {
+        for (int row = 0; row < GRID_SIZE; row++) {
             // Páratlan sorok eltolása
             double rowOffset = (row % 2 == 1) ? HEX_HORIZ_DIST / 2 : 0;
 
-            for (int col = 0; col < cols; col++) {
+            for (int col = 0; col < GRID_SIZE; col++) {
                 // Hexagon középpontjának kiszámítása
                 double x = startX + col * HEX_HORIZ_DIST + rowOffset;
                 double y = startY + row * HEX_VERT_DIST;
 
+                // Csak elmentjük a pozíciókat, nem rajzolunk még
+                hexagonPositions.put(id, new Double[]{x, y});
+                id++;
+            }
+        }
+    }
+
+    private void drawExistingHexagons() {
+        // Csak a létező hexagonokat rajzoljuk ki
+        for (Integer hexId : existingHexagonIds) {
+            Double[] position = hexagonPositions.get(hexId);
+            if (position != null) {
+                double x = position[0];
+                double y = position[1];
+
                 // Hexagon létrehozása a pontos pozícióban
                 Polygon hexagon = createHexagon(x, y);
-
-                // Hézag esetén feketére színezzük
-                if (removedHexagons.contains(id)) {
-                    hexagon.setFill(Color.BLACK);
-                } else {
-                    hexagon.setFill(Color.WHITE);
-                }
-
+                hexagon.setFill(Color.WHITE);
                 hexagon.setStroke(Color.BLACK);
                 hexagon.setStrokeWidth(1);
 
                 // Hexagon tárolása
-                hexagonShapes.put(id, hexagon);
-                hexagonPositions.put(id, new Double[] { x, y });
+                hexagonShapes.put(hexId, hexagon);
 
                 // Hexagon és azonosító hozzáadása a képernyőhöz
                 boardPane.getChildren().add(hexagon);
 
-                // ID kiírása (kivéve a hézagokon)
-                if (!removedHexagons.contains(id)) {
-                    Text idText = new Text(x - 5, y + 5, String.valueOf(id));
-                    idText.setFont(Font.font(10));
-                    boardPane.getChildren().add(idText);
-                }
-
-                id++;
+                // ID kiírása
+                Text idText = new Text(x - 5, y + 5, String.valueOf(hexId));
+                idText.setFont(Font.font(10));
+                boardPane.getChildren().add(idText);
             }
         }
     }
@@ -191,37 +190,31 @@ public class GameBoard implements ModelObserver {
                     int hexId = hexagon.getId();
                     hexIds.append(hexId).append(",");
 
-                    // Csak akkor színezzük, ha nem hézag
-                    if (!removedHexagons.contains(hexId)) {
-                        Polygon hexShape = hexagonShapes.get(hexId);
-
-                        if (hexShape != null) {
-                            hexShape.setFill(color);
-                        }
+                    Polygon hexShape = hexagonShapes.get(hexId);
+                    if (hexShape != null) {
+                        hexShape.setFill(color);
                     }
                 }
 
                 // Tecton információinak kiírása
                 if (!tecton.hexagons.isEmpty()) {
-                    // Keressünk egy nem-hézag hexagont, ahova kiírhatjuk az infót
+                    // Keressünk egy hexagont, ahova kiírhatjuk az infót
                     for (Hexagon hex : tecton.hexagons) {
                         int hexId = hex.getId();
-                        if (!removedHexagons.contains(hexId)) {
-                            Double[] pos = hexagonPositions.get(hexId);
+                        Double[] pos = hexagonPositions.get(hexId);
 
-                            if (pos != null) {
-                                String tectonName = registry.getNameOf(tecton);
-                                String tectonType = tecton.getClass().getSimpleName();
+                        if (pos != null) {
+                            String tectonName = registry.getNameOf(tecton);
+                            String tectonType = tecton.getClass().getSimpleName();
 
-                                Text nameText = new Text(pos[0] - 30, pos[1] - 10, tectonName);
-                                nameText.setFont(Font.font(8));
+                            Text nameText = new Text(pos[0] - 30, pos[1] - 10, tectonName);
+                            nameText.setFont(Font.font(8));
 
-                                Text typeText = new Text(pos[0] - 30, pos[1] + 10, tectonType);
-                                typeText.setFont(Font.font(8));
+                            Text typeText = new Text(pos[0] - 30, pos[1] + 10, tectonType);
+                            typeText.setFont(Font.font(8));
 
-                                boardPane.getChildren().addAll(nameText, typeText);
-                                break;
-                            }
+                            boardPane.getChildren().addAll(nameText, typeText);
+                            break;
                         }
                     }
                 }
@@ -249,13 +242,10 @@ public class GameBoard implements ModelObserver {
     public void highlightTecton(Tecton t) {
         if (t.hexagons != null) {
             for (Hexagon hex : t.hexagons) {
-                // Csak a nem-hézag hexagonokat emeljük ki
-                if (!removedHexagons.contains(hex.getId())) {
-                    Polygon hexShape = hexagonShapes.get(hex.getId());
-                    if (hexShape != null) {
-                        hexShape.setStroke(Color.RED);
-                        hexShape.setStrokeWidth(3);
-                    }
+                Polygon hexShape = hexagonShapes.get(hex.getId());
+                if (hexShape != null) {
+                    hexShape.setStroke(Color.RED);
+                    hexShape.setStrokeWidth(3);
                 }
             }
         }
