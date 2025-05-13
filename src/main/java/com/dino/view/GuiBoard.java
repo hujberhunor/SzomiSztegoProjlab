@@ -26,7 +26,7 @@ import java.util.Map;
 import java.util.Random;
 import java.util.Set;
 
-public class GameBoard implements ModelObserver {
+public class GuiBoard implements ModelObserver {
     private Pane boardPane;
     private Map<Integer, Polygon> hexagonShapes; // id -> polygon
     private Map<Integer, Double[]> hexagonPositions; // id -> [x, y]
@@ -45,7 +45,7 @@ public class GameBoard implements ModelObserver {
     // Hézagok beállítása
     private final double GAP_PERCENTAGE = 0.1; // A hexagonok 10%-a lesz hézag
 
-    public GameBoard() {
+    public GuiBoard() {
         boardPane = new Pane();
         boardPane.setPrefSize(800, 600);
         boardPane.setStyle("-fx-background-color: #333333;");
@@ -84,6 +84,8 @@ public class GameBoard implements ModelObserver {
         colorHexagonsByTecton(game);
     }
 
+    // TODO 
+    // Nem típusonként hanem tektononként színezünk
     private void setupTectonColors(Game game) {
         for (Tecton tecton : game.getBoard().getAllTectons()) {
             Color color;
@@ -107,6 +109,7 @@ public class GameBoard implements ModelObserver {
     }
 
     private void createHexagonGrid(int rows, int cols) {
+        // TODO ablak középén legyen a map
         double centerX = boardPane.getPrefWidth() / 2;
         double centerY = boardPane.getPrefHeight() / 2;
 
@@ -155,6 +158,7 @@ public class GameBoard implements ModelObserver {
                     hexagon.setFill(Color.BLACK);
                 } else {
                     hexagon.setFill(Color.WHITE);
+                    // TODO
                 }
 
                 hexagon.setStroke(Color.BLACK);

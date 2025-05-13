@@ -3,7 +3,7 @@ package com.dino;
 import com.dino.commands.CommandParser;
 import com.dino.engine.Game;
 import com.dino.view.BottomBar;
-import com.dino.view.GameBoard;
+import com.dino.view.GuiBoard;
 import com.dino.view.Scoreboard;
 import com.dino.view.TopBar;
 
@@ -33,7 +33,7 @@ public class MainApp extends Application {
             game.quickInit(); // Gyors játékinicializálás
             
             // UI komponensek létrehozása
-            GameBoard gameBoard = new GameBoard();
+            GuiBoard gameBoard = new GuiBoard();
             Scoreboard scoreboard = new Scoreboard();
             TopBar topBar = new TopBar(scoreboard);
             BottomBar bottomBar = new BottomBar();

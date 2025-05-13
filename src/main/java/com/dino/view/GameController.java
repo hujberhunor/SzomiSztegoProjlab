@@ -7,11 +7,11 @@ import com.dino.util.Logger;
 
 public class GameController {
     private Game game;
-    private GameBoard gameBoard;
+    private GuiBoard gameBoard;
     private CommandParser commandParser;
     private Logger logger;
 
-    public GameController(Game game, GameBoard gameBoard, CommandParser commandParser) {
+    public GameController(Game game, GuiBoard gameBoard, CommandParser commandParser) {
         this.game = game;
         this.gameBoard = gameBoard;
         this.commandParser = commandParser;
