@@ -21,10 +21,7 @@ public class SetFungusChargeCommand implements Command {
         Fungus fungus = (Fungus) registry.getByName(fungusName);
         String fungusId = registry.getNameOf(fungus);
 
-        int prevCharge = fungus.getCharge();
         fungus.setCharge(charge);
-
-        logger.logChange("FUNGUS", fungus, "CHARGE", String.valueOf(prevCharge), String.valueOf(charge));
     }
 
     /**

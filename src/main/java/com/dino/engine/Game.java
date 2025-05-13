@@ -19,6 +19,7 @@ import com.dino.core.Insect;
 import com.dino.player.Entomologist;
 import com.dino.player.Mycologist;
 import com.dino.player.Player;
+import com.dino.tecton.NoFungiTecton;
 import com.dino.tecton.Tecton;
 import com.dino.util.EntityRegistry;
 import com.dino.util.Logger;
@@ -198,7 +199,13 @@ public class Game {
      * A játék első körtől való indításáért felelő függvény.
      */
     public void startGame() {
-        List<Tecton> tectons = map.getTectons();
+        //Kiválogatjuk egy listába azokat a tektonokat, amikre lehet gombát helyezni
+        List<Tecton> tectons = new ArrayList<>();
+        for (Tecton t : map.getTectons()){
+            if(!(t instanceof NoFungiTecton))
+                tectons.add(t);
+        }
+
         List<Tecton> tectonsWithFungus = new ArrayList<>();
 
         int numberOfMycologist = 1;
@@ -222,13 +229,14 @@ public class Game {
                 }
                 selectedIndex--;
                 Tecton selectedTecton = tectons.get(selectedIndex);
+                System.out.println("Kiválasztott tekton: " + namer.getName(selectedTecton));
                 ((Mycologist) player).debugPlaceFungus(selectedTecton);
                 tectons.remove(selectedIndex);
                 Fungus fungus = new Fungus((Mycologist) player, selectedTecton);
                 namer.register(fungus);
                 tectonsWithFungus.add(selectedTecton);
                 numberOfMycologist++;
-                System.out.println("\nGomba: "+ namer.getName(fungus));
+                System.out.println("Gomba: "+ namer.getName(fungus) + "\n");
             }
         }
 
@@ -479,7 +487,17 @@ public class Game {
                 String.valueOf(oldRound),
                 String.valueOf(currRound));
 
-        map.breakHandler();
+        //map.breakHandler();
+
+        for (Player player : players) {
+            if(player instanceof Mycologist){
+                for (Fungus f : ((Mycologist) player).getMushrooms()){
+                    int oldCharge = f.getCharge();
+                    f.increaseCharge();
+                    logger.logChange("FUNGUS", f, "CHARGE", oldCharge, f.getCharge());
+                }
+            }
+        }
 
         String oldPlayerName = namer.getName(currentPlayer);
         currentPlayer = players.get(0);

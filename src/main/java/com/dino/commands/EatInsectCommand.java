@@ -27,6 +27,7 @@ public class EatInsectCommand implements Command {
         boolean success = hypha.eatInsect(insect);
         if (success) {
             logger.logChange("HYPHA", hypha, "EAT_INSECT", insectId, "SUCCESS");
+            hypha.getMycologist().decreaseActions();
         } else {
             logger.logError("HYPHA", hyphaId, "Failed to eat insect: not on hypha.");
         }

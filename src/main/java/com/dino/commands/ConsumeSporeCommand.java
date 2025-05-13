@@ -23,6 +23,7 @@ public class ConsumeSporeCommand implements Command {
         boolean success = insect.consumeSpores(insect.getEntomologist());
         if (success) {
             logger.logChange("INSECT", insect, "CONSUME_SPORE", "-", "SUCCESS");
+            insect.getEntomologist().decreaseActions();
         } else {
             logger.logError("INSECT", insectId, "Failed to consume spore.");
         }
