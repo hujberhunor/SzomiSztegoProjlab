@@ -11,26 +11,26 @@ import com.dino.util.Logger;
 public class GrowHyphaCommand implements Command {
 
     private final String fungusName;
+    private final String nextTectonName;
 
-    public GrowHyphaCommand(String fungusName) {
+    public GrowHyphaCommand(String fungusName, String nextTectonString) {
         this.fungusName = fungusName;
+        this.nextTectonName = nextTectonString;
     }
 
     @Override
     public void execute(Game game, Logger logger) {
         EntityRegistry registry = game.getRegistry();
+
         Fungus fungus = (Fungus) registry.getByName(fungusName);
         String fungusId = registry.getNameOf(fungus);
-
-        // A gombából minden szükséges info kinyerhető
         Mycologist mycologist = fungus.getSpecies();
         Tecton startTecton = fungus.getTecton();
+        Tecton nextTecton = (Tecton) registry.getByName(nextTectonName);
 
-        // Új hypha létrehozása
         Hypha hypha = new Hypha(mycologist, fungus);
-        hypha.continueHypha(startTecton);
+        boolean success = hypha.continueHypha(nextTecton);
 
-        // Regisztráció
         String baseName = "hypha_" + fungusId;
         String name = baseName;
         int i = 1;
@@ -39,7 +39,11 @@ public class GrowHyphaCommand implements Command {
         }
         registry.register(name, hypha);
 
-        // logger.logChange("HYPHA", hypha, "CREATE", fungusId, startTecton.toString());
+        logger.logChange("HYPHA", hypha, "CREATE", fungusId, startTecton.toString());
+
+        if(success) {
+            fungus.getSpecies().decreaseActions();
+        }
     }
 
     @Override

@@ -3,7 +3,7 @@ package com.dino.view;
 import com.dino.engine.Game;
 
 public class GameWindow {
-    private GameBoard gameBoard;
+    private GuiBoard gameBoard;
     private TopBar topBar;
     private BottomBar bottomBar;
     private Scoreboard scoreboard;
@@ -13,10 +13,10 @@ public class GameWindow {
      * @param game A játék példány
      */
     public void startGame(Game game) {
-        gameBoard = new GameBoard();
-        topBar = new TopBar();
+        gameBoard = new GuiBoard();
         bottomBar = new BottomBar();
         scoreboard = new Scoreboard();
+        topBar = new TopBar(scoreboard);
         gameBoard.update(game);
         topBar.update(game);
         bottomBar.update(game);

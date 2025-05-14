@@ -123,6 +123,7 @@ public class Mycologist extends Player implements SerializableEntity {
     public void debugPlaceFungus(Tecton t){
         Fungus f = new Fungus();
         t.setFungus(f);
+        mushrooms.add(f);
     }
 
     @Override

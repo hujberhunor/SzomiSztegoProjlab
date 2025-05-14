@@ -22,6 +22,7 @@ public class SpreadSporeCommand implements Command {
         int prevCharge = fungus.getCharge();
         fungus.spreadSpores();
         logger.logChange("FUNGUS", fungus, "SPREAD_SPORE", "CHARGE=" + prevCharge, "CHARGE=0");
+        fungus.getSpecies().decreaseActions();
     }
 
     /**

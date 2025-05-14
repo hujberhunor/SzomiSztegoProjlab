@@ -26,6 +26,7 @@ public class ContinueHyphaCommand implements Command {
         boolean success = hypha.continueHypha(target);
         if (success) {
             logger.logChange("HYPHA", hypha, "CONTINUE", "-", targetTectonName);
+            hypha.getMycologist().decreaseActions();
         } else {
             logger.logError("HYPHA", hyphaId, "Cannot continue hypha: target is not neighbor.");
         }
