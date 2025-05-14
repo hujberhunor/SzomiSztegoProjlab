@@ -103,20 +103,20 @@ public class GuiBoard implements ModelObserver {
     }
 
     private void setupTectonColors_v2 (Game game) {
-        Color selectedColor;
+        Color selectedColor = Color.MEDIUMVIOLETRED;
         List<Color> possibleColors = Arrays.asList(Color.LIGHTBLUE, Color.LIGHTYELLOW, Color.LIGHTPINK, Color.LIGHTGRAY, Color.LIGHTGREEN);
 
         Random rnd = new Random();
-        int numberOfColorsTried = 0;
 
         for (Tecton tecton : game.getBoard().getAllTectons()) {
-            int selectedIndex = rnd.nextInt(possibleColors.size());
-            selectedColor = possibleColors.get(selectedIndex);
+            List<Color> availableColors = new ArrayList<>(possibleColors);
 
-            /*
-            boolean isUnique = true;
-            do {
-                numberOfColorsTried++;
+            boolean isUnique = false;
+            while(!isUnique && !(availableColors.isEmpty())) {
+                isUnique = true;
+
+                int selectedIndex = rnd.nextInt(availableColors.size());
+                selectedColor = availableColors.get(selectedIndex);
 
                 for(Tecton neigbourTecton : tecton.getNeighbours()){
                     if(neigbourTecton.getColor() == null){
@@ -124,21 +124,11 @@ public class GuiBoard implements ModelObserver {
                     }
                     if(neigbourTecton.getColor().equals(selectedColor)){
                         isUnique = false;
+                        availableColors.remove(selectedColor);
                         break;
                     }
                 }
-
-                if(!isUnique){
-                    selectedIndex++;
-                    if(selectedIndex >= possibleColors.size()){
-                        selectedIndex = 0;
-                    }
-                    if(numberOfColorsTried == possibleColors.size()){
-                        selectedColor = Color.WHITE;
-                    }
-                }
-            } while (!isUnique);
-             */
+            }
 
             tecton.setColor(selectedColor);
             tectonColors.put(tecton, selectedColor);
