@@ -80,8 +80,8 @@ public abstract class Player {
         for (Player p : game.getPlayers()){
             if (p.getClass() == this.getClass()){
                 if (p.equals(this)) return index;
+                else index++;
             }
-            else index++;
         }
         return 1;
     }

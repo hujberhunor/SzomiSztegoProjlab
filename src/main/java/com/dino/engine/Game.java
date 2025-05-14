@@ -731,6 +731,10 @@ public class Game {
             Entomologist entomologist = new Entomologist();
             players.add(entomologist);
             namer.register(entomologist);
+            Random random = new Random();
+            Tecton targTecton = map.getTectons().get(random.nextInt(map.getTectons().size()));
+            Insect insect = new Insect(entomologist, targTecton);
+            targTecton.getInsects().add(insect);
         }
 
         totalRounds = numberOfRounds;
