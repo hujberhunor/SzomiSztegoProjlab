@@ -31,7 +31,7 @@ public class FungusEntity extends Entity {
     @Override
     public Node draw() {
         int playerId = fungus.getSpecies().getIdForDrawing();
-        String imagePath = "images/fungus" + playerId + ".png";
+        String imagePath = "/images/fungus" + playerId + ".png";
         Image image;
         try {
             image = new Image(getClass().getResourceAsStream(imagePath));
@@ -40,13 +40,13 @@ public class FungusEntity extends Entity {
             return null;
         }
         ImageView imageView = new ImageView(image);
-        imageView.setFitWidth(20);
-        imageView.setFitHeight(20);
+        imageView.setFitWidth(40);
+        imageView.setFitHeight(40);
         imageView.setPreserveRatio(true);
         
         if (location != null) {
-            imageView.setTranslateX(location.getX());
-            imageView.setTranslateY(location.getY());
+            imageView.setTranslateX(location.getX() - imageView.getFitWidth() / 2);
+            imageView.setTranslateY(location.getY() - imageView.getFitWidth() / 2);
         }
 
         return imageView;

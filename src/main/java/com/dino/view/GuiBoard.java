@@ -297,10 +297,11 @@ public class GuiBoard implements ModelObserver {
                 int indexInHexagon = fungiCountPerHex.getOrDefault(hexagonId, 0);
                 fungiCountPerHex.put(hexagonId, indexInHexagon + 1);
 
-                double offsetX = (indexInHexagon % 2.0) * 15.0 - 7.5;
-                double offsetY = (indexInHexagon / 2.0) * 15.0;
+                //double offsetX = (indexInHexagon % 2.0) * 15.0 - 7.5;
+                //double offsetY = (indexInHexagon / 2.0) * 15.0;
 
-                Point2D location = new Point2D(position[0] + offsetX, position[1] + offsetY);
+                //Point2D location = new Point2D(position[0] + offsetX, position[1] + offsetY);
+                Point2D location = new Point2D(position[0], position[1]);
                 FungusEntity fEntity = new FungusEntity(f);
                 fEntity.location = location;
 

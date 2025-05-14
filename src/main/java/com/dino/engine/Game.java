@@ -723,6 +723,8 @@ public class Game {
             Mycologist mycologist = new Mycologist();
             players.add(mycologist);
             namer.register(mycologist);
+            Random random = new Random();
+            mycologist.placeFungus(map.getTectons().get(random.nextInt(map.getTectons().size())));
         }
 
         for (int i = 0; i < numberOfEntomologist; i++) {
