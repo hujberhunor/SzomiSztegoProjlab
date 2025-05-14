@@ -5,6 +5,7 @@ import java.util.List;
 
 import com.dino.core.Fungus;
 import com.dino.core.Hypha;
+import com.dino.engine.Game;
 import com.dino.tecton.Tecton;
 import com.dino.util.EntityRegistry;
 import com.dino.util.Logger;

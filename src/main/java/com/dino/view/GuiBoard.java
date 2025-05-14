@@ -1,7 +1,9 @@
 package com.dino.view;
 
 import com.dino.core.Hexagon;
+import com.dino.core.Fungus;
 import com.dino.engine.Game;
+import com.dino.player.Mycologist;
 import com.dino.tecton.Tecton;
 import com.dino.tecton.SingleHyphaTecton;
 import com.dino.tecton.InfiniteHyphaTecton;
@@ -11,6 +13,7 @@ import com.dino.tecton.ShortHyphaTecton;
 import com.dino.util.EntityRegistry;
 import com.dino.util.ObjectNamer;
 
+import javafx.geometry.Point2D;
 import javafx.scene.Node;
 import javafx.scene.layout.Pane;
 import javafx.scene.paint.Color;
@@ -19,6 +22,7 @@ import javafx.scene.text.Font;
 import javafx.scene.text.Text;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
@@ -82,6 +86,8 @@ public class GuiBoard implements ModelObserver {
 
         // 3. Hexagonok színezése a tectonok alapján
         colorHexagonsByTecton(game);
+
+        drawFungi(game);
     }
 
     // TODO 
@@ -260,6 +266,47 @@ public class GuiBoard implements ModelObserver {
                         hexShape.setStroke(Color.RED);
                         hexShape.setStrokeWidth(3);
                     }
+                }
+            }
+        }
+    }
+
+    private final Map<Integer, Integer> fungiCountPerHex = new HashMap<>();
+
+    public void drawFungi(Game game){
+        fungiCountPerHex.clear();
+
+        for (Mycologist m: game.getAllMycologists()){
+            for (Fungus f : m.getMushrooms()){
+                Tecton tecton = f.getTecton();
+
+                List<Hexagon> hexagons = new ArrayList<>(tecton.hexagons);
+                Collections.shuffle(hexagons);
+
+                Hexagon chosenHexagon = null;
+                for (Hexagon h : hexagons) {
+                    if (!removedHexagons.contains(h.getId())) {
+                        chosenHexagon = h;
+                        break;
+                    }
+                }
+                if (chosenHexagon == null) break;
+
+                int hexagonId = chosenHexagon.getId();
+                Double[] position = hexagonPositions.get(hexagonId);
+                int indexInHexagon = fungiCountPerHex.getOrDefault(hexagonId, 0);
+                fungiCountPerHex.put(hexagonId, indexInHexagon + 1);
+
+                double offsetX = (indexInHexagon % 2.0) * 15.0 - 7.5;
+                double offsetY = (indexInHexagon / 2.0) * 15.0;
+
+                Point2D location = new Point2D(position[0] + offsetX, position[1] + offsetY);
+                FungusEntity fEntity = new FungusEntity(f);
+                fEntity.location = location;
+
+                Node fungusNode = fEntity.draw();
+                if (fungusNode != null) {
+                    boardPane.getChildren().add(fungusNode);
                 }
             }
         }

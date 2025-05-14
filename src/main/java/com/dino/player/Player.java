@@ -1,5 +1,6 @@
 package com.dino.player;
 
+import com.dino.engine.Game;
 import com.dino.tecton.Tecton;
 
 /**
@@ -72,4 +73,16 @@ public abstract class Player {
     public abstract void increaseActions();
 
     public void setName(String name) { this.name = name; }
+
+    public int getIdForDrawing(){
+        Game game = Game.getInstance();
+        int index = 1; // A képek egytől számolnak
+        for (Player p : game.getPlayers()){
+            if (p.getClass() == this.getClass()){
+                if (p.equals(this)) return index;
+            }
+            else index++;
+        }
+        return 1;
+    }
 }

@@ -7,13 +7,16 @@ import javafx.scene.Node;
 import java.util.List;
 
 public class InsectEntity extends Entity {
+    protected Insect insect;
+    /*
     protected int movementPoints;
     protected List<Spore> effects;
     protected Entomologist entomologist;
-
+    */
     public InsectEntity(Insect i) {
-        effects = i.getEffects();
-        entomologist = i.getEntomologist();
+        insect = i;
+        // effects = i.getEffects();
+        // entomologist = i.getEntomologist();
     }
 
     /**
