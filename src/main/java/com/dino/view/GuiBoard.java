@@ -18,13 +18,7 @@ import javafx.scene.shape.Polygon;
 import javafx.scene.text.Font;
 import javafx.scene.text.Text;
 
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Map;
-import java.util.Random;
-import java.util.Set;
+import java.util.*;
 
 public class GuiBoard implements ModelObserver {
     private Pane boardPane;
@@ -75,7 +69,7 @@ public class GuiBoard implements ModelObserver {
         removedHexagons.clear();
 
         // 1. Először határozzuk meg a tecton színeket
-        setupTectonColors(game);
+        setupTectonColors_v2(game);
 
         // 2. Hexagon rács kirajzolása - tökéletes méhsejt mintával, hézagokkal
         createHexagonGrid(10, 10);
@@ -105,6 +99,49 @@ public class GuiBoard implements ModelObserver {
             }
 
             tectonColors.put(tecton, color);
+        }
+    }
+
+    private void setupTectonColors_v2 (Game game) {
+        Color selectedColor;
+        List<Color> possibleColors = Arrays.asList(Color.LIGHTBLUE, Color.LIGHTYELLOW, Color.LIGHTPINK, Color.LIGHTGRAY, Color.LIGHTGREEN);
+
+        Random rnd = new Random();
+        int numberOfColorsTried = 0;
+
+        for (Tecton tecton : game.getBoard().getAllTectons()) {
+            int selectedIndex = rnd.nextInt(possibleColors.size());
+            selectedColor = possibleColors.get(selectedIndex);
+
+            /*
+            boolean isUnique = true;
+            do {
+                numberOfColorsTried++;
+
+                for(Tecton neigbourTecton : tecton.getNeighbours()){
+                    if(neigbourTecton.getColor() == null){
+                        break;
+                    }
+                    if(neigbourTecton.getColor().equals(selectedColor)){
+                        isUnique = false;
+                        break;
+                    }
+                }
+
+                if(!isUnique){
+                    selectedIndex++;
+                    if(selectedIndex >= possibleColors.size()){
+                        selectedIndex = 0;
+                    }
+                    if(numberOfColorsTried == possibleColors.size()){
+                        selectedColor = Color.WHITE;
+                    }
+                }
+            } while (!isUnique);
+             */
+
+            tecton.setColor(selectedColor);
+            tectonColors.put(tecton, selectedColor);
         }
     }
 
