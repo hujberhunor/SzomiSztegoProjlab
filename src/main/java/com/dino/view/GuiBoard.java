@@ -69,7 +69,7 @@ public class GuiBoard implements ModelObserver {
         removedHexagons.clear();
 
         // 1. Először határozzuk meg a tecton színeket
-        setupTectonColors_v2(game);
+        setupTectonColors(game);
 
         // 2. Hexagon rács kirajzolása - tökéletes méhsejt mintával, hézagokkal
         createHexagonGrid(10, 10);
@@ -78,42 +78,11 @@ public class GuiBoard implements ModelObserver {
         colorHexagonsByTecton(game);
     }
 
-    // TODO 
-    // Nem típusonként hanem tektononként színezünk
-    private void setupTectonColors(Game game) {
-        for (Tecton tecton : game.getBoard().getAllTectons()) {
-            Color color;
-
-            if (tecton instanceof SingleHyphaTecton) {
-                color = Color.LIGHTBLUE;
-            } else if (tecton instanceof KeepHyphaTecton) {
-                color = Color.LIGHTYELLOW;
-            } else if (tecton instanceof NoFungiTecton) {
-                color = Color.LIGHTPINK;
-            } else if (tecton instanceof ShortHyphaTecton) {
-                color = Color.LIGHTGRAY;
-            } else if (tecton instanceof InfiniteHyphaTecton) {
-                color = Color.LIGHTGREEN;
-            } else {
-                color = Color.WHITE;
-            }
-
-            tectonColors.put(tecton, color);
-        }
-    }
-
-    private void setupTectonColors_v2 (Game game) {
+    private void setupTectonColors (Game game) {
         Color selectedColor = Color.MEDIUMVIOLETRED;
         //List<Color> possibleColors = Arrays.asList(Color.LIGHTBLUE, Color.LIGHTYELLOW, Color.LIGHTPINK, Color.LIGHTGRAY, Color.LIGHTGREEN);
-        List<Color> possibleColors = Arrays.asList(
-                Color.web("FFADAD"),
-                Color.web("FFD6A5"),
-                Color.web("FDFFBF"),
-                Color.web("CAFFBF"),
-                Color.web("9BF6FF"),
-                Color.web("A0C4FF"),
-                Color.web("BDB2FF"),
-                Color.web("FFC6FF"));
+        //List<Color> possibleColors = Arrays.asList(Color.web("FFADAD"), Color.web("FFD6A5"), Color.web("FDFFBF"), Color.web("CAFFBF"), Color.web("9BF6FF"), Color.web("A0C4FF"), Color.web("BDB2FF"), Color.web("FFC6FF"));
+        List<Color> possibleColors = Arrays.asList(Color.web("#557174"), Color.web("#798f7a"), Color.web("#9dad7f"), Color.web("#b2be9b"), Color.web("#c7cfb7"), Color.web("#f7f7e8"));
 
         Random rnd = new Random();
 
