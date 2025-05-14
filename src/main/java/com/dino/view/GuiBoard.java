@@ -3,11 +3,6 @@ package com.dino.view;
 import com.dino.core.Hexagon;
 import com.dino.engine.Game;
 import com.dino.tecton.Tecton;
-import com.dino.tecton.SingleHyphaTecton;
-import com.dino.tecton.InfiniteHyphaTecton;
-import com.dino.tecton.KeepHyphaTecton;
-import com.dino.tecton.NoFungiTecton;
-import com.dino.tecton.ShortHyphaTecton;
 import com.dino.util.EntityRegistry;
 import com.dino.util.ObjectNamer;
 
@@ -93,29 +88,38 @@ public class GuiBoard implements ModelObserver {
         }
     }
 
+    /**
+     * A tektonok színezéséért felelős függvény
+     * @param game - a játékot megkapja paraméterként, hogy hozzá tudjon férni
+     */
     private void setupTectonColors (Game game) {
-        Color selectedColor = Color.MEDIUMVIOLETRED;
         //List<Color> possibleColors = Arrays.asList(Color.LIGHTBLUE, Color.LIGHTYELLOW, Color.LIGHTPINK, Color.LIGHTGRAY, Color.LIGHTGREEN);
-        //List<Color> possibleColors = Arrays.asList(Color.web("FFADAD"), Color.web("FFD6A5"), Color.web("FDFFBF"), Color.web("CAFFBF"), Color.web("9BF6FF"), Color.web("A0C4FF"), Color.web("BDB2FF"), Color.web("FFC6FF"));
-        List<Color> possibleColors = Arrays.asList(Color.web("#557174"), Color.web("#798f7a"), Color.web("#9dad7f"), Color.web("#b2be9b"), Color.web("#c7cfb7"), Color.web("#f7f7e8"));
+        List<Color> possibleColors = Arrays.asList(Color.web("FFADAD"), Color.web("FFD6A5"), Color.web("FDFFBF"), Color.web("CAFFBF"), Color.web("9BF6FF"), Color.web("A0C4FF"), Color.web("BDB2FF"), Color.web("FFC6FF"));
+        //List<Color> possibleColors = Arrays.asList(Color.web("#557174"), Color.web("#798f7a"), Color.web("#9dad7f"), Color.web("#b2be9b"), Color.web("#c7cfb7"), Color.web("#f7f7e8"));
+
+        Color selectedColor = Color.MEDIUMVIOLETRED;
 
         Random rnd = new Random();
 
         for (Tecton tecton : game.getBoard().getAllTectons()) {
+            //a tektonnak még adható színek listája
             List<Color> availableColors = new ArrayList<>(possibleColors);
 
-            boolean isUnique = false;
+            boolean isUnique = false; //egyedi-e a szín, vagyis nincs olyan szomszédja, ami ugyanilyen színű
             while(!isUnique && !(availableColors.isEmpty())) {
                 isUnique = true;
 
+                //a színlistából találomra kiválasztunk egyet
                 int selectedIndex = rnd.nextInt(availableColors.size());
                 selectedColor = availableColors.get(selectedIndex);
 
+                //Leellenőrizzük, hogy van-e olyan szomszédos tekton, ami ugyanolyan színű, mint amit kiválasztottunk.
                 for(Tecton neigbourTecton : tecton.getNeighbours()){
                     if(neigbourTecton.getColor() == null){
                         break;
                     }
                     if(neigbourTecton.getColor().equals(selectedColor)){
+                        //Ha a szomszéd már ugyanolyan színű, eltávolítjuk a lehetséges színek listájából a színt, és újra lefut a ciklus, vagyis új színt választunk.
                         isUnique = false;
                         availableColors.remove(selectedColor);
                         break;
@@ -123,6 +127,7 @@ public class GuiBoard implements ModelObserver {
                 }
             }
 
+            //Beállítjuk a tekton színét
             tecton.setColor(selectedColor);
             tectonColors.put(tecton, selectedColor);
         }
