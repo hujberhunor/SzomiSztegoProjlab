@@ -104,7 +104,16 @@ public class GuiBoard implements ModelObserver {
 
     private void setupTectonColors_v2 (Game game) {
         Color selectedColor = Color.MEDIUMVIOLETRED;
-        List<Color> possibleColors = Arrays.asList(Color.LIGHTBLUE, Color.LIGHTYELLOW, Color.LIGHTPINK, Color.LIGHTGRAY, Color.LIGHTGREEN);
+        //List<Color> possibleColors = Arrays.asList(Color.LIGHTBLUE, Color.LIGHTYELLOW, Color.LIGHTPINK, Color.LIGHTGRAY, Color.LIGHTGREEN);
+        List<Color> possibleColors = Arrays.asList(
+                Color.web("FFADAD"),
+                Color.web("FFD6A5"),
+                Color.web("FDFFBF"),
+                Color.web("CAFFBF"),
+                Color.web("9BF6FF"),
+                Color.web("A0C4FF"),
+                Color.web("BDB2FF"),
+                Color.web("FFC6FF"));
 
         Random rnd = new Random();
 
