@@ -274,11 +274,13 @@ public class GuiBoard implements ModelObserver {
         }
     }
 
-    private final Map<Integer, Integer> fungusCountPerHexagon = new HashMap<>();
-    private final Map<Integer, Integer> insectCountPerHexagon = new HashMap<>();
+    // private final Map<Integer, Integer> fungusCountPerHexagon = new HashMap<>();
+    // private final Map<Integer, Integer> insectCountPerHexagon = new HashMap<>();
+    private final Map<Integer, Integer> entityCountPerHexagon = new HashMap<>();
 
     public void drawFungi(Game game){
-        fungusCountPerHexagon.clear();
+        //fungusCountPerHexagon.clear();
+        entityCountPerHexagon.clear();
 
         for (Mycologist m: game.getAllMycologists()){
             for (Fungus f : m.getMushrooms()){
@@ -298,14 +300,14 @@ public class GuiBoard implements ModelObserver {
 
                 int hexagonId = chosenHexagon.getId();
                 Double[] position = hexagonPositions.get(hexagonId);
-                int indexInHexagon = fungusCountPerHexagon.getOrDefault(hexagonId, 0);
-                fungusCountPerHexagon.put(hexagonId, indexInHexagon + 1);
+                int indexInHexagon = entityCountPerHexagon.getOrDefault(hexagonId, 0);
+                entityCountPerHexagon.put(hexagonId, indexInHexagon + 1);
 
-                //double offsetX = (indexInHexagon % 2.0) * 15.0 - 7.5;
-                //double offsetY = (indexInHexagon / 2.0) * 15.0;
+                double offsetX = (indexInHexagon % 2.0) * 15.0 - 7.5;
+                double offsetY = (indexInHexagon / 2.0) * 15.0;
 
-                //Point2D location = new Point2D(position[0] + offsetX, position[1] + offsetY);
-                Point2D location = new Point2D(position[0], position[1]);
+                Point2D location = new Point2D(position[0] + offsetX, position[1] + offsetY);
+                // Point2D location = new Point2D(position[0], position[1]);
                 FungusEntity fEntity = new FungusEntity(f);
                 fEntity.location = location;
 
@@ -318,7 +320,8 @@ public class GuiBoard implements ModelObserver {
     }
 
     public void drawInsects(Game game){
-        insectCountPerHexagon.clear();
+        // insectCountPerHexagon.clear();
+
         for (Entomologist e: game.getAllEntomologists()){
             for (Insect i : e.getInsects()){
                 Tecton tecton = i.getTecton();
@@ -337,10 +340,13 @@ public class GuiBoard implements ModelObserver {
 
                 int hexagonId = chosenHexagon.getId();
                 Double[] position = hexagonPositions.get(hexagonId);
-                int indexInHexagon = insectCountPerHexagon.getOrDefault(hexagonId, 0);
-                insectCountPerHexagon.put(hexagonId, indexInHexagon + 1);
+                int indexInHexagon = entityCountPerHexagon.getOrDefault(hexagonId, 0);
+                entityCountPerHexagon.put(hexagonId, indexInHexagon + 1);
 
-                Point2D location = new Point2D(position[0], position[1]);
+                double offsetX = (indexInHexagon % 2.0) * 15.0 - 7.5;
+                double offsetY = (indexInHexagon / 2.0) * 15.0;
+
+                Point2D location = new Point2D(position[0] + offsetX, position[1] + offsetY);
                 InsectEntity iEntity = new InsectEntity(i);
                 iEntity.location = location;
 

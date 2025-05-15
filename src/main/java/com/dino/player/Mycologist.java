@@ -73,7 +73,7 @@ public class Mycologist extends Player implements SerializableEntity {
                     "Nem lehet elhelyezni a gombát: nincs elegendő spóra a tektonon " + tectonName);
             return;
         }
-
+        
         int oldMushroomsCount = mushrooms.size();
 
         // Gombatest létrehozása és hozzáadása a listához
