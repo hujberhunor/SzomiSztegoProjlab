@@ -1,13 +1,13 @@
 package com.dino.view;
 
-import com.dino.core.Hexagon;
-import com.dino.core.Insect;
-import com.dino.core.Spore;
+import com.dino.core.*;
+import com.dino.player.*;
 import com.dino.engine.Game;
-import com.dino.tecton.Tecton;
+import com.dino.tecton.*;
 import com.dino.util.EntityRegistry;
 import com.dino.util.ObjectNamer;
 
+import javafx.geometry.Point2D;
 import javafx.scene.Node;
 import javafx.scene.control.Label;
 import javafx.scene.input.MouseEvent;
@@ -92,6 +92,10 @@ public class GuiBoard implements ModelObserver {
 
         // 5. Hexagonok színezése a tectonok alapján
         colorHexagonsByTecton(game);
+
+        drawFungi(game);
+        drawInsects(game);
+        drawHypha(game);
     }
 
     private void identifyExistingHexagons(Game game) {
@@ -479,4 +483,142 @@ public class GuiBoard implements ModelObserver {
 
         return info.toString();
     }
+
+    // private final Map<Integer, Integer> fungusCountPerHexagon = new HashMap<>();
+    // private final Map<Integer, Integer> insectCountPerHexagon = new HashMap<>();
+    private final Map<Integer, Integer> entityCountPerHexagon = new HashMap<>();
+
+    public void drawFungi(Game game){
+        //fungusCountPerHexagon.clear();
+        entityCountPerHexagon.clear();
+
+        for (Mycologist m: game.getAllMycologists()){
+            for (Fungus f : m.getMushrooms()){
+                Tecton tecton = f.getTecton();
+
+                List<Hexagon> hexagons = new ArrayList<>(tecton.hexagons);
+                Collections.shuffle(hexagons);
+
+                Hexagon chosenHexagon = null;
+                for (Hexagon h : hexagons) {
+                    if (!removedHexagons.contains(h.getId())) {
+                        chosenHexagon = h;
+                        break;
+                    }
+                }
+                if (chosenHexagon == null) break;
+
+                int hexagonId = chosenHexagon.getId();
+                Double[] position = hexagonPositions.get(hexagonId);
+                int indexInHexagon = entityCountPerHexagon.getOrDefault(hexagonId, 0);
+                entityCountPerHexagon.put(hexagonId, indexInHexagon + 1);
+
+                double offsetX = (indexInHexagon % 2.0) * 15.0 - 7.5;
+                double offsetY = (indexInHexagon / 2.0) * 15.0;
+
+                Point2D location = new Point2D(position[0] + offsetX, position[1] + offsetY);
+                // Point2D location = new Point2D(position[0], position[1]);
+                FungusEntity fEntity = new FungusEntity(f);
+                fEntity.location = location;
+
+                Node fungusNode = fEntity.draw();
+                if (fungusNode != null) {
+                    boardPane.getChildren().add(fungusNode);
+                }
+            }
+        }
+    }
+
+    public void drawInsects(Game game){
+        // insectCountPerHexagon.clear();
+
+        for (Entomologist e: game.getAllEntomologists()){
+            for (Insect i : e.getInsects()){
+                Tecton tecton = i.getTecton();
+
+                List<Hexagon> hexagons = new ArrayList<>(tecton.hexagons);
+                Collections.shuffle(hexagons);
+
+                Hexagon chosenHexagon = null;
+                for (Hexagon h : hexagons) {
+                    if (!removedHexagons.contains(h.getId())) {
+                        chosenHexagon = h;
+                        break;
+                    }
+                }
+                if (chosenHexagon == null) break;
+
+                int hexagonId = chosenHexagon.getId();
+                Double[] position = hexagonPositions.get(hexagonId);
+                int indexInHexagon = entityCountPerHexagon.getOrDefault(hexagonId, 0);
+                entityCountPerHexagon.put(hexagonId, indexInHexagon + 1);
+
+                double offsetX = (indexInHexagon % 2.0) * 15.0 - 7.5;
+                double offsetY = (indexInHexagon / 2.0) * 15.0;
+
+                Point2D location = new Point2D(position[0] + offsetX, position[1] + offsetY);
+                InsectEntity iEntity = new InsectEntity(i);
+                iEntity.location = location;
+
+                Node insectNode = iEntity.draw();
+                if (insectNode != null) {
+                    boardPane.getChildren().add(insectNode);
+                }
+            }
+        }
+    }
+
+    public void drawHypha(Game game) {
+        Set<Hypha> alreadyDrawn = new HashSet<>();
+
+        for (Tecton tecton : game.getBoard().getAllTectons()) {
+            for (Hypha h : tecton.getHyphas()) {
+                if (alreadyDrawn.contains(h))
+                    continue;
+
+                alreadyDrawn.add(h);
+
+                Tecton start = h.getTectons().get(0);
+                Tecton end = h.getTectons().get(1);
+
+                Hexagon startHex = null, endHex = null;
+
+                for (Hexagon hex : start.hexagons) {
+                    if (!removedHexagons.contains(hex.getId())) {
+                        startHex = hex;
+                        break;
+                    }
+                }
+
+                for (Hexagon hex : end.hexagons) {
+                    if (!removedHexagons.contains(hex.getId())) {
+                        endHex = hex;
+                        break;
+                    }
+                }
+
+                if (startHex == null || endHex == null)
+                    continue;
+
+                Double[] startPosArray = hexagonPositions.get(startHex.getId());
+                Double[] endPosArray = hexagonPositions.get(endHex.getId());
+                if (startPosArray == null || endPosArray == null)
+                    continue;
+
+                Point2D startPos = new Point2D(startPosArray[0], startPosArray[1]);
+                Point2D endPos = new Point2D(endPosArray[0], endPosArray[1]);
+
+                HyphaEntity entity = new HyphaEntity(h);
+                entity.setStartPos(startPos);
+                entity.setEndPos(endPos);
+
+                Node hyphaNode = entity.draw();
+                if (hyphaNode != null) {
+                    boardPane.getChildren().add(hyphaNode);
+                }
+            }
+        }
+    }
+
 }
+
