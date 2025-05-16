@@ -41,7 +41,9 @@ public class GuiBoard implements ModelObserver {
     // Hexagon méret és elrendezés változók
     private final double HEX_SIZE = 35; // A hatszög oldalhossza
     private final double HEX_HORIZ_DIST = HEX_SIZE * Math.sqrt(3); // Vízszintes távolság a középpontok között
-    private final double HEX_VERT_DIST = HEX_SIZE * 1.5; // Függőleges távolság a középpontok között
+    private final double HEX_VERT_DIST = HEX_SIZE * 1.5; // Függőleges távolság a középpontok közötta
+
+
 
     private Popup tectonInfoPopup;
     private Label tectonInfoLabel;
@@ -501,7 +503,7 @@ public class GuiBoard implements ModelObserver {
 
                 Hexagon chosenHexagon = null;
                 for (Hexagon h : hexagons) {
-                    if (!removedHexagons.contains(h.getId())) {
+                    if (existingHexagonIds.contains(h.getId())) {
                         chosenHexagon = h;
                         break;
                     }
@@ -541,7 +543,7 @@ public class GuiBoard implements ModelObserver {
 
                 Hexagon chosenHexagon = null;
                 for (Hexagon h : hexagons) {
-                    if (!removedHexagons.contains(h.getId())) {
+                    if (existingHexagonIds.contains(h.getId())) {
                         chosenHexagon = h;
                         break;
                     }
@@ -584,14 +586,14 @@ public class GuiBoard implements ModelObserver {
                 Hexagon startHex = null, endHex = null;
 
                 for (Hexagon hex : start.hexagons) {
-                    if (!removedHexagons.contains(hex.getId())) {
+                    if (existingHexagonIds.contains(hex.getId())) {
                         startHex = hex;
                         break;
                     }
                 }
 
                 for (Hexagon hex : end.hexagons) {
-                    if (!removedHexagons.contains(hex.getId())) {
+                    if (existingHexagonIds.contains(hex.getId())) {
                         endHex = hex;
                         break;
                     }

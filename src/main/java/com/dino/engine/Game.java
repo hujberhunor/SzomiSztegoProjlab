@@ -722,6 +722,10 @@ public class Game {
         Random random = new Random();
         Tecton targTecton = map.getTectons().get(random.nextInt(map.getTectons().size()));
 
+        // Tecton.connectTectons(targTecton, map.getTectons().get(random.nextInt(map.getTectons().size())));
+        // Tecton.connectWithHypha(targTecton, map.getTectons().get(random.nextInt(map.getTectons().size())));
+
+
         for (int i = 0; i < numberOfMycologist; i++) {
             Mycologist mycologist = new Mycologist();
             players.add(mycologist);
