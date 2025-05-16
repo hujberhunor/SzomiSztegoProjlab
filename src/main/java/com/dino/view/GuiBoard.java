@@ -1,17 +1,22 @@
 package com.dino.view;
 
 import com.dino.core.Hexagon;
+import com.dino.core.Insect;
+import com.dino.core.Spore;
 import com.dino.engine.Game;
 import com.dino.tecton.Tecton;
 import com.dino.util.EntityRegistry;
 import com.dino.util.ObjectNamer;
 
 import javafx.scene.Node;
+import javafx.scene.control.Label;
+import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.Pane;
 import javafx.scene.paint.Color;
 import javafx.scene.shape.Polygon;
 import javafx.scene.text.Font;
 import javafx.scene.text.Text;
+import javafx.stage.Popup;
 
 import java.util.*;
 
@@ -30,6 +35,9 @@ public class GuiBoard implements ModelObserver {
     private final double HEX_HORIZ_DIST = HEX_SIZE * Math.sqrt(3); // Vízszintes távolság a középpontok között
     private final double HEX_VERT_DIST = HEX_SIZE * 1.5; // Függőleges távolság a középpontok között
 
+    private Popup tectonInfoPopup;
+    private Label tectonInfoLabel;
+
     public GuiBoard() {
         boardPane = new Pane();
         boardPane.setPrefSize(800, 600);
@@ -41,6 +49,8 @@ public class GuiBoard implements ModelObserver {
         existingHexagonIds = new HashSet<>();
         registry = EntityRegistry.getInstance();
         namer = ObjectNamer.getInstance();
+
+        initializeTectonInfoPopup();
     }
 
     public Node createNode() {
@@ -177,6 +187,9 @@ public class GuiBoard implements ModelObserver {
                 hexagon.setStroke(Color.BLACK);
                 hexagon.setStrokeWidth(1);
 
+                hexagon.setUserData(hexId);
+                hexagon.setOnMouseClicked(event -> handleHexagonClick(event, hexId));
+
                 // Hexagon tárolása
                 hexagonShapes.put(hexId, hexagon);
 
@@ -186,6 +199,7 @@ public class GuiBoard implements ModelObserver {
                 // ID kiírása
                 Text idText = new Text(x - 5, y + 5, String.valueOf(hexId));
                 idText.setFont(Font.font(10));
+                idText.setOnMouseClicked(event -> handleHexagonClick(event, hexId));
                 boardPane.getChildren().add(idText);
             }
         }
@@ -262,5 +276,105 @@ public class GuiBoard implements ModelObserver {
                 }
             }
         }
+    }
+
+    private void initializeTectonInfoPopup() {
+        tectonInfoPopup = new Popup();
+        tectonInfoPopup.setAutoHide(true);
+
+        tectonInfoLabel = new Label();
+        tectonInfoLabel.setStyle("-fx-background-color: rgba(255, 255, 255, 0.9); " +
+                "-fx-padding: 10; " +
+                "-fx-border-color: #aaaaaa; " +
+                "-fx-border-width: 1; " +
+                "-fx-border-radius: 5; " +
+                "-fx-background-radius: 5;");
+
+        tectonInfoPopup.getContent().add(tectonInfoLabel);
+    }
+
+    private void handleHexagonClick(MouseEvent event, int hexId) {
+        // Find the tecton that contains this hexagon
+        Tecton clickedTecton = findTectonByHexagonId(hexId);
+
+        if (clickedTecton != null) {
+            // Prepare the tecton information
+            String tectonInfo = buildTectonInfo(clickedTecton);
+
+            // Update the label and show the popup
+            tectonInfoLabel.setText(tectonInfo);
+            tectonInfoPopup.show(boardPane.getScene().getWindow(),
+                    event.getScreenX() + 10,
+                    event.getScreenY() + 10);
+        }
+    }
+
+    private Tecton findTectonByHexagonId(int hexId) {
+        Game game = Game.getInstance();
+
+        for (Tecton tecton : game.getBoard().getAllTectons()) {
+            for (Hexagon hex : tecton.getHexagons()) {
+                if (hex.getId() == hexId) {
+                    return tecton;
+                }
+            }
+        }
+
+        return null;
+    }
+
+    private String buildTectonInfo(Tecton tecton) {
+        StringBuilder info = new StringBuilder();
+
+        // Add tecton name and type
+        String tectonName = registry.getNameOf(tecton);
+        String tectonType = tecton.getClass().getSimpleName();
+        info.append("Name: ").append(tectonName).append("\n");
+        info.append("Type: ").append(tectonType).append("\n");
+
+        // Add hexagon IDs
+        info.append("Hexagons: ");
+        for (int i = 0; i < tecton.getHexagons().size(); i++) {
+            if (i > 0) info.append(", ");
+            info.append(tecton.getHexagons().get(i).getId());
+        }
+        info.append("\n");
+
+        // Add fungus information
+        if (tecton.getFungus() != null) {
+            info.append("Fungus: ").append(registry.getNameOf(tecton.getFungus())).append("\n");
+        } else {
+            info.append("Fungus: None\n");
+        }
+
+        // Add insect information
+        if (!tecton.getInsects().isEmpty()) {
+            info.append("Insects: ").append(tecton.getInsects().size()).append("\n");
+            for (Insect insect : tecton.getInsects()) {
+                info.append(" - ").append(registry.getNameOf(insect)).append("\n");
+            }
+        } else {
+            info.append("Insects: None\n");
+        }
+
+        // Add spore information
+        if (!tecton.getSporeMap().isEmpty()) {
+            info.append("Spores: \n");
+            for (Map.Entry<Spore, Integer> entry : tecton.getSporeMap().entrySet()) {
+                info.append(" - ").append(registry.getNameOf(entry.getKey()))
+                        .append(": ").append(entry.getValue()).append("\n");
+            }
+        } else {
+            info.append("Spores: None\n");
+        }
+
+        // Add hypha information
+        if (!tecton.getHyphas().isEmpty()) {
+            info.append("Connected by ").append(tecton.getHyphas().size()).append(" hyphae\n");
+        } else {
+            info.append("No hypha connections\n");
+        }
+
+        return info.toString();
     }
 }
