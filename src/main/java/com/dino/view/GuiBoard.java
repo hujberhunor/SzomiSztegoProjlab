@@ -1,14 +1,20 @@
 package com.dino.view;
 
 import com.dino.core.Hexagon;
+import com.dino.core.Spore;
 import com.dino.engine.Game;
 import com.dino.tecton.Tecton;
 import com.dino.util.EntityRegistry;
 import com.dino.util.ObjectNamer;
 
 import javafx.scene.Node;
+import javafx.scene.canvas.Canvas;
+import javafx.scene.canvas.GraphicsContext;
+import javafx.scene.image.WritableImage;
 import javafx.scene.layout.Pane;
 import javafx.scene.paint.Color;
+import javafx.scene.paint.ImagePattern;
+import javafx.scene.paint.Paint;
 import javafx.scene.shape.Polygon;
 import javafx.scene.text.Font;
 import javafx.scene.text.Text;
@@ -88,17 +94,14 @@ public class GuiBoard implements ModelObserver {
         }
     }
 
-    /**
-     * A tektonok színezéséért felelős függvény
-     * @param game - a játékot megkapja paraméterként, hogy hozzá tudjon férni
-     */
-    private void setupTectonColors (Game game) {
-        //List<Color> possibleColors = Arrays.asList(Color.LIGHTBLUE, Color.LIGHTYELLOW, Color.LIGHTPINK, Color.LIGHTGRAY, Color.LIGHTGREEN);
-        List<Color> possibleColors = Arrays.asList(Color.web("FFADAD"), Color.web("FFD6A5"), Color.web("FDFFBF"), Color.web("CAFFBF"), Color.web("9BF6FF"), Color.web("A0C4FF"), Color.web("BDB2FF"), Color.web("FFC6FF"));
-        //List<Color> possibleColors = Arrays.asList(Color.web("#557174"), Color.web("#798f7a"), Color.web("#9dad7f"), Color.web("#b2be9b"), Color.web("#c7cfb7"), Color.web("#f7f7e8"));
+    private void setupTectonColors(Game game) {
+        List<Color> possibleColors = Arrays.asList(
+            Color.web("FFADAD"), Color.web("FFD6A5"), Color.web("FDFFBF"), 
+            Color.web("CAFFBF"), Color.web("9BF6FF"), Color.web("A0C4FF"), 
+            Color.web("BDB2FF"), Color.web("FFC6FF")
+        );
 
         Color selectedColor = Color.MEDIUMVIOLETRED;
-
         Random rnd = new Random();
 
         for (Tecton tecton : game.getBoard().getAllTectons()) {
@@ -119,7 +122,7 @@ public class GuiBoard implements ModelObserver {
                         break;
                     }
                     if(neigbourTecton.getColor().equals(selectedColor)){
-                        //Ha a szomszéd már ugyanolyan színű, eltávolítjuk a lehetséges színek listájából a színt, és újra lefut a ciklus, vagyis új színt választunk.
+                        //Ha a szomszéd már ugyanolyan színű, eltávolítjuk a lehetséges színek listájából a színt
                         isUnique = false;
                         availableColors.remove(selectedColor);
                         break;
@@ -145,6 +148,9 @@ public class GuiBoard implements ModelObserver {
         double startX = centerX - gridWidth / 2 + HEX_HORIZ_DIST / 2;
         double startY = centerY - gridHeight / 2 + HEX_SIZE;
 
+        // Biztosítsuk, hogy a 0-ás ID-hez is legyen pozíció (ha véletlenül létezik)
+        hexagonPositions.put(0, new Double[]{startX, startY});
+        
         // Számítsuk ki az összes pozíciót (a létező és nem létező hexagonokét is)
         int id = 1;
         for (int row = 0; row < GRID_SIZE; row++) {
@@ -198,6 +204,9 @@ public class GuiBoard implements ModelObserver {
 
             if (color != null && tecton.hexagons != null) {
                 StringBuilder hexIds = new StringBuilder();
+                
+                // Ellenőrizzük, hogy van-e spóra a tectonon
+                boolean hasSpores = tecton.spores != null && !tecton.spores.isEmpty();
 
                 for (Hexagon hexagon : tecton.hexagons) {
                     int hexId = hexagon.getId();
@@ -205,7 +214,16 @@ public class GuiBoard implements ModelObserver {
 
                     Polygon hexShape = hexagonShapes.get(hexId);
                     if (hexShape != null) {
-                        hexShape.setFill(color);
+                        // Alap szín beállítása
+                        if (hasSpores) {
+                            // Ha van spóra, speciális mintát használunk
+                            hexShape.setFill(createSporePatternFill(color));
+                            hexShape.setStroke(Color.YELLOW);
+                            hexShape.setStrokeWidth(2);
+                        } else {
+                            // Ha nincs spóra, normál színezés
+                            hexShape.setFill(color);
+                        }
                     }
                 }
 
@@ -225,6 +243,14 @@ public class GuiBoard implements ModelObserver {
 
                             Text typeText = new Text(pos[0] - 30, pos[1] + 10, tectonType);
                             typeText.setFont(Font.font(8));
+                            
+                            // Ha van spóra, azt is kiírjuk
+                            if (hasSpores) {
+                                Text sporeText = new Text(pos[0] - 30, pos[1] + 20, "Spores: " + tecton.spores.size());
+                                sporeText.setFont(Font.font(8));
+                                sporeText.setFill(Color.YELLOW);
+                                boardPane.getChildren().add(sporeText);
+                            }
 
                             boardPane.getChildren().addAll(nameText, typeText);
                             break;
@@ -250,6 +276,37 @@ public class GuiBoard implements ModelObserver {
         }
 
         return hexagon;
+    }
+
+    /**
+     * Spóra mintázatú kitöltés létrehozása
+     * @param baseColor Az alap szín
+     * @return A spóra mintázatú kitöltés
+     */
+    private Paint createSporePatternFill(Color baseColor) {
+        // Világosabb variációja az alapszínnek a spóra pöttyökhöz
+        Color spotColor = baseColor.brighter().brighter();
+        
+        // Kép létrehozása a textúrához
+        Canvas canvas = new Canvas(20, 20);
+        GraphicsContext gc = canvas.getGraphicsContext2D();
+        
+        // Alapszín kitöltése
+        gc.setFill(baseColor);
+        gc.fillRect(0, 0, 20, 20);
+        
+        // Spóra pöttyök rajzolása
+        gc.setFill(spotColor);
+        gc.fillOval(5, 5, 3, 3);
+        gc.fillOval(12, 7, 2, 2);
+        gc.fillOval(8, 14, 3, 3);
+        
+        // Kép készítése a mintázathoz
+        WritableImage image = new WritableImage(20, 20);
+        canvas.snapshot(null, image);
+        
+        // Mintázat visszaadása
+        return new ImagePattern(image);
     }
 
     public void highlightTecton(Tecton t) {
