@@ -45,14 +45,12 @@ public class CommandParser {
                 return new EatInsectCommand(parts[1], parts[2]);
             case "SET_FUNGUS_CHARGE":
                 return new SetFungusChargeCommand( parts[1], Integer.parseInt(parts[2]));
-            case "NEXT_TURN":
+            case "NEXT_TURN", "SKIP_TURN":
                 return new NextTurnCommand();
-            case "NEXT_ROUND":
+            case "NEXT_ROUND", "SKIP_ROUND":
                 return new NextRoundCommand();
             case "END_GAME":
                 return new EndGameCommand();
-            case "SKIP_TURN":
-                return new SkipTurnCommand();
             case "SELECT_ENTITY":
                 return new SelectEntityCommand(parts[1]);
             default:

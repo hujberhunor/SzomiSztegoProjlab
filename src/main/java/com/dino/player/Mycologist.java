@@ -121,7 +121,8 @@ public class Mycologist extends Player implements SerializableEntity {
      * Első gomba lehelyezéséhez
      */
     public void debugPlaceFungus(Tecton t){
-        Fungus f = new Fungus();
+        Fungus f = new Fungus(this, t);
+        namer.register(f);
         t.setFungus(f);
         mushrooms.add(f);
     }

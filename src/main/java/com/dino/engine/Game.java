@@ -232,11 +232,9 @@ public class Game {
                 System.out.println("Kiválasztott tekton: " + namer.getName(selectedTecton));
                 ((Mycologist) player).debugPlaceFungus(selectedTecton);
                 tectons.remove(selectedIndex);
-                Fungus fungus = new Fungus((Mycologist) player, selectedTecton);
-                namer.register(fungus);
                 tectonsWithFungus.add(selectedTecton);
                 numberOfMycologist++;
-                System.out.println("Gomba: "+ namer.getName(fungus) + "\n");
+                System.out.println("Gomba: "+ namer.getName(((Mycologist) player).getMushrooms().get(0)) + "\n");
             }
         }
 
@@ -250,7 +248,7 @@ public class Game {
                 ((Entomologist) player).addInsects(insect);
                 namer.register(insect);
                 System.out.println(
-                        "Insect regisztrálva, neve:" + namer.getName(insect) + "\nKezdp tekton:" + insect.getTecton());
+                        "Insect regisztrálva, neve:" + namer.getName(insect) + "\nKezdő tekton:" + insect.getTecton() + "\n");
                 tectonsWithFungus.remove(selectedIndex);
             }
         }
@@ -391,16 +389,17 @@ public class Game {
     public int nextTurn() {
         int currentIndex = players.indexOf(currentPlayer);
         int nextIndex = (currentIndex + 1) % players.size();
-        boolean turnEnded = false;
+        boolean roundEnded = false;
 
         System.out.println("Aktuális játékos: " + namer.getName(currentPlayer));
         System.out.println(
                 "Készen állsz, gépelj commandokat (pl. MOVE_INSECT insect1 tectonB):");
 
         // Scanner kezelése külön metódusba kerül át
-        turnEnded = processPlayerCommands();
+        roundEnded = processPlayerCommands();
 
-        if (turnEnded) {
+        // Ha next_round kommandot írunk be, vagy ha az utolsó játékos volt soron, legyen vége a roundnak
+        if (roundEnded || currentPlayer.equals(players.get(players.size() - 1))) {
             return 0; // Jelezzük, hogy kör vége
         } else {
             String oldPlayerName = namer.getName(currentPlayer);
