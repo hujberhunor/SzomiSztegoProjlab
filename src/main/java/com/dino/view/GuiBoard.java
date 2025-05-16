@@ -1,17 +1,27 @@
 package com.dino.view;
 
-import com.dino.core.Hexagon;
-import com.dino.core.Insect;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Map;
+import java.util.Random;
+import java.util.Set;
+
 import com.dino.core.Fungus;
+import com.dino.core.Hexagon;
+import com.dino.core.Hypha;
+import com.dino.core.Insect;
 import com.dino.engine.Game;
 import com.dino.player.Entomologist;
 import com.dino.player.Mycologist;
-import com.dino.tecton.Tecton;
-import com.dino.tecton.SingleHyphaTecton;
 import com.dino.tecton.InfiniteHyphaTecton;
 import com.dino.tecton.KeepHyphaTecton;
 import com.dino.tecton.NoFungiTecton;
 import com.dino.tecton.ShortHyphaTecton;
+import com.dino.tecton.SingleHyphaTecton;
+import com.dino.tecton.Tecton;
 import com.dino.util.EntityRegistry;
 import com.dino.util.ObjectNamer;
 
@@ -22,15 +32,6 @@ import javafx.scene.paint.Color;
 import javafx.scene.shape.Polygon;
 import javafx.scene.text.Font;
 import javafx.scene.text.Text;
-
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Map;
-import java.util.Random;
-import java.util.Set;
 
 public class GuiBoard implements ModelObserver {
     private Pane boardPane;
@@ -91,6 +92,7 @@ public class GuiBoard implements ModelObserver {
 
         drawFungi(game);
         drawInsects(game);
+        drawHypha(game);
     }
 
     // TODO 
@@ -357,4 +359,58 @@ public class GuiBoard implements ModelObserver {
             }
         }
     }
+    
+    public void drawHypha(Game game) {
+        Set<Hypha> alreadyDrawn = new HashSet<>();
+
+        for (Tecton tecton : game.getBoard().getAllTectons()) {
+            for (Hypha h : tecton.getHyphas()) {
+                if (alreadyDrawn.contains(h))
+                    continue;
+
+                alreadyDrawn.add(h);
+
+                Tecton start = h.getTectons().get(0);
+                Tecton end = h.getTectons().get(1);
+
+                Hexagon startHex = null, endHex = null;
+
+                for (Hexagon hex : start.hexagons) {
+                    if (!removedHexagons.contains(hex.getId())) {
+                        startHex = hex;
+                        break;
+                    }
+                }
+
+                for (Hexagon hex : end.hexagons) {
+                    if (!removedHexagons.contains(hex.getId())) {
+                        endHex = hex;
+                        break;
+                    }
+                }
+
+                if (startHex == null || endHex == null)
+                    continue;
+
+                Double[] startPosArray = hexagonPositions.get(startHex.getId());
+                Double[] endPosArray = hexagonPositions.get(endHex.getId());
+                if (startPosArray == null || endPosArray == null)
+                    continue;
+
+                Point2D startPos = new Point2D(startPosArray[0], startPosArray[1]);
+                Point2D endPos = new Point2D(endPosArray[0], endPosArray[1]);
+
+                HyphaEntity entity = new HyphaEntity(h);
+                entity.setStartPos(startPos);
+                entity.setEndPos(endPos);
+
+                Node hyphaNode = entity.draw();
+                if (hyphaNode != null) {
+                    boardPane.getChildren().add(hyphaNode);
+                }
+            }
+        }
+    }
+
 }
+
