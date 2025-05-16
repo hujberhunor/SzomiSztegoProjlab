@@ -8,4 +8,7 @@ Ebbe az ablakban le fog futni egy `git clone` és a `cd` parancs, így bekerül�
 
 Itt pedig már fordíthatunk: `mvc compile` és futtathatunk `mvn exec:java`. 
 
-# Tesztek futtatásának menete
+# GUI futtatásának menete
+`mvn javafx:run` command kiadásával elindítható a GUI. 
+
+

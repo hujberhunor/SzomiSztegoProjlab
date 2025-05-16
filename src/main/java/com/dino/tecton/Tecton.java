@@ -14,6 +14,7 @@ import com.dino.util.SerializableEntity;
 import com.dino.util.SerializerUtil;
 import com.dino.util.Skeleton;
 import com.google.gson.JsonObject;
+import javafx.scene.paint.Color;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -41,6 +42,8 @@ public abstract class Tecton implements SerializableEntity {
     public Map<Spore, Integer> spores;
 
     public List<Hypha> hyphas;
+
+    private Color color;
 
     /**
      * Alapértelmezett konstruktor
@@ -447,6 +450,9 @@ public abstract class Tecton implements SerializableEntity {
     public Map<Spore, Integer> getSporeMap() {
         return spores;
     }
+
+    public Color getColor() { return color; }
+    public void setColor(Color color) { this.color = color; }
 
     @Override
     public JsonObject serialize(ObjectNamer namer) {
