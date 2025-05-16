@@ -1,31 +1,43 @@
 package com.dino.view;
 
-import com.dino.core.*;
-import com.dino.player.*;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collections;
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Map;
+import java.util.Random;
+import java.util.Set;
+
+import com.dino.core.Fungus;
+import com.dino.core.Hexagon;
+import com.dino.core.Hypha;
+import com.dino.core.Insect;
+import com.dino.core.Spore;
 import com.dino.engine.Game;
-import com.dino.tecton.*;
+import com.dino.player.Entomologist;
+import com.dino.player.Mycologist;
+import com.dino.tecton.Tecton;
 import com.dino.util.EntityRegistry;
 import com.dino.util.ObjectNamer;
 
 import javafx.geometry.Point2D;
 import javafx.scene.Node;
-import javafx.scene.control.Label;
-import javafx.scene.input.MouseEvent;
 import javafx.scene.canvas.Canvas;
 import javafx.scene.canvas.GraphicsContext;
+import javafx.scene.control.Label;
 import javafx.scene.effect.DropShadow;
 import javafx.scene.image.WritableImage;
+import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.Pane;
 import javafx.scene.paint.Color;
 import javafx.scene.paint.ImagePattern;
 import javafx.scene.paint.Paint;
 import javafx.scene.shape.Polygon;
 import javafx.scene.text.Font;
-import javafx.scene.text.FontWeight;
 import javafx.scene.text.Text;
 import javafx.stage.Popup;
-
-import java.util.*;
 
 public class GuiBoard implements ModelObserver {
     private Pane boardPane;
@@ -114,11 +126,14 @@ public class GuiBoard implements ModelObserver {
     }
 
     private void setupTectonColors(Game game) {
-        List<Color> possibleColors = Arrays.asList(
-            Color.web("FFADAD"), Color.web("FFD6A5"), Color.web("FDFFBF"), 
-            Color.web("CAFFBF"), Color.web("9BF6FF"), Color.web("A0C4FF"), 
-            Color.web("BDB2FF"), Color.web("FFC6FF")
-        );
+        // List<Color> possibleColors = Arrays.asList(
+        //     Color.web("FFADAD"), Color.web("FFD6A5"), Color.web("FDFFBF"), 
+        //     Color.web("CAFFBF"), Color.web("9BF6FF"), Color.web("A0C4FF"), 
+        //     Color.web("BDB2FF"), Color.web("FFC6FF")
+        // );
+
+        // PETI
+        List<Color> possibleColors = Arrays.asList(Color.web("#557174"), Color.web("#798f7a"), Color.web("#9dad7f"), Color.web("#b2be9b"), Color.web("#c7cfb7"), Color.web("#f7f7e8"));
 
         Random rnd = new Random();
 
@@ -271,28 +286,28 @@ public class GuiBoard implements ModelObserver {
                 }
 
                 // Tecton információinak kiírása
-                if (!tecton.hexagons.isEmpty()) {
-                    // Keressünk egy hexagont, ahova kiírhatjuk az infót
-                    for (Hexagon hex : tecton.hexagons) {
-                        int hexId = hex.getId();
-                        Double[] pos = hexagonPositions.get(hexId);
+                // if (!tecton.hexagons.isEmpty()) {
+                //     // Keressünk egy hexagont, ahova kiírhatjuk az infót
+                //     for (Hexagon hex : tecton.hexagons) {
+                //         int hexId = hex.getId();
+                //         Double[] pos = hexagonPositions.get(hexId);
 
-                        if (pos != null) {
-                            String tectonName = registry.getNameOf(tecton);
-                            String tectonType = tecton.getClass().getSimpleName();
+                //         if (pos != null) {
+                //             String tectonName = registry.getNameOf(tecton);
+                //             String tectonType = tecton.getClass().getSimpleName();
 
-                            Text nameText = new Text(pos[0] - 30, pos[1] - 10, tectonName);
-                            nameText.setFont(Font.font(8));
+                //             Text nameText = new Text(pos[0] - 30, pos[1] - 10, tectonName);
+                //             nameText.setFont(Font.font(8));
 
-                            Text typeText = new Text(pos[0] - 30, pos[1] + 10, tectonType);
-                            typeText.setFont(Font.font(8));
+                //             Text typeText = new Text(pos[0] - 30, pos[1] + 10, tectonType);
+                //             typeText.setFont(Font.font(8));
                             
 
-                            boardPane.getChildren().addAll(nameText, typeText);
-                            break;
-                        }
-                    }
-                }
+                //             boardPane.getChildren().addAll(nameText, typeText);
+                //             break;
+                //         }
+                //     }
+                // }
             }
         }
     }
