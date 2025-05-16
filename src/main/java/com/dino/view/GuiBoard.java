@@ -268,13 +268,6 @@ public class GuiBoard implements ModelObserver {
                             Text typeText = new Text(pos[0] - 30, pos[1] + 10, tectonType);
                             typeText.setFont(Font.font(8));
                             
-                            // Ha van spóra, azt is kiírjuk
-                            if (hasSpores) {
-                                Text sporeText = new Text(pos[0] - 15, pos[1], "Spores: " + sporeCount);
-                                sporeText.setFont(Font.font("Arial", FontWeight.BOLD, 10));
-                                sporeText.setFill(Color.BLACK);
-                                boardPane.getChildren().add(sporeText);
-                            }
 
                             boardPane.getChildren().addAll(nameText, typeText);
                             break;
