@@ -172,7 +172,7 @@ public class Game {
             namer.register(mycologist);
             // Név beállítása
             String name = namer.getName(mycologist);
-            mycologist.setName(i + ". Gombász " + " (" + name + ")");
+            mycologist.setName(name);
         }
 
         for (int i = 0; i < numberOfEntomologist; i++) {
@@ -181,7 +181,7 @@ public class Game {
             namer.register(entomologist);
             // Név beállítása
             String name = namer.getName(entomologist);
-            entomologist.setName( i + ". Rovarász " + " (" + name + ")");
+            entomologist.setName(name);
         }
 
         System.out.println("Hány kör legyen a játék?");
