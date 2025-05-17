@@ -30,6 +30,7 @@ public class ContinueHyphaCommand implements Command {
         } else {
             logger.logError("HYPHA", hyphaId, "Cannot continue hypha: target is not neighbor.");
         }
+         game.notifyObservers();
     }
 
     @Override

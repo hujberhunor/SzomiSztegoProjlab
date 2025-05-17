@@ -53,6 +53,7 @@ public class BreakTectonCommand implements Command {
             logger.logChange("TECTON", original, "BREAK", baseName, newNameB);
 
         }
+         game.notifyObservers();
     }
 
     /**

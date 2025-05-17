@@ -7,9 +7,21 @@ public class NextRoundCommand implements Command {
 
     @Override
     public void execute(Game game, Logger logger) {
-        // Csak az akciókat nullázzuk le, a kör váltását a Game osztály kezeli
+        // Akciópontok nullázása
         game.getCurrentPlayer().remainingActions = 0;
-        logger.logChange("GAME", game, "ROUND", "-", "Advanced to next round");
+
+        // Következő kör
+        int result = game.nextRound();
+
+        // Ha a játék véget ért (result = 0)
+        if (result == 0) {
+            game.endGame();
+            logger.logChange("GAME", game, "STATE", "RUNNING", "ENDED");
+            logger.logChange("GAME", game, "ROUND", "-", "Game ended");
+        } else {
+            logger.logChange("GAME", game, "ROUND", "-", "Advanced to next round");
+        }
+         game.notifyObservers();
     }
 
     @Override

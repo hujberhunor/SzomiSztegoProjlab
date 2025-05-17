@@ -31,6 +31,7 @@ public class EatInsectCommand implements Command {
         } else {
             logger.logError("HYPHA", hyphaId, "Failed to eat insect: not on hypha.");
         }
+         game.notifyObservers();
     }
 
     /**

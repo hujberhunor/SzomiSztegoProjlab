@@ -54,6 +54,7 @@ public class MoveInsectCommand implements Command {
         String newTecton = registry.getNameOf(target);
 
         // logger.logChange("INSECT", insect, "POSITION", prevTecton, newTecton);
+         game.notifyObservers();
     }
 
     /**
