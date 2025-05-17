@@ -8,6 +8,7 @@ import com.dino.util.Logger;
 import javafx.application.Platform;
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
+import javafx.scene.Cursor;
 import javafx.scene.control.TextArea;
 import javafx.scene.control.TextField;
 import javafx.scene.effect.DropShadow;
@@ -15,6 +16,8 @@ import javafx.scene.layout.Background;
 import javafx.scene.layout.BackgroundFill;
 import javafx.scene.layout.CornerRadii;
 import javafx.scene.layout.Priority;
+import javafx.scene.layout.Region;
+import javafx.scene.layout.StackPane;
 import javafx.scene.layout.VBox;
 import javafx.scene.paint.Color;
 import javafx.scene.text.Font;
@@ -37,6 +40,7 @@ public class BottomBar extends VBox implements ModelObserver {
         setPadding(new Insets(10));
         setAlignment(Pos.BOTTOM_LEFT);
         setMaxWidth(Double.MAX_VALUE);
+        setMinHeight(80);
         setBackground(new Background(new BackgroundFill(Color.rgb(30, 30, 30, 0.7), new CornerRadii(10), Insets.EMPTY)));
         setEffect(new DropShadow(2, Color.BLACK));
 
@@ -49,11 +53,45 @@ public class BottomBar extends VBox implements ModelObserver {
         logDisplay.setEditable(false);
         logDisplay.setWrapText(true);
         logDisplay.setFont(Font.font("Consolas", 12));
-        logDisplay.setPrefHeight(75);
+        logDisplay.setPrefHeight(200);
         logDisplay.setStyle("-fx-text-fill: white; -fx-control-inner-background: rgba(0, 0, 0, 0.5);");
-        VBox.setVgrow(logDisplay, Priority.ALWAYS);
+        VBox.setVgrow(logDisplay, Priority.SOMETIMES);
 
-        getChildren().addAll(logDisplay, commandInput);
+        VBox contentBox = new VBox(5, logDisplay, commandInput);
+        contentBox.setPadding(new Insets(10));
+        contentBox.setAlignment(Pos.BOTTOM_LEFT);
+        VBox.setVgrow(contentBox, Priority.ALWAYS);
+
+        // Ablak méretének állítgatása
+        Region resizeHandle = new Region();
+        resizeHandle.setMaxHeight(5);
+        resizeHandle.setMaxWidth(Double.MAX_VALUE);
+        resizeHandle.setCursor(Cursor.N_RESIZE);
+        resizeHandle.setStyle("-fx-background-color: rgba(255, 255, 255, 0.05);");
+        resizeHandle.setMouseTransparent(false);
+
+        final double[] startY = new double[1];
+        final double[] startHeight = new double[1];
+
+        resizeHandle.setOnMousePressed(e -> {
+            startY[0] = e.getScreenY();
+            startHeight[0] = getHeight();
+        });
+
+        resizeHandle.setOnMouseDragged(e -> {
+            double delta = startY[0] - e.getScreenY();
+            double newHeight = startHeight[0] + delta;
+            if (newHeight >= 100) {
+                setPrefHeight(newHeight);
+            }
+        });
+
+        StackPane overlayPane = new StackPane(contentBox, resizeHandle);
+        StackPane.setAlignment(resizeHandle, Pos.TOP_CENTER);
+        StackPane.setMargin(resizeHandle, new Insets(0, 0, 0, 0));
+        VBox.setVgrow(overlayPane, Priority.ALWAYS);
+
+        getChildren().add(overlayPane);
 
         // ESEMÉNY: ENTER billentyű
         commandInput.setOnAction(e -> processCommand());
