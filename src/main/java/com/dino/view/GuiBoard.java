@@ -230,7 +230,6 @@ public class GuiBoard implements ModelObserver {
                 hexagon.setStroke(Color.BLACK);
                 hexagon.setStrokeWidth(1);
 
-                hexagon.setUserData(hexId);
                 hexagon.setOnMouseClicked(event -> handleHexagonClick(event, hexId));
 
                 // Hexagon tárolása
@@ -541,6 +540,7 @@ public class GuiBoard implements ModelObserver {
                 Node fungusNode = fEntity.draw();
                 if (fungusNode != null) {
                     boardPane.getChildren().add(fungusNode);
+                    fungusNode.setOnMouseClicked(event -> handleFungusClick(event, f));
                 }
             }
         }
@@ -580,6 +580,7 @@ public class GuiBoard implements ModelObserver {
                 Node insectNode = iEntity.draw();
                 if (insectNode != null) {
                     boardPane.getChildren().add(insectNode);
+                    insectNode.setOnMouseClicked(event -> handleInsectClick(event, i));
                 }
             }
         }
@@ -637,5 +638,113 @@ public class GuiBoard implements ModelObserver {
         }
     }
 
-}
+    private void handleFungusClick(MouseEvent event, Fungus fungus) {
+        // Prepare the fungus information
+        String fungusInfo = buildFungusInfo(fungus);
 
+        // Update the label and show the popup
+        tectonInfoLabel.setText(fungusInfo);
+        tectonInfoPopup.show(boardPane.getScene().getWindow(),
+                event.getScreenX() + 10,
+                event.getScreenY() + 10);
+    }
+
+    private void handleInsectClick(MouseEvent event, Insect insect) {
+        // Prepare the insect information
+        String insectInfo = buildInsectInfo(insect);
+
+        // Update the label and show the popup
+        tectonInfoLabel.setText(insectInfo);
+        tectonInfoPopup.show(boardPane.getScene().getWindow(),
+                event.getScreenX() + 10,
+                event.getScreenY() + 10);
+    }
+
+    private String buildFungusInfo(Fungus fungus) {
+        StringBuilder info = new StringBuilder();
+
+        // Add fungus name
+        String fungusName = registry.getNameOf(fungus);
+        info.append("Name: ").append(fungusName).append("\n");
+
+        // Add species information
+        Mycologist species = fungus.getSpecies();
+        if (species != null) {
+            info.append("Species: ").append(species.name).append("\n");
+        } else {
+            info.append("Species: Unknown\n");
+        }
+
+        // Add location information
+        Tecton tecton = fungus.getTecton();
+        if (tecton != null) {
+            info.append("Location: ").append(registry.getNameOf(tecton)).append("\n");
+        }
+
+        // Add charge and lifespan information
+        int charge = fungus.getCharge();
+        int lifespan = fungus.getLifespan();
+        info.append("Charge: ").append(charge).append("\n");
+        info.append("Lifespan: ").append(lifespan).append("\n");
+
+        // Add hypha information
+        List<Hypha> hyphas = fungus.getHyphas();
+        if (hyphas != null && !hyphas.isEmpty()) {
+            info.append("Connected Hyphae: ").append(hyphas.size()).append("\n");
+        } else {
+            info.append("Connected Hyphae: None\n");
+        }
+
+        // Add spore information
+        List<Spore> spores = fungus.getSpores();
+        if (spores != null && !spores.isEmpty()) {
+            info.append("Spores: ").append(spores.size()).append("\n");
+        } else {
+            info.append("Spores: None\n");
+        }
+
+        return info.toString();
+    }
+
+    private String buildInsectInfo(Insect insect) {
+        StringBuilder info = new StringBuilder();
+
+        // Add insect name and owner
+        String insectName = registry.getNameOf(insect);
+        info.append("Name: ").append(insectName).append("\n");
+
+        // Add owner information
+        Entomologist owner = insect.getEntomologist();
+        if (owner != null) {
+            info.append("Owner: ").append(owner.name).append("\n");
+        } else {
+            info.append("Owner: Unknown\n");
+        }
+
+        // Add location information
+        Tecton currentTecton = insect.getTecton();
+        if (currentTecton != null) {
+            info.append("Location: ").append(registry.getNameOf(currentTecton)).append("\n");
+        }
+
+        // Add effects information
+        List<Spore> effects = insect.getEffects();
+        if (effects != null && !effects.isEmpty()) {
+            info.append("Active Effects: \n");
+            for (Spore effect : effects) {
+                info.append(" - ").append(effect.getClass().getSimpleName());
+
+                // If it's a timed effect, add duration
+                int duration = effect.getEffectDuration();
+                if (duration > 0) {
+                    info.append(" (").append(duration).append(" turns remaining)");
+                }
+                info.append("\n");
+            }
+        } else {
+            info.append("Active Effects: None\n");
+        }
+
+        return info.toString();
+    }
+}
