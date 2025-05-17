@@ -516,7 +516,7 @@ public class GuiBoard implements ModelObserver {
                 Tecton tecton = f.getTecton();
 
                 List<Hexagon> hexagons = new ArrayList<>(tecton.hexagons);
-                // Collections.shuffle(hexagons); 
+                // Collections.shuffle(hexagons);
 
                 Hexagon chosenHexagon = null;
                 for (Hexagon h : hexagons) {
@@ -557,7 +557,7 @@ public class GuiBoard implements ModelObserver {
                 Tecton tecton = i.getTecton();
 
                 List<Hexagon> hexagons = new ArrayList<>(tecton.hexagons);
-                // Collections.shuffle(hexagons); 
+                // Collections.shuffle(hexagons);
 
                 Hexagon chosenHexagon = null;
                 for (Hexagon h : hexagons) {
@@ -598,6 +598,10 @@ public class GuiBoard implements ModelObserver {
                     continue;
 
                 alreadyDrawn.add(h);
+
+                // Ellenőrizzük, hogy van-e legalább két tecton a hypha-ban
+                if (h.getTectons().size() < 2)
+                    continue;
 
                 Tecton start = h.getTectons().get(0);
                 Tecton end = h.getTectons().get(1);

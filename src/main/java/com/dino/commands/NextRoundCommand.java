@@ -21,6 +21,7 @@ public class NextRoundCommand implements Command {
         } else {
             logger.logChange("GAME", game, "ROUND", "-", "Advanced to next round");
         }
+         game.notifyObservers();
     }
 
     @Override
