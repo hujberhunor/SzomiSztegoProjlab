@@ -170,12 +170,18 @@ public class Game {
             Mycologist mycologist = new Mycologist();
             players.add(mycologist);
             namer.register(mycologist);
+            // Név beállítása
+            String name = namer.getName(mycologist);
+            mycologist.setName(i + ". Gombász " + " (" + name + ")");
         }
 
         for (int i = 0; i < numberOfEntomologist; i++) {
             Entomologist entomologist = new Entomologist();
             players.add(entomologist);
             namer.register(entomologist);
+            // Név beállítása
+            String name = namer.getName(entomologist);
+            entomologist.setName( i + ". Rovarász " + " (" + name + ")");
         }
 
         System.out.println("Hány kör legyen a játék?");
