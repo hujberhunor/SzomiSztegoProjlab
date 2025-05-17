@@ -53,6 +53,7 @@ public class Insect implements SerializableEntity {
         this.currentTecton = currentTecton;
         this.effects = new ArrayList<>();
         this.entomologist.addInsects(this);
+        currentTecton.addInsect(this);
     }
 
     // Számontartja, hogy a rovar mozoghat-e ingyen a jelenlegi körében, ha gyorsító

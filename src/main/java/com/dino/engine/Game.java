@@ -245,7 +245,6 @@ public class Game {
                 Insect insect = new Insect(
                         (Entomologist) player,
                         tectonsWithFungus.get(selectedIndex));
-                ((Entomologist) player).addInsects(insect);
                 namer.register(insect);
                 System.out.println(
                         "Insect regisztrálva, neve:" + namer.getName(insect) + "\nKezdő tekton:" + insect.getTecton() + "\n");
@@ -399,7 +398,7 @@ public class Game {
         roundEnded = processPlayerCommands();
 
         // Ha next_round kommandot írunk be, vagy ha az utolsó játékos volt soron, legyen vége a roundnak
-        if (roundEnded || currentPlayer.equals(players.get(players.size() - 1))) {
+        if (roundEnded || nextIndex == 0) {
             return 0; // Jelezzük, hogy kör vége
         } else {
             String oldPlayerName = namer.getName(currentPlayer);
