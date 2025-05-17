@@ -79,6 +79,8 @@ private void processCommand() {
     } catch (Exception ex) {
         appendLog("[ERROR] " + ex.getMessage());
     }
+game.notifyObservers();
+
 }
 
 
