@@ -55,8 +55,6 @@ public class GuiBoard implements ModelObserver {
     private final double HEX_HORIZ_DIST = HEX_SIZE * Math.sqrt(3); // Vízszintes távolság a középpontok között
     private final double HEX_VERT_DIST = HEX_SIZE * 1.5; // Függőleges távolság a középpontok közötta
 
-
-
     private Popup tectonInfoPopup;
     private Label tectonInfoLabel;
 
@@ -127,19 +125,20 @@ public class GuiBoard implements ModelObserver {
 
     private void setupTectonColors(Game game) {
         // List<Color> possibleColors = Arrays.asList(
-        //     Color.web("FFADAD"), Color.web("FFD6A5"), Color.web("FDFFBF"), 
-        //     Color.web("CAFFBF"), Color.web("9BF6FF"), Color.web("A0C4FF"), 
-        //     Color.web("BDB2FF"), Color.web("FFC6FF")
+        // Color.web("FFADAD"), Color.web("FFD6A5"), Color.web("FDFFBF"),
+        // Color.web("CAFFBF"), Color.web("9BF6FF"), Color.web("A0C4FF"),
+        // Color.web("BDB2FF"), Color.web("FFC6FF")
         // );
 
         // PETI
-        List<Color> possibleColors = Arrays.asList(Color.web("#557174"), Color.web("#798f7a"), Color.web("#9dad7f"), Color.web("#b2be9b"), Color.web("#c7cfb7"), Color.web("#f7f7e8"));
+        List<Color> possibleColors = Arrays.asList(Color.web("#557174"), Color.web("#798f7a"), Color.web("#9dad7f"),
+                Color.web("#b2be9b"), Color.web("#c7cfb7"), Color.web("#f7f7e8"));
 
         Random rnd = new Random();
 
         for (Tecton tecton : game.getBoard().getAllTectons()) {
             String tectonName = registry.getNameOf(tecton);
-            
+
             // Ellenőrizzük, hogy a tectonnak már van-e színe
             if (persistentTectonColors.containsKey(tectonName)) {
                 // Ha már van színe, használjuk azt
@@ -148,27 +147,29 @@ public class GuiBoard implements ModelObserver {
                 tecton.setColor(savedColor);
                 continue;
             }
-            
+
             // Ha nincs még színe, új színt választunk neki
             List<Color> availableColors = new ArrayList<>(possibleColors);
 
-            boolean isUnique = false; //egyedi-e a szín, vagyis nincs olyan szomszédja, ami ugyanilyen színű
+            boolean isUnique = false; // egyedi-e a szín, vagyis nincs olyan szomszédja, ami ugyanilyen színű
             Color selectedColor = possibleColors.get(0); // Alapértelmezett
-            
-            while(!isUnique && !(availableColors.isEmpty())) {
+
+            while (!isUnique && !(availableColors.isEmpty())) {
                 isUnique = true;
 
-                //a színlistából találomra kiválasztunk egyet
+                // a színlistából találomra kiválasztunk egyet
                 int selectedIndex = rnd.nextInt(availableColors.size());
                 selectedColor = availableColors.get(selectedIndex);
 
-                //Leellenőrizzük, hogy van-e olyan szomszédos tekton, ami ugyanolyan színű, mint amit kiválasztottunk.
-                for(Tecton neigbourTecton : tecton.getNeighbours()){
-                    if(neigbourTecton.getColor() == null){
+                // Leellenőrizzük, hogy van-e olyan szomszédos tekton, ami ugyanolyan színű,
+                // mint amit kiválasztottunk.
+                for (Tecton neigbourTecton : tecton.getNeighbours()) {
+                    if (neigbourTecton.getColor() == null) {
                         break;
                     }
-                    if(neigbourTecton.getColor().equals(selectedColor)){
-                        //Ha a szomszéd már ugyanolyan színű, eltávolítjuk a lehetséges színek listájából a színt
+                    if (neigbourTecton.getColor().equals(selectedColor)) {
+                        // Ha a szomszéd már ugyanolyan színű, eltávolítjuk a lehetséges színek
+                        // listájából a színt
                         isUnique = false;
                         availableColors.remove(selectedColor);
                         break;
@@ -196,8 +197,8 @@ public class GuiBoard implements ModelObserver {
         double startY = centerY - gridHeight / 2 + HEX_SIZE;
 
         // Biztosítsuk, hogy a 0-ás ID-hez is legyen pozíció (ha véletlenül létezik)
-        hexagonPositions.put(0, new Double[]{startX, startY});
-        
+        hexagonPositions.put(0, new Double[] { startX, startY });
+
         // Számítsuk ki az összes pozíciót (a létező és nem létező hexagonokét is)
         int id = 1;
         for (int row = 0; row < GRID_SIZE; row++) {
@@ -210,7 +211,7 @@ public class GuiBoard implements ModelObserver {
                 double y = startY + row * HEX_VERT_DIST;
 
                 // Csak elmentjük a pozíciókat, nem rajzolunk még
-                hexagonPositions.put(id, new Double[]{x, y});
+                hexagonPositions.put(id, new Double[] { x, y });
                 id++;
             }
         }
@@ -230,7 +231,6 @@ public class GuiBoard implements ModelObserver {
                 hexagon.setStroke(Color.BLACK);
                 hexagon.setStrokeWidth(1);
 
-                hexagon.setUserData(hexId);
                 hexagon.setOnMouseClicked(event -> handleHexagonClick(event, hexId));
 
                 // Hexagon tárolása
@@ -255,7 +255,7 @@ public class GuiBoard implements ModelObserver {
 
             if (color != null && tecton.hexagons != null) {
                 StringBuilder hexIds = new StringBuilder();
-                
+
                 // Ellenőrizzük, hogy van-e spóra a tectonon
                 boolean hasSpores = tecton.spores != null && !tecton.spores.isEmpty();
                 int sporeCount = 0;
@@ -275,7 +275,7 @@ public class GuiBoard implements ModelObserver {
                         if (hasSpores) {
                             // Ha van spóra, speciális mintát használunk
                             hexShape.setFill(createSporePatternFill(color, sporeCount));
-                            
+
                             // Enyhe árnyékhatás hozzáadása a spórákhoz
                             hexShape.setEffect(new DropShadow(5, Color.rgb(0, 0, 0, 0.5)));
                         } else {
@@ -287,26 +287,25 @@ public class GuiBoard implements ModelObserver {
 
                 // Tecton információinak kiírása
                 // if (!tecton.hexagons.isEmpty()) {
-                //     // Keressünk egy hexagont, ahova kiírhatjuk az infót
-                //     for (Hexagon hex : tecton.hexagons) {
-                //         int hexId = hex.getId();
-                //         Double[] pos = hexagonPositions.get(hexId);
+                // // Keressünk egy hexagont, ahova kiírhatjuk az infót
+                // for (Hexagon hex : tecton.hexagons) {
+                // int hexId = hex.getId();
+                // Double[] pos = hexagonPositions.get(hexId);
 
-                //         if (pos != null) {
-                //             String tectonName = registry.getNameOf(tecton);
-                //             String tectonType = tecton.getClass().getSimpleName();
+                // if (pos != null) {
+                // String tectonName = registry.getNameOf(tecton);
+                // String tectonType = tecton.getClass().getSimpleName();
 
-                //             Text nameText = new Text(pos[0] - 30, pos[1] - 10, tectonName);
-                //             nameText.setFont(Font.font(8));
+                // Text nameText = new Text(pos[0] - 30, pos[1] - 10, tectonName);
+                // nameText.setFont(Font.font(8));
 
-                //             Text typeText = new Text(pos[0] - 30, pos[1] + 10, tectonType);
-                //             typeText.setFont(Font.font(8));
-                            
+                // Text typeText = new Text(pos[0] - 30, pos[1] + 10, tectonType);
+                // typeText.setFont(Font.font(8));
 
-                //             boardPane.getChildren().addAll(nameText, typeText);
-                //             break;
-                //         }
-                //     }
+                // boardPane.getChildren().addAll(nameText, typeText);
+                // break;
+                // }
+                // }
                 // }
             }
         }
@@ -331,7 +330,8 @@ public class GuiBoard implements ModelObserver {
 
     /**
      * Spóra mintázatú kitöltés létrehozása - Látványosabb, sötétebb foltokkal
-     * @param baseColor Az alap szín
+     * 
+     * @param baseColor  Az alap szín
      * @param sporeCount A spórák száma a tectonon
      * @return A spóra mintázatú kitöltés
      */
@@ -340,37 +340,37 @@ public class GuiBoard implements ModelObserver {
         int canvasSize = 50;
         Canvas canvas = new Canvas(canvasSize, canvasSize);
         GraphicsContext gc = canvas.getGraphicsContext2D();
-        
+
         // Alapszín kitöltése
         gc.setFill(baseColor);
         gc.fillRect(0, 0, canvasSize, canvasSize);
-        
+
         // Sötétebb színvariációk létrehozása
-        Color darkSpotColor = baseColor.darker().darker();  // Jelentősen sötétebb
-        Color mediumSpotColor = baseColor.darker();         // Közepesen sötét
-        
+        Color darkSpotColor = baseColor.darker().darker(); // Jelentősen sötétebb
+        Color mediumSpotColor = baseColor.darker(); // Közepesen sötét
+
         // Véletlen generátor a spórák elhelyezéséhez
         Random random = new Random(sporeCount); // A spórák száma lesz a seed
-        
+
         // Spórák számától függően állítjuk a sűrűséget
         int spotCount = Math.min(5 + sporeCount * 3, 30); // Maximum 30 folt
-        
+
         // Spóra foltok rajzolása
         for (int i = 0; i < spotCount; i++) {
             // Véletlenszerű pozíció
             double x = random.nextDouble() * canvasSize;
             double y = random.nextDouble() * canvasSize;
-            
+
             // Véletlenszerű méret (de nagyobb, mint eddig volt)
             double size = 3 + random.nextDouble() * 8;
-            
+
             // Váltakozva használjuk a nagyon sötét és középsötét színeket
             if (i % 3 == 0) {
                 gc.setFill(darkSpotColor);
             } else {
                 gc.setFill(mediumSpotColor);
             }
-            
+
             // Folt rajzolása (oválisok és körök)
             if (random.nextBoolean()) {
                 // Kör
@@ -380,11 +380,11 @@ public class GuiBoard implements ModelObserver {
                 gc.fillOval(x, y, size, size * 0.7);
             }
         }
-        
+
         // Kép készítése a mintázathoz
         WritableImage image = new WritableImage(canvasSize, canvasSize);
         canvas.snapshot(null, image);
-        
+
         // Mintázat visszaadása
         return new ImagePattern(image);
     }
@@ -458,7 +458,8 @@ public class GuiBoard implements ModelObserver {
         // Add hexagon IDs
         info.append("Hexagons: ");
         for (int i = 0; i < tecton.getHexagons().size(); i++) {
-            if (i > 0) info.append(", ");
+            if (i > 0)
+                info.append(", ");
             info.append(tecton.getHexagons().get(i).getId());
         }
         info.append("\n");
@@ -473,22 +474,6 @@ public class GuiBoard implements ModelObserver {
         // Add insect information
         if (!tecton.getInsects().isEmpty()) {
             info.append("Insects: ").append(tecton.getInsects().size()).append("\n");
-            for (Insect insect : tecton.getInsects()) {
-                info.append(" - ").append(registry.getNameOf(insect)).append("\n");
-            }
-        } else {
-            info.append("Insects: None\n");
-        }
-
-        // Add spore information
-        if (!tecton.getSporeMap().isEmpty()) {
-            info.append("Spores: \n");
-            for (Map.Entry<Spore, Integer> entry : tecton.getSporeMap().entrySet()) {
-                info.append(" - ").append(registry.getNameOf(entry.getKey()))
-                        .append(": ").append(entry.getValue()).append("\n");
-            }
-        } else {
-            info.append("Spores: None\n");
         }
 
         // Add hypha information
@@ -505,16 +490,16 @@ public class GuiBoard implements ModelObserver {
     // private final Map<Integer, Integer> insectCountPerHexagon = new HashMap<>();
     private final Map<Integer, Integer> entityCountPerHexagon = new HashMap<>();
 
-    public void drawFungi(Game game){
-        //fungusCountPerHexagon.clear();
+    public void drawFungi(Game game) {
+        // fungusCountPerHexagon.clear();
         entityCountPerHexagon.clear();
 
-        for (Mycologist m: game.getAllMycologists()){
-            for (Fungus f : m.getMushrooms()){
+        for (Mycologist m : game.getAllMycologists()) {
+            for (Fungus f : m.getMushrooms()) {
                 Tecton tecton = f.getTecton();
 
                 List<Hexagon> hexagons = new ArrayList<>(tecton.hexagons);
-                Collections.shuffle(hexagons);
+                // Collections.shuffle(hexagons);
 
                 Hexagon chosenHexagon = null;
                 for (Hexagon h : hexagons) {
@@ -523,7 +508,8 @@ public class GuiBoard implements ModelObserver {
                         break;
                     }
                 }
-                if (chosenHexagon == null) break;
+                if (chosenHexagon == null)
+                    break;
 
                 int hexagonId = chosenHexagon.getId();
                 Double[] position = hexagonPositions.get(hexagonId);
@@ -541,20 +527,21 @@ public class GuiBoard implements ModelObserver {
                 Node fungusNode = fEntity.draw();
                 if (fungusNode != null) {
                     boardPane.getChildren().add(fungusNode);
+                    fungusNode.setOnMouseClicked(event -> handleFungusClick(event, f));
                 }
             }
         }
     }
 
-    public void drawInsects(Game game){
+    public void drawInsects(Game game) {
         // insectCountPerHexagon.clear();
 
-        for (Entomologist e: game.getAllEntomologists()){
-            for (Insect i : e.getInsects()){
+        for (Entomologist e : game.getAllEntomologists()) {
+            for (Insect i : e.getInsects()) {
                 Tecton tecton = i.getTecton();
 
                 List<Hexagon> hexagons = new ArrayList<>(tecton.hexagons);
-                Collections.shuffle(hexagons);
+                // Collections.shuffle(hexagons);
 
                 Hexagon chosenHexagon = null;
                 for (Hexagon h : hexagons) {
@@ -563,7 +550,8 @@ public class GuiBoard implements ModelObserver {
                         break;
                     }
                 }
-                if (chosenHexagon == null) break;
+                if (chosenHexagon == null)
+                    break;
 
                 int hexagonId = chosenHexagon.getId();
                 Double[] position = hexagonPositions.get(hexagonId);
@@ -580,6 +568,7 @@ public class GuiBoard implements ModelObserver {
                 Node insectNode = iEntity.draw();
                 if (insectNode != null) {
                     boardPane.getChildren().add(insectNode);
+                    insectNode.setOnMouseClicked(event -> handleInsectClick(event, i));
                 }
             }
         }
@@ -594,6 +583,10 @@ public class GuiBoard implements ModelObserver {
                     continue;
 
                 alreadyDrawn.add(h);
+
+                // Ellenőrizzük, hogy van-e legalább két tecton a hypha-ban
+                if (h.getTectons().size() < 2)
+                    continue;
 
                 Tecton start = h.getTectons().get(0);
                 Tecton end = h.getTectons().get(1);
@@ -637,5 +630,113 @@ public class GuiBoard implements ModelObserver {
         }
     }
 
-}
+    private void handleFungusClick(MouseEvent event, Fungus fungus) {
+        // Prepare the fungus information
+        String fungusInfo = buildFungusInfo(fungus);
 
+        // Update the label and show the popup
+        tectonInfoLabel.setText(fungusInfo);
+        tectonInfoPopup.show(boardPane.getScene().getWindow(),
+                event.getScreenX() + 10,
+                event.getScreenY() + 10);
+    }
+
+    private void handleInsectClick(MouseEvent event, Insect insect) {
+        // Prepare the insect information
+        String insectInfo = buildInsectInfo(insect);
+
+        // Update the label and show the popup
+        tectonInfoLabel.setText(insectInfo);
+        tectonInfoPopup.show(boardPane.getScene().getWindow(),
+                event.getScreenX() + 10,
+                event.getScreenY() + 10);
+    }
+
+    private String buildFungusInfo(Fungus fungus) {
+        StringBuilder info = new StringBuilder();
+
+        // Add fungus name
+        String fungusName = registry.getNameOf(fungus);
+        info.append("Name: ").append(fungusName).append("\n");
+
+        // Add species information
+        Mycologist species = fungus.getSpecies();
+        if (species != null) {
+            info.append("Species: ").append(species.name).append("\n");
+        } else {
+            info.append("Species: Unknown\n");
+        }
+
+        // Add location information
+        Tecton tecton = fungus.getTecton();
+        if (tecton != null) {
+            info.append("Location: ").append(registry.getNameOf(tecton)).append("\n");
+        }
+
+        // Add charge and lifespan information
+        int charge = fungus.getCharge();
+        int lifespan = fungus.getLifespan();
+        info.append("Charge: ").append(charge).append("\n");
+        info.append("Lifespan: ").append(lifespan).append("\n");
+
+        // Add hypha information
+        List<Hypha> hyphas = fungus.getHyphas();
+        if (hyphas != null && !hyphas.isEmpty()) {
+            info.append("Connected Hyphae: ").append(hyphas.size()).append("\n");
+        } else {
+            info.append("Connected Hyphae: None\n");
+        }
+
+        // Add spore information
+        List<Spore> spores = fungus.getSpores();
+        if (spores != null && !spores.isEmpty()) {
+            info.append("Spores: ").append(spores.size()).append("\n");
+        } else {
+            info.append("Spores: None\n");
+        }
+
+        return info.toString();
+    }
+
+    private String buildInsectInfo(Insect insect) {
+        StringBuilder info = new StringBuilder();
+
+        // Add insect name and owner
+        String insectName = registry.getNameOf(insect);
+        info.append("Name: ").append(insectName).append("\n");
+
+        // Add owner information
+        Entomologist owner = insect.getEntomologist();
+        if (owner != null) {
+            info.append("Owner: ").append(owner.name).append("\n");
+        } else {
+            info.append("Owner: Unknown\n");
+        }
+
+        // Add location information
+        Tecton currentTecton = insect.getTecton();
+        if (currentTecton != null) {
+            info.append("Location: ").append(registry.getNameOf(currentTecton)).append("\n");
+        }
+
+        // Add effects information
+        List<Spore> effects = insect.getEffects();
+        if (effects != null && !effects.isEmpty()) {
+            info.append("Active Effects: \n");
+            for (Spore effect : effects) {
+                info.append(" - ").append(effect.getClass().getSimpleName());
+
+                // If it's a timed effect, add duration
+                int duration = effect.getEffectDuration();
+                if (duration > 0) {
+                    info.append(" (").append(duration).append(" turns remaining)");
+                }
+                info.append("\n");
+            }
+        } else {
+            info.append("Active Effects: None\n");
+        }
+
+        return info.toString();
+    }
+}

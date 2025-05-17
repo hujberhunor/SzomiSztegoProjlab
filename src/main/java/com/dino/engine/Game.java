@@ -24,6 +24,7 @@ import com.dino.tecton.Tecton;
 import com.dino.util.EntityRegistry;
 import com.dino.util.Logger;
 import com.dino.util.ObjectNamer;
+import com.dino.view.GameEndDialog;
 import com.dino.view.ModelObserver;
 
 /**
@@ -199,10 +200,10 @@ public class Game {
      * A játék első körtől való indításáért felelő függvény.
      */
     public void startGame() {
-        //Kiválogatjuk egy listába azokat a tektonokat, amikre lehet gombát helyezni
+        // Kiválogatjuk egy listába azokat a tektonokat, amikre lehet gombát helyezni
         List<Tecton> tectons = new ArrayList<>();
-        for (Tecton t : map.getTectons()){
-            if(!(t instanceof NoFungiTecton))
+        for (Tecton t : map.getTectons()) {
+            if (!(t instanceof NoFungiTecton))
                 tectons.add(t);
         }
 
@@ -232,9 +233,11 @@ public class Game {
                 System.out.println("Kiválasztott tekton: " + namer.getName(selectedTecton));
                 ((Mycologist) player).debugPlaceFungus(selectedTecton);
                 tectons.remove(selectedIndex);
+                Fungus fungus = new Fungus((Mycologist) player, selectedTecton);
+                namer.register(fungus);
                 tectonsWithFungus.add(selectedTecton);
                 numberOfMycologist++;
-                System.out.println("Gomba: "+ namer.getName(((Mycologist) player).getMushrooms().get(0)) + "\n");
+                System.out.println("Gomba: " + namer.getName(fungus) + "\n");
             }
         }
 
@@ -405,13 +408,14 @@ public class Game {
             currentPlayer = players.get(nextIndex);
             currentPlayer.remainingActions = currentPlayer.actionsPerTurn;
 
-            String newPlayerName = namer.getName(currentPlayer);
-            logger.logChange(
-                    "GAME",
-                    this,
-                    "CURRENT_PLAYER",
-                    oldPlayerName,
-                    newPlayerName);
+        // Log üzenet
+        String newPlayerName = namer.getName(currentPlayer);
+        logger.logChange(
+                "GAME",
+                this,
+                "CURRENT_PLAYER",
+                oldPlayerName,
+                newPlayerName);
 
             return 1;
         }
@@ -471,8 +475,8 @@ public class Game {
      * Meghívódik, amikor minden játékos befejezte a saját körét.
      */
     public int nextRound() {
-        if (currRound == totalRounds) {
-            return 0;
+        if (currRound >= totalRounds) {
+            return 0; // Jelzés, hogy a játéknak vége
         }
 
         int oldRound = currRound;
@@ -488,8 +492,8 @@ public class Game {
         //map.breakHandler();
 
         for (Player player : players) {
-            if(player instanceof Mycologist){
-                for (Fungus f : ((Mycologist) player).getMushrooms()){
+            if (player instanceof Mycologist) {
+                for (Fungus f : ((Mycologist) player).getMushrooms()) {
                     int oldCharge = f.getCharge();
                     f.increaseCharge();
                     logger.logChange("FUNGUS", f, "CHARGE", oldCharge, f.getCharge());
@@ -537,6 +541,21 @@ public class Game {
                             player.name +
                             " - Pontszám: " +
                             player.score);
+        }
+
+        // Értesítjük az observer-eket, hogy a játék véget ért
+        notifyObservers();
+
+        // Ha JavaFX környezetben vagyunk, GUI dialógust is megjelenítünk
+        try {
+            javafx.application.Platform.runLater(() -> {
+                GameEndDialog dialog = new GameEndDialog(players);
+                dialog.showAndWait();
+            });
+        } catch (Exception e) {
+            // Ha nincs JavaFX környezet (pl. konzol módban futunk),
+            // akkor csak ignoráljuk a hibát
+            System.out.println("(GUI nem elérhető, csak konzolos megjelenítés)");
         }
     }
 
@@ -712,7 +731,7 @@ public class Game {
         }
     }
 
-    public boolean quickInit(){
+    public boolean quickInit() {
         int numberOfMycologist = 4;
         int numberOfEntomologist = 4;
         int numberOfRounds = 5;
@@ -720,9 +739,10 @@ public class Game {
         Random random = new Random();
         Tecton targTecton = map.getTectons().get(random.nextInt(map.getTectons().size()));
 
-        // Tecton.connectTectons(targTecton, map.getTectons().get(random.nextInt(map.getTectons().size())));
-        // Tecton.connectWithHypha(targTecton, map.getTectons().get(random.nextInt(map.getTectons().size())));
-
+        // Tecton.connectTectons(targTecton,
+        // map.getTectons().get(random.nextInt(map.getTectons().size())));
+        // Tecton.connectWithHypha(targTecton,
+        // map.getTectons().get(random.nextInt(map.getTectons().size())));
 
         for (int i = 0; i < numberOfMycologist; i++) {
             Mycologist mycologist = new Mycologist();
@@ -738,7 +758,8 @@ public class Game {
             players.add(entomologist);
             namer.register(entomologist);
             // Random random = new Random();
-            // Tecton targTecton = map.getTectons().get(random.nextInt(map.getTectons().size()));
+            // Tecton targTecton =
+            // map.getTectons().get(random.nextInt(map.getTectons().size()));
             Insect insect = new Insect(entomologist, targTecton);
             targTecton.getInsects().add(insect);
         }

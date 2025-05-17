@@ -27,6 +27,7 @@ public class ConsumeSporeCommand implements Command {
         } else {
             logger.logError("INSECT", insectId, "Failed to consume spore.");
         }
+         game.notifyObservers();
     }
 
     /**

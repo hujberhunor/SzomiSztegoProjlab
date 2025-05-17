@@ -33,6 +33,7 @@ public class PlaceFungusCommand implements Command {
         } else {
             logger.logError("MYCOLOGIST", mycologistId, "Failed to place fungus on tecton.");
         }
+         game.notifyObservers();
     }
 
     /**

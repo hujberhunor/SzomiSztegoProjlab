@@ -40,6 +40,7 @@ public class GrowHyphaCommand implements Command {
 
             fungus.getSpecies().decreaseActions();
         }
+         game.notifyObservers();
     }
 
     @Override
