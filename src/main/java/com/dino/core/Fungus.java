@@ -22,7 +22,6 @@ import com.dino.util.Logger;
 import com.dino.util.ObjectNamer;
 import com.dino.util.SerializableEntity;
 import com.dino.util.SerializerUtil;
-import com.dino.util.Skeleton;
 import com.google.gson.JsonObject;
 
 /**
@@ -185,7 +184,7 @@ public class Fungus implements SerializableEntity {
         }
 
         // Ellenőrízzük, hogy a két tekton szomszédos-e egymással és a gomba tektonjával
-        if (!t.get(0).isNeighbor(tecton) || !t.get(1).isNeighbor(t.get(1))){
+        if (!t.get(0).isNeighbor(t.get(1)) || !t.get(1).isNeighbor(t.get(0))){
             logger.logError("FUNGUS", namer.getName(this),"Nem lehet növeszteni gombafonalat: a tektonok nem szomszédosak egymással.");
             // skeleton.log("Nem lehet növeszteni gombafonalat: a tektonok nem szomszédosak egymással.");
             // skeleton.endMethod();
@@ -208,7 +207,6 @@ public class Fungus implements SerializableEntity {
                 logger.logError("FUNGUS", namer.getName(this),"Nem lehet növeszteni hosszú gombafonalat: az első tektonon nincs spóra.");
                 // skeleton.log("Nem lehet növeszteni hosszú gombafonalat: az első tektonon nincs spóra.");
                 // skeleton.endMethod();
-                return false;
             }
         }
 
@@ -217,19 +215,22 @@ public class Fungus implements SerializableEntity {
         Hypha newHypha = new Hypha(species, this);
         namer.register(newHypha);
         tecton.addHypha(newHypha);
+        t.get(1).addHypha(newHypha);
         hyphas.add(newHypha);
         newHypha.getTectons().add(tecton);
+        newHypha.getTectons().add(t.get(1));
 
         for (Tecton currTecton : t) {
+            /*
             // Növesztünk egy új gombafonalat a tektonra
             newHypha.continueHypha(currTecton); // A fonal folytatása ezen a tektonon
             currTecton.addHypha(newHypha); // Hozzáadjuk a fonalat a tektonhoz
+             */
 
             logger.logOk("FUNGUS", namer.getName(this),"ACTION", "ATTEMPT_GROW_HYPHA", "SUCCESS");
             // skeleton.log("Gombafonál sikeresen növesztve a tektonon: " + currTecton.toString());
         }
 
-        species.decreaseActions();
         // skeleton.endMethod();
         return true; // Ha sikerült minden tektonra növeszteni
     }

@@ -17,7 +17,7 @@ import com.google.gson.JsonObject;
 public class InfiniteHyphaTecton extends Tecton {
 
     /// Attribútum
-    private int hyphaCount; // A tektonon lévő fonalak száma
+    //private int hyphaCount; // A tektonon lévő fonalak száma
     private int hyphaLimit; // Korlátlan (-1)
 
     /**
@@ -26,7 +26,7 @@ public class InfiniteHyphaTecton extends Tecton {
     public InfiniteHyphaTecton() {
         super();
         this.hyphaLimit = -1; // Végtelen számú fonál biztosítása
-        this.hyphaCount = 0;
+        //this.hyphaCount = 0;
     }
 
     /**
@@ -45,35 +45,41 @@ public class InfiniteHyphaTecton extends Tecton {
         
         // Minden fonalat elfogadunk, mivel korlátlan számú lehet
         hyphas.add(h);
-        hyphaCount++;
+        //hyphaCount++;
         
-        logger.logChange("TECTON", this, "ADD_HYPHA", String.valueOf(hyphaCount-1), String.valueOf(hyphaCount));
+        //logger.logChange("TECTON", this, "ADD_HYPHA", String.valueOf(hyphaCount-1), String.valueOf(hyphaCount));
 }
 
     /**
      * Hyphacount növelése
      */
-    public void increaseHyphaCount() {
+    /* public void increaseHyphaCount() {
         this.hyphaCount++;
     }
+
+     */
 
     /**
      * Hyphacount csökkentése
      */
+    /*
     public void decreaseHyphaCount() {
         if (this.hyphaCount > 0) {
             this.hyphaCount--;
         }
     }
 
-    /**
+     */
+
+    /*
      * Hyphacount getter
      *
      * @return A tektonon lévő fonalak száma
      */
-    public int getHyphaCount() {
+    /* public int getHyphaCount() {
         return hyphaCount;
     }
+     */
 
     /**
      * Létrehoz egy új, ugyanolyan típusú tektont
@@ -89,7 +95,7 @@ public class InfiniteHyphaTecton extends Tecton {
     public JsonObject serialize(ObjectNamer namer) {
         JsonObject obj = super.serialize(namer);
 
-        obj.addProperty("hyphaCount", hyphaCount);
+        //obj.addProperty("hyphaCount", hyphaCount);
         obj.addProperty("hyphaLimit", hyphaLimit);
 
         return obj;
