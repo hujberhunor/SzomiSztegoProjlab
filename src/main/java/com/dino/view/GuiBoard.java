@@ -472,22 +472,6 @@ public class GuiBoard implements ModelObserver {
         // Add insect information
         if (!tecton.getInsects().isEmpty()) {
             info.append("Insects: ").append(tecton.getInsects().size()).append("\n");
-            for (Insect insect : tecton.getInsects()) {
-                info.append(" - ").append(registry.getNameOf(insect)).append("\n");
-            }
-        } else {
-            info.append("Insects: None\n");
-        }
-
-        // Add spore information
-        if (!tecton.getSporeMap().isEmpty()) {
-            info.append("Spores: \n");
-            for (Map.Entry<Spore, Integer> entry : tecton.getSporeMap().entrySet()) {
-                info.append(" - ").append(registry.getNameOf(entry.getKey()))
-                        .append(": ").append(entry.getValue()).append("\n");
-            }
-        } else {
-            info.append("Spores: None\n");
         }
 
         // Add hypha information
