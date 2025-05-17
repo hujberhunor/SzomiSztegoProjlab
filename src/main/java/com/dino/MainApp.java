@@ -39,7 +39,7 @@ public class MainApp extends Application {
             GuiBoard gameBoard = new GuiBoard();
             Scoreboard scoreboard = new Scoreboard();
             TopBar topBar = new TopBar(scoreboard);
-            BottomBar bottomBar = new BottomBar();
+            BottomBar bottomBar = new BottomBar(Game.getInstance());
 
             // Observer kapcsolatok beállítása
             game.addObserver(gameBoard);

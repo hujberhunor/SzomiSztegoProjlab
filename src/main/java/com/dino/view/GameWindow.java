@@ -14,7 +14,7 @@ public class GameWindow {
      */
     public void startGame(Game game) {
         gameBoard = new GuiBoard();
-        bottomBar = new BottomBar();
+        bottomBar = new BottomBar(Game.getInstance());
         scoreboard = new Scoreboard();
         topBar = new TopBar(scoreboard);
         gameBoard.update(game);
