@@ -53,26 +53,11 @@ public class ObjectNamer {
 
     private String generateName(Object obj) {
         if (obj instanceof Tecton) {
-            Tecton tecton = (Tecton) obj;
-            List<String> hexIds = tecton.getHexagons().stream()
-                    .filter(h -> h != null)
-                    .map(h -> String.valueOf(h.getId()))
-                    .sorted()
-                    .collect(Collectors.toList());
-
-            if (hexIds.isEmpty()) {
-                return "tecton_" + nextIndex(Tecton.class);
-            } else {
-                return "tecton_" + String.join("_", hexIds);
-            }
+           return "tecton_" + nextIndex(Tecton.class);
         }
 
         if (obj instanceof Hypha) {
-            Hypha hypha = (Hypha) obj;
-            List<String> tectonNames = hypha.getTectons().stream()
-                    .map(registry::getNameOf)
-                    .collect(Collectors.toList());
-            return "hypha_" + String.join("→", tectonNames);
+           return "hypha_" + nextIndex(Hypha.class);
         }
 
         if (obj instanceof Insect)

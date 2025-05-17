@@ -53,6 +53,8 @@ public class CommandParser {
                 return new EndGameCommand();
             case "SELECT_ENTITY":
                 return new SelectEntityCommand(parts[1]);
+            case "HELP":
+                return new HelpCommand();
             default:
                 throw new IllegalArgumentException(
                     "Unknown command: " + commandType

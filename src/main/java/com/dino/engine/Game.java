@@ -714,20 +714,34 @@ public class Game {
     }
 
     public boolean quickInit(){
-        int numberOfMycologist = 2;
-        int numberOfEntomologist = 2;
+        int numberOfMycologist = 4;
+        int numberOfEntomologist = 4;
         int numberOfRounds = 5;
+
+        Random random = new Random();
+        Tecton targTecton = map.getTectons().get(random.nextInt(map.getTectons().size()));
+
+        // Tecton.connectTectons(targTecton, map.getTectons().get(random.nextInt(map.getTectons().size())));
+        // Tecton.connectWithHypha(targTecton, map.getTectons().get(random.nextInt(map.getTectons().size())));
+
 
         for (int i = 0; i < numberOfMycologist; i++) {
             Mycologist mycologist = new Mycologist();
             players.add(mycologist);
             namer.register(mycologist);
+            mycologist.placeFungus(targTecton);
+            // Random random = new Random();
+            // mycologist.placeFungus(map.getTectons().get(random.nextInt(map.getTectons().size())));
         }
 
         for (int i = 0; i < numberOfEntomologist; i++) {
             Entomologist entomologist = new Entomologist();
             players.add(entomologist);
             namer.register(entomologist);
+            // Random random = new Random();
+            // Tecton targTecton = map.getTectons().get(random.nextInt(map.getTectons().size()));
+            Insect insect = new Insect(entomologist, targTecton);
+            targTecton.getInsects().add(insect);
         }
 
         totalRounds = numberOfRounds;

@@ -1,5 +1,7 @@
 package com.dino.view;
 
+import com.dino.commands.Command;
+import com.dino.commands.CommandParser;
 import com.dino.engine.Game;
 import com.dino.util.Logger;
 
@@ -19,32 +21,29 @@ import javafx.scene.text.Font;
 import javafx.scene.text.FontWeight;
 
 public class BottomBar extends VBox implements ModelObserver {
-    private TextField commandInput;
-    private TextArea logDisplay;
+    private final TextField commandInput;
+    private final TextArea logDisplay;
+    private final Game game;
+    private final Logger logger;
+    private final CommandParser parser;
 
-    public BottomBar() {
+    public BottomBar(Game game) {
+        this.game = game;
+        this.logger = game.getLogger(); // vagy Logger.getInstance()
+        this.parser = new CommandParser(game);
+
+        // GUI init
         setSpacing(5);
         setPadding(new Insets(10));
         setAlignment(Pos.BOTTOM_LEFT);
         setMaxWidth(Double.MAX_VALUE);
-
-        setBackground(new Background(new BackgroundFill(
-            Color.rgb(30, 30, 30, 0.7),
-            new CornerRadii(10),
-            Insets.EMPTY
-        )));
+        setBackground(new Background(new BackgroundFill(Color.rgb(30, 30, 30, 0.7), new CornerRadii(10), Insets.EMPTY)));
         setEffect(new DropShadow(2, Color.BLACK));
 
         commandInput = new TextField();
         commandInput.setFont(Font.font("Consolas", FontWeight.BOLD, 12));
         commandInput.setPromptText("Enter command...");
         commandInput.setStyle("-fx-text-fill: white; -fx-background-color: rgba(20, 20, 20, 0.8);");
-
-        commandInput.setOnAction(e -> {
-            String command = getCommand();
-            Logger.getInstance().logOk("COMMAND", "USER", "EXECUTE", "", command);
-            clearInput();
-        });
 
         logDisplay = new TextArea();
         logDisplay.setEditable(false);
@@ -56,8 +55,35 @@ public class BottomBar extends VBox implements ModelObserver {
 
         getChildren().addAll(logDisplay, commandInput);
 
-        //Logger.getInstance().addListener(this::appendLog);
+        // ESEMÉNY: ENTER billentyű
+        commandInput.setOnAction(e -> processCommand());
+
+        // opcionális: logger visszajelzés
+        logger.addListener(this::appendLog);
     }
+
+private void processCommand() {
+    String input = getCommand().trim();
+    clearInput();
+
+    if (input.isBlank()) return;
+
+    try {
+        Command command = parser.parse(input);
+        if (command.validate(game)) {
+            command.execute(game, logger);
+            appendLog("[OK] Executed: " + input);
+        } else {
+            appendLog("[ERROR] Invalid command: " + input);
+        }
+    } catch (Exception ex) {
+        appendLog("[ERROR] " + ex.getMessage());
+    }
+game.notifyObservers();
+
+}
+
+
 
     /**
      * Új log bejegyzés hozzáadása

@@ -30,6 +30,8 @@ import com.dino.util.ObjectNamer;
 import com.dino.util.Serializer;
 import com.google.gson.JsonObject;
 
+import javafx.application.Application;
+
 public class Main {
 
     public static void SimpleSerializeTest() {
@@ -775,6 +777,7 @@ public class Main {
             System.out.println("12. Deszerializálás");
             System.out.println("13. Tesztek futtatása");
             System.out.println("14. Full gameplay statikus mapon");
+            System.out.println("15. GUI");
             System.out.println("-----------------------");
             System.out.print("Select use case (e.g. 1, 2...): ");
             int useCase = scanner.nextInt();
@@ -803,6 +806,9 @@ public class Main {
                     break;
                 case 14:
                     staticMap();
+                    break;
+                case 15:
+                    Application.launch(MainApp.class, args);
                     break;
                 default:
                     System.out.println("Invalid input");

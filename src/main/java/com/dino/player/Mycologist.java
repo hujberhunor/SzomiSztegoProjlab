@@ -5,6 +5,7 @@ import java.util.List;
 
 import com.dino.core.Fungus;
 import com.dino.core.Hypha;
+import com.dino.engine.Game;
 import com.dino.tecton.Tecton;
 import com.dino.util.EntityRegistry;
 import com.dino.util.Logger;
@@ -51,7 +52,7 @@ public class Mycologist extends Player implements SerializableEntity {
         Logger logger = Logger.getInstance();
 
         String tectonName = namer.getName(t);
-
+        
         // Ellenőrizzük, hogy a tekton tartalmaz-e a gombász által vezérelt fajnak
         // megfelelő fonalat
         boolean tectonHasHypha = false;
@@ -72,7 +73,7 @@ public class Mycologist extends Player implements SerializableEntity {
                     "Nem lehet elhelyezni a gombát: nincs elegendő spóra a tektonon " + tectonName);
             return;
         }
-
+        
         int oldMushroomsCount = mushrooms.size();
 
         // Gombatest létrehozása és hozzáadása a listához
