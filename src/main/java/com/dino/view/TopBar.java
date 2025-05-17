@@ -29,6 +29,7 @@ public class TopBar extends HBox implements ModelObserver {
 
     private final Label roundLabel;
     private final Label playerLabel;
+    private final Label actionsLeftLabel;
     private final Button scoreboardButton;
 
     public TopBar(Scoreboard scoreboard){
@@ -53,14 +54,18 @@ public class TopBar extends HBox implements ModelObserver {
 
         roundLabel = new Label("Current Round: N/A");
         playerLabel = new Label("Current Player: N/A");
+        actionsLeftLabel = new Label("Actions Left: N/A");
 
         roundLabel.setTextFill(Color.WHITE);
         roundLabel.setFont(Font.font("Georgia", FontWeight.BOLD, 16));
         playerLabel.setTextFill(Color.WHITE);
         playerLabel.setFont(Font.font("Georgia", FontWeight.BOLD, 16));
+        actionsLeftLabel.setTextFill(Color.WHITE);
+        actionsLeftLabel.setFont(Font.font("Georgia", FontWeight.BOLD, 16));
 
         StackPane roundWrapper = wrapLabel(roundLabel);
         StackPane playerWrapper = wrapLabel(playerLabel);
+        StackPane actionsWrapper = wrapLabel(actionsLeftLabel);
 
         scoreboardButton = new Button("Scoreboard");
         scoreboardButton.setFont(Font.font("Georgia", FontWeight.BOLD, 16));
@@ -90,7 +95,21 @@ public class TopBar extends HBox implements ModelObserver {
             )));
             buttonWrapper.setEffect(new DropShadow(2, Color.BLACK));
 
-        getChildren().addAll(roundWrapper, leftSpacer, playerWrapper, centerSpacer, buttonWrapper, rightSpacer);
+        HBox leftContainer = new HBox(wrapLabel(roundLabel));
+        HBox centerContainer = new HBox(wrapLabel(playerLabel), wrapLabel(actionsLeftLabel));
+        HBox rightContainer = new HBox(createButtonWrapper(scoreboardButton));
+
+        leftContainer.setAlignment(Pos.CENTER_LEFT);
+        centerContainer.setAlignment(Pos.CENTER);
+        rightContainer.setAlignment(Pos.CENTER_RIGHT);
+
+        HBox.setHgrow(leftContainer, Priority.ALWAYS);
+        HBox.setHgrow(centerContainer, Priority.ALWAYS);
+        HBox.setHgrow(rightContainer, Priority.ALWAYS);
+
+        getChildren().addAll(leftContainer, centerContainer, rightContainer);
+        centerContainer.setSpacing(10);
+
     }
 
     private StackPane wrapLabel(Label label){
@@ -123,6 +142,10 @@ public class TopBar extends HBox implements ModelObserver {
         playerLabel.setText("Current Player: " + (player != null ? player.name : "N/A"));
     }
 
+    public void updateActionsLeft(int actionsLeft) {
+        actionsLeftLabel.setText("Actions Left: " + actionsLeft);
+    }
+
     /**
      * Frissíti a komponenst a játék aktuális állapota alapján
      * @param game A játék aktuális állapota
@@ -131,5 +154,18 @@ public class TopBar extends HBox implements ModelObserver {
     public void update(Game game) {
         updateTurn(game.getCurrentRound());
         updatePlayer(game.getCurrentPlayer());
+        updateActionsLeft(game.getCurrentPlayer().getRemainingActions());
+    }
+
+    private StackPane createButtonWrapper(Button button) {
+        StackPane wrapper = new StackPane(button);
+        wrapper.setPadding(new Insets(5, 15, 5, 15));
+        wrapper.setBackground(new Background(new BackgroundFill(
+            Color.rgb(60, 60, 60, 0.8),
+            new CornerRadii(10),
+            Insets.EMPTY
+        )));
+        wrapper.setEffect(new DropShadow(2, Color.BLACK));
+        return wrapper;
     }
 }
