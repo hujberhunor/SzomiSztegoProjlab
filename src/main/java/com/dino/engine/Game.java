@@ -392,31 +392,28 @@ public class Game {
     public int nextTurn() {
         int currentIndex = players.indexOf(currentPlayer);
         int nextIndex = (currentIndex + 1) % players.size();
-        boolean turnEnded = false;
 
-        System.out.println("Aktuális játékos: " + namer.getName(currentPlayer));
-        System.out.println(
-                "Készen állsz, gépelj commandokat (pl. MOVE_INSECT insect1 tectonB):");
+        // Jelenlegi játékos nevének elmentése log üzenethez
+        String oldPlayerName = namer.getName(currentPlayer);
 
-        // Scanner kezelése külön metódusba kerül át
-        turnEnded = processPlayerCommands();
+        // Következő játékosra váltás
+        currentPlayer = players.get(nextIndex);
+        currentPlayer.remainingActions = currentPlayer.actionsPerTurn;
 
-        if (turnEnded) {
-            return 0; // Jelezzük, hogy kör vége
+        // Log üzenet
+        String newPlayerName = namer.getName(currentPlayer);
+        logger.logChange(
+                "GAME",
+                this,
+                "CURRENT_PLAYER",
+                oldPlayerName,
+                newPlayerName);
+
+        // Ha körbe értünk (az utolsó játékos után újra az első jön)
+        if (nextIndex == 0) {
+            return 0; // Jelezzük, hogy vége a körnek
         } else {
-            String oldPlayerName = namer.getName(currentPlayer);
-            currentPlayer = players.get(nextIndex);
-            currentPlayer.remainingActions = currentPlayer.actionsPerTurn;
-
-            String newPlayerName = namer.getName(currentPlayer);
-            logger.logChange(
-                    "GAME",
-                    this,
-                    "CURRENT_PLAYER",
-                    oldPlayerName,
-                    newPlayerName);
-
-            return 1;
+            return 1; // Kör még tart
         }
     }
 
@@ -474,8 +471,8 @@ public class Game {
      * Meghívódik, amikor minden játékos befejezte a saját körét.
      */
     public int nextRound() {
-        if (currRound == totalRounds) {
-            return 0;
+        if (currRound >= totalRounds) {
+            return 0; // Jelzés, hogy a játéknak vége
         }
 
         int oldRound = currRound;

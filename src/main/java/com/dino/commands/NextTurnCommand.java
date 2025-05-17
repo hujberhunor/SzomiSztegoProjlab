@@ -9,7 +9,28 @@ public class NextTurnCommand implements Command {
     public void execute(Game game, Logger logger) {
         // Jelenlegi játékos akcióinak nullázása
         game.getCurrentPlayer().remainingActions = 0;
-        logger.logChange("GAME", game, "TURN", "-", "Turn ended");
+        
+        // Következő játékosra lépés
+        int result = game.nextTurn();
+        
+        // Játék állapot értékelése
+        if (result == 0) {
+            // Ha egy kör véget ért, és az utolsó kör volt
+            if (game.getCurrentRound() >= game.getTotalRounds()) {
+                game.endGame();
+                logger.logChange("GAME", game, "STATE", "RUNNING", "ENDED");
+                logger.logChange("GAME", game, "TURN", "-", "Game ended");
+            } else {
+                // Ha nem az utolsó kör volt, akkor új kör indítása
+                game.nextRound();
+                logger.logChange("GAME", game, "TURN", "-", "New round started");
+            }
+        } else {
+            logger.logChange("GAME", game, "TURN", "-", "Turn ended");
+        }
+        
+        // Értesítjük az observer-eket
+        game.notifyObservers();
     }
 
     @Override
