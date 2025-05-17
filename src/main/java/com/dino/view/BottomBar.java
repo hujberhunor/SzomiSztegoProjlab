@@ -59,7 +59,7 @@ public class BottomBar extends VBox implements ModelObserver {
         commandInput.setOnAction(e -> processCommand());
 
         // opcionális: logger visszajelzés
-        // logger.addListener(this::appendLog);
+        logger.addListener(this::appendLog);
     }
 
 private void processCommand() {
