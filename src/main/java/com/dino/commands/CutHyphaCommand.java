@@ -40,6 +40,7 @@ public class CutHyphaCommand implements Command {
             // Sikertelen vágás esetén hiba logolása
             logger.logError("INSECT", insectId, "Failed to cut hypha at target tecton.");
         }
+         game.notifyObservers();
     }
 
     /**

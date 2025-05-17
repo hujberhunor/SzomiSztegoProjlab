@@ -30,11 +30,10 @@ public class MainApp extends Application {
             // Játék létrehozása és inicializálása
             Game game = Game.getInstance(); // Singleton pattern használata
             game.initBoard(); // Játéktábla generálása
-            game.quickInit(); // Gyors játékinicializálás
+            //game.quickInit(); // Gyors játékinicializálás
             Game.getInstance().initGame();
             Game.getInstance().startGame();
-            System.out.println("FASZ");
-            
+
             // UI komponensek létrehozása
             GuiBoard gameBoard = new GuiBoard();
             Scoreboard scoreboard = new Scoreboard();

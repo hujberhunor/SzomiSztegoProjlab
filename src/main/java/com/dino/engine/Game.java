@@ -24,6 +24,7 @@ import com.dino.tecton.Tecton;
 import com.dino.util.EntityRegistry;
 import com.dino.util.Logger;
 import com.dino.util.ObjectNamer;
+import com.dino.view.GameEndDialog;
 import com.dino.view.ModelObserver;
 
 /**
@@ -169,12 +170,18 @@ public class Game {
             Mycologist mycologist = new Mycologist();
             players.add(mycologist);
             namer.register(mycologist);
+            // Név beállítása
+            String name = namer.getName(mycologist);
+            mycologist.setName(name);
         }
 
         for (int i = 0; i < numberOfEntomologist; i++) {
             Entomologist entomologist = new Entomologist();
             players.add(entomologist);
             namer.register(entomologist);
+            // Név beállítása
+            String name = namer.getName(entomologist);
+            entomologist.setName(name);
         }
 
         System.out.println("Hány kör legyen a játék?");
@@ -199,10 +206,10 @@ public class Game {
      * A játék első körtől való indításáért felelő függvény.
      */
     public void startGame() {
-        //Kiválogatjuk egy listába azokat a tektonokat, amikre lehet gombát helyezni
+        // Kiválogatjuk egy listába azokat a tektonokat, amikre lehet gombát helyezni
         List<Tecton> tectons = new ArrayList<>();
-        for (Tecton t : map.getTectons()){
-            if(!(t instanceof NoFungiTecton))
+        for (Tecton t : map.getTectons()) {
+            if (!(t instanceof NoFungiTecton))
                 tectons.add(t);
         }
 
@@ -236,7 +243,7 @@ public class Game {
                 namer.register(fungus);
                 tectonsWithFungus.add(selectedTecton);
                 numberOfMycologist++;
-                System.out.println("Gomba: "+ namer.getName(fungus) + "\n");
+                System.out.println("Gomba: " + namer.getName(fungus) + "\n");
             }
         }
 
@@ -391,31 +398,28 @@ public class Game {
     public int nextTurn() {
         int currentIndex = players.indexOf(currentPlayer);
         int nextIndex = (currentIndex + 1) % players.size();
-        boolean turnEnded = false;
 
-        System.out.println("Aktuális játékos: " + namer.getName(currentPlayer));
-        System.out.println(
-                "Készen állsz, gépelj commandokat (pl. MOVE_INSECT insect1 tectonB):");
+        // Jelenlegi játékos nevének elmentése log üzenethez
+        String oldPlayerName = namer.getName(currentPlayer);
 
-        // Scanner kezelése külön metódusba kerül át
-        turnEnded = processPlayerCommands();
+        // Következő játékosra váltás
+        currentPlayer = players.get(nextIndex);
+        currentPlayer.remainingActions = currentPlayer.actionsPerTurn;
 
-        if (turnEnded) {
-            return 0; // Jelezzük, hogy kör vége
+        // Log üzenet
+        String newPlayerName = namer.getName(currentPlayer);
+        logger.logChange(
+                "GAME",
+                this,
+                "CURRENT_PLAYER",
+                oldPlayerName,
+                newPlayerName);
+
+        // Ha körbe értünk (az utolsó játékos után újra az első jön)
+        if (nextIndex == 0) {
+            return 0; // Jelezzük, hogy vége a körnek
         } else {
-            String oldPlayerName = namer.getName(currentPlayer);
-            currentPlayer = players.get(nextIndex);
-            currentPlayer.remainingActions = currentPlayer.actionsPerTurn;
-
-            String newPlayerName = namer.getName(currentPlayer);
-            logger.logChange(
-                    "GAME",
-                    this,
-                    "CURRENT_PLAYER",
-                    oldPlayerName,
-                    newPlayerName);
-
-            return 1;
+            return 1; // Kör még tart
         }
     }
 
@@ -473,8 +477,8 @@ public class Game {
      * Meghívódik, amikor minden játékos befejezte a saját körét.
      */
     public int nextRound() {
-        if (currRound == totalRounds) {
-            return 0;
+        if (currRound >= totalRounds) {
+            return 0; // Jelzés, hogy a játéknak vége
         }
 
         int oldRound = currRound;
@@ -487,11 +491,11 @@ public class Game {
                 String.valueOf(oldRound),
                 String.valueOf(currRound));
 
-        //map.breakHandler();
+        // map.breakHandler();
 
         for (Player player : players) {
-            if(player instanceof Mycologist){
-                for (Fungus f : ((Mycologist) player).getMushrooms()){
+            if (player instanceof Mycologist) {
+                for (Fungus f : ((Mycologist) player).getMushrooms()) {
                     int oldCharge = f.getCharge();
                     f.increaseCharge();
                     logger.logChange("FUNGUS", f, "CHARGE", oldCharge, f.getCharge());
@@ -539,6 +543,21 @@ public class Game {
                             player.name +
                             " - Pontszám: " +
                             player.score);
+        }
+
+        // Értesítjük az observer-eket, hogy a játék véget ért
+        notifyObservers();
+
+        // Ha JavaFX környezetben vagyunk, GUI dialógust is megjelenítünk
+        try {
+            javafx.application.Platform.runLater(() -> {
+                GameEndDialog dialog = new GameEndDialog(players);
+                dialog.showAndWait();
+            });
+        } catch (Exception e) {
+            // Ha nincs JavaFX környezet (pl. konzol módban futunk),
+            // akkor csak ignoráljuk a hibát
+            System.out.println("(GUI nem elérhető, csak konzolos megjelenítés)");
         }
     }
 
@@ -714,7 +733,7 @@ public class Game {
         }
     }
 
-    public boolean quickInit(){
+    public boolean quickInit() {
         int numberOfMycologist = 4;
         int numberOfEntomologist = 4;
         int numberOfRounds = 5;
@@ -722,9 +741,10 @@ public class Game {
         Random random = new Random();
         Tecton targTecton = map.getTectons().get(random.nextInt(map.getTectons().size()));
 
-        // Tecton.connectTectons(targTecton, map.getTectons().get(random.nextInt(map.getTectons().size())));
-        // Tecton.connectWithHypha(targTecton, map.getTectons().get(random.nextInt(map.getTectons().size())));
-
+        // Tecton.connectTectons(targTecton,
+        // map.getTectons().get(random.nextInt(map.getTectons().size())));
+        // Tecton.connectWithHypha(targTecton,
+        // map.getTectons().get(random.nextInt(map.getTectons().size())));
 
         for (int i = 0; i < numberOfMycologist; i++) {
             Mycologist mycologist = new Mycologist();
@@ -740,7 +760,8 @@ public class Game {
             players.add(entomologist);
             namer.register(entomologist);
             // Random random = new Random();
-            // Tecton targTecton = map.getTectons().get(random.nextInt(map.getTectons().size()));
+            // Tecton targTecton =
+            // map.getTectons().get(random.nextInt(map.getTectons().size()));
             Insect insect = new Insect(entomologist, targTecton);
             targTecton.getInsects().add(insect);
         }

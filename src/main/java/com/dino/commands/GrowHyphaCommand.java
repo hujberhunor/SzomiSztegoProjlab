@@ -29,7 +29,18 @@ public class GrowHyphaCommand implements Command {
         Tecton nextTecton = (Tecton) registry.getByName(nextTectonName);
 
         Hypha hypha = new Hypha(mycologist, fungus);
+
+        // A fonál indítása a kezdő tectonról
+        hypha.getTectons().add(startTecton);
+        startTecton.hyphas.add(hypha);
+
+        // Folytatása a cél tectonra
         boolean success = hypha.continueHypha(nextTecton);
+
+        // Hozzáadjuk a fonalat a cél tectonhoz is
+        if (success) {
+            nextTecton.hyphas.add(hypha);
+        }
 
         String baseName = "hypha_" + fungusId;
         String name = baseName;
@@ -41,9 +52,10 @@ public class GrowHyphaCommand implements Command {
 
         logger.logChange("HYPHA", hypha, "CREATE", fungusId, startTecton.toString());
 
-        if(success) {
+        if (success) {
             fungus.getSpecies().decreaseActions();
         }
+         game.notifyObservers();
     }
 
     @Override
@@ -57,4 +69,3 @@ public class GrowHyphaCommand implements Command {
         return "GROW_HYPHA " + fungusName;
     }
 }
-
