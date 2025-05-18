@@ -194,30 +194,21 @@ public abstract class Tecton implements SerializableEntity {
 
         String currentTectonName = namer.getName(this);
 
-        // Ha van rajta rovar, nem törhet el a tekton
-        if (!insects.isEmpty()) {
-            System.out.println(
-                    "[ERROR] TECTON " +
-                            currentTectonName +
-                            " Nem törhet el: van rajta rovar");
-            return resultTectons;
-        }
-
         // Ellenőrizzük, hogy a tekton nem csak egy hexagonból áll-e
         if (hexagons.size() <= 1) {
-            System.out.println(
-                    "[ERROR] TECTON " +
-                            currentTectonName +
-                            " Nem törhet el: csak egy hexagonból áll");
+            System.out.println("[ERROR] TECTON " + currentTectonName + " Nem törhet el: csak egy hexagonból áll");
             return resultTectons;
         }
 
         // Ha már kétszer tört a tekton, akkor nem törhet újra
         if (breakCount >= 2) {
-            System.out.println(
-                    "[ERROR] TECTON " +
-                            currentTectonName +
-                            " Nem törhet el: már kétszer tört");
+            System.out.println("[ERROR] TECTON " + currentTectonName + " Nem törhet el: már kétszer tört");
+            return resultTectons;
+        }
+
+        // Ha van rajta rovar, nem törhet el a tekton
+        if (!insects.isEmpty()) {
+            System.out.println("[ERROR] TECTON " + currentTectonName + " Nem törhet el: van rajta rovar");
             return resultTectons;
         }
 
