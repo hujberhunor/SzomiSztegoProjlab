@@ -53,7 +53,6 @@ public class Insect implements SerializableEntity {
         this.currentTecton = currentTecton;
         this.effects = new ArrayList<>();
         this.entomologist.addInsects(this);
-        currentTecton.addInsect(this);
     }
 
     // Számontartja, hogy a rovar mozoghat-e ingyen a jelenlegi körében, ha gyorsító
@@ -149,7 +148,10 @@ public class Insect implements SerializableEntity {
             "ATTEMPT_MOVE",
             "SUCCESS"
         );
+
         currentTecton = targetTecton;
+        currentTecton.getInsects().remove(this);
+        targetTecton.getInsects().add(this);
         // skeleton.log("Rovar sikeresen mozgott az új tektonra.");
 
         if (isUnderEffect(AcceleratingEffect.class) && extraMove && isUnderEffect(SlowingEffect.class)) {
