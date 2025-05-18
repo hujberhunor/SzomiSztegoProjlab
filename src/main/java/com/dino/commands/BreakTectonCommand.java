@@ -74,19 +74,6 @@ public class BreakTectonCommand implements Command {
         }
 
         game.notifyObservers();
-        // A command végére:
-        // Debug információ kiírása
-        System.out.println("DEBUG: Original tecton hexagons: " +
-                original.hexagons.stream().map(h -> Integer.toString(h.getId())).collect(Collectors.joining(",")));
-
-        System.out.println("DEBUG: New tecton count: " + newTectons.size());
-        for (int i = 0; i < newTectons.size(); i++) {
-            System.out.println("DEBUG: New tecton " + i + " hexagons: " +
-                    newTectons.get(i).hexagons.stream().map(h -> Integer.toString(h.getId()))
-                            .collect(Collectors.joining(",")));
-        }
-
-        System.out.println("DEBUG: Game board tecton count: " + game.getBoard().getAllTectons().size());
     }
 
     /**

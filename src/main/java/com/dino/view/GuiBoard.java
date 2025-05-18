@@ -820,19 +820,13 @@ public class GuiBoard implements ModelObserver {
         System.out.println("Recoloring tectons: " + registry.getNameOf(tecton1) +
                 " and " + registry.getNameOf(tecton2));
 
-        // Hexagonok azonosítóinak kiírása debug célból
-        System.out.println("Tecton1 hexagons: " +
-                tecton1.hexagons.stream().map(h -> Integer.toString(h.getId())).collect(Collectors.joining(",")));
-        System.out.println("Tecton2 hexagons: " +
-                tecton2.hexagons.stream().map(h -> Integer.toString(h.getId())).collect(Collectors.joining(",")));
-
         // Teljes újrarajzolás
         boardPane.getChildren().clear();
         hexagonShapes.clear();
         hexagonPositions.clear();
         existingHexagonIds.clear();
 
-        // Explicit módon újrarajzoljuk a teljes táblát
+        // újrarajzoljuk a teljes táblát
         render(Game.getInstance());
     }
 }

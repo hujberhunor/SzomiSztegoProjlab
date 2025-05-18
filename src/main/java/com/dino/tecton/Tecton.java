@@ -481,13 +481,6 @@ public abstract class Tecton implements SerializableEntity {
         // Az új csoportok beállítása a tectonokban
         tecton1.hexagons = group1;
         tecton2.hexagons = group2;
-
-        // Debug információ
-        System.out.println("Dividing hexagons into connected groups:");
-        System.out.println(
-                "Group 1: " + group1.stream().map(h -> Integer.toString(h.getId())).collect(Collectors.joining(",")));
-        System.out.println(
-                "Group 2: " + group2.stream().map(h -> Integer.toString(h.getId())).collect(Collectors.joining(",")));
     }
 
     /**
