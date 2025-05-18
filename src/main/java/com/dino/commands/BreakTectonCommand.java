@@ -3,6 +3,7 @@ package com.dino.commands;
 import java.util.List;
 import java.util.stream.Collectors;
 
+import com.dino.core.Hexagon;
 import com.dino.engine.Game;
 import com.dino.tecton.Tecton;
 import com.dino.util.EntityRegistry;
@@ -41,7 +42,6 @@ public class BreakTectonCommand implements Command {
         String newNameA = baseName + "_A";
         String newNameB = baseName + "_B";
 
-        // Új tekton az ős + A vagy B nevet kapja
         if (registry.getByName(newNameA) != null) {
             newNameA += "_" + System.currentTimeMillis();
         }
@@ -49,7 +49,6 @@ public class BreakTectonCommand implements Command {
             newNameB += "_" + System.currentTimeMillis();
         }
 
-        // Új tektonok regisztrálása és logolása
         registry.register(newNameA, newTectons.get(0));
         registry.register(newNameB, newTectons.get(1));
 
@@ -57,23 +56,48 @@ public class BreakTectonCommand implements Command {
         game.getBoard().getAllTectons().add(newTectons.get(0));
         game.getBoard().getAllTectons().add(newTectons.get(1));
 
+        // Javítás 4: Szomszédsági kapcsolatok beállítása az új Tectonok között
+        Tecton.connectTectons(newTectons.get(0), newTectons.get(1));
+        logger.logChange("TECTON", newTectons.get(0), "NEIGHBOURS_ADD", "-", newNameB);
+
+        // Javítás 5: Szomszédsági kapcsolatok átvitele az eredeti Tectonról
+        for (Tecton neighbour : original.getNeighbours()) {
+            // Csak akkor ha nem az eredeti Tecton (ami már törölve van)
+            if (!neighbour.equals(original)) {
+                for (Tecton newTecton : newTectons) {
+                    if (areTectonsNeighbours(newTecton, neighbour)) {
+                        Tecton.connectTectons(newTecton, neighbour);
+                        logger.logChange("TECTON", newTecton, "NEIGHBOURS_ADD", "-",
+                                registry.getNameOf(neighbour));
+                    }
+                }
+            }
+        }
+
         logger.logChange("TECTON", original, "BREAK", baseName, newNameA);
         logger.logChange("TECTON", original, "BREAK", baseName, newNameB);
 
-        // Új tektonok újraszínezése a GUI-n
+        // GUI frissítése
         for (ModelObserver observer : game.getObservers()) {
             if (observer instanceof GuiBoard) {
                 GuiBoard guiBoard = (GuiBoard) observer;
                 guiBoard.recolorTecton(newTectons.get(0), newTectons.get(1));
-
-                // Javítás 4: Teljes újrarajzolás erőltetése
-                guiBoard.boardPane.getChildren().clear();
-                guiBoard.render(game);
-                break;
             }
         }
 
         game.notifyObservers();
+    }
+
+    // Segédmetódus, ami meghatározza, hogy két Tecton szomszédos-e a hexagonok alapján
+    private boolean areTectonsNeighbours(Tecton a, Tecton b) {
+        for (Hexagon hexA : a.getHexagons()) {
+            for (Hexagon hexB : b.getHexagons()) {
+                if (hexA.getNeighbours().contains(hexB)) {
+                    return true;
+                }
+            }
+        }
+        return false;
     }
 
     /**
