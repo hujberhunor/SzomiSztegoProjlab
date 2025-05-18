@@ -17,6 +17,8 @@ import com.dino.tecton.Tecton;
 import com.dino.util.EntityRegistry;
 import com.dino.util.Logger;
 import com.dino.util.ObjectNamer;
+import com.dino.view.GuiBoard;
+import com.dino.view.ModelObserver;
 
 /**
  * A játékteret kezelő és megvalósító osztály.
@@ -84,13 +86,13 @@ public class GameBoard {
         List<Tecton> newTectons = new ArrayList<>();
         List<Tecton> tectonskToRemove = new ArrayList<>();
 
-        // Minden tektonra megpróbáljuk elvégezni a törést
+        // Minden tectonra megpróbáljuk elvégezni a törést
         for (Tecton tecton : tectons) {
             List<Tecton> splitResult = tecton.split(tecton.breakChance);
 
-            // Ha a split művelet új tektonokat eredményezett
+            // Ha a split művelet új tectonokat eredményezett
             if (!splitResult.isEmpty()) {
-                // Regisztráljuk az új tektonokat
+                // Regisztráljuk az új tectonokat
                 for (Tecton newTecton : splitResult) {
                     namer.register(newTecton);
                 }
@@ -103,6 +105,15 @@ public class GameBoard {
                     Tecton.connectTectons(splitResult.get(0), splitResult.get(1));
                     logger.logChange("TECTON", splitResult.get(0), "NEIGHBOURS_ADD", "-",
                             namer.getName(splitResult.get(1)));
+
+                    // Itt hívd meg a recolorTecton metódust a Game osztályon keresztül
+                    Game game = Game.getInstance();
+                    for (ModelObserver observer : game.getObservers()) {
+                        if (observer instanceof GuiBoard) {
+                            ((GuiBoard) observer).recolorTecton(splitResult.get(0), splitResult.get(1));
+                            break;
+                        }
+                    }
                 }
 
                 // Szomszédsági kapcsolatok átvitele az eredeti tektonról
@@ -132,6 +143,8 @@ public class GameBoard {
 
         // Hozzáadjuk az új tektonokat
         tectons.addAll(newTectons);
+
+        Game.getInstance().notifyObservers();
     }
 
     /**

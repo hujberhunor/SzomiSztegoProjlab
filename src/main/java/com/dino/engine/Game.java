@@ -774,4 +774,8 @@ public class Game {
 
         return true;
     }
+
+    public List<ModelObserver> getObservers() {
+        return observers;
+    }
 }
