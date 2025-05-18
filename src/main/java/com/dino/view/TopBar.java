@@ -155,6 +155,7 @@ public class TopBar extends HBox implements ModelObserver {
         updateTurn(game.getCurrentRound());
         updatePlayer(game.getCurrentPlayer());
         updateActionsLeft(game.getCurrentPlayer().getRemainingActions());
+        
     }
 
     private StackPane createButtonWrapper(Button button) {
