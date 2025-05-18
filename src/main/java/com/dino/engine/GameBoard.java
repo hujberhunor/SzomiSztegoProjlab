@@ -20,6 +20,8 @@ import com.dino.util.ObjectNamer;
 import com.dino.view.GuiBoard;
 import com.dino.view.ModelObserver;
 
+import javafx.application.Platform;
+
 /**
  * A játékteret kezelő és megvalósító osztály.
  * Eltárolja az azt alkotó összes tektont, amiken keresztül el tudja érni azok
@@ -80,71 +82,106 @@ public class GameBoard {
     }
 
     /**
-     * A körök végén a tektonok törését kezelő függvény.
+     * A körök végén a tektonok törését kezelő függvény, aszinkron módon.
      */
     public void breakHandler() {
-        List<Tecton> newTectons = new ArrayList<>();
-        List<Tecton> tectonskToRemove = new ArrayList<>();
+        // Ne a főszálon futtasd, hogy ne akadályozza a GUI-t
+        new Thread(() -> {
+            try {
+                List<Tecton> newTectons = new ArrayList<>();
+                List<Tecton> tectonskToRemove = new ArrayList<>();
 
-        // Minden tectonra megpróbáljuk elvégezni a törést
-        for (Tecton tecton : tectons) {
-            List<Tecton> splitResult = tecton.split(tecton.breakChance);
+                // Maximum 1 törés körönként
+                boolean hasBreakOccurred = false;
 
-            // Ha a split művelet új tectonokat eredményezett
-            if (!splitResult.isEmpty()) {
-                // Regisztráljuk az új tectonokat
-                for (Tecton newTecton : splitResult) {
-                    namer.register(newTecton);
-                }
+                // Minden tectonra megpróbáljuk elvégezni a törést
+                for (Tecton tecton : new ArrayList<>(tectons)) { // Másolatot használunk, hogy elkerüljük a
+                                                                 // ConcurrentModificationException-t
+                    if (hasBreakOccurred)
+                        break; // Ha már volt törés, nem folytatjuk
 
-                newTectons.addAll(splitResult);
-                tectonskToRemove.add(tecton);
+                    // Próbáljuk meg a törést
+                    List<Tecton> splitResult = tecton.split(tecton.breakChance);
 
-                // Szomszédsági kapcsolatok beállítása
-                if (splitResult.size() >= 2) {
-                    Tecton.connectTectons(splitResult.get(0), splitResult.get(1));
-                    logger.logChange("TECTON", splitResult.get(0), "NEIGHBOURS_ADD", "-",
-                            namer.getName(splitResult.get(1)));
+                    // Ha a split művelet új tectonokat eredményezett
+                    if (!splitResult.isEmpty()) {
+                        hasBreakOccurred = true; // Jelezzük, hogy volt már törés
 
-                    // Itt hívd meg a recolorTecton metódust a Game osztályon keresztül
-                    Game game = Game.getInstance();
-                    for (ModelObserver observer : game.getObservers()) {
-                        if (observer instanceof GuiBoard) {
-                            ((GuiBoard) observer).recolorTecton(splitResult.get(0), splitResult.get(1));
-                            break;
-                        }
-                    }
-                }
-
-                // Szomszédsági kapcsolatok átvitele az eredeti tektonról
-                for (Tecton neighbour : tecton.getNeighbours()) {
-                    if (!tectonskToRemove.contains(neighbour)) {
+                        // Regisztráljuk az új tectonokat
                         for (Tecton newTecton : splitResult) {
-                            if (areTectonsNeighbours(newTecton, neighbour)) {
-                                Tecton.connectTectons(newTecton, neighbour);
-                                logger.logChange("TECTON", newTecton, "NEIGHBOURS_ADD", "-",
-                                        namer.getName(neighbour));
+                            namer.register(newTecton);
+                        }
+
+                        newTectons.addAll(splitResult);
+                        tectonskToRemove.add(tecton);
+
+                        // Szomszédsági kapcsolatok beállítása
+                        if (splitResult.size() >= 2) {
+                            Tecton.connectTectons(splitResult.get(0), splitResult.get(1));
+                            logger.logChange("TECTON", splitResult.get(0), "NEIGHBOURS_ADD", "-",
+                                    namer.getName(splitResult.get(1)));
+                        }
+
+                        // Szomszédsági kapcsolatok átvitele az eredeti tektonról
+                        for (Tecton neighbour : tecton.getNeighbours()) {
+                            if (!tectonskToRemove.contains(neighbour)) {
+                                for (Tecton newTecton : splitResult) {
+                                    if (areTectonsNeighbours(newTecton, neighbour)) {
+                                        Tecton.connectTectons(newTecton, neighbour);
+                                        logger.logChange("TECTON", newTecton, "NEIGHBOURS_ADD", "-",
+                                                namer.getName(neighbour));
+                                    }
+                                }
                             }
                         }
+
+                        // Logoljuk a sikeres törést
+                        logger.logChange("GAMEBOARD", tecton, "BREAK", namer.getName(tecton),
+                                splitResult.stream()
+                                        .map(namer::getName)
+                                        .reduce((a, b) -> a + ", " + b)
+                                        .orElse("-"));
+
+                        // Mivel már volt egy törés, nem folytatjuk a többi Tecton ellenőrzését
+                        break;
                     }
                 }
 
-                // Logoljuk a sikeres törést
-                logger.logChange("GAMEBOARD", tecton, "BREAK", namer.getName(tecton),
-                        splitResult.stream()
-                                .map(namer::getName)
-                                .reduce((a, b) -> a + ", " + b)
-                                .orElse("-"));
+                // Eltávolítjuk a kettétört tektonokat
+                tectons.removeAll(tectonskToRemove);
+
+                // Hozzáadjuk az új tektonokat
+                tectons.addAll(newTectons);
+
+                // Csak akkor folytatjuk a GUI frissítéssel, ha történt törés
+                if (hasBreakOccurred) {
+                    // A GUI frissítése a JavaFX alkalmazás szálján kell történjen
+                    Platform.runLater(() -> {
+                        try {
+                            // Az újraszínezés
+                            Game game = Game.getInstance();
+                            if (newTectons.size() >= 2) {
+                                for (ModelObserver observer : game.getObservers()) {
+                                    if (observer instanceof GuiBoard) {
+                                        ((GuiBoard) observer).recolorTecton(newTectons.get(0), newTectons.get(1));
+                                        break;
+                                    }
+                                }
+                            }
+
+                            // Megfigyelők értesítése, biztosítva hogy a GUI frissüljön
+                            Game.getInstance().notifyObservers();
+                        } catch (Exception e) {
+                            System.err.println("GUI frissítési hiba: " + e.getMessage());
+                            e.printStackTrace();
+                        }
+                    });
+                }
+            } catch (Exception e) {
+                System.err.println("Hiba a törések feldolgozásakor: " + e.getMessage());
+                e.printStackTrace();
             }
-        }
-
-        // Eltávolítjuk a kettétört tektonokat
-        tectons.removeAll(tectonskToRemove);
-
-        // Hozzáadjuk az új tektonokat
-        tectons.addAll(newTectons);
-
-        Game.getInstance().notifyObservers();
+        }).start(); // Elindítjuk az új szálat
     }
 
     /**

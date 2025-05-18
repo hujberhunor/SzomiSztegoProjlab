@@ -23,6 +23,7 @@ import com.dino.tecton.Tecton;
 import com.dino.util.EntityRegistry;
 import com.dino.util.ObjectNamer;
 
+import javafx.application.Platform;
 import javafx.geometry.Point2D;
 import javafx.scene.Node;
 import javafx.scene.canvas.Canvas;
@@ -820,13 +821,30 @@ public class GuiBoard implements ModelObserver {
         System.out.println("Recoloring tectons: " + registry.getNameOf(tecton1) +
                 " and " + registry.getNameOf(tecton2));
 
-        // Teljes újrarajzolás
-        boardPane.getChildren().clear();
-        hexagonShapes.clear();
-        hexagonPositions.clear();
-        existingHexagonIds.clear();
+        System.out.println("Recoloring tectons: " + registry.getNameOf(tecton1) +
+                " and " + registry.getNameOf(tecton2));
 
-        // újrarajzoljuk a teljes táblát
-        render(Game.getInstance());
+        // JavaFX alkalmazás szálán frissítünk
+        Platform.runLater(() -> {
+            try {
+                // Csak az érintett hexagonok újrarajzolása
+                for (Hexagon hex : tecton1.hexagons) {
+                    Polygon hexShape = hexagonShapes.get(hex.getId());
+                    if (hexShape != null) {
+                        hexShape.setFill(tecton1.getColor());
+                    }
+                }
+
+                for (Hexagon hex : tecton2.hexagons) {
+                    Polygon hexShape = hexagonShapes.get(hex.getId());
+                    if (hexShape != null) {
+                        hexShape.setFill(tecton2.getColor());
+                    }
+                }
+            } catch (Exception e) {
+                System.err.println("Error during recolor: " + e.getMessage());
+                e.printStackTrace();
+            }
+        });
     }
 }
