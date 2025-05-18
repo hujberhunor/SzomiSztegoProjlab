@@ -21,11 +21,17 @@ public class BreakTectonCommand implements Command {
 
     @Override
     public void execute(Game game, Logger logger) {
-        EntityRegistry registry = game.getRegistry();
-        Tecton original = (Tecton) registry.getByName(tectonName);
-        String originalName = registry.getNameOf(original);
-
         try {
+            EntityRegistry registry = game.getRegistry();
+            Tecton original = (Tecton) registry.getByName(tectonName);
+            String originalName = registry.getNameOf(original);
+
+            if (original == null) {
+                logger.logError("TECTON", tectonName, "Tecton nem található");
+                return;
+            }
+
+            // 1. Először csak modell-műveleteket végzünk
             // Az eredeti Tectont eltávolítjuk a játéktábláról
             game.getBoard().getAllTectons().remove(original);
 
@@ -33,7 +39,8 @@ public class BreakTectonCommand implements Command {
             List<Tecton> newTectons = original.split(-1);
 
             if (newTectons.isEmpty()) {
-                logger.logError("TECTON", originalName, "Tecton cannot break.");
+                logger.logError("TECTON", originalName, "Tecton nem törhet el");
+                // Visszatesszük az eredeti tectont
                 game.getBoard().getAllTectons().add(original);
                 return;
             }
@@ -43,11 +50,16 @@ public class BreakTectonCommand implements Command {
             String newNameA = baseName + "_A";
             String newNameB = baseName + "_B";
 
-            if (registry.isNameRegistered(newNameA)) {
-                newNameA = baseName + "_A_" + System.currentTimeMillis();
+            // Elkerüljük a duplikált neveket
+            int counter = 1;
+            while (registry.isNameRegistered(newNameA)) {
+                newNameA = baseName + "_A" + counter;
+                counter++;
             }
-            if (registry.isNameRegistered(newNameB)) {
-                newNameB = baseName + "_B_" + System.currentTimeMillis();
+            counter = 1;
+            while (registry.isNameRegistered(newNameB)) {
+                newNameB = baseName + "_B" + counter;
+                counter++;
             }
 
             registry.register(newNameA, newTectons.get(0));
@@ -59,27 +71,12 @@ public class BreakTectonCommand implements Command {
 
             logger.logChange("TECTON", original, "BREAK", baseName, newNameA + ", " + newNameB);
 
-            // GUI frissítése JavaFX alkalmazás szálán, de csak célzottan
-            javafx.application.Platform.runLater(() -> {
-                try {
-                    // Csak a színeket frissítjük, nem rajzolunk újra mindent
-                    for (ModelObserver observer : game.getObservers()) {
-                        if (observer instanceof GuiBoard) {
-                            GuiBoard guiBoard = (GuiBoard) observer;
-                            guiBoard.recolorTecton(newTectons.get(0), newTectons.get(1));
-                            break;
-                        }
-                    }
+            // 2. Végül értesítjük az observereket, hogy frissítsék a nézetüket
+            // Ez biztonságos a főszálon is
+            game.notifyObservers();
 
-                    // Értesítjük az összes megfigyelőt a változásról
-                    game.notifyObservers();
-                } catch (Exception e) {
-                    System.err.println("GUI frissítési hiba: " + e.getMessage());
-                    e.printStackTrace();
-                }
-            });
         } catch (Exception e) {
-            logger.logError("BREAK_TECTON", originalName, "Hiba történt: " + e.getMessage());
+            logger.logError("BREAK_TECTON", tectonName, "Hiba történt: " + e.getMessage());
             e.printStackTrace();
         }
     }
