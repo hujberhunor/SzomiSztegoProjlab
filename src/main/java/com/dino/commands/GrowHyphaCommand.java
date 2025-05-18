@@ -8,6 +8,10 @@ import com.dino.tecton.Tecton;
 import com.dino.util.EntityRegistry;
 import com.dino.util.Logger;
 
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
+
 public class GrowHyphaCommand implements Command {
 
     private final String fungusName;
@@ -23,36 +27,17 @@ public class GrowHyphaCommand implements Command {
         EntityRegistry registry = game.getRegistry();
 
         Fungus fungus = (Fungus) registry.getByName(fungusName);
-        String fungusId = registry.getNameOf(fungus);
-        Mycologist mycologist = fungus.getSpecies();
         Tecton startTecton = fungus.getTecton();
         Tecton nextTecton = (Tecton) registry.getByName(nextTectonName);
+        List<Tecton> tectonsAsList = Arrays.asList(startTecton, nextTecton);
 
-        Hypha hypha = new Hypha(mycologist, fungus);
+        boolean success = fungus.growHypha(tectonsAsList);
 
-        // A fonál indítása a kezdő tectonról
-        hypha.getTectons().add(startTecton);
-        startTecton.hyphas.add(hypha);
+        if(success) {
+            Hypha hypha = fungus.getHyphas().get(0);
 
-        // Folytatása a cél tectonra
-        boolean success = hypha.continueHypha(nextTecton);
+            logger.logChange("HYPHA", hypha, "CREATE", fungusName, startTecton.toString());
 
-        // Hozzáadjuk a fonalat a cél tectonhoz is
-        if (success) {
-            nextTecton.hyphas.add(hypha);
-        }
-
-        String baseName = "hypha_" + fungusId;
-        String name = baseName;
-        int i = 1;
-        while (registry.getByName(name) != null) {
-            name = baseName + "_" + i++;
-        }
-        registry.register(name, hypha);
-
-        logger.logChange("HYPHA", hypha, "CREATE", fungusId, startTecton.toString());
-
-        if (success) {
             fungus.getSpecies().decreaseActions();
         }
          game.notifyObservers();
@@ -69,3 +54,4 @@ public class GrowHyphaCommand implements Command {
         return "GROW_HYPHA " + fungusName;
     }
 }
+
