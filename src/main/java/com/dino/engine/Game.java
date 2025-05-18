@@ -129,10 +129,8 @@ public class Game {
      * felveszi,
      * és elhelyezi a játékosokat a kezdeti tektonokon, és inicializálja a
      * játékmenet kezdeti értékeit.
-     *
-     * @return A játék inicializálásának sikeressége.
      */
-    public boolean initGame() {
+    public void initGame() {
         System.out.println("Adja meg a gombászok számát!");
         int numberOfMycologist = 0;
         while (numberOfMycologist < 2 || numberOfMycologist > 4) {
@@ -170,18 +168,14 @@ public class Game {
             Mycologist mycologist = new Mycologist();
             players.add(mycologist);
             namer.register(mycologist);
-            // Név beállítása
-            String name = namer.getName(mycologist);
-            mycologist.setName(name);
+            mycologist.setName(namer.getName(mycologist));
         }
 
         for (int i = 0; i < numberOfEntomologist; i++) {
             Entomologist entomologist = new Entomologist();
             players.add(entomologist);
             namer.register(entomologist);
-            // Név beállítása
-            String name = namer.getName(entomologist);
-            entomologist.setName(name);
+            entomologist.setName(namer.getName(entomologist));
         }
 
         System.out.println("Hány kör legyen a játék?");
@@ -198,8 +192,6 @@ public class Game {
         totalRounds = numberOfRounds;
 
         notifyObservers();
-
-        return true;
     }
 
     /**
@@ -239,11 +231,9 @@ public class Game {
                 System.out.println("Kiválasztott tekton: " + namer.getName(selectedTecton));
                 ((Mycologist) player).debugPlaceFungus(selectedTecton);
                 tectons.remove(selectedIndex);
-                Fungus fungus = new Fungus((Mycologist) player, selectedTecton);
-                namer.register(fungus);
                 tectonsWithFungus.add(selectedTecton);
                 numberOfMycologist++;
-                System.out.println("Gomba: " + namer.getName(fungus) + "\n");
+                System.out.println("Gomba: " + namer.getName(((Mycologist) player).getMushrooms().get(0)) + "\n");
             }
         }
 
@@ -254,10 +244,9 @@ public class Game {
                 Insect insect = new Insect(
                         (Entomologist) player,
                         tectonsWithFungus.get(selectedIndex));
-                ((Entomologist) player).addInsects(insect);
                 namer.register(insect);
                 System.out.println(
-                        "Insect regisztrálva, neve:" + namer.getName(insect) + "\nKezdp tekton:" + insect.getTecton());
+                        "Insect regisztrálva, neve:" + namer.getName(insect) + "\nKezdő tekton:" + insect.getTecton() + "\n");
                 tectonsWithFungus.remove(selectedIndex);
             }
         }
@@ -336,61 +325,6 @@ public class Game {
     }
 
     /**
-     * Törli a paraméterként kapott játékost, és visszaadja, hogy a művelet sikeres
-     * volt-e.
-     *
-     * @param player Töröli kívánt játékos.
-     * @return Az játékos törlésének sikeressége.
-     */
-    public boolean removePlayer(Player player) {
-        if (player == null || !players.contains(player)) {
-            return false;
-        }
-
-        int playerIndex = players.indexOf(player);
-        int oldPlayerCount = players.size();
-        String playerName = namer.getName(player);
-
-        boolean result = players.remove(player);
-        if (result) {
-            logger.logChange(
-                    "GAME",
-                    this,
-                    "PLAYERS_COUNT",
-                    String.valueOf(oldPlayerCount),
-                    String.valueOf(players.size()));
-
-            if (player == currentPlayer) {
-                String oldPlayerName = playerName;
-
-                if (players.isEmpty()) {
-                    currentPlayer = null;
-                    logger.logChange(
-                            "GAME",
-                            this,
-                            "CURRENT_PLAYER",
-                            oldPlayerName,
-                            "null");
-                } else {
-                    // A következő játékos lesz az aktuális, vagy az első, ha ez volt az utolsó
-                    int nextIndex = playerIndex % players.size();
-                    currentPlayer = players.get(nextIndex);
-
-                    String newPlayerName = namer.getName(currentPlayer);
-                    logger.logChange(
-                            "GAME",
-                            this,
-                            "CURRENT_PLAYER",
-                            oldPlayerName,
-                            newPlayerName);
-                }
-            }
-        }
-
-        return result;
-    }
-
-    /**
      * Paraméter nélkül hívható függvény, ami lépteti a játékmenetet a következő
      * játékosra.
      * Ha minden játékos sorra került, akkor meghívja a nextRound() függvényt.
@@ -398,13 +332,22 @@ public class Game {
     public int nextTurn() {
         int currentIndex = players.indexOf(currentPlayer);
         int nextIndex = (currentIndex + 1) % players.size();
+        boolean roundEnded = false;
 
-        // Jelenlegi játékos nevének elmentése log üzenethez
-        String oldPlayerName = namer.getName(currentPlayer);
+        System.out.println("Aktuális játékos: " + namer.getName(currentPlayer));
+        System.out.println(
+                "Készen állsz, gépelj commandokat (pl. MOVE_INSECT insect1 tectonB):");
 
-        // Következő játékosra váltás
-        currentPlayer = players.get(nextIndex);
-        currentPlayer.remainingActions = currentPlayer.actionsPerTurn;
+        // Scanner kezelése külön metódusba kerül át
+        roundEnded = processPlayerCommands();
+
+        // Ha next_round kommandot írunk be, vagy ha az utolsó játékos volt soron, legyen vége a roundnak
+        if (roundEnded || nextIndex == 0) {
+            return 0; // Jelezzük, hogy kör vége
+        } else {
+            String oldPlayerName = namer.getName(currentPlayer);
+            currentPlayer = players.get(nextIndex);
+            currentPlayer.remainingActions = currentPlayer.actionsPerTurn;
 
         // Log üzenet
         String newPlayerName = namer.getName(currentPlayer);
@@ -415,11 +358,7 @@ public class Game {
                 oldPlayerName,
                 newPlayerName);
 
-        // Ha körbe értünk (az utolsó játékos után újra az első jön)
-        if (nextIndex == 0) {
-            return 0; // Jelezzük, hogy vége a körnek
-        } else {
-            return 1; // Kör még tart
+            return 1;
         }
     }
 

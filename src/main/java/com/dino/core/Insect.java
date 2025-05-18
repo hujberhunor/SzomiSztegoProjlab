@@ -148,7 +148,10 @@ public class Insect implements SerializableEntity {
             "ATTEMPT_MOVE",
             "SUCCESS"
         );
+
         currentTecton = targetTecton;
+        currentTecton.getInsects().remove(this);
+        targetTecton.getInsects().add(this);
         // skeleton.log("Rovar sikeresen mozgott az új tektonra.");
 
         if (isUnderEffect(AcceleratingEffect.class) && extraMove && isUnderEffect(SlowingEffect.class)) {
