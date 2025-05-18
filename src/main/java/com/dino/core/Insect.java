@@ -277,6 +277,7 @@ public class Insect implements SerializableEntity {
             sporeToRemove.ifPresent(spore -> {
                 currentTecton.removeSpores(spore);
                 entomologist.increaseScore(spore.getNutrientValue());
+                spore.applyTo(this);
             });
         });
 
