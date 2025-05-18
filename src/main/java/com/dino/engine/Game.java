@@ -129,10 +129,8 @@ public class Game {
      * felveszi,
      * és elhelyezi a játékosokat a kezdeti tektonokon, és inicializálja a
      * játékmenet kezdeti értékeit.
-     *
-     * @return A játék inicializálásának sikeressége.
      */
-    public boolean initGame() {
+    public void initGame() {
         System.out.println("Adja meg a gombászok számát!");
         int numberOfMycologist = 0;
         while (numberOfMycologist < 2 || numberOfMycologist > 4) {
@@ -170,12 +168,14 @@ public class Game {
             Mycologist mycologist = new Mycologist();
             players.add(mycologist);
             namer.register(mycologist);
+            mycologist.setName(namer.getName(mycologist));
         }
 
         for (int i = 0; i < numberOfEntomologist; i++) {
             Entomologist entomologist = new Entomologist();
             players.add(entomologist);
             namer.register(entomologist);
+            entomologist.setName(namer.getName(entomologist));
         }
 
         System.out.println("Hány kör legyen a játék?");
@@ -192,8 +192,6 @@ public class Game {
         totalRounds = numberOfRounds;
 
         notifyObservers();
-
-        return true;
     }
 
     /**
@@ -233,11 +231,9 @@ public class Game {
                 System.out.println("Kiválasztott tekton: " + namer.getName(selectedTecton));
                 ((Mycologist) player).debugPlaceFungus(selectedTecton);
                 tectons.remove(selectedIndex);
-                Fungus fungus = new Fungus((Mycologist) player, selectedTecton);
-                namer.register(fungus);
                 tectonsWithFungus.add(selectedTecton);
                 numberOfMycologist++;
-                System.out.println("Gomba: " + namer.getName(fungus) + "\n");
+                System.out.println("Gomba: " + namer.getName(((Mycologist) player).getMushrooms().get(0)) + "\n");
             }
         }
 
@@ -326,61 +322,6 @@ public class Game {
         }
 
         return true;
-    }
-
-    /**
-     * Törli a paraméterként kapott játékost, és visszaadja, hogy a művelet sikeres
-     * volt-e.
-     *
-     * @param player Töröli kívánt játékos.
-     * @return Az játékos törlésének sikeressége.
-     */
-    public boolean removePlayer(Player player) {
-        if (player == null || !players.contains(player)) {
-            return false;
-        }
-
-        int playerIndex = players.indexOf(player);
-        int oldPlayerCount = players.size();
-        String playerName = namer.getName(player);
-
-        boolean result = players.remove(player);
-        if (result) {
-            logger.logChange(
-                    "GAME",
-                    this,
-                    "PLAYERS_COUNT",
-                    String.valueOf(oldPlayerCount),
-                    String.valueOf(players.size()));
-
-            if (player == currentPlayer) {
-                String oldPlayerName = playerName;
-
-                if (players.isEmpty()) {
-                    currentPlayer = null;
-                    logger.logChange(
-                            "GAME",
-                            this,
-                            "CURRENT_PLAYER",
-                            oldPlayerName,
-                            "null");
-                } else {
-                    // A következő játékos lesz az aktuális, vagy az első, ha ez volt az utolsó
-                    int nextIndex = playerIndex % players.size();
-                    currentPlayer = players.get(nextIndex);
-
-                    String newPlayerName = namer.getName(currentPlayer);
-                    logger.logChange(
-                            "GAME",
-                            this,
-                            "CURRENT_PLAYER",
-                            oldPlayerName,
-                            newPlayerName);
-                }
-            }
-        }
-
-        return result;
     }
 
     /**
