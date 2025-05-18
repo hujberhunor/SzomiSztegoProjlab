@@ -85,20 +85,25 @@ public class GameBoard {
      * A körök végén a tektonok törését kezelő függvény, aszinkron módon.
      */
     public void breakHandler() {
-        // Ne a főszálon futtasd, hogy ne akadályozza a GUI-t
+        // Nem a főszálon futtatjuk, hogy ne fagyjon le az egész
         new Thread(() -> {
             try {
                 List<Tecton> newTectons = new ArrayList<>();
                 List<Tecton> tectonskToRemove = new ArrayList<>();
+                EntityRegistry registry = EntityRegistry.getInstance();
+                ObjectNamer namer = ObjectNamer.getInstance();
 
                 // Maximum 1 törés körönként
                 boolean hasBreakOccurred = false;
 
                 // Minden tectonra megpróbáljuk elvégezni a törést
-                for (Tecton tecton : new ArrayList<>(tectons)) { // Másolatot használunk, hogy elkerüljük a
+                for (Tecton tecton : new ArrayList<>(tectons)) { // Másolatot használunk, elkerülve a
                                                                  // ConcurrentModificationException-t
                     if (hasBreakOccurred)
                         break; // Ha már volt törés, nem folytatjuk
+
+                    // Eredeti Tecton nevének mentése a logoláshoz
+                    String originalName = registry.getNameOf(tecton);
 
                     // Próbáljuk meg a törést
                     List<Tecton> splitResult = tecton.split(tecton.breakChance);
@@ -107,40 +112,29 @@ public class GameBoard {
                     if (!splitResult.isEmpty()) {
                         hasBreakOccurred = true; // Jelezzük, hogy volt már törés
 
-                        // Regisztráljuk az új tectonokat
-                        for (Tecton newTecton : splitResult) {
-                            namer.register(newTecton);
+                        // Az új Tectonok elnevezése
+                        String newNameA = originalName + "_A";
+                        String newNameB = originalName + "_B";
+
+                        // Elkerüljük a duplikált neveket
+                        if (registry.isNameRegistered(newNameA)) {
+                            newNameA = originalName + "_A_" + System.currentTimeMillis();
+                        }
+                        if (registry.isNameRegistered(newNameB)) {
+                            newNameB = originalName + "_B_" + System.currentTimeMillis();
                         }
 
+                        // Regisztráljuk az új Tectonokat a meghatározott nevekkel
+                        registry.register(newNameA, splitResult.get(0));
+                        registry.register(newNameB, splitResult.get(1));
+
+                        // Hozzáadjuk az új tectonokat a gyűjtőlistához
                         newTectons.addAll(splitResult);
                         tectonskToRemove.add(tecton);
 
-                        // Szomszédsági kapcsolatok beállítása
-                        if (splitResult.size() >= 2) {
-                            Tecton.connectTectons(splitResult.get(0), splitResult.get(1));
-                            logger.logChange("TECTON", splitResult.get(0), "NEIGHBOURS_ADD", "-",
-                                    namer.getName(splitResult.get(1)));
-                        }
-
-                        // Szomszédsági kapcsolatok átvitele az eredeti tektonról
-                        for (Tecton neighbour : tecton.getNeighbours()) {
-                            if (!tectonskToRemove.contains(neighbour)) {
-                                for (Tecton newTecton : splitResult) {
-                                    if (areTectonsNeighbours(newTecton, neighbour)) {
-                                        Tecton.connectTectons(newTecton, neighbour);
-                                        logger.logChange("TECTON", newTecton, "NEIGHBOURS_ADD", "-",
-                                                namer.getName(neighbour));
-                                    }
-                                }
-                            }
-                        }
-
                         // Logoljuk a sikeres törést
-                        logger.logChange("GAMEBOARD", tecton, "BREAK", namer.getName(tecton),
-                                splitResult.stream()
-                                        .map(namer::getName)
-                                        .reduce((a, b) -> a + ", " + b)
-                                        .orElse("-"));
+                        logger.logChange("GAMEBOARD", tecton, "BREAK", originalName,
+                                newNameA + ", " + newNameB);
 
                         // Mivel már volt egy törés, nem folytatjuk a többi Tecton ellenőrzését
                         break;

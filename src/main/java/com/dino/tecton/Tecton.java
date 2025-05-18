@@ -224,11 +224,10 @@ public abstract class Tecton implements SerializableEntity {
         boolean shouldBreak;
 
         if (breakChance < 0) { // A paraméterként kapott breakChance értéket ellenőrizzük
-            // Ha negatív értéket kap, akkor garantáltan törni fog (a valószínűség
-            // ellenőrzés kikerülése)
+            // Ha negatív értéket kap, akkor garantáltan törni fog
             shouldBreak = true;
         } else {
-            // Normál működés: véletlenszám generálás az eredeti logika szerint
+            // Normál működés: véletlenszám generálás
             shouldBreak = Math.random() * 100 < this.breakChance;
         }
 
@@ -264,8 +263,20 @@ public abstract class Tecton implements SerializableEntity {
         namer.register(tecton1);
         namer.register(tecton2);
 
-        String tecton1Name = namer.getName(tecton1);
-        String tecton2Name = namer.getName(tecton2);
+        // ÚJ: A két új Tecton közötti szomszédsági kapcsolat beállítása
+        Tecton.connectTectons(tecton1, tecton2);
+
+        // ÚJ: Szomszédsági kapcsolatok átvitele az eredeti Tectonról
+        for (Tecton neighbour : this.neighbours) {
+            if (!neighbour.equals(this)) { // Ne adjuk hozzá saját magát
+                if (areTectonsNeighbours(tecton1, neighbour)) {
+                    Tecton.connectTectons(tecton1, neighbour);
+                }
+                if (areTectonsNeighbours(tecton2, neighbour)) {
+                    Tecton.connectTectons(tecton2, neighbour);
+                }
+            }
+        }
 
         // Törési valószínűségek és számláló frissítése
         double newBreakChance = this.breakChance;
@@ -281,10 +292,6 @@ public abstract class Tecton implements SerializableEntity {
         tecton1.breakCount = newBreakCount;
         tecton2.breakChance = newBreakChance;
         tecton2.breakCount = newBreakCount;
-
-        // Gombafonalak törlése
-        // tecton1.hyphas = new ArrayList<>();
-        // tecton2.hyphas = new ArrayList<>();
 
         // Gombatestek véletlenszerű áthelyezése
         if (fungus != null) {
@@ -307,14 +314,26 @@ public abstract class Tecton implements SerializableEntity {
                 "[OK] TECTON " +
                         currentTectonName +
                         " SPLIT: - -> " +
-                        tecton1Name +
+                        namer.getName(tecton1) +
                         ", " +
-                        tecton2Name);
+                        namer.getName(tecton2));
 
         resultTectons.add(tecton1);
         resultTectons.add(tecton2);
 
         return resultTectons;
+    }
+
+    // Új segédmetódus a Tecton osztályban
+    private boolean areTectonsNeighbours(Tecton a, Tecton b) {
+        for (Hexagon hexA : a.hexagons) {
+            for (Hexagon hexB : b.hexagons) {
+                if (hexA.getNeighbours().contains(hexB)) {
+                    return true;
+                }
+            }
+        }
+        return false;
     }
 
     /**
