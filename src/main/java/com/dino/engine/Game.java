@@ -491,7 +491,7 @@ public class Game {
                 String.valueOf(oldRound),
                 String.valueOf(currRound));
 
-        // map.breakHandler();
+        map.breakHandler();
 
         for (Player player : players) {
             if (player instanceof Mycologist) {
