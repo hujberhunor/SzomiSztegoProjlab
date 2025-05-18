@@ -495,7 +495,7 @@ public class GuiBoard implements ModelObserver {
                 Spore spore = entry.getKey();
                 Integer count = entry.getValue();
 
-                String sporeName = registry.getNameOf(spore);
+                String sporeName = spore.getClass().getSimpleName();
                 try {
                     Mycologist owner = spore.getSpecies();
                     if (owner != null) {

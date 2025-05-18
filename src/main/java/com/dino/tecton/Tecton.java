@@ -355,7 +355,7 @@ public abstract class Tecton implements SerializableEntity {
      * @return Igaz, ha van legalább egy spóra a gombásztól, egyébként hamis.
      */
     public boolean hasSpores(Mycologist m) {
-        return spores.getOrDefault(m, 0) > 0;
+        return spores.keySet().stream().anyMatch(spore -> spore.getSpecies().equals(m));
     }
 
     /**
