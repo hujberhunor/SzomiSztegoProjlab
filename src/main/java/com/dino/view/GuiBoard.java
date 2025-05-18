@@ -9,6 +9,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Random;
 import java.util.Set;
+import java.util.stream.Collectors;
 
 import com.dino.core.Fungus;
 import com.dino.core.Hexagon;
@@ -40,7 +41,7 @@ import javafx.scene.text.Text;
 import javafx.stage.Popup;
 
 public class GuiBoard implements ModelObserver {
-    private Pane boardPane;
+    public Pane boardPane;
     private Map<Integer, Polygon> hexagonShapes; // id -> polygon
     private Map<Integer, Double[]> hexagonPositions; // id -> [x, y]
     private Map<Tecton, Color> tectonColors;
@@ -816,8 +817,22 @@ public class GuiBoard implements ModelObserver {
             tecton2.setColor(selectedColor);
             persistentTectonColors.put(tectonName2, selectedColor);
         }
+        System.out.println("Recoloring tectons: " + registry.getNameOf(tecton1) +
+                " and " + registry.getNameOf(tecton2));
 
-        // A GUI frissítése, hogy megjelenjenek az új színek
-        update(Game.getInstance());
+        // Hexagonok azonosítóinak kiírása debug célból
+        System.out.println("Tecton1 hexagons: " +
+                tecton1.hexagons.stream().map(h -> Integer.toString(h.getId())).collect(Collectors.joining(",")));
+        System.out.println("Tecton2 hexagons: " +
+                tecton2.hexagons.stream().map(h -> Integer.toString(h.getId())).collect(Collectors.joining(",")));
+
+        // Teljes újrarajzolás
+        boardPane.getChildren().clear();
+        hexagonShapes.clear();
+        hexagonPositions.clear();
+        existingHexagonIds.clear();
+
+        // Explicit módon újrarajzoljuk a teljes táblát
+        render(Game.getInstance());
     }
 }

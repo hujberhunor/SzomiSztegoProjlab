@@ -17,8 +17,11 @@ import com.google.gson.JsonObject;
 import javafx.scene.paint.Color;
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
+import java.util.stream.Collectors;
 
 /**
  * Ennek az absztrakt osztálynak a leszármazottjai reprezentálják a játékteret
@@ -226,7 +229,7 @@ public abstract class Tecton implements SerializableEntity {
             shouldBreak = true;
         } else {
             // Normál működés: véletlenszám generálás az eredeti logika szerint
-            shouldBreak = Math.random() * 100 < this.breakChance; 
+            shouldBreak = Math.random() * 100 < this.breakChance;
         }
 
         if (!shouldBreak) {
@@ -392,11 +395,8 @@ public abstract class Tecton implements SerializableEntity {
     }
 
     /**
-     * Szétosztja a hexagonokat a két új tekton között.
-     * Minden hexagon az egyik vagy másik tektonhoz kerül.
-     * Az algoritmus a sok implementációs lehetőség közül egy egyszerű
-     * megoldást választ: a hexagonokat két részre osztja, de biztosítja,
-     * hogy mindkét részben legalább egy hexagon legyen.
+     * Szétosztja a hexagonokat a két új tekton között úgy, hogy mindkettő
+     * összefüggő hexagon-csoportot tartalmazzon.
      *
      * @param tecton1 Az első új tekton
      * @param tecton2 A második új tekton
@@ -405,13 +405,123 @@ public abstract class Tecton implements SerializableEntity {
         if (hexagons.size() <= 1)
             return;
 
-        // Hexagonok számának meghatározása az első tekton számára
-        int firstTectonHexCount = Math.max(1, hexagons.size() / 2);
+        // A két új tektonhoz tartozó hexagonok listái
+        List<Hexagon> group1 = new ArrayList<>();
+        List<Hexagon> group2 = new ArrayList<>();
 
-        tecton1.hexagons = new ArrayList<>(
-                hexagons.subList(0, firstTectonHexCount));
-        tecton2.hexagons = new ArrayList<>(
-                hexagons.subList(firstTectonHexCount, hexagons.size()));
+        // Indítsunk két "növekedési pontot" a hexagonok ellentétes végeiről
+        Hexagon seed1 = hexagons.get(0);
+        Hexagon seed2 = hexagons.get(hexagons.size() - 1);
+
+        // Ha véletlenül ugyanazt a seedet választottuk, válasszunk másikat
+        if (seed1 == seed2 && hexagons.size() > 1) {
+            seed2 = hexagons.get(hexagons.size() / 2);
+        }
+
+        group1.add(seed1);
+        group2.add(seed2);
+
+        // A már kiosztott hexagonok
+        Set<Hexagon> assigned = new HashSet<>();
+        assigned.add(seed1);
+        assigned.add(seed2);
+
+        // Felváltva növeljük a két csoportot, amíg minden hexagont ki nem osztottunk
+        boolean growGroup1 = true;
+
+        while (assigned.size() < hexagons.size()) {
+            if (growGroup1) {
+                // Az 1. csoport növelése
+                Hexagon nextHex = findNextConnectedHexagon(group1, assigned);
+                if (nextHex != null) {
+                    group1.add(nextHex);
+                    assigned.add(nextHex);
+                } else {
+                    // Ha nem találtunk újabb hexagont az 1. csoporthoz, váltsunk a 2. csoportra
+                    growGroup1 = false;
+                }
+            } else {
+                // A 2. csoport növelése
+                Hexagon nextHex = findNextConnectedHexagon(group2, assigned);
+                if (nextHex != null) {
+                    group2.add(nextHex);
+                    assigned.add(nextHex);
+                } else {
+                    // Ha nem találtunk újabb hexagont a 2. csoporthoz, váltsunk vissza az 1.
+                    // csoportra
+                    growGroup1 = true;
+                }
+            }
+
+            // Ha már nem tudunk több kapcsolódó hexagont találni, de még vannak kiosztandó
+            // hexagonok,
+            // akkor válasszunk egy random hexagont a még nem kiosztottak közül
+            if (!growGroup1 && findNextConnectedHexagon(group1, assigned) == null &&
+                    findNextConnectedHexagon(group2, assigned) == null &&
+                    assigned.size() < hexagons.size()) {
+
+                for (Hexagon hex : hexagons) {
+                    if (!assigned.contains(hex)) {
+                        // Döntsük el, melyik csoporthoz adunk, az alapján, melyik csoportnak van
+                        // közelebbi hexagonja
+                        if (isMoreConnectedTo(hex, group1, group2)) {
+                            group1.add(hex);
+                        } else {
+                            group2.add(hex);
+                        }
+                        assigned.add(hex);
+                        break;
+                    }
+                }
+            }
+        }
+
+        // Az új csoportok beállítása a tectonokban
+        tecton1.hexagons = group1;
+        tecton2.hexagons = group2;
+
+        // Debug információ kiírása
+        System.out.println("Dividing hexagons into connected groups:");
+        System.out.println(
+                "Group 1: " + group1.stream().map(h -> Integer.toString(h.getId())).collect(Collectors.joining(",")));
+        System.out.println(
+                "Group 2: " + group2.stream().map(h -> Integer.toString(h.getId())).collect(Collectors.joining(",")));
+    }
+
+    /**
+     * Megkeresi a következő csoporthoz kapcsolódó, még nem kiosztott hexagont
+     */
+    private Hexagon findNextConnectedHexagon(List<Hexagon> group, Set<Hexagon> assigned) {
+        // Minden hexagont ellenőrzünk a csoportban
+        for (Hexagon groupHex : group) {
+            // Megnézzük a hexagon összes szomszédját
+            for (Hexagon neighbor : groupHex.getNeighbours()) {
+                // Ha a szomszéd a jelenlegi tectonhoz tartozik, de még nincs kiosztva
+                if (hexagons.contains(neighbor) && !assigned.contains(neighbor)) {
+                    return neighbor;
+                }
+            }
+        }
+        return null; // Nem találtunk több kapcsolódó hexagont
+    }
+
+    /**
+     * Ellenőrzi, hogy egy hexagon melyik csoporthoz kapcsolódik jobban
+     */
+    private boolean isMoreConnectedTo(Hexagon hex, List<Hexagon> group1, List<Hexagon> group2) {
+        int connections1 = 0;
+        int connections2 = 0;
+
+        for (Hexagon neighbor : hex.getNeighbours()) {
+            if (group1.contains(neighbor)) {
+                connections1++;
+            }
+            if (group2.contains(neighbor)) {
+                connections2++;
+            }
+        }
+
+        return connections1 >= connections2;
     }
 
     /**
