@@ -2,7 +2,6 @@ package com.dino.view;
 
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.Collections;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
@@ -481,6 +480,37 @@ public class GuiBoard implements ModelObserver {
             info.append("Connected by ").append(tecton.getHyphas().size()).append(" hyphae\n");
         } else {
             info.append("No hypha connections\n");
+        }
+
+        Map<Spore, Integer> sporeMap = tecton.getSporeMap();
+        if (!sporeMap.isEmpty()) {
+            int totalSpores = 0;
+            for (Integer count : sporeMap.values()) {
+                totalSpores += count;
+            }
+
+            info.append("Spores: ").append(totalSpores).append("\n");
+
+            for (Map.Entry<Spore, Integer> entry : sporeMap.entrySet()) {
+                Spore spore = entry.getKey();
+                Integer count = entry.getValue();
+
+                String sporeName = registry.getNameOf(spore);
+                try {
+                    Mycologist owner = spore.getSpecies();
+                    if (owner != null) {
+                        String ownerName = registry.getNameOf(owner);
+                        info.append(" - ").append(count).append("× ").append(sporeName)
+                                .append(" (Owner: ").append(ownerName).append(")\n");
+                    } else {
+                        info.append(" - ").append(count).append("× ").append(sporeName).append("\n");
+                    }
+                } catch (Exception e) {
+                    info.append(" - ").append(count).append("× ").append(sporeName).append("\n");
+                }
+            }
+        } else {
+            info.append("Spores: None\n");
         }
 
         return info.toString();
