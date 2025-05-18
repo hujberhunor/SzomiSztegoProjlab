@@ -85,4 +85,8 @@ public abstract class Player {
         }
         return 1;
     }
+
+    public void increaseScore(int extraScore){
+        this.score += extraScore;
+    }
 }

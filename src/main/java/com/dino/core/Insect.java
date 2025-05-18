@@ -274,7 +274,10 @@ public class Insect implements SerializableEntity {
         
             Optional<Spore> sporeToRemove = currentTecton.spores.keySet().stream().filter(spore -> spore.getSpecies().equals(topMycologist)).findFirst();
 
-            sporeToRemove.ifPresent(spore -> currentTecton.removeSpores(spore));
+            sporeToRemove.ifPresent(spore -> {
+                currentTecton.removeSpores(spore);
+                entomologist.increaseScore(spore.getNutrientValue());
+            });
         });
 
         logger.logOk(
