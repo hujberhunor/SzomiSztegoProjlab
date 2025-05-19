@@ -2,11 +2,11 @@ package com.dino.engine;
 
 import java.util.ArrayList;
 import java.util.Comparator;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.Random;
 import java.util.Scanner;
-import java.util.Map;
-import java.util.HashMap;
 
 import com.dino.commands.Command;
 import com.dino.commands.CommandParser;
@@ -246,7 +246,8 @@ public class Game {
                         tectonsWithFungus.get(selectedIndex));
                 namer.register(insect);
                 System.out.println(
-                        "Insect regisztrálva, neve:" + namer.getName(insect) + "\nKezdő tekton:" + insect.getTecton() + "\n");
+                        "Insect regisztrálva, neve:" + namer.getName(insect) + "\nKezdő tekton:" + insect.getTecton()
+                                + "\n");
                 tectonsWithFungus.remove(selectedIndex);
             }
         }
@@ -341,7 +342,8 @@ public class Game {
         // Scanner kezelése külön metódusba kerül át
         roundEnded = processPlayerCommands();
 
-        // Ha next_round kommandot írunk be, vagy ha az utolsó játékos volt soron, legyen vége a roundnak
+        // Ha next_round kommandot írunk be, vagy ha az utolsó játékos volt soron,
+        // legyen vége a roundnak
         if (roundEnded || nextIndex == 0) {
             return 0; // Jelezzük, hogy kör vége
         } else {
@@ -349,14 +351,14 @@ public class Game {
             currentPlayer = players.get(nextIndex);
             currentPlayer.remainingActions = currentPlayer.actionsPerTurn;
 
-        // Log üzenet
-        String newPlayerName = namer.getName(currentPlayer);
-        logger.logChange(
-                "GAME",
-                this,
-                "CURRENT_PLAYER",
-                oldPlayerName,
-                newPlayerName);
+            // Log üzenet
+            String newPlayerName = namer.getName(currentPlayer);
+            logger.logChange(
+                    "GAME",
+                    this,
+                    "CURRENT_PLAYER",
+                    oldPlayerName,
+                    newPlayerName);
 
             return 1;
         }
@@ -717,4 +719,28 @@ public class Game {
     public List<ModelObserver> getObservers() {
         return observers;
     }
+
+    private boolean autoAdvanceInProgress = false;
+
+    public void autoAdvanceIfNeeded() {
+        if (autoAdvanceInProgress)
+            return;
+        autoAdvanceInProgress = true;
+
+        while (currentPlayer.remainingActions <= 0) {
+            int turnResult = nextTurn();
+
+            if (turnResult == 0) {
+                int roundResult = nextRound();
+                if (roundResult == 0) {
+                    endGame();
+                    break;
+                }
+            }
+        }
+
+        notifyObservers();
+        autoAdvanceInProgress = false;
+    }
+
 }

@@ -118,6 +118,7 @@ private void processCommand() {
         appendLog("[ERROR] " + ex.getMessage());
     }
 game.notifyObservers();
+game.autoAdvanceIfNeeded();
 
 }
 
