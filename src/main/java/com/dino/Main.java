@@ -771,13 +771,15 @@ public class Main {
         System.out.println("Enter 0 to exit\n");
 
         while (menuActive) {
-            System.out.println("9. Serializáció teszt");
-            System.out.println("10. Command test");
-            System.out.println("11. Full gameplay");
-            System.out.println("12. Deszerializálás");
-            System.out.println("13. Tesztek futtatása");
-            System.out.println("14. Full gameplay statikus mapon");
-            System.out.println("15. GUI");
+            // System.out.println("9. Serializáció teszt");
+            // System.out.println("10. Command test");
+            // System.out.println("11. Full gameplay");
+            // System.out.println("12. Deszerializálás");
+            // System.out.println("13. Tesztek futtatása");
+            // System.out.println("14. Full gameplay statikus mapon");
+            // System.out.println("15. GUI");
+             System.out.println("1. Tesztek futtatása");
+             System.out.println("2. GUI");
             System.out.println("-----------------------");
             System.out.print("Select use case (e.g. 1, 2...): ");
             int useCase = scanner.nextInt();
@@ -807,7 +809,13 @@ public class Main {
                 case 14:
                     staticMap();
                     break;
-                case 15:
+                case 1:
+                    System.err.println("Not implemented yet");
+                    System.err.println("Not implemented yet");
+                    System.err.println("Not implemented yet");
+                    runTestOracleMenu();
+                    break;
+                case 2:
                     Application.launch(MainApp.class, args);
                     break;
                 default:
