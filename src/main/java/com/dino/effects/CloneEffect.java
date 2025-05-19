@@ -46,6 +46,7 @@ public class CloneEffect extends Spore {
     public void applyTo(Insect original) {
         EntityRegistry registry = EntityRegistry.getInstance();
         Logger logger = Logger.getInstance();
+        ObjectNamer namer = ObjectNamer.getInstance();
 
         List<Spore> prevEffects = new ArrayList<>(original.getEffects());
 
@@ -54,6 +55,7 @@ public class CloneEffect extends Spore {
 
         // Copy konstruktort meghívjuk
         Insect clone = new Insect(original);
+        namer.register(clone);
         Tecton currTecton = original.getTecton();
         // Hozzáadom a klónt az eredeti tektonjához
         currTecton.addInsect(clone);
