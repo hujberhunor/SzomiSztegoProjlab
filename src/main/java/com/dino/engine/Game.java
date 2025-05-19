@@ -472,12 +472,6 @@ public class Game {
                     int oldCharge = f.getCharge();
                     f.increaseCharge();
                     logger.logChange("FUNGUS", f, "CHARGE", oldCharge, f.getCharge());
-
-                    if(f.getLifespan() > 0){
-                        int oldLifespan = f.getLifespan();
-                        f.decreaseLifespan();
-                        logger.logChange("FUNGUS", f, "LIFESPAN", oldLifespan, f.getLifespan());
-                    }
                 }
             }
             else if(player instanceof Entomologist) {
