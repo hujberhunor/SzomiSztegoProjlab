@@ -136,11 +136,10 @@ public class Fungus implements SerializableEntity {
             }
             logger.logOk("FUNGUS", namer.getName(this), "ACTION", "ATTEMPT_SPREAD_SPORE_1", "SUCCESS");
         }
-        // ha a gomba töltöttsége 3, spórát szór(hat) a szomszédos tektonok szomszédaira
-        // is
+        // ha a gomba töltöttsége 3, spórát szór(hat) a szomszédos tektonok szomszédaira is
         if (charge == 3) {
             for (Tecton t : tecton.getNeighbours()) {
-                for (Tecton secondDegree : tecton.getNeighbours()) {
+                for (Tecton secondDegree : t.getNeighbours()) {
                     if (secondDegree != t && !alreadySpread.contains(secondDegree)) {
                         secondDegree.addSpores(createRandomSpore());
                         alreadySpread.add(secondDegree);

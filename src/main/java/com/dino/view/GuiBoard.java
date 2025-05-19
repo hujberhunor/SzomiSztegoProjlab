@@ -2,7 +2,6 @@ package com.dino.view;
 
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.Collections;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
@@ -22,6 +21,7 @@ import com.dino.tecton.Tecton;
 import com.dino.util.EntityRegistry;
 import com.dino.util.ObjectNamer;
 
+import javafx.application.Platform;
 import javafx.geometry.Point2D;
 import javafx.scene.Node;
 import javafx.scene.canvas.Canvas;
@@ -40,7 +40,7 @@ import javafx.scene.text.Text;
 import javafx.stage.Popup;
 
 public class GuiBoard implements ModelObserver {
-    private Pane boardPane;
+    public Pane boardPane;
     private Map<Integer, Polygon> hexagonShapes; // id -> polygon
     private Map<Integer, Double[]> hexagonPositions; // id -> [x, y]
     private Map<Tecton, Color> tectonColors;
@@ -449,13 +449,13 @@ public class GuiBoard implements ModelObserver {
     private String buildTectonInfo(Tecton tecton) {
         StringBuilder info = new StringBuilder();
 
-        // Add tecton name and type
+        // Tecton név és típus
         String tectonName = registry.getNameOf(tecton);
         String tectonType = tecton.getClass().getSimpleName();
         info.append("Name: ").append(tectonName).append("\n");
         info.append("Type: ").append(tectonType).append("\n");
 
-        // Add hexagon IDs
+        // Hexagon ID-k
         info.append("Hexagons: ");
         for (int i = 0; i < tecton.getHexagons().size(); i++) {
             if (i > 0)
@@ -464,23 +464,61 @@ public class GuiBoard implements ModelObserver {
         }
         info.append("\n");
 
-        // Add fungus information
+        // Gomba
         if (tecton.getFungus() != null) {
             info.append("Fungus: ").append(registry.getNameOf(tecton.getFungus())).append("\n");
         } else {
             info.append("Fungus: None\n");
         }
 
-        // Add insect information
+        // Rovarok
         if (!tecton.getInsects().isEmpty()) {
             info.append("Insects: ").append(tecton.getInsects().size()).append("\n");
         }
 
-        // Add hypha information
-        if (!tecton.getHyphas().isEmpty()) {
-            info.append("Connected by ").append(tecton.getHyphas().size()).append(" hyphae\n");
+        // Fonalak (Hypha-k)
+        List<Hypha> hyphae = tecton.getHyphas();
+        if (!hyphae.isEmpty()) {
+            info.append("Connected by ").append(hyphae.size()).append(" hyphae\n");
+
+            for (Hypha h : hyphae) {
+                String hyphaName = registry.getNameOf(h);
+                info.append(" - Hypha: ").append(hyphaName != null ? hyphaName : "Unnamed").append("\n");
+            }
         } else {
             info.append("No hypha connections\n");
+        }
+
+        // Spórák
+        Map<Spore, Integer> sporeMap = tecton.getSporeMap();
+        if (!sporeMap.isEmpty()) {
+            int totalSpores = 0;
+            for (Integer count : sporeMap.values()) {
+                totalSpores += count;
+            }
+
+            info.append("Spores: ").append(totalSpores).append("\n");
+
+            for (Map.Entry<Spore, Integer> entry : sporeMap.entrySet()) {
+                Spore spore = entry.getKey();
+                Integer count = entry.getValue();
+
+                String sporeName = spore.getClass().getSimpleName();
+                try {
+                    Mycologist owner = spore.getSpecies();
+                    if (owner != null) {
+                        String ownerName = registry.getNameOf(owner);
+                        info.append(" - ").append(count).append("× ").append(sporeName)
+                                .append(" (Owner: ").append(ownerName).append(")\n");
+                    } else {
+                        info.append(" - ").append(count).append("× ").append(sporeName).append("\n");
+                    }
+                } catch (Exception e) {
+                    info.append(" - ").append(count).append("× ").append(sporeName).append("\n");
+                }
+            }
+        } else {
+            info.append("Spores: None\n");
         }
 
         return info.toString();
@@ -581,53 +619,50 @@ public class GuiBoard implements ModelObserver {
             for (Hypha h : tecton.getHyphas()) {
                 if (alreadyDrawn.contains(h))
                     continue;
-
                 alreadyDrawn.add(h);
 
-                // Ellenőrizzük, hogy van-e legalább két tecton a hypha-ban
-                if (h.getTectons().size() < 2)
+                List<Tecton> path = h.getTectons();
+                if (path.size() < 2)
                     continue;
 
-                Tecton start = h.getTectons().get(0);
-                Tecton end = h.getTectons().get(1);
+                for (int i = 0; i < path.size() - 1; i++) {
+                    Tecton start = path.get(i);
+                    Tecton end = path.get(i + 1);
 
-                Hexagon startHex = null, endHex = null;
+                    Hexagon startHex = getFirstValidHex(start);
+                    Hexagon endHex = getFirstValidHex(end);
 
-                for (Hexagon hex : start.hexagons) {
-                    if (existingHexagonIds.contains(hex.getId())) {
-                        startHex = hex;
-                        break;
+                    if (startHex == null || endHex == null)
+                        continue;
+
+                    Double[] startPosArray = hexagonPositions.get(startHex.getId());
+                    Double[] endPosArray = hexagonPositions.get(endHex.getId());
+                    if (startPosArray == null || endPosArray == null)
+                        continue;
+
+                    Point2D startPos = new Point2D(startPosArray[0], startPosArray[1]);
+                    Point2D endPos = new Point2D(endPosArray[0], endPosArray[1]);
+
+                    HyphaEntity entity = new HyphaEntity(h);
+                    entity.setStartPos(startPos);
+                    entity.setEndPos(endPos);
+
+                    Node hyphaNode = entity.draw();
+                    if (hyphaNode != null) {
+                        boardPane.getChildren().add(hyphaNode);
                     }
-                }
-
-                for (Hexagon hex : end.hexagons) {
-                    if (existingHexagonIds.contains(hex.getId())) {
-                        endHex = hex;
-                        break;
-                    }
-                }
-
-                if (startHex == null || endHex == null)
-                    continue;
-
-                Double[] startPosArray = hexagonPositions.get(startHex.getId());
-                Double[] endPosArray = hexagonPositions.get(endHex.getId());
-                if (startPosArray == null || endPosArray == null)
-                    continue;
-
-                Point2D startPos = new Point2D(startPosArray[0], startPosArray[1]);
-                Point2D endPos = new Point2D(endPosArray[0], endPosArray[1]);
-
-                HyphaEntity entity = new HyphaEntity(h);
-                entity.setStartPos(startPos);
-                entity.setEndPos(endPos);
-
-                Node hyphaNode = entity.draw();
-                if (hyphaNode != null) {
-                    boardPane.getChildren().add(hyphaNode);
                 }
             }
         }
+    }
+
+    private Hexagon getFirstValidHex(Tecton tecton) {
+        for (Hexagon hex : tecton.hexagons) {
+            if (existingHexagonIds.contains(hex.getId())) {
+                return hex;
+            }
+        }
+        return null;
     }
 
     private void handleFungusClick(MouseEvent event, Fungus fungus) {
@@ -738,5 +773,112 @@ public class GuiBoard implements ModelObserver {
         }
 
         return info.toString();
+    }
+
+    /**
+     * Újraszínezi a megadott Tectonokat két különböző színnel.
+     * Ezt a függvényt akkor kell meghívni, amikor egy Tecton széttörik két új
+     * Tectonra.
+     * 
+     * @param tecton1 Az első új Tecton
+     * @param tecton2 A második új Tecton
+     */
+    public void recolorTecton(Tecton tecton1, Tecton tecton2) {
+        List<Color> possibleColors = Arrays.asList(Color.web("#557174"), Color.web("#798f7a"), Color.web("#9dad7f"),
+                Color.web("#b2be9b"), Color.web("#c7cfb7"), Color.web("#f7f7e8"));
+
+        Random rnd = new Random();
+
+        // Az első Tecton színének kiválasztása
+        String tectonName1 = registry.getNameOf(tecton1);
+        if (!persistentTectonColors.containsKey(tectonName1)) {
+            List<Color> availableColors = new ArrayList<>(possibleColors);
+            boolean isUnique = false;
+            Color selectedColor = possibleColors.get(0);
+
+            while (!isUnique && !(availableColors.isEmpty())) {
+                isUnique = true;
+                int selectedIndex = rnd.nextInt(availableColors.size());
+                selectedColor = availableColors.get(selectedIndex);
+
+                for (Tecton neighbourTecton : tecton1.getNeighbours()) {
+                    if (neighbourTecton.getColor() == null) {
+                        continue;
+                    }
+                    if (neighbourTecton.getColor().equals(selectedColor)) {
+                        isUnique = false;
+                        availableColors.remove(selectedColor);
+                        break;
+                    }
+                }
+            }
+
+            tectonColors.put(tecton1, selectedColor);
+            tecton1.setColor(selectedColor);
+            persistentTectonColors.put(tectonName1, selectedColor);
+        }
+
+        // A második Tecton színének kiválasztása
+        String tectonName2 = registry.getNameOf(tecton2);
+        if (!persistentTectonColors.containsKey(tectonName2)) {
+            List<Color> availableColors = new ArrayList<>(possibleColors);
+            // Kivesszük az első Tecton színét a lehetséges színek közül
+            if (tecton1.getColor() != null) {
+                availableColors.remove(tecton1.getColor());
+            }
+
+            boolean isUnique = false;
+            Color selectedColor = availableColors.isEmpty() ? possibleColors.get(0) : availableColors.get(0);
+
+            while (!isUnique && !(availableColors.isEmpty())) {
+                isUnique = true;
+                int selectedIndex = rnd.nextInt(availableColors.size());
+                selectedColor = availableColors.get(selectedIndex);
+
+                for (Tecton neighbourTecton : tecton2.getNeighbours()) {
+                    if (neighbourTecton.getColor() == null) {
+                        continue;
+                    }
+                    if (neighbourTecton.getColor().equals(selectedColor)) {
+                        isUnique = false;
+                        availableColors.remove(selectedColor);
+                        break;
+                    }
+                }
+            }
+
+            tectonColors.put(tecton2, selectedColor);
+            tecton2.setColor(selectedColor);
+            persistentTectonColors.put(tectonName2, selectedColor);
+        }
+        System.out.println("Recoloring tectons: " + registry.getNameOf(tecton1) +
+                " and " + registry.getNameOf(tecton2));
+
+        System.out.println("Recoloring tectons: " + registry.getNameOf(tecton1) +
+                " and " + registry.getNameOf(tecton2));
+
+        // JavaFX alkalmazás szálán frissítünk
+        Platform.runLater(() -> {
+            try {
+                // Csak az érintett hexagonok újrarajzolása
+                for (Hexagon hex : tecton1.hexagons) {
+                    Polygon hexShape = hexagonShapes.get(hex.getId());
+                    if (hexShape != null) {
+                        hexShape.setFill(tecton1.getColor());
+                    }
+                }
+
+                for (Hexagon hex : tecton2.hexagons) {
+                    Polygon hexShape = hexagonShapes.get(hex.getId());
+                    if (hexShape != null) {
+                        hexShape.setFill(tecton2.getColor());
+                    }
+                }
+                drawHypha(Game.getInstance());
+            } catch (Exception e) {
+                System.err.println("Error during recolor: " + e.getMessage());
+                e.printStackTrace();
+            }
+        });
     }
 }

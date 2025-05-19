@@ -80,6 +80,7 @@ public class Mycologist extends Player implements SerializableEntity {
         Fungus newFungus = new Fungus(this, t);
         mushrooms.add(newFungus);
         t.setFungus(newFungus);
+        this.increaseScore(1);
 
         logger.logChange("MYCOLOGIST", this, "MUSHROOMS_COUNT",
                 String.valueOf(oldMushroomsCount), String.valueOf(mushrooms.size()));
