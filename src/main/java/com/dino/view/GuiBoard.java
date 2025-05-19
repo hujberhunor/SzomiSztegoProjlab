@@ -449,13 +449,13 @@ public class GuiBoard implements ModelObserver {
     private String buildTectonInfo(Tecton tecton) {
         StringBuilder info = new StringBuilder();
 
-        // Add tecton name and type
+        // Tecton név és típus
         String tectonName = registry.getNameOf(tecton);
         String tectonType = tecton.getClass().getSimpleName();
         info.append("Name: ").append(tectonName).append("\n");
         info.append("Type: ").append(tectonType).append("\n");
 
-        // Add hexagon IDs
+        // Hexagon ID-k
         info.append("Hexagons: ");
         for (int i = 0; i < tecton.getHexagons().size(); i++) {
             if (i > 0)
@@ -464,25 +464,32 @@ public class GuiBoard implements ModelObserver {
         }
         info.append("\n");
 
-        // Add fungus information
+        // Gomba
         if (tecton.getFungus() != null) {
             info.append("Fungus: ").append(registry.getNameOf(tecton.getFungus())).append("\n");
         } else {
             info.append("Fungus: None\n");
         }
 
-        // Add insect information
+        // Rovarok
         if (!tecton.getInsects().isEmpty()) {
             info.append("Insects: ").append(tecton.getInsects().size()).append("\n");
         }
 
-        // Add hypha information
-        if (!tecton.getHyphas().isEmpty()) {
-            info.append("Connected by ").append(tecton.getHyphas().size()).append(" hyphae\n");
+        // Fonalak (Hypha-k)
+        List<Hypha> hyphae = tecton.getHyphas();
+        if (!hyphae.isEmpty()) {
+            info.append("Connected by ").append(hyphae.size()).append(" hyphae\n");
+
+            for (Hypha h : hyphae) {
+                String hyphaName = registry.getNameOf(h);
+                info.append(" - Hypha: ").append(hyphaName != null ? hyphaName : "Unnamed").append("\n");
+            }
         } else {
             info.append("No hypha connections\n");
         }
 
+        // Spórák
         Map<Spore, Integer> sporeMap = tecton.getSporeMap();
         if (!sporeMap.isEmpty()) {
             int totalSpores = 0;
