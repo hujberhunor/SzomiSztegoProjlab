@@ -8,7 +8,6 @@ import java.util.List;
 import java.util.Map;
 import java.util.Random;
 import java.util.Set;
-import java.util.stream.Collectors;
 
 import com.dino.core.Fungus;
 import com.dino.core.Hexagon;
@@ -450,13 +449,13 @@ public class GuiBoard implements ModelObserver {
     private String buildTectonInfo(Tecton tecton) {
         StringBuilder info = new StringBuilder();
 
-        // Add tecton name and type
+        // Tecton név és típus
         String tectonName = registry.getNameOf(tecton);
         String tectonType = tecton.getClass().getSimpleName();
         info.append("Name: ").append(tectonName).append("\n");
         info.append("Type: ").append(tectonType).append("\n");
 
-        // Add hexagon IDs
+        // Hexagon ID-k
         info.append("Hexagons: ");
         for (int i = 0; i < tecton.getHexagons().size(); i++) {
             if (i > 0)
@@ -465,25 +464,32 @@ public class GuiBoard implements ModelObserver {
         }
         info.append("\n");
 
-        // Add fungus information
+        // Gomba
         if (tecton.getFungus() != null) {
             info.append("Fungus: ").append(registry.getNameOf(tecton.getFungus())).append("\n");
         } else {
             info.append("Fungus: None\n");
         }
 
-        // Add insect information
+        // Rovarok
         if (!tecton.getInsects().isEmpty()) {
             info.append("Insects: ").append(tecton.getInsects().size()).append("\n");
         }
 
-        // Add hypha information
-        if (!tecton.getHyphas().isEmpty()) {
-            info.append("Connected by ").append(tecton.getHyphas().size()).append(" hyphae\n");
+        // Fonalak (Hypha-k)
+        List<Hypha> hyphae = tecton.getHyphas();
+        if (!hyphae.isEmpty()) {
+            info.append("Connected by ").append(hyphae.size()).append(" hyphae\n");
+
+            for (Hypha h : hyphae) {
+                String hyphaName = registry.getNameOf(h);
+                info.append(" - Hypha: ").append(hyphaName != null ? hyphaName : "Unnamed").append("\n");
+            }
         } else {
             info.append("No hypha connections\n");
         }
 
+        // Spórák
         Map<Spore, Integer> sporeMap = tecton.getSporeMap();
         if (!sporeMap.isEmpty()) {
             int totalSpores = 0;
@@ -613,53 +619,50 @@ public class GuiBoard implements ModelObserver {
             for (Hypha h : tecton.getHyphas()) {
                 if (alreadyDrawn.contains(h))
                     continue;
-
                 alreadyDrawn.add(h);
 
-                // Ellenőrizzük, hogy van-e legalább két tecton a hypha-ban
-                if (h.getTectons().size() < 2)
+                List<Tecton> path = h.getTectons();
+                if (path.size() < 2)
                     continue;
 
-                Tecton start = h.getTectons().get(0);
-                Tecton end = h.getTectons().get(1);
+                for (int i = 0; i < path.size() - 1; i++) {
+                    Tecton start = path.get(i);
+                    Tecton end = path.get(i + 1);
 
-                Hexagon startHex = null, endHex = null;
+                    Hexagon startHex = getFirstValidHex(start);
+                    Hexagon endHex = getFirstValidHex(end);
 
-                for (Hexagon hex : start.hexagons) {
-                    if (existingHexagonIds.contains(hex.getId())) {
-                        startHex = hex;
-                        break;
+                    if (startHex == null || endHex == null)
+                        continue;
+
+                    Double[] startPosArray = hexagonPositions.get(startHex.getId());
+                    Double[] endPosArray = hexagonPositions.get(endHex.getId());
+                    if (startPosArray == null || endPosArray == null)
+                        continue;
+
+                    Point2D startPos = new Point2D(startPosArray[0], startPosArray[1]);
+                    Point2D endPos = new Point2D(endPosArray[0], endPosArray[1]);
+
+                    HyphaEntity entity = new HyphaEntity(h);
+                    entity.setStartPos(startPos);
+                    entity.setEndPos(endPos);
+
+                    Node hyphaNode = entity.draw();
+                    if (hyphaNode != null) {
+                        boardPane.getChildren().add(hyphaNode);
                     }
-                }
-
-                for (Hexagon hex : end.hexagons) {
-                    if (existingHexagonIds.contains(hex.getId())) {
-                        endHex = hex;
-                        break;
-                    }
-                }
-
-                if (startHex == null || endHex == null)
-                    continue;
-
-                Double[] startPosArray = hexagonPositions.get(startHex.getId());
-                Double[] endPosArray = hexagonPositions.get(endHex.getId());
-                if (startPosArray == null || endPosArray == null)
-                    continue;
-
-                Point2D startPos = new Point2D(startPosArray[0], startPosArray[1]);
-                Point2D endPos = new Point2D(endPosArray[0], endPosArray[1]);
-
-                HyphaEntity entity = new HyphaEntity(h);
-                entity.setStartPos(startPos);
-                entity.setEndPos(endPos);
-
-                Node hyphaNode = entity.draw();
-                if (hyphaNode != null) {
-                    boardPane.getChildren().add(hyphaNode);
                 }
             }
         }
+    }
+
+    private Hexagon getFirstValidHex(Tecton tecton) {
+        for (Hexagon hex : tecton.hexagons) {
+            if (existingHexagonIds.contains(hex.getId())) {
+                return hex;
+            }
+        }
+        return null;
     }
 
     private void handleFungusClick(MouseEvent event, Fungus fungus) {
