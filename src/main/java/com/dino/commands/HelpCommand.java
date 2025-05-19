@@ -18,11 +18,11 @@ public class HelpCommand implements Command {
                 "CONSUME_SPORE <insect>",
                 "GROW_HYPHA <fungus> <tecton>",
                 "CONTINUE_HYPHA <hypha> <tecton>",
-                "CUT_HYPHA <insect> <hypha> <tecton>",
+                "CUT_HYPHA <insect> <hypha> <neighbourTecton>",
                 "PLACE_FUNGUS <mycologist> <tecton>",
                 "SPREAD_SPORE <fungus>",
                 "BREAK_TECTON <tecton>",
-                "EAT_INSECT <predator> <victim>",
+                "EAT_INSECT <hypha> <insect>",
                 "SET_FUNGUS_CHARGE <fungus> <charge>",
                 "NEXT_TURN", "NEXT_ROUND", "END_GAME", "SKIP_TURN",
                 "SELECT_ENTITY <name>", "HELP");

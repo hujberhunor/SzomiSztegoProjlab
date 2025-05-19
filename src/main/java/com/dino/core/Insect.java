@@ -289,7 +289,6 @@ public class Insect implements SerializableEntity {
             "SUCCESS"
         );
         //skeleton.log("Rovar sikeresen elfogyasztotta a spórát.");
-        entomologist.decreaseActions();
         //skeleton.endMethod();
 
         return true;

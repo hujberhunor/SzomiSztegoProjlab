@@ -16,6 +16,7 @@ import com.dino.commands.SkipTurnCommand;
 import com.dino.core.Fungus;
 import com.dino.core.Hypha;
 import com.dino.core.Insect;
+import com.dino.core.Spore;
 import com.dino.player.Entomologist;
 import com.dino.player.Mycologist;
 import com.dino.player.Player;
@@ -255,6 +256,37 @@ public class Game {
         currentPlayer = players.get(0);
     }
 
+    public void gameplay() {
+        int endOfRound = 1;
+        while (endOfRound != 0) {
+            endOfRound = nextTurn();
+        }
+
+        // After first round is complete
+        if (totalRounds > 1) {
+            boolean gameIsEnded = false;
+            for (int currentRound = 1; currentRound < totalRounds && !gameIsEnded; currentRound++) {
+                int endOfGame = nextRound();
+                if (endOfGame == 0) {
+                    gameIsEnded = true; // Game has ended prematurely
+                    break;
+                }
+
+                endOfRound = 1; // Reset for the new round
+                while (endOfRound != 0) {
+                    endOfRound = nextTurn();
+                }
+            }
+
+            // Make sure we call endGame() if we exited the loop normally
+            if (!gameIsEnded) {
+                endGame();
+            }
+        } else {
+            endGame();
+        }
+    }
+
     // MAIN 9-es teszt erre dependál
     public boolean TSTinitGame() {
         if (players.isEmpty() || map == null) {
@@ -440,6 +472,14 @@ public class Game {
                     int oldCharge = f.getCharge();
                     f.increaseCharge();
                     logger.logChange("FUNGUS", f, "CHARGE", oldCharge, f.getCharge());
+                }
+            }
+            else if(player instanceof Entomologist) {
+                for (Insect insect : ((Entomologist) player).getInsects()) {
+                    for (Spore effekt : insect.getEffects()) {
+                        effekt.decreaseEffectDuration();
+                    }
+                    insect.removeExpiredEffects();
                 }
             }
         }

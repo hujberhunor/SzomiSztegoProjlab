@@ -78,6 +78,7 @@ public class Mycologist extends Player implements SerializableEntity {
 
         // Gombatest létrehozása és hozzáadása a listához
         Fungus newFungus = new Fungus(this, t);
+        namer.register(newFungus);
         mushrooms.add(newFungus);
         t.setFungus(newFungus);
         this.increaseScore(1);
