@@ -874,6 +874,7 @@ public class GuiBoard implements ModelObserver {
                         hexShape.setFill(tecton2.getColor());
                     }
                 }
+                drawHypha(Game.getInstance());
             } catch (Exception e) {
                 System.err.println("Error during recolor: " + e.getMessage());
                 e.printStackTrace();
