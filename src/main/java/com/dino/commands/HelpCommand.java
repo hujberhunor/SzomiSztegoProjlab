@@ -11,6 +11,7 @@ public class HelpCommand implements Command {
     @Override
     public void execute(Game game, Logger logger) {
         List<String> commands = Arrays.asList(
+                "Non case sensitive",
                 "INIT <filename>",
                 "LOAD <filename>",
                 "SAVE <filename>",

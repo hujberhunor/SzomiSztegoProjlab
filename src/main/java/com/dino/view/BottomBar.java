@@ -46,7 +46,7 @@ public class BottomBar extends VBox implements ModelObserver {
 
         commandInput = new TextField();
         commandInput.setFont(Font.font("Consolas", FontWeight.BOLD, 12));
-        commandInput.setPromptText("Enter command...");
+        commandInput.setPromptText("Type help for commands...");
         commandInput.setStyle("-fx-text-fill: white; -fx-background-color: rgba(20, 20, 20, 0.8);");
 
         logDisplay = new TextArea();
