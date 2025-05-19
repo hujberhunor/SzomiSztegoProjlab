@@ -276,6 +276,7 @@ public class Fungus implements SerializableEntity {
     public void setLifespan(int lifespan) {
         this.lifespan = lifespan;
     }
+    public void decreaseLifespan() { lifespan--; }
 
     @Override
     public JsonObject serialize(ObjectNamer namer) {

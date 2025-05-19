@@ -27,7 +27,7 @@ public class CommandParser {
                 return new SaveCommand(parts[1]);
             case "MOVE_INSECT":
                 return new MoveInsectCommand(parts[1], parts[2]);
-            case "CONSUME_SPORE":
+            case "CONSUME_SPORE", "EAT_SPORE":
                 return new ConsumeSporeCommand(parts[1]);
             case "GROW_HYPHA":
                 return new GrowHyphaCommand(parts[1], parts[2]);

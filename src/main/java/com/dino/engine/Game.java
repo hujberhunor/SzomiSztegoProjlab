@@ -16,6 +16,7 @@ import com.dino.commands.SkipTurnCommand;
 import com.dino.core.Fungus;
 import com.dino.core.Hypha;
 import com.dino.core.Insect;
+import com.dino.core.Spore;
 import com.dino.player.Entomologist;
 import com.dino.player.Mycologist;
 import com.dino.player.Player;
@@ -471,6 +472,20 @@ public class Game {
                     int oldCharge = f.getCharge();
                     f.increaseCharge();
                     logger.logChange("FUNGUS", f, "CHARGE", oldCharge, f.getCharge());
+
+                    if(f.getLifespan() > 0){
+                        int oldLifespan = f.getLifespan();
+                        f.decreaseLifespan();
+                        logger.logChange("FUNGUS", f, "LIFESPAN", oldLifespan, f.getLifespan());
+                    }
+                }
+            }
+            else if(player instanceof Entomologist) {
+                for (Insect insect : ((Entomologist) player).getInsects()) {
+                    for (Spore effekt : insect.getEffects()) {
+                        effekt.decreaseEffectDuration();
+                    }
+                    insect.removeExpiredEffects();
                 }
             }
         }
