@@ -22,7 +22,7 @@ public class HelpCommand implements Command {
                 "PLACE_FUNGUS <mycologist> <tecton>",
                 "SPREAD_SPORE <fungus>",
                 "BREAK_TECTON <tecton>",
-                "EAT_INSECT <predator> <victim>",
+                "EAT_INSECT <hypha> <insect>",
                 "SET_FUNGUS_CHARGE <fungus> <charge>",
                 "NEXT_TURN", "NEXT_ROUND", "END_GAME", "SKIP_TURN",
                 "SELECT_ENTITY <name>", "HELP");
