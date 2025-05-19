@@ -336,12 +336,12 @@ public class GameBoard {
             // Véletlenszerű tekton típus létrehozása
             Tecton newTecton = createRandomTectonType();
 
-            // Hatszögek gyűjtése a tektonhoz (1-4 darab)
+            // Hatszögek gyűjtése a tektonhoz (1-6 darab)
             List<Hexagon> tectonHexagons = new ArrayList<>();
             tectonHexagons.add(startHex);
 
             // Véletlenszerű méret 1 és 8 között
-            int targetSize = 1 + (int) (Math.random() * 8);
+            int targetSize = 1 + (int) (Math.random() * 6);
 
             // Egybefüggő tekton kialakítása
             growTecton(tectonHexagons, remainingHexagons, targetSize);
