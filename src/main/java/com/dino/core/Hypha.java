@@ -215,13 +215,6 @@ public class Hypha implements SerializableEntity {
 
     // Kettlvág egy fonalat - a második felét decay-eli, ha kell
     public void splitHypha(Tecton tecton, Game game) {
-        /*int index = -1;
-        for (int i = 0; i < tectons.size(); i++) {
-            if (tectons.get(i).equals(tecton)) {
-                index = i;
-                break;
-            }
-        }*/
         int index = tectons.indexOf(tecton);
         if (index < 0 || index >= tectons.size() - 1) {
             return;
