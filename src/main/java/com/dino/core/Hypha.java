@@ -1,5 +1,10 @@
 package com.dino.core;
 
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.List;
+import java.util.stream.Collectors;
+
 import com.dino.effects.ParalyzingEffect;
 import com.dino.engine.Game;
 import com.dino.player.Mycologist;
@@ -10,13 +15,7 @@ import com.dino.util.Logger;
 import com.dino.util.ObjectNamer;
 import com.dino.util.SerializableEntity;
 import com.dino.util.SerializerUtil;
-import com.google.gson.JsonArray;
-import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.List;
-import java.util.stream.Collectors;
 
 /**
  * A gombafonalakat reprezentáló osztály. Egy objektum a növesztés sorrendjében
@@ -107,9 +106,9 @@ public class Hypha implements SerializableEntity {
      * végére
      */
     public boolean continueHypha(Tecton t) {
-        // Ha ez az első tecton (pl. új fonalnál), engedjük
         if (tectons.isEmpty()) {
             tectons.add(t);
+            t.addHypha(this);
             logger.logChange(
                     "HYPHA",
                     namer.getName(this),
@@ -125,10 +124,10 @@ public class Hypha implements SerializableEntity {
             return true;
         }
 
-        // Ellenőrizzük, hogy az utolsó tecton szomszédja-e a cél
         Tecton last = tectons.get(tectons.size() - 1);
         if (last.isNeighbor(t)) {
             tectons.add(t);
+            t.addHypha(this); // 👈 NÉLKÜLE NINCS GUI
             logger.logChange(
                     "HYPHA",
                     namer.getName(this),
