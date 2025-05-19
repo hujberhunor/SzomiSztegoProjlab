@@ -8,6 +8,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Random;
 import java.util.Set;
+import java.util.stream.Collectors;
 
 import com.dino.core.Fungus;
 import com.dino.core.Hexagon;
@@ -21,6 +22,7 @@ import com.dino.tecton.Tecton;
 import com.dino.util.EntityRegistry;
 import com.dino.util.ObjectNamer;
 
+import javafx.application.Platform;
 import javafx.geometry.Point2D;
 import javafx.scene.Node;
 import javafx.scene.canvas.Canvas;
@@ -39,7 +41,7 @@ import javafx.scene.text.Text;
 import javafx.stage.Popup;
 
 public class GuiBoard implements ModelObserver {
-    private Pane boardPane;
+    public Pane boardPane;
     private Map<Integer, Polygon> hexagonShapes; // id -> polygon
     private Map<Integer, Double[]> hexagonPositions; // id -> [x, y]
     private Map<Tecton, Color> tectonColors;
@@ -768,5 +770,111 @@ public class GuiBoard implements ModelObserver {
         }
 
         return info.toString();
+    }
+
+    /**
+     * Újraszínezi a megadott Tectonokat két különböző színnel.
+     * Ezt a függvényt akkor kell meghívni, amikor egy Tecton széttörik két új
+     * Tectonra.
+     * 
+     * @param tecton1 Az első új Tecton
+     * @param tecton2 A második új Tecton
+     */
+    public void recolorTecton(Tecton tecton1, Tecton tecton2) {
+        List<Color> possibleColors = Arrays.asList(Color.web("#557174"), Color.web("#798f7a"), Color.web("#9dad7f"),
+                Color.web("#b2be9b"), Color.web("#c7cfb7"), Color.web("#f7f7e8"));
+
+        Random rnd = new Random();
+
+        // Az első Tecton színének kiválasztása
+        String tectonName1 = registry.getNameOf(tecton1);
+        if (!persistentTectonColors.containsKey(tectonName1)) {
+            List<Color> availableColors = new ArrayList<>(possibleColors);
+            boolean isUnique = false;
+            Color selectedColor = possibleColors.get(0);
+
+            while (!isUnique && !(availableColors.isEmpty())) {
+                isUnique = true;
+                int selectedIndex = rnd.nextInt(availableColors.size());
+                selectedColor = availableColors.get(selectedIndex);
+
+                for (Tecton neighbourTecton : tecton1.getNeighbours()) {
+                    if (neighbourTecton.getColor() == null) {
+                        continue;
+                    }
+                    if (neighbourTecton.getColor().equals(selectedColor)) {
+                        isUnique = false;
+                        availableColors.remove(selectedColor);
+                        break;
+                    }
+                }
+            }
+
+            tectonColors.put(tecton1, selectedColor);
+            tecton1.setColor(selectedColor);
+            persistentTectonColors.put(tectonName1, selectedColor);
+        }
+
+        // A második Tecton színének kiválasztása
+        String tectonName2 = registry.getNameOf(tecton2);
+        if (!persistentTectonColors.containsKey(tectonName2)) {
+            List<Color> availableColors = new ArrayList<>(possibleColors);
+            // Kivesszük az első Tecton színét a lehetséges színek közül
+            if (tecton1.getColor() != null) {
+                availableColors.remove(tecton1.getColor());
+            }
+
+            boolean isUnique = false;
+            Color selectedColor = availableColors.isEmpty() ? possibleColors.get(0) : availableColors.get(0);
+
+            while (!isUnique && !(availableColors.isEmpty())) {
+                isUnique = true;
+                int selectedIndex = rnd.nextInt(availableColors.size());
+                selectedColor = availableColors.get(selectedIndex);
+
+                for (Tecton neighbourTecton : tecton2.getNeighbours()) {
+                    if (neighbourTecton.getColor() == null) {
+                        continue;
+                    }
+                    if (neighbourTecton.getColor().equals(selectedColor)) {
+                        isUnique = false;
+                        availableColors.remove(selectedColor);
+                        break;
+                    }
+                }
+            }
+
+            tectonColors.put(tecton2, selectedColor);
+            tecton2.setColor(selectedColor);
+            persistentTectonColors.put(tectonName2, selectedColor);
+        }
+        System.out.println("Recoloring tectons: " + registry.getNameOf(tecton1) +
+                " and " + registry.getNameOf(tecton2));
+
+        System.out.println("Recoloring tectons: " + registry.getNameOf(tecton1) +
+                " and " + registry.getNameOf(tecton2));
+
+        // JavaFX alkalmazás szálán frissítünk
+        Platform.runLater(() -> {
+            try {
+                // Csak az érintett hexagonok újrarajzolása
+                for (Hexagon hex : tecton1.hexagons) {
+                    Polygon hexShape = hexagonShapes.get(hex.getId());
+                    if (hexShape != null) {
+                        hexShape.setFill(tecton1.getColor());
+                    }
+                }
+
+                for (Hexagon hex : tecton2.hexagons) {
+                    Polygon hexShape = hexagonShapes.get(hex.getId());
+                    if (hexShape != null) {
+                        hexShape.setFill(tecton2.getColor());
+                    }
+                }
+            } catch (Exception e) {
+                System.err.println("Error during recolor: " + e.getMessage());
+                e.printStackTrace();
+            }
+        });
     }
 }
