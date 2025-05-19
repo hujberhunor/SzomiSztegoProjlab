@@ -18,7 +18,7 @@ public class HelpCommand implements Command {
                 "CONSUME_SPORE <insect>",
                 "GROW_HYPHA <fungus> <tecton>",
                 "CONTINUE_HYPHA <hypha> <tecton>",
-                "CUT_HYPHA <mycologist> <fromTecton> <toTecton>",
+                "CUT_HYPHA <insect> <hypha> <neighbourTecton>",
                 "PLACE_FUNGUS <mycologist> <tecton>",
                 "SPREAD_SPORE <fungus>",
                 "BREAK_TECTON <tecton>",
